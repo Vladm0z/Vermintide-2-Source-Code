@@ -79,7 +79,7 @@ local function var_0_8()
 	return SPProfiles[var_2_2].careers[var_2_1].profile_name
 end
 
-DialogueSystem.init = function (arg_3_0, arg_3_1, arg_3_2)
+function DialogueSystem.init(arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_1.entity_manager
 
 	var_3_0:register_system(arg_3_0, arg_3_2, var_0_3)
@@ -309,7 +309,7 @@ DialogueSystem.init = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._next_story_line_update_t = DialogueSettings.story_start_delay
 end
 
-DialogueSystem._load_special_event_dialogues = function (arg_4_0, arg_4_1, arg_4_2)
+function DialogueSystem._load_special_event_dialogues(arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = var_0_1[arg_4_1]
 	local var_4_1 = var_4_0 and var_4_0.dialogues
 	local var_4_2 = var_4_1 and var_4_1[arg_4_2]
@@ -339,15 +339,15 @@ DialogueSystem._load_special_event_dialogues = function (arg_4_0, arg_4_1, arg_4
 	end
 end
 
-DialogueSystem.dialogue_units = function (arg_5_0)
+function DialogueSystem.dialogue_units(arg_5_0)
 	return arg_5_0._unit_extension_data
 end
 
-DialogueSystem.is_dialogue_playing = function (arg_6_0)
+function DialogueSystem.is_dialogue_playing(arg_6_0)
 	return not table.is_empty(arg_6_0._playing_dialogues)
 end
 
-DialogueSystem.destroy = function (arg_7_0)
+function DialogueSystem.destroy(arg_7_0)
 	arg_7_0._tagquery_loader:unload_files()
 	arg_7_0._tagquery_database:destroy()
 	World.destroy_gui(arg_7_0.world, arg_7_0.gui)
@@ -364,7 +364,7 @@ end
 
 local var_0_9 = {}
 
-DialogueSystem.on_add_extension = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+function DialogueSystem.on_add_extension(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = {
 		user_memory = {},
 		context = {
@@ -376,7 +376,7 @@ DialogueSystem.on_add_extension = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, 
 	local var_8_1 = arg_8_0
 
 	var_8_0.input = MakeTableStrict({
-		trigger_dialogue_event = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+		trigger_dialogue_event = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 			if not var_8_1._is_server then
 				return
 			end
@@ -390,7 +390,7 @@ DialogueSystem.on_add_extension = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, 
 			var_9_0[var_9_1 + 4] = arg_9_3 or ""
 			var_8_1._input_event_queue_n = var_9_1 + 4
 		end,
-		trigger_networked_dialogue_event = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		trigger_networked_dialogue_event = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 			if LEVEL_EDITOR_TEST then
 				return
 			end
@@ -436,7 +436,7 @@ DialogueSystem.on_add_extension = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, 
 			fassert(var_10_6, "No game object id for unit %s.", arg_8_2)
 			Managers.state.network.network_transmit:send_rpc_server("rpc_trigger_dialogue_event", var_10_6, var_10_7, var_10_3, var_10_2)
 		end,
-		play_voice = function (arg_11_0, arg_11_1, arg_11_2)
+		play_voice = function(arg_11_0, arg_11_1, arg_11_2)
 			if DEDICATED_SERVER then
 				return
 			end
@@ -453,7 +453,7 @@ DialogueSystem.on_add_extension = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, 
 				return
 			end
 		end,
-		play_voice_debug = function (arg_12_0, arg_12_1)
+		play_voice_debug = function(arg_12_0, arg_12_1)
 			if DEDICATED_SERVER then
 				return
 			end
@@ -470,7 +470,7 @@ DialogueSystem.on_add_extension = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, 
 				return
 			end
 		end,
-		trigger_query = function (arg_13_0, arg_13_1)
+		trigger_query = function(arg_13_0, arg_13_1)
 			local var_13_0, var_13_1, var_13_2, var_13_3, var_13_4 = unpack(arg_13_1)
 
 			var_8_1._tagquery_database:debug_test_query(var_13_0, var_13_1, var_13_2, var_13_3, var_13_4)
@@ -531,7 +531,7 @@ DialogueSystem.on_add_extension = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, 
 	return var_8_0
 end
 
-DialogueSystem.extensions_ready = function (arg_14_0, arg_14_1, arg_14_2)
+function DialogueSystem.extensions_ready(arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._unit_extension_data[arg_14_2]
 	local var_14_1 = arg_14_0._unit_extension_data[arg_14_2].context
 	local var_14_2 = var_14_1.player_profile
@@ -568,14 +568,14 @@ DialogueSystem.extensions_ready = function (arg_14_0, arg_14_1, arg_14_2)
 	var_14_0.vo_center_percent = var_14_6
 end
 
-DialogueSystem.on_remove_extension = function (arg_15_0, arg_15_1, arg_15_2)
+function DialogueSystem.on_remove_extension(arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0._frozen_unit_extension_data[arg_15_1] = nil
 
 	arg_15_0:_cleanup_extension(arg_15_1, arg_15_2)
 	ScriptUnit.remove_extension(arg_15_1, arg_15_0.NAME)
 end
 
-DialogueSystem.on_freeze_extension = function (arg_16_0, arg_16_1, arg_16_2)
+function DialogueSystem.on_freeze_extension(arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._unit_extension_data[arg_16_1]
 
 	fassert(var_16_0, "Unit was already frozen.")
@@ -585,7 +585,7 @@ DialogueSystem.on_freeze_extension = function (arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0:_cleanup_extension(arg_16_1, arg_16_2)
 end
 
-DialogueSystem.freeze = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+function DialogueSystem.freeze(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = arg_17_0._frozen_unit_extension_data
 
 	if var_17_0[arg_17_1] then
@@ -601,7 +601,7 @@ DialogueSystem.freeze = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	var_17_0[arg_17_1] = var_17_1
 end
 
-DialogueSystem.unfreeze = function (arg_18_0, arg_18_1)
+function DialogueSystem.unfreeze(arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._frozen_unit_extension_data[arg_18_1]
 
 	fassert(var_18_0, "Unit to unfreeze didn't have frozen extension")
@@ -614,11 +614,11 @@ DialogueSystem.unfreeze = function (arg_18_0, arg_18_1)
 	arg_18_0._tagquery_database:add_object_context(arg_18_1, "faction_memory", arg_18_0._faction_memories[var_18_0.faction])
 end
 
-DialogueSystem.set_faction_memory = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+function DialogueSystem.set_faction_memory(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	arg_19_0._faction_memories[arg_19_1][arg_19_2] = arg_19_3
 end
 
-DialogueSystem.set_user_memory = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+function DialogueSystem.set_user_memory(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = arg_20_0._unit_extension_data[arg_20_1]
 
 	if var_20_0 then
@@ -626,7 +626,7 @@ DialogueSystem.set_user_memory = function (arg_20_0, arg_20_1, arg_20_2, arg_20_
 	end
 end
 
-DialogueSystem.set_user_context = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+function DialogueSystem.set_user_context(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = arg_21_0._unit_extension_data[arg_21_1]
 
 	if var_21_0 then
@@ -634,19 +634,19 @@ DialogueSystem.set_user_context = function (arg_21_0, arg_21_1, arg_21_2, arg_21
 	end
 end
 
-DialogueSystem.set_global_context = function (arg_22_0, arg_22_1, arg_22_2)
+function DialogueSystem.set_global_context(arg_22_0, arg_22_1, arg_22_2)
 	arg_22_0._global_context[arg_22_1] = arg_22_2
 end
 
-DialogueSystem.get_global_context = function (arg_23_0, arg_23_1)
+function DialogueSystem.get_global_context(arg_23_0, arg_23_1)
 	return arg_23_0._global_context[arg_23_1]
 end
 
-DialogueSystem.force_faction_op = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+function DialogueSystem.force_faction_op(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 	arg_24_0._faction_memories[arg_24_2][arg_24_3] = DialogueSystem.function_by_op[TagQuery.OP[arg_24_4]](arg_24_0._faction_memories[arg_24_2][arg_24_3], arg_24_5)
 end
 
-DialogueSystem._cleanup_extension = function (arg_25_0, arg_25_1, arg_25_2)
+function DialogueSystem._cleanup_extension(arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0._unit_extension_data[arg_25_1]
 
 	if var_25_0 == nil then
@@ -697,21 +697,21 @@ end
 local var_0_10 = 0
 
 DialogueSystem.function_by_op = DialogueSystem.function_by_op or {
-	[TagQuery.OP.ADD] = function (arg_26_0, arg_26_1)
+	[TagQuery.OP.ADD] = function(arg_26_0, arg_26_1)
 		return (arg_26_0 or 0) + arg_26_1
 	end,
-	[TagQuery.OP.SUB] = function (arg_27_0, arg_27_1)
+	[TagQuery.OP.SUB] = function(arg_27_0, arg_27_1)
 		return (arg_27_0 or 0) - arg_27_1
 	end,
-	[TagQuery.OP.NUMSET] = function (arg_28_0, arg_28_1)
+	[TagQuery.OP.NUMSET] = function(arg_28_0, arg_28_1)
 		return arg_28_1 or 0
 	end,
-	[TagQuery.OP.TIMESET] = function ()
+	[TagQuery.OP.TIMESET] = function()
 		return Managers.time:time("game") + 900
 	end
 }
 
-DialogueSystem._update_currently_playing_dialogues = function (arg_30_0, arg_30_1)
+function DialogueSystem._update_currently_playing_dialogues(arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_0._function_command_queue
 	local var_30_1 = Managers.player
 	local var_30_2 = arg_30_0._unit_extension_data
@@ -855,11 +855,11 @@ DialogueSystem._update_currently_playing_dialogues = function (arg_30_0, arg_30_
 	end
 end
 
-DialogueSystem.update = function (arg_31_0, arg_31_1, arg_31_2)
+function DialogueSystem.update(arg_31_0, arg_31_1, arg_31_2)
 	return
 end
 
-DialogueSystem._handle_wwise_markers = function (arg_32_0, arg_32_1, arg_32_2)
+function DialogueSystem._handle_wwise_markers(arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = WwiseWorld.pull_marker_events(arg_32_0.wwise_world)
 
 	if var_32_0 then
@@ -874,7 +874,7 @@ DialogueSystem._handle_wwise_markers = function (arg_32_0, arg_32_1, arg_32_2)
 	end
 end
 
-DialogueSystem._trigger_marker = function (arg_33_0, arg_33_1)
+function DialogueSystem._trigger_marker(arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_1.sound_event
 	local var_33_1 = arg_33_1.source_name
 	local var_33_2
@@ -926,7 +926,7 @@ end
 
 local var_0_11 = {}
 
-DialogueSystem.physics_async_update = function (arg_34_0, arg_34_1, arg_34_2)
+function DialogueSystem.physics_async_update(arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_1.dt
 
 	arg_34_0:_update_currently_playing_dialogues(var_34_0)
@@ -979,7 +979,7 @@ DialogueSystem.physics_async_update = function (arg_34_0, arg_34_1, arg_34_2)
 				local var_34_21 = iter_34_1.only_local and (not var_34_13 or var_34_13 ~= var_34_12:owner(iter_34_1.currently_playing_unit))
 
 				if var_34_20 or var_34_21 then
-					-- Nothing
+					-- block empty
 				elseif var_34_18 and var_34_9 == iter_34_1.category then
 					var_34_16 = false
 
@@ -991,7 +991,7 @@ DialogueSystem.physics_async_update = function (arg_34_0, arg_34_1, arg_34_2)
 
 					break
 				elseif var_34_11[iter_34_1.category] then
-					-- Nothing
+					-- block empty
 				else
 					var_34_16 = false
 
@@ -1059,11 +1059,11 @@ DialogueSystem.physics_async_update = function (arg_34_0, arg_34_1, arg_34_2)
 							iter_34_6.input:trigger_dialogue_event(var_34_31, var_34_32)
 						end
 					else
-						local var_34_36 = POSITION_LOOKUP[var_34_33] or Unit.local_position(var_34_33, 0)
+						local var_34_36 = Unit.local_position(var_34_33, 0)
 						local var_34_37 = DialogueSettings.default_hear_distance
 
 						for iter_34_7, iter_34_8 in pairs(arg_34_0._unit_extension_data) do
-							local var_34_38 = POSITION_LOOKUP[iter_34_7] or Unit.local_position(iter_34_7, 0)
+							local var_34_38 = Unit.local_position(iter_34_7, 0)
 							local var_34_39 = Vector3.distance(var_34_36, var_34_38)
 
 							if var_34_39 <= var_34_37 then
@@ -1125,11 +1125,11 @@ DialogueSystem.physics_async_update = function (arg_34_0, arg_34_1, arg_34_2)
 	arg_34_0:_update_new_events(arg_34_2)
 end
 
-DialogueSystem.post_update = function (arg_35_0, arg_35_1, arg_35_2)
+function DialogueSystem.post_update(arg_35_0, arg_35_1, arg_35_2)
 	arg_35_0._function_command_queue:run_commands()
 end
 
-DialogueSystem._update_incapacitation = function (arg_36_0, arg_36_1)
+function DialogueSystem._update_incapacitation(arg_36_0, arg_36_1)
 	for iter_36_0, iter_36_1 in pairs(arg_36_0._unit_extension_data) do
 		local var_36_0 = iter_36_1.status_extension
 
@@ -1147,7 +1147,7 @@ end
 
 local var_0_12 = {}
 
-DialogueSystem._update_new_events = function (arg_37_0, arg_37_1)
+function DialogueSystem._update_new_events(arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0._unit_extension_data
 	local var_37_1 = arg_37_0._tagquery_database
 	local var_37_2 = Unit.alive
@@ -1211,7 +1211,7 @@ DialogueSystem._update_new_events = function (arg_37_0, arg_37_1)
 	arg_37_0._input_event_queue_n = 0
 end
 
-DialogueSystem.hot_join_sync = function (arg_38_0, arg_38_1)
+function DialogueSystem.hot_join_sync(arg_38_0, arg_38_1)
 	if arg_38_0._global_context.current_wind then
 		local var_38_0 = arg_38_0._global_context.current_wind
 		local var_38_1 = NetworkLookup.weave_winds[var_38_0]
@@ -1220,7 +1220,7 @@ DialogueSystem.hot_join_sync = function (arg_38_0, arg_38_1)
 	end
 end
 
-DialogueSystem.has_local_player_moved_from_start_position = function (arg_39_0)
+function DialogueSystem.has_local_player_moved_from_start_position(arg_39_0)
 	if var_0_6 then
 		return false
 	end
@@ -1230,7 +1230,7 @@ DialogueSystem.has_local_player_moved_from_start_position = function (arg_39_0)
 	return var_39_0:round_has_started() or var_39_0:player_has_moved()
 end
 
-DialogueSystem.player_shield_check = function (arg_40_0, arg_40_1, arg_40_2)
+function DialogueSystem.player_shield_check(arg_40_0, arg_40_1, arg_40_2)
 	local var_40_0 = 0
 
 	if Unit.alive(arg_40_1) and Managers.player:owner(arg_40_1) ~= nil then
@@ -1258,7 +1258,7 @@ DialogueSystem.player_shield_check = function (arg_40_0, arg_40_1, arg_40_2)
 	return var_40_0
 end
 
-DialogueSystem.trigger_general_unit_event = function (arg_41_0, arg_41_1, arg_41_2)
+function DialogueSystem.trigger_general_unit_event(arg_41_0, arg_41_1, arg_41_2)
 	Managers.state.entity:system("audio_system"):_play_event(arg_41_2, arg_41_1, 0)
 
 	local var_41_0 = NetworkLookup.sound_events[arg_41_2]
@@ -1268,7 +1268,7 @@ DialogueSystem.trigger_general_unit_event = function (arg_41_0, arg_41_1, arg_41
 	var_41_1.network_transmit:send_rpc_clients("rpc_server_audio_unit_event", var_41_0, var_41_2, var_41_3, 0)
 end
 
-DialogueSystem.trigger_targeted_by_ratling = function (arg_42_0, arg_42_1)
+function DialogueSystem.trigger_targeted_by_ratling(arg_42_0, arg_42_1)
 	local var_42_0 = Managers.player:unit_owner(arg_42_1)
 
 	if arg_42_1 and var_42_0 ~= nil then
@@ -1276,7 +1276,7 @@ DialogueSystem.trigger_targeted_by_ratling = function (arg_42_0, arg_42_1)
 	end
 end
 
-DialogueSystem.trigger_attack = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
+function DialogueSystem.trigger_attack(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
 	local var_43_0 = Managers.player:unit_owner(arg_43_2)
 
 	if ALIVE[arg_43_2] and var_43_0 and ALIVE[arg_43_3] then
@@ -1331,7 +1331,7 @@ DialogueSystem.trigger_attack = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3
 	end
 end
 
-DialogueSystem.trigger_backstab = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+function DialogueSystem.trigger_backstab(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	local var_44_0 = Managers.player:unit_owner(arg_44_1)
 
 	if ALIVE[arg_44_1] and var_44_0 and ALIVE[arg_44_2] and not var_44_0.bot_player then
@@ -1362,7 +1362,7 @@ DialogueSystem.trigger_backstab = function (arg_44_0, arg_44_1, arg_44_2, arg_44
 	end
 end
 
-DialogueSystem.trigger_flanking = function (arg_45_0, arg_45_1, arg_45_2)
+function DialogueSystem.trigger_flanking(arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = Managers.player:unit_owner(arg_45_1)
 
 	if ALIVE[arg_45_1] and var_45_0 and ALIVE[arg_45_2] then
@@ -1384,7 +1384,7 @@ DialogueSystem.trigger_flanking = function (arg_45_0, arg_45_1, arg_45_2)
 	end
 end
 
-DialogueSystem.trigger_backstab_hit = function (arg_46_0, arg_46_1, arg_46_2)
+function DialogueSystem.trigger_backstab_hit(arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = Managers.player:unit_owner(arg_46_1)
 	local var_46_1 = Managers.state.network:game()
 
@@ -1411,11 +1411,11 @@ DialogueSystem.trigger_backstab_hit = function (arg_46_0, arg_46_1, arg_46_2)
 	end
 end
 
-DialogueSystem.get_random_player = function (arg_47_0)
+function DialogueSystem.get_random_player(arg_47_0)
 	return PlayerUtils.get_random_alive_hero()
 end
 
-DialogueSystem._update_story_lines = function (arg_48_0, arg_48_1)
+function DialogueSystem._update_story_lines(arg_48_0, arg_48_1)
 	local var_48_0 = arg_48_0._next_story_line_update_t
 
 	if not arg_48_0:_is_story_trigger_frozen() and var_48_0 < arg_48_1 then
@@ -1429,15 +1429,15 @@ DialogueSystem._update_story_lines = function (arg_48_0, arg_48_1)
 	end
 end
 
-DialogueSystem.freeze_story_trigger = function (arg_49_0)
+function DialogueSystem.freeze_story_trigger(arg_49_0)
 	arg_49_0._story_trigger_freezes = arg_49_0._story_trigger_freezes + 1
 end
 
-DialogueSystem.unfreeze_story_trigger = function (arg_50_0)
+function DialogueSystem.unfreeze_story_trigger(arg_50_0)
 	arg_50_0._story_trigger_freezes = math.max(0, arg_50_0._story_trigger_freezes - 1)
 end
 
-DialogueSystem._is_story_trigger_frozen = function (arg_51_0)
+function DialogueSystem._is_story_trigger_frozen(arg_51_0)
 	return arg_51_0._story_trigger_freezes and arg_51_0._story_trigger_freezes > 0
 end
 
@@ -1446,7 +1446,7 @@ local var_0_14
 local var_0_15 = 0
 local var_0_16 = 5
 
-DialogueSystem.trigger_cutscene_subtitles = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+function DialogueSystem.trigger_cutscene_subtitles(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 	var_0_5 = false
 	var_0_14 = arg_52_2
 	var_0_16 = arg_52_3
@@ -1456,7 +1456,7 @@ DialogueSystem.trigger_cutscene_subtitles = function (arg_52_0, arg_52_1, arg_52
 	end
 end
 
-DialogueSystem._update_cutscene_subtitles = function (arg_53_0, arg_53_1)
+function DialogueSystem._update_cutscene_subtitles(arg_53_0, arg_53_1)
 	local var_53_0 = Managers.state.entity:system("hud_system")
 
 	for iter_53_0, iter_53_1 in pairs(var_0_13) do
@@ -1476,7 +1476,7 @@ DialogueSystem._update_cutscene_subtitles = function (arg_53_0, arg_53_1)
 	end
 end
 
-DialogueSystem.trigger_sound_event_with_subtitles = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5)
+function DialogueSystem.trigger_sound_event_with_subtitles(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -1484,7 +1484,7 @@ DialogueSystem.trigger_sound_event_with_subtitles = function (arg_54_0, arg_54_1
 	arg_54_0._flow_calls_implementation:trigger_sound_event_with_subtitles(arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5)
 end
 
-DialogueSystem._update_sound_event_subtitles = function (arg_55_0)
+function DialogueSystem._update_sound_event_subtitles(arg_55_0)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -1492,23 +1492,23 @@ DialogueSystem._update_sound_event_subtitles = function (arg_55_0)
 	arg_55_0._flow_calls_implementation:update_sound_event_subtitles()
 end
 
-DialogueSystem.disable = function (arg_56_0)
+function DialogueSystem.disable(arg_56_0)
 	var_0_5 = false
 end
 
-DialogueSystem.enable = function (arg_57_0)
+function DialogueSystem.enable(arg_57_0)
 	var_0_5 = true
 end
 
-DialogueSystem.tagquery_loader = function (arg_58_0)
+function DialogueSystem.tagquery_loader(arg_58_0)
 	return arg_58_0._tagquery_loader
 end
 
-DialogueSystem.tagquery_database = function (arg_59_0)
+function DialogueSystem.tagquery_database(arg_59_0)
 	return arg_59_0._tagquery_database
 end
 
-DialogueSystem.reset_memory_time = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+function DialogueSystem.reset_memory_time(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 	local var_60_0 = var_0_10 - 2000
 	local var_60_1 = arg_60_0._unit_extension_data[arg_60_3]
 
@@ -1521,7 +1521,7 @@ DialogueSystem.reset_memory_time = function (arg_60_0, arg_60_1, arg_60_2, arg_6
 	end
 end
 
-DialogueSystem.trigger_story_dialogue = function (arg_61_0, arg_61_1)
+function DialogueSystem.trigger_story_dialogue(arg_61_0, arg_61_1)
 	if Unit.alive(arg_61_1) and not arg_61_0:_is_story_trigger_frozen() then
 		local var_61_0 = ScriptUnit.extension_input(arg_61_1, "dialogue_system")
 		local var_61_1 = FrameTable.alloc_table()
@@ -1535,7 +1535,7 @@ end
 local var_0_17 = 0
 local var_0_18 = 0
 
-DialogueSystem._update_player_jumping = function (arg_62_0, arg_62_1)
+function DialogueSystem._update_player_jumping(arg_62_0, arg_62_1)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -1566,7 +1566,7 @@ DialogueSystem._update_player_jumping = function (arg_62_0, arg_62_1)
 	end
 end
 
-DialogueSystem.queue_mission_giver_event = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+function DialogueSystem.queue_mission_giver_event(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
 	arg_63_0._mission_giver_events[#arg_63_0._mission_giver_events + 1] = {
 		delay = DialogueSettings.mission_giver_events_delay,
 		event_name = arg_63_1,
@@ -1575,7 +1575,7 @@ DialogueSystem.queue_mission_giver_event = function (arg_63_0, arg_63_1, arg_63_
 	}
 end
 
-DialogueSystem.trigger_mission_giver_event = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+function DialogueSystem.trigger_mission_giver_event(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 	local var_64_0 = Managers.state.entity:system("surrounding_aware_system"):get_global_observers()
 	local var_64_1 = Managers.state.side:get_side_from_name(arg_64_3)
 	local var_64_2 = var_64_1 and var_64_1.side_id
@@ -1587,7 +1587,7 @@ DialogueSystem.trigger_mission_giver_event = function (arg_64_0, arg_64_1, arg_6
 	end
 end
 
-DialogueSystem._update_mission_giver_events = function (arg_65_0, arg_65_1)
+function DialogueSystem._update_mission_giver_events(arg_65_0, arg_65_1)
 	local var_65_0 = arg_65_0._mission_giver_events
 	local var_65_1 = #var_65_0
 	local var_65_2 = 1
@@ -1608,7 +1608,7 @@ DialogueSystem._update_mission_giver_events = function (arg_65_0, arg_65_1)
 	end
 end
 
-DialogueSystem.rpc_trigger_dialogue_event = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4, arg_66_5, arg_66_6)
+function DialogueSystem.rpc_trigger_dialogue_event(arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4, arg_66_5, arg_66_6)
 	local var_66_0 = Managers.state.unit_storage:unit(arg_66_2)
 
 	if not var_66_0 then
@@ -1650,7 +1650,7 @@ DialogueSystem.rpc_trigger_dialogue_event = function (arg_66_0, arg_66_1, arg_66
 	arg_66_0._input_event_queue_n = var_66_6 + 4
 end
 
-DialogueSystem.rpc_play_marker_event = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+function DialogueSystem.rpc_play_marker_event(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 	local var_67_0 = Managers.state.network:game_object_or_level_unit(arg_67_2, false)
 
 	if not var_67_0 then
@@ -1678,15 +1678,15 @@ DialogueSystem.rpc_play_marker_event = function (arg_67_0, arg_67_1, arg_67_2, a
 	end
 end
 
-DialogueSystem._check_play_debug_sound = function (arg_68_0, arg_68_1, arg_68_2)
+function DialogueSystem._check_play_debug_sound(arg_68_0, arg_68_1, arg_68_2)
 	return
 end
 
-DialogueSystem.is_unit_playing_dialogue = function (arg_69_0, arg_69_1)
+function DialogueSystem.is_unit_playing_dialogue(arg_69_0, arg_69_1)
 	return arg_69_0._playing_units[arg_69_1]
 end
 
-DialogueSystem.rpc_play_dialogue_event = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5)
+function DialogueSystem.rpc_play_dialogue_event(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5)
 	local var_70_0 = Managers.state.network:game_object_or_level_unit(arg_70_2, arg_70_3)
 
 	if not var_70_0 then
@@ -1805,7 +1805,7 @@ DialogueSystem.rpc_play_dialogue_event = function (arg_70_0, arg_70_1, arg_70_2,
 	end
 end
 
-DialogueSystem.rpc_interrupt_dialogue_event = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3)
+function DialogueSystem.rpc_interrupt_dialogue_event(arg_71_0, arg_71_1, arg_71_2, arg_71_3)
 	local var_71_0 = Managers.state.network:game_object_or_level_unit(arg_71_2, arg_71_3)
 
 	if not var_71_0 then
@@ -1847,7 +1847,7 @@ DialogueSystem.rpc_interrupt_dialogue_event = function (arg_71_0, arg_71_1, arg_
 	end
 end
 
-DialogueSystem.rpc_update_current_wind = function (arg_72_0, arg_72_1, arg_72_2)
+function DialogueSystem.rpc_update_current_wind(arg_72_0, arg_72_1, arg_72_2)
 	local var_72_0 = NetworkLookup.weave_winds[arg_72_2]
 
 	arg_72_0._global_context.current_wind = var_72_0

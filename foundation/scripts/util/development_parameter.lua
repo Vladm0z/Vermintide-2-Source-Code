@@ -52,19 +52,19 @@ if LAUNCH_MODE == "attract_benchmark" then
 	var_0_0 = Development._hardcoded_benchmark_mode_params
 end
 
-Development.parameter = function (arg_1_0)
+function Development.parameter(arg_1_0)
 	return var_0_0[arg_1_0]
 end
 
-Development.clear_param_cache = function (arg_2_0)
+function Development.clear_param_cache(arg_2_0)
 	return
 end
 
-Development.set_parameter = function (arg_3_0, arg_3_1)
+function Development.set_parameter(arg_3_0, arg_3_1)
 	return
 end
 
-Development.init_parameters = function ()
+function Development.init_parameters()
 	for iter_4_0, iter_4_1 in pairs(var_0_0) do
 		script_data[iter_4_0] = iter_4_1
 	end

@@ -2,7 +2,7 @@
 
 ImguiSpawning = class(ImguiSpawning)
 
-ImguiSpawning.init = function (arg_1_0)
+function ImguiSpawning.init(arg_1_0)
 	arg_1_0._breed_index = 0
 	arg_1_0._breed_names = table.keys(Breeds)
 
@@ -18,7 +18,7 @@ ImguiSpawning.init = function (arg_1_0)
 	arg_1_0._damage = 100
 end
 
-ImguiSpawning.update = function (arg_2_0)
+function ImguiSpawning.update(arg_2_0)
 	if arg_2_0._mark_outline_extension then
 		arg_2_0._mark_outline_extension:remove_outline(arg_2_0._mark_outline_id)
 
@@ -32,7 +32,7 @@ local function var_0_1()
 	return Breeds[var_0_0]
 end
 
-ImguiSpawning.draw = function (arg_4_0)
+function ImguiSpawning.draw(arg_4_0)
 	local var_4_0 = Imgui.begin_window("Spawning")
 	local var_4_1 = arg_4_0._pickup_names[arg_4_0._pickup_index]
 
@@ -101,10 +101,10 @@ ImguiSpawning.draw = function (arg_4_0)
 	return var_4_0
 end
 
-ImguiSpawning._clear_outline = function (arg_5_0)
+function ImguiSpawning._clear_outline(arg_5_0)
 	return
 end
 
-ImguiSpawning.is_persistent = function (arg_6_0)
+function ImguiSpawning.is_persistent(arg_6_0)
 	return true
 end

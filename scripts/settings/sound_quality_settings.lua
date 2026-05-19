@@ -86,7 +86,7 @@ end
 
 assert(SoundQualitySettings, "No SoundQualitySettings set?")
 
-SoundQualitySettings.get_quality_template = function (arg_1_0)
+function SoundQualitySettings.get_quality_template(arg_1_0)
 	local var_1_0 = SoundQualitySettings.templates[arg_1_0]
 
 	if not var_1_0 then
@@ -102,7 +102,7 @@ SoundQualitySettings.get_quality_template = function (arg_1_0)
 	return var_1_0
 end
 
-SoundQualitySettings.set_sound_quality = function (arg_2_0, arg_2_1)
+function SoundQualitySettings.set_sound_quality(arg_2_0, arg_2_1)
 	local var_2_0 = SoundQualitySettings.get_quality_template(arg_2_1)
 	local var_2_1 = var_2_0.sound_performance
 

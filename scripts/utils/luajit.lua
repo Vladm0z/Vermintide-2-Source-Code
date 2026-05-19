@@ -25,13 +25,13 @@ local var_0_13 = var_0_1.new("long long[1]")
 
 var_0_4.QueryPerformanceFrequency(var_0_12)
 
-LuaJIT.clock = function ()
+function LuaJIT.clock()
 	var_0_4.QueryPerformanceCounter(var_0_13)
 
 	return var_0_12[0] * var_0_13[0]
 end
 
-LuaJIT.clock_diff = function (arg_2_0, arg_2_1)
+function LuaJIT.clock_diff(arg_2_0, arg_2_1)
 	return var_0_10(arg_2_0 - arg_2_1)
 end
 
@@ -45,7 +45,7 @@ end
 
 local var_0_15 = {}
 
-LuaJIT.tvalue = function (arg_4_0)
+function LuaJIT.tvalue(arg_4_0)
 	var_0_15[0] = arg_4_0
 
 	local var_4_0 = var_0_14("uint32_t*", var_0_15)
@@ -70,7 +70,7 @@ local var_0_16 = {
 	"numx"
 }
 
-LuaJIT.itype = function (arg_5_0)
+function LuaJIT.itype(arg_5_0)
 	local var_5_0 = LuaJIT.tvalue(arg_5_0)
 	local var_5_1 = var_0_10(var_0_5.arshift(var_5_0, 32))
 	local var_5_2 = var_0_5.bnot(var_5_1)
@@ -86,7 +86,7 @@ LuaJIT.itype = function (arg_5_0)
 	return var_0_16[var_5_2], var_5_2
 end
 
-LuaJIT.table_size = function (arg_6_0)
+function LuaJIT.table_size(arg_6_0)
 	local var_6_0 = var_0_14("uint32_t*", arg_6_0)
 
 	return var_6_0[6], var_6_0[7]
@@ -178,10 +178,10 @@ local function var_0_17(arg_7_0, arg_7_1, arg_7_2)
 	error("Unknown type: " .. arg_7_2)
 end
 
-LuaJIT.bytes = function (arg_8_0, arg_8_1)
+function LuaJIT.bytes(arg_8_0, arg_8_1)
 	return var_0_17(not arg_8_1 and {}, arg_8_0)
 end
 
-LuaJIT.bytes_ex = function (arg_9_0, arg_9_1)
+function LuaJIT.bytes_ex(arg_9_0, arg_9_1)
 	return var_0_17(arg_9_1, arg_9_0)
 end

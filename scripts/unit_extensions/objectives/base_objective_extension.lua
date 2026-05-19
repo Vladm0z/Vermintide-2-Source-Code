@@ -3,7 +3,7 @@
 BaseObjectiveExtension = class(BaseObjectiveExtension)
 BaseObjectiveExtension.NAME = "BaseObjectiveExtension"
 
-BaseObjectiveExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function BaseObjectiveExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._is_server = arg_1_1.is_server
 	arg_1_0._unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
@@ -24,7 +24,7 @@ BaseObjectiveExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	Unit.set_local_scale(arg_1_2, 0, arg_1_0._scale)
 end
 
-BaseObjectiveExtension.set_objective_data = function (arg_2_0, arg_2_1)
+function BaseObjectiveExtension.set_objective_data(arg_2_0, arg_2_1)
 	arg_2_0._objective_type = arg_2_1.objective_type
 	arg_2_0._objective_tag = arg_2_1.objective_tag
 	arg_2_0._on_complete_func = arg_2_1.on_complete_func
@@ -41,7 +41,7 @@ BaseObjectiveExtension.set_objective_data = function (arg_2_0, arg_2_1)
 	arg_2_0:_set_objective_data(arg_2_1)
 end
 
-BaseObjectiveExtension.activate = function (arg_3_0)
+function BaseObjectiveExtension.activate(arg_3_0)
 	arg_3_0:_activate()
 	arg_3_0:_store_position()
 	arg_3_0:_store_local_player()
@@ -49,25 +49,25 @@ BaseObjectiveExtension.activate = function (arg_3_0)
 	arg_3_0._activated = true
 end
 
-BaseObjectiveExtension.objective_tag = function (arg_4_0)
+function BaseObjectiveExtension.objective_tag(arg_4_0)
 	return arg_4_0._objective_tag
 end
 
-BaseObjectiveExtension._store_local_player = function (arg_5_0)
+function BaseObjectiveExtension._store_local_player(arg_5_0)
 	if not DEDICATED_SERVER then
 		arg_5_0:_local_side()
 	end
 end
 
-BaseObjectiveExtension.sync_objective = function (arg_6_0, arg_6_1, arg_6_2)
+function BaseObjectiveExtension.sync_objective(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._game_object_id = arg_6_1
 end
 
-BaseObjectiveExtension.desync_objective = function (arg_7_0)
+function BaseObjectiveExtension.desync_objective(arg_7_0)
 	arg_7_0._game_object_id = nil
 end
 
-BaseObjectiveExtension._local_side = function (arg_8_0)
+function BaseObjectiveExtension._local_side(arg_8_0)
 	local var_8_0 = Managers.player:local_player()
 
 	if var_8_0 then
@@ -83,7 +83,7 @@ BaseObjectiveExtension._local_side = function (arg_8_0)
 	return arg_8_0._local_side_cached
 end
 
-BaseObjectiveExtension.complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+function BaseObjectiveExtension.complete(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	if arg_9_0._is_server and arg_9_0._on_complete_func then
 		arg_9_0._on_complete_func(arg_9_0._unit)
 	end
@@ -110,7 +110,7 @@ BaseObjectiveExtension.complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	arg_9_0:deactivate()
 end
 
-BaseObjectiveExtension.deactivate = function (arg_10_0)
+function BaseObjectiveExtension.deactivate(arg_10_0)
 	arg_10_0:_deactivate()
 
 	arg_10_0._percentage = 1
@@ -118,31 +118,31 @@ BaseObjectiveExtension.deactivate = function (arg_10_0)
 	arg_10_0._activated = false
 end
 
-BaseObjectiveExtension.play_local_sound = function (arg_11_0, arg_11_1)
+function BaseObjectiveExtension.play_local_sound(arg_11_0, arg_11_1)
 	WwiseWorld.trigger_event(arg_11_0._wwise_world, arg_11_1)
 end
 
-BaseObjectiveExtension.play_local_unit_sound = function (arg_12_0, arg_12_1)
+function BaseObjectiveExtension.play_local_unit_sound(arg_12_0, arg_12_1)
 	WwiseUtils.trigger_unit_event(arg_12_0._world, arg_12_1, arg_12_0._unit, 0)
 end
 
-BaseObjectiveExtension.play_unit_sound = function (arg_13_0, arg_13_1)
+function BaseObjectiveExtension.play_unit_sound(arg_13_0, arg_13_1)
 	arg_13_0._audio_system:play_audio_unit_event(arg_13_1, arg_13_0._unit)
 end
 
-BaseObjectiveExtension.unit = function (arg_14_0)
+function BaseObjectiveExtension.unit(arg_14_0)
 	return arg_14_0._unit
 end
 
-BaseObjectiveExtension.display_name = function (arg_15_0)
+function BaseObjectiveExtension.display_name(arg_15_0)
 	return arg_15_0._display_name
 end
 
-BaseObjectiveExtension.is_stacking_objective = function (arg_16_0)
+function BaseObjectiveExtension.is_stacking_objective(arg_16_0)
 	return false
 end
 
-BaseObjectiveExtension.update = function (arg_17_0, arg_17_1, arg_17_2)
+function BaseObjectiveExtension.update(arg_17_0, arg_17_1, arg_17_2)
 	if script_data.testify and arg_17_0.update_testify then
 		arg_17_0:update_testify(arg_17_1, arg_17_2)
 	end
@@ -158,7 +158,7 @@ BaseObjectiveExtension.update = function (arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-BaseObjectiveExtension.on_section_completed = function (arg_18_0)
+function BaseObjectiveExtension.on_section_completed(arg_18_0)
 	arg_18_0._current_section = arg_18_0._current_section + 1
 
 	Managers.state.event:trigger("obj_objective_section_completed", arg_18_0)
@@ -182,7 +182,7 @@ BaseObjectiveExtension.on_section_completed = function (arg_18_0)
 	end
 end
 
-BaseObjectiveExtension.server_set_value = function (arg_19_0, arg_19_1)
+function BaseObjectiveExtension.server_set_value(arg_19_0, arg_19_1)
 	local var_19_0 = Network.game_session()
 
 	if var_19_0 then
@@ -190,7 +190,7 @@ BaseObjectiveExtension.server_set_value = function (arg_19_0, arg_19_1)
 	end
 end
 
-BaseObjectiveExtension.client_get_value = function (arg_20_0)
+function BaseObjectiveExtension.client_get_value(arg_20_0)
 	local var_20_0 = Network.game_session()
 
 	if not var_20_0 or not arg_20_0._game_object_id then
@@ -202,65 +202,65 @@ BaseObjectiveExtension.client_get_value = function (arg_20_0)
 	return arg_20_0._cached_value
 end
 
-BaseObjectiveExtension._store_position = function (arg_21_0)
+function BaseObjectiveExtension._store_position(arg_21_0)
 	local var_21_0 = Unit.local_position(arg_21_0._unit, 0)
 
 	arg_21_0._position = Vector3Box(var_21_0)
 end
 
-BaseObjectiveExtension._activate = function (arg_22_0)
+function BaseObjectiveExtension._activate(arg_22_0)
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension._deactivate = function (arg_23_0)
+function BaseObjectiveExtension._deactivate(arg_23_0)
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension._server_update = function (arg_24_0, arg_24_1, arg_24_2)
+function BaseObjectiveExtension._server_update(arg_24_0, arg_24_1, arg_24_2)
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension._client_update = function (arg_25_0, arg_25_1, arg_25_2)
+function BaseObjectiveExtension._client_update(arg_25_0, arg_25_1, arg_25_2)
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension.get_percentage_done = function (arg_26_0)
+function BaseObjectiveExtension.get_percentage_done(arg_26_0)
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension.objective_name = function (arg_27_0)
+function BaseObjectiveExtension.objective_name(arg_27_0)
 	return arg_27_0._objective_name
 end
 
-BaseObjectiveExtension.get_current_section = function (arg_28_0)
+function BaseObjectiveExtension.get_current_section(arg_28_0)
 	return arg_28_0._current_section
 end
 
-BaseObjectiveExtension.get_total_sections = function (arg_29_0)
+function BaseObjectiveExtension.get_total_sections(arg_29_0)
 	return arg_29_0._num_sections
 end
 
-BaseObjectiveExtension.get_num_sections_left = function (arg_30_0)
+function BaseObjectiveExtension.get_num_sections_left(arg_30_0)
 	return arg_30_0._current_section - arg_30_0._num_sections
 end
 
-BaseObjectiveExtension.get_time_per_section = function (arg_31_0)
+function BaseObjectiveExtension.get_time_per_section(arg_31_0)
 	return arg_31_0._time_per_section
 end
 
-BaseObjectiveExtension.get_score_per_section = function (arg_32_0)
+function BaseObjectiveExtension.get_score_per_section(arg_32_0)
 	return arg_32_0._score_per_section
 end
 
-BaseObjectiveExtension.get_time_for_completion = function (arg_33_0)
+function BaseObjectiveExtension.get_time_for_completion(arg_33_0)
 	return arg_33_0._time_for_completion
 end
 
-BaseObjectiveExtension.get_score_for_completion = function (arg_34_0)
+function BaseObjectiveExtension.get_score_for_completion(arg_34_0)
 	return arg_34_0._score_for_completion
 end
 
-BaseObjectiveExtension.get_position = function (arg_35_0)
+function BaseObjectiveExtension.get_position(arg_35_0)
 	if arg_35_0._position then
 		return arg_35_0._position:unbox()
 	else
@@ -268,30 +268,30 @@ BaseObjectiveExtension.get_position = function (arg_35_0)
 	end
 end
 
-BaseObjectiveExtension.is_optional = function (arg_36_0)
+function BaseObjectiveExtension.is_optional(arg_36_0)
 	return arg_36_0._optional
 end
 
-BaseObjectiveExtension.description = function (arg_37_0)
+function BaseObjectiveExtension.description(arg_37_0)
 	return arg_37_0._description
 end
 
-BaseObjectiveExtension.objective_icon = function (arg_38_0)
+function BaseObjectiveExtension.objective_icon(arg_38_0)
 	return arg_38_0._objective_icon
 end
 
-BaseObjectiveExtension.objective_type = function (arg_39_0)
+function BaseObjectiveExtension.objective_type(arg_39_0)
 	return arg_39_0._objective_type
 end
 
-BaseObjectiveExtension.is_done = function (arg_40_0)
+function BaseObjectiveExtension.is_done(arg_40_0)
 	return arg_40_0:get_percentage_done() >= 1
 end
 
-BaseObjectiveExtension.is_active = function (arg_41_0)
+function BaseObjectiveExtension.is_active(arg_41_0)
 	return arg_41_0._activated
 end
 
-BaseObjectiveExtension.always_show_objective_marker = function (arg_42_0)
+function BaseObjectiveExtension.always_show_objective_marker(arg_42_0)
 	return arg_42_0._always_show_objective_marker
 end

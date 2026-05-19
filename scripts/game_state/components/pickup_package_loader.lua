@@ -5,11 +5,11 @@ PickupPackageLoader = class(PickupPackageLoader)
 local var_0_0 = {}
 local var_0_1 = {}
 
-PickupPackageLoader.init = function (arg_1_0)
+function PickupPackageLoader.init(arg_1_0)
 	arg_1_0._loaded_pickup_map = {}
 end
 
-PickupPackageLoader.network_context_created = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+function PickupPackageLoader.network_context_created(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	printf("[PickupPackageLoader] network_context_created (server_peer_id=%s, own_peer_id=%s)", arg_2_2, arg_2_3)
 
 	arg_2_0._lobby = arg_2_1
@@ -25,11 +25,11 @@ PickupPackageLoader.network_context_created = function (arg_2_0, arg_2_1, arg_2_
 	arg_2_0._network_handler = arg_2_4
 end
 
-PickupPackageLoader.matching_session = function (arg_3_0, arg_3_1)
+function PickupPackageLoader.matching_session(arg_3_0, arg_3_1)
 	return arg_3_0._network_handler == arg_3_1
 end
 
-PickupPackageLoader.network_context_destroyed = function (arg_4_0)
+function PickupPackageLoader.network_context_destroyed(arg_4_0)
 	print("[PickupPackageLoader] network_context_destroyed")
 
 	arg_4_0._lobby = nil
@@ -42,14 +42,14 @@ PickupPackageLoader.network_context_destroyed = function (arg_4_0)
 	arg_4_0._is_server = nil
 end
 
-PickupPackageLoader.request_pickup = function (arg_5_0, arg_5_1, arg_5_2)
+function PickupPackageLoader.request_pickup(arg_5_0, arg_5_1, arg_5_2)
 	assert(arg_5_0._is_server, "[PickupPackageLoader] 'request_pickup' is a server only function")
 
 	local var_5_0 = arg_5_0._session_pickup_map[arg_5_1]
 
 	if var_5_0 then
 		if arg_5_2 then
-			arg_5_0._session_pickup_map[arg_5_1] = function ()
+			arg_5_0._session_pickup_map[arg_5_1] = function()
 				if var_5_0 ~= true then
 					var_5_0()
 				end
@@ -67,15 +67,15 @@ PickupPackageLoader.request_pickup = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_update_package_diffs()
 end
 
-PickupPackageLoader.is_pickup_processed = function (arg_7_0, arg_7_1)
+function PickupPackageLoader.is_pickup_processed(arg_7_0, arg_7_1)
 	return arg_7_0._network_handler:get_session_pickup_map()[arg_7_1]
 end
 
-PickupPackageLoader.processed_pickups = function (arg_8_0)
+function PickupPackageLoader.processed_pickups(arg_8_0)
 	return arg_8_0._network_handler:get_session_pickup_map()
 end
 
-PickupPackageLoader._unload_package = function (arg_9_0, arg_9_1)
+function PickupPackageLoader._unload_package(arg_9_0, arg_9_1)
 	assert(arg_9_0._is_server, "[PickupPackageLoader] '_unload_package' is a server only function.")
 
 	arg_9_0._session_pickup_map[arg_9_1] = nil
@@ -84,7 +84,7 @@ PickupPackageLoader._unload_package = function (arg_9_0, arg_9_1)
 	arg_9_0:_update_package_diffs()
 end
 
-PickupPackageLoader.update = function (arg_10_0)
+function PickupPackageLoader.update(arg_10_0)
 	if not arg_10_0._initialized then
 		if Managers.package:has_loaded("resource_packages/pickups") then
 			arg_10_0._initialized = true
@@ -96,7 +96,7 @@ PickupPackageLoader.update = function (arg_10_0)
 	arg_10_0:_update_package_diffs()
 end
 
-PickupPackageLoader._package_reference = function (arg_11_0, arg_11_1)
+function PickupPackageLoader._package_reference(arg_11_0, arg_11_1)
 	local var_11_0 = var_0_0[arg_11_1]
 
 	if var_11_0 then
@@ -108,7 +108,7 @@ PickupPackageLoader._package_reference = function (arg_11_0, arg_11_1)
 	return var_0_0[arg_11_1]
 end
 
-PickupPackageLoader._cached_3p = function (arg_12_0, arg_12_1)
+function PickupPackageLoader._cached_3p(arg_12_0, arg_12_1)
 	local var_12_0 = var_0_1[arg_12_1]
 
 	if var_12_0 then
@@ -120,7 +120,7 @@ PickupPackageLoader._cached_3p = function (arg_12_0, arg_12_1)
 	return var_0_1[arg_12_1]
 end
 
-PickupPackageLoader._has_loaded_pickup = function (arg_13_0, arg_13_1)
+function PickupPackageLoader._has_loaded_pickup(arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0:_package_reference(arg_13_1)
 	local var_13_1 = Managers.package
 	local var_13_2 = AllPickups[arg_13_1]
@@ -151,7 +151,7 @@ PickupPackageLoader._has_loaded_pickup = function (arg_13_0, arg_13_1)
 	return true
 end
 
-PickupPackageLoader._is_loading_pickup = function (arg_14_0, arg_14_1)
+function PickupPackageLoader._is_loading_pickup(arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0:_package_reference(arg_14_1)
 	local var_14_1 = Managers.package
 	local var_14_2 = AllPickups[arg_14_1]
@@ -180,7 +180,7 @@ PickupPackageLoader._is_loading_pickup = function (arg_14_0, arg_14_1)
 	end
 end
 
-PickupPackageLoader._load_pickup = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+function PickupPackageLoader._load_pickup(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = arg_15_0:_package_reference(arg_15_1)
 	local var_15_1 = Managers.package
 	local var_15_2 = AllPickups[arg_15_1]
@@ -212,7 +212,7 @@ PickupPackageLoader._load_pickup = function (arg_15_0, arg_15_1, arg_15_2, arg_1
 	end
 end
 
-PickupPackageLoader._unload_pickup = function (arg_16_0, arg_16_1)
+function PickupPackageLoader._unload_pickup(arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0:_package_reference(arg_16_1)
 	local var_16_1 = Managers.package
 	local var_16_2 = AllPickups[arg_16_1]
@@ -240,7 +240,7 @@ PickupPackageLoader._unload_pickup = function (arg_16_0, arg_16_1)
 	end
 end
 
-PickupPackageLoader._update_package_diffs = function (arg_17_0, arg_17_1)
+function PickupPackageLoader._update_package_diffs(arg_17_0, arg_17_1)
 	if not arg_17_0._network_handler or not arg_17_0._network_handler:is_fully_synced() then
 		return
 	end
@@ -286,7 +286,7 @@ PickupPackageLoader._update_package_diffs = function (arg_17_0, arg_17_1)
 	end
 end
 
-PickupPackageLoader.load_sync_done_for_peer = function (arg_18_0, arg_18_1)
+function PickupPackageLoader.load_sync_done_for_peer(arg_18_0, arg_18_1)
 	if not arg_18_0._network_handler or not arg_18_0._network_handler:is_fully_synced() then
 		return false
 	end
@@ -303,7 +303,7 @@ PickupPackageLoader.load_sync_done_for_peer = function (arg_18_0, arg_18_1)
 	return true
 end
 
-PickupPackageLoader.loading_completed = function (arg_19_0)
+function PickupPackageLoader.loading_completed(arg_19_0)
 	if not arg_19_0._network_handler or not arg_19_0._network_handler:is_fully_synced() then
 		return false
 	end
@@ -320,7 +320,7 @@ PickupPackageLoader.loading_completed = function (arg_19_0)
 	return true
 end
 
-PickupPackageLoader.on_application_shutdown = function (arg_20_0)
+function PickupPackageLoader.on_application_shutdown(arg_20_0)
 	local var_20_0 = arg_20_0._loaded_pickup_map
 	local var_20_1 = arg_20_0._session_pickup_map
 
@@ -338,12 +338,12 @@ PickupPackageLoader.on_application_shutdown = function (arg_20_0)
 	end
 end
 
-PickupPackageLoader.is_pickup_loaded_on_all_peers = function (arg_21_0, arg_21_1, arg_21_2)
+function PickupPackageLoader.is_pickup_loaded_on_all_peers(arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_0._is_server and arg_21_0._network_handler:hot_join_synced_peers()
 
 	if arg_21_2 then
 		var_21_0 = table.shallow_copy(arg_21_0._network_handler:get_peers(), true)
-		var_21_0 = table.array_to_map(var_21_0, function (arg_22_0, arg_22_1)
+		var_21_0 = table.array_to_map(var_21_0, function(arg_22_0, arg_22_1)
 			return arg_22_1, true
 		end)
 	end
@@ -357,7 +357,7 @@ PickupPackageLoader.is_pickup_loaded_on_all_peers = function (arg_21_0, arg_21_1
 	return true
 end
 
-PickupPackageLoader.debug_loaded_pickups = function (arg_23_0)
+function PickupPackageLoader.debug_loaded_pickups(arg_23_0)
 	if not arg_23_0._network_handler then
 		Debug.text("[PickupPackageLoader] network handler not avaiable")
 
@@ -376,7 +376,7 @@ PickupPackageLoader.debug_loaded_pickups = function (arg_23_0)
 
 	if not arg_23_0._is_server then
 		var_23_1 = table.shallow_copy(arg_23_0._network_handler:get_peers(), true)
-		var_23_1 = table.array_to_map(var_23_1, function (arg_24_0, arg_24_1)
+		var_23_1 = table.array_to_map(var_23_1, function(arg_24_0, arg_24_1)
 			return arg_24_1, true
 		end)
 	end

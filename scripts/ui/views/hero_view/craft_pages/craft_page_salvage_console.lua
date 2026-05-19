@@ -13,7 +13,7 @@ local var_0_6 = false
 CraftPageSalvageConsole = class(CraftPageSalvageConsole)
 CraftPageSalvageConsole.NAME = "CraftPageSalvageConsole"
 
-CraftPageSalvageConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
+function CraftPageSalvageConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroWindowCraft] Enter Substate CraftPageSalvageConsole")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -58,7 +58,7 @@ CraftPageSalvageConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-CraftPageSalvageConsole._start_transition_animation = function (arg_2_0, arg_2_1)
+function CraftPageSalvageConsole._start_transition_animation(arg_2_0, arg_2_1)
 	local var_2_0 = {
 		wwise_world = arg_2_0.wwise_world,
 		render_settings = arg_2_0.render_settings
@@ -69,7 +69,7 @@ CraftPageSalvageConsole._start_transition_animation = function (arg_2_0, arg_2_1
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-CraftPageSalvageConsole.create_ui_elements = function (arg_3_0, arg_3_1)
+function CraftPageSalvageConsole.create_ui_elements(arg_3_0, arg_3_1)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
 	local var_3_0 = {}
@@ -95,7 +95,7 @@ CraftPageSalvageConsole.create_ui_elements = function (arg_3_0, arg_3_1)
 	var_3_1.max_counter_text.content.text = "/" .. tostring(CraftingSettings.NUM_SALVAGE_SLOTS)
 end
 
-CraftPageSalvageConsole.on_exit = function (arg_4_0, arg_4_1)
+function CraftPageSalvageConsole.on_exit(arg_4_0, arg_4_1)
 	print("[HeroWindowCraft] Exit Substate CraftPageSalvageConsole")
 
 	arg_4_0.ui_animator = nil
@@ -107,7 +107,7 @@ CraftPageSalvageConsole.on_exit = function (arg_4_0, arg_4_1)
 	arg_4_0.super_parent:set_disabled_item_icon(nil)
 end
 
-CraftPageSalvageConsole.update = function (arg_5_0, arg_5_1, arg_5_2)
+function CraftPageSalvageConsole.update(arg_5_0, arg_5_1, arg_5_2)
 	if var_0_6 then
 		var_0_6 = false
 
@@ -121,11 +121,11 @@ CraftPageSalvageConsole.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:draw(arg_5_1)
 end
 
-CraftPageSalvageConsole.post_update = function (arg_6_0, arg_6_1, arg_6_2)
+function CraftPageSalvageConsole.post_update(arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-CraftPageSalvageConsole._update_animations = function (arg_7_0, arg_7_1)
+function CraftPageSalvageConsole._update_animations(arg_7_0, arg_7_1)
 	arg_7_0.ui_animator:update(arg_7_1)
 
 	local var_7_0 = arg_7_0._animations
@@ -148,7 +148,7 @@ CraftPageSalvageConsole._update_animations = function (arg_7_0, arg_7_1)
 	UIWidgetUtils.animate_icon_button(var_7_2.auto_fill_clear, arg_7_1)
 end
 
-CraftPageSalvageConsole._handle_input = function (arg_8_0, arg_8_1, arg_8_2)
+function CraftPageSalvageConsole._handle_input(arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.parent
 
 	if var_8_0:waiting_for_craft() or arg_8_0._craft_result then
@@ -221,17 +221,17 @@ CraftPageSalvageConsole._handle_input = function (arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-CraftPageSalvageConsole._handle_craft_input_progress = function (arg_9_0, arg_9_1)
+function CraftPageSalvageConsole._handle_craft_input_progress(arg_9_0, arg_9_1)
 	return arg_9_0.parent:_set_input_progress(arg_9_1)
 end
 
-CraftPageSalvageConsole.craft_result = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+function CraftPageSalvageConsole.craft_result(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if not arg_10_2 then
 		arg_10_0._craft_result = arg_10_1
 	end
 end
 
-CraftPageSalvageConsole.reset = function (arg_11_0)
+function CraftPageSalvageConsole.reset(arg_11_0)
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._craft_items) do
 		arg_11_0:_remove_craft_item(iter_11_0)
 	end
@@ -242,12 +242,12 @@ CraftPageSalvageConsole.reset = function (arg_11_0)
 	arg_11_0._material_fade_out_time = 0
 end
 
-CraftPageSalvageConsole.present_results = function (arg_12_0)
+function CraftPageSalvageConsole.present_results(arg_12_0)
 	arg_12_0.super_parent:clear_disabled_backend_ids()
 	arg_12_0.super_parent:update_inventory_items()
 end
 
-CraftPageSalvageConsole.on_craft_completed = function (arg_13_0)
+function CraftPageSalvageConsole.on_craft_completed(arg_13_0)
 	local var_13_0 = arg_13_0._craft_result
 
 	table.clear(arg_13_0._craft_items)
@@ -280,7 +280,7 @@ CraftPageSalvageConsole.on_craft_completed = function (arg_13_0)
 	arg_13_0._presenting_rewards = true
 end
 
-CraftPageSalvageConsole._update_craft_items = function (arg_14_0)
+function CraftPageSalvageConsole._update_craft_items(arg_14_0)
 	local var_14_0 = arg_14_0.super_parent
 	local var_14_1, var_14_2 = var_14_0:get_pressed_item_backend_id()
 
@@ -311,7 +311,7 @@ CraftPageSalvageConsole._update_craft_items = function (arg_14_0)
 	end
 end
 
-CraftPageSalvageConsole._remove_craft_item = function (arg_15_0, arg_15_1)
+function CraftPageSalvageConsole._remove_craft_item(arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._craft_items
 
 	if arg_15_1 then
@@ -333,7 +333,7 @@ CraftPageSalvageConsole._remove_craft_item = function (arg_15_0, arg_15_1)
 	end
 end
 
-CraftPageSalvageConsole._add_craft_item = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+function CraftPageSalvageConsole._add_craft_item(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	if arg_16_0._presenting_rewards then
 		arg_16_0:_on_craft_material_fade_complete()
 	end
@@ -366,7 +366,7 @@ CraftPageSalvageConsole._add_craft_item = function (arg_16_0, arg_16_1, arg_16_2
 	end
 end
 
-CraftPageSalvageConsole._set_craft_counter_text = function (arg_17_0, arg_17_1, arg_17_2)
+function CraftPageSalvageConsole._set_craft_counter_text(arg_17_0, arg_17_1, arg_17_2)
 	if arg_17_0._presenting_rewards then
 		return
 	end
@@ -380,7 +380,7 @@ CraftPageSalvageConsole._set_craft_counter_text = function (arg_17_0, arg_17_1, 
 	var_17_2.content.visible = arg_17_2
 end
 
-CraftPageSalvageConsole._set_craft_button_disabled = function (arg_18_0, arg_18_1)
+function CraftPageSalvageConsole._set_craft_button_disabled(arg_18_0, arg_18_1)
 	arg_18_0._widgets_by_name.craft_button.content.button_hotspot.disable_button = arg_18_1
 
 	local var_18_0 = not arg_18_1 and arg_18_0.settings.name or "disabled"
@@ -392,12 +392,12 @@ CraftPageSalvageConsole._set_craft_button_disabled = function (arg_18_0, arg_18_
 	arg_18_0.parent:set_input_description(var_18_0)
 end
 
-CraftPageSalvageConsole._exit = function (arg_19_0, arg_19_1)
+function CraftPageSalvageConsole._exit(arg_19_0, arg_19_1)
 	arg_19_0.exit = true
 	arg_19_0.exit_level_id = arg_19_1
 end
 
-CraftPageSalvageConsole.draw = function (arg_20_0, arg_20_1)
+function CraftPageSalvageConsole.draw(arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0.ui_renderer
 	local var_20_1 = arg_20_0.ui_top_renderer
 	local var_20_2 = arg_20_0.ui_scenegraph
@@ -412,19 +412,19 @@ CraftPageSalvageConsole.draw = function (arg_20_0, arg_20_1)
 	UIRenderer.end_pass(var_20_1)
 end
 
-CraftPageSalvageConsole._play_sound = function (arg_21_0, arg_21_1)
+function CraftPageSalvageConsole._play_sound(arg_21_0, arg_21_1)
 	arg_21_0.super_parent:play_sound(arg_21_1)
 end
 
-CraftPageSalvageConsole._set_craft_button_text = function (arg_22_0, arg_22_1, arg_22_2)
+function CraftPageSalvageConsole._set_craft_button_text(arg_22_0, arg_22_1, arg_22_2)
 	arg_22_0._widgets_by_name.craft_button.content.button_text = arg_22_2 and Localize(arg_22_1) or arg_22_1
 end
 
-CraftPageSalvageConsole._has_added_item_by_id = function (arg_23_0, arg_23_1)
+function CraftPageSalvageConsole._has_added_item_by_id(arg_23_0, arg_23_1)
 	return arg_23_0._craft_items[arg_23_1]
 end
 
-CraftPageSalvageConsole._update_reward_material_fade_out = function (arg_24_0, arg_24_1)
+function CraftPageSalvageConsole._update_reward_material_fade_out(arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0._material_fade_out_time
 
 	if var_24_0 then
@@ -443,7 +443,7 @@ CraftPageSalvageConsole._update_reward_material_fade_out = function (arg_24_0, a
 	end
 end
 
-CraftPageSalvageConsole._on_craft_material_fade_complete = function (arg_25_0)
+function CraftPageSalvageConsole._on_craft_material_fade_complete(arg_25_0)
 	arg_25_0._presenting_rewards = nil
 
 	arg_25_0:_reset_reward_materials(false)
@@ -455,7 +455,7 @@ CraftPageSalvageConsole._on_craft_material_fade_complete = function (arg_25_0)
 	arg_25_0._material_fade_out_time = nil
 end
 
-CraftPageSalvageConsole._set_reward_material_alpha_fraction = function (arg_26_0, arg_26_1)
+function CraftPageSalvageConsole._set_reward_material_alpha_fraction(arg_26_0, arg_26_1)
 	local var_26_0 = 255 * arg_26_1
 	local var_26_1 = arg_26_0._widgets_by_name
 
@@ -473,7 +473,7 @@ CraftPageSalvageConsole._set_reward_material_alpha_fraction = function (arg_26_0
 	var_26_1.material_cross.style.texture_id.color[1] = var_26_0
 end
 
-CraftPageSalvageConsole._reset_reward_materials = function (arg_27_0, arg_27_1)
+function CraftPageSalvageConsole._reset_reward_materials(arg_27_0, arg_27_1)
 	local var_27_0 = UISettings.crafting_material_icons_small
 	local var_27_1 = UISettings.crafting_material_order_by_item_key
 	local var_27_2 = arg_27_0._widgets_by_name
@@ -493,7 +493,7 @@ CraftPageSalvageConsole._reset_reward_materials = function (arg_27_0, arg_27_1)
 	var_27_2.material_cross.content.visible = arg_27_1
 end
 
-CraftPageSalvageConsole._set_material_enabled_state = function (arg_28_0, arg_28_1, arg_28_2)
+function CraftPageSalvageConsole._set_material_enabled_state(arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0._widgets_by_name["material_text_" .. arg_28_1].style
 	local var_28_1 = var_28_0.text
 	local var_28_2 = var_28_0.icon
@@ -512,7 +512,7 @@ CraftPageSalvageConsole._set_material_enabled_state = function (arg_28_0, arg_28
 	var_28_2.saturated = not arg_28_2
 end
 
-CraftPageSalvageConsole._set_reward_material_by_index = function (arg_29_0, arg_29_1, arg_29_2)
+function CraftPageSalvageConsole._set_reward_material_by_index(arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = UISettings.crafting_material_order_by_item_key
 	local var_29_1 = Managers.backend:get_interface("items"):get_key(arg_29_1)
 	local var_29_2 = var_29_0[var_29_1]

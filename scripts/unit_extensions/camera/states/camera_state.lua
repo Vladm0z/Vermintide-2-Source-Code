@@ -2,7 +2,7 @@
 
 CameraState = class(CameraState)
 
-CameraState.init = function (arg_1_0, arg_1_1, arg_1_2)
+function CameraState.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.name = arg_1_2
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_1.unit

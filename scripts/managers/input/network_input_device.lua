@@ -2,14 +2,14 @@
 
 NetworkInputDevice = {}
 
-NetworkInputDevice.name = function ()
+function NetworkInputDevice.name()
 	return "NetworkInputDevice"
 end
 
-NetworkInputDevice.category = function ()
+function NetworkInputDevice.category()
 	return "network"
 end
 
-NetworkInputDevice.active = function ()
+function NetworkInputDevice.active()
 	return true
 end

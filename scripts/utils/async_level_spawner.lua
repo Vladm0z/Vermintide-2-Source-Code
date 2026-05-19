@@ -2,7 +2,7 @@
 
 AsyncLevelSpawner = class(AsyncLevelSpawner)
 
-AsyncLevelSpawner.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+function AsyncLevelSpawner.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	local var_1_0 = arg_1_0:_setup_world(arg_1_1)
 
 	arg_1_0._world = var_1_0
@@ -19,7 +19,7 @@ AsyncLevelSpawner.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._level = var_1_7
 end
 
-AsyncLevelSpawner.destroy = function (arg_2_0)
+function AsyncLevelSpawner.destroy(arg_2_0)
 	if arg_2_0._level then
 		ScriptWorld.destroy_level(arg_2_0._world, arg_2_0._level_name)
 
@@ -33,7 +33,7 @@ AsyncLevelSpawner.destroy = function (arg_2_0)
 	end
 end
 
-AsyncLevelSpawner.update = function (arg_3_0)
+function AsyncLevelSpawner.update(arg_3_0)
 	local var_3_0 = Level.update_spawn_time_sliced(arg_3_0._level, arg_3_0._level_spawn_time_budget)
 
 	if var_3_0 then
@@ -53,7 +53,7 @@ AsyncLevelSpawner.update = function (arg_3_0)
 	return var_3_0
 end
 
-AsyncLevelSpawner._setup_world = function (arg_4_0, arg_4_1)
+function AsyncLevelSpawner._setup_world(arg_4_0, arg_4_1)
 	local var_4_0 = 1
 	local var_4_1 = {
 		Application.ENABLE_UMBRA,

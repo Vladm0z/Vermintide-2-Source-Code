@@ -21,7 +21,7 @@ local var_0_3 = {
 	removed = true
 }
 
-BuffExtension.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function BuffExtension.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._unit = arg_2_2
 	arg_2_0.world = arg_2_1.world
 	arg_2_0._breed = arg_2_3.breed
@@ -64,7 +64,7 @@ BuffExtension.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0.reset_material_cache = nil
 end
 
-BuffExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
+function BuffExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_activate_initial_buffs()
 
 	local var_3_0 = Unit.get_data(arg_3_2, "breed")
@@ -95,21 +95,21 @@ BuffExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.debug_buff_names = {}
 end
 
-BuffExtension.destroy = function (arg_4_0)
+function BuffExtension.destroy(arg_4_0)
 	arg_4_0:clear()
 end
 
-BuffExtension.freeze = function (arg_5_0)
+function BuffExtension.freeze(arg_5_0)
 	arg_5_0:clear()
 
 	arg_5_0._ai_frozen = true
 end
 
-BuffExtension.unfreeze = function (arg_6_0)
+function BuffExtension.unfreeze(arg_6_0)
 	arg_6_0._ai_frozen = nil
 end
 
-BuffExtension.clear = function (arg_7_0)
+function BuffExtension.clear(arg_7_0)
 	local var_7_0 = arg_7_0._buffs
 	local var_7_1 = Managers.time:time("game")
 	local var_7_2 = buff_extension_function_params
@@ -158,7 +158,7 @@ BuffExtension.clear = function (arg_7_0)
 	Managers.state.entity:system("buff_system"):set_buff_ext_active(arg_7_0._unit, false)
 end
 
-BuffExtension.add_buff = function (arg_8_0, arg_8_1, arg_8_2)
+function BuffExtension.add_buff(arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._unit
 
 	if FROZEN[var_8_0] or arg_8_0._ai_frozen then
@@ -178,12 +178,14 @@ BuffExtension.add_buff = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_11 = 0
 
 	for iter_8_0 = 1, #var_8_3 do
-		local var_8_12 = var_8_3[iter_8_0]
-		local var_8_13 = var_8_12.apply_condition
+		repeat
+			local var_8_12 = var_8_3[iter_8_0]
+			local var_8_13 = var_8_12.apply_condition
 
-		if var_8_13 and not var_8_13(var_8_0, var_8_12, arg_8_2) then
-			-- Nothing
-		else
+			if var_8_13 and not var_8_13(var_8_0, var_8_12, arg_8_2) then
+				break
+			end
+
 			local var_8_14 = var_8_12.duration
 			local var_8_15 = var_8_12.ticks
 			local var_8_16 = var_8_12.update_frequency
@@ -267,211 +269,210 @@ BuffExtension.add_buff = function (arg_8_0, arg_8_1, arg_8_2)
 			local var_8_40 = var_8_14 and var_8_5 + var_8_14
 
 			if var_8_18 and not arg_8_0:_add_stacking_buff(var_8_12, var_8_17, var_8_5, var_8_14, var_8_40, arg_8_2) then
-				-- Nothing
-			else
-				local var_8_41 = var_8_12.refresh_duration_of_buffs_on_apply
+				break
+			end
 
-				if var_8_41 then
-					for iter_8_1 = 1, #var_8_41 do
-						local var_8_42 = var_8_41[iter_8_1]
-						local var_8_43 = arg_8_0:get_stacking_buff(var_8_42)
+			local var_8_41 = var_8_12.refresh_duration_of_buffs_on_apply
 
-						if var_8_43 then
-							for iter_8_2 = 1, #var_8_43 do
-								local var_8_44 = var_8_43[iter_8_2]
+			if var_8_41 then
+				for iter_8_1 = 1, #var_8_41 do
+					local var_8_42 = var_8_41[iter_8_1]
+					local var_8_43 = arg_8_0:get_stacking_buff(var_8_42)
 
-								arg_8_0:_refresh_duration(var_8_44, var_8_5, var_8_44.duration, var_8_5 + var_8_44.duration, arg_8_2, var_8_44.template)
-							end
-						else
-							local var_8_45 = arg_8_0:get_buff_type(var_8_42)
+					if var_8_43 then
+						for iter_8_2 = 1, #var_8_43 do
+							local var_8_44 = var_8_43[iter_8_2]
 
-							if var_8_45 then
-								arg_8_0:_refresh_duration(var_8_45, var_8_5, var_8_45.duration, var_8_5 + var_8_45.duration, arg_8_2, var_8_45.template)
-							end
+							arg_8_0:_refresh_duration(var_8_44, var_8_5, var_8_44.duration, var_8_5 + var_8_44.duration, arg_8_2, var_8_44.template)
 						end
-					end
-				end
+					else
+						local var_8_45 = arg_8_0:get_buff_type(var_8_42)
 
-				local var_8_46 = {
-					id = var_8_6,
-					start_time = var_8_5,
-					template = var_8_12,
-					buff_type = var_8_12.name,
-					buff_template_name = arg_8_1,
-					bonus = var_8_19,
-					multiplier = var_8_21,
-					value = var_8_20,
-					proc_chance = var_8_22,
-					proc_cooldown = var_8_23,
-					duration = var_8_14,
-					ticks = var_8_15,
-					current_ticks = var_8_15 and 0 or nil,
-					update_frequency = var_8_16,
-					range = var_8_24,
-					damage_source = var_8_25,
-					power_level = var_8_26,
-					attacker_unit = var_8_27,
-					source_attacker_unit = var_8_28,
-					max_stacks = var_8_17,
-					parent_buff_shared_table = var_8_10
-				}
-
-				var_8_9 = var_8_9 or var_8_46
-				arg_8_0._num_buffs = arg_8_0._num_buffs + 1
-				var_8_1[arg_8_0._num_buffs] = var_8_46
-				var_8_11 = var_8_11 + 1
-
-				if var_8_18 then
-					local var_8_47 = arg_8_0._stacking_buffs[var_8_12.name]
-
-					if not var_8_47 then
-						var_8_47 = {}
-						arg_8_0._stacking_buffs[var_8_12.name] = var_8_47
-
-						local var_8_48 = StackingBuffFunctions[var_8_12.on_stack_buff_first_add]
-
-						if var_8_48 then
-							var_8_48(arg_8_0._unit, var_8_12, arg_8_2)
+						if var_8_45 then
+							arg_8_0:_refresh_duration(var_8_45, var_8_5, var_8_45.duration, var_8_5 + var_8_45.duration, arg_8_2, var_8_45.template)
 						end
-					end
-
-					var_8_47[#var_8_47 + 1] = var_8_46
-				end
-
-				if var_8_36 then
-					for iter_8_3 = 1, #var_8_36 do
-						local var_8_49 = var_8_36[iter_8_3]
-						local var_8_50 = arg_8_0._perks[var_8_49] or 0
-
-						if var_8_50 == 0 then
-							local var_8_51 = var_0_0[var_8_49]
-
-							if var_8_51 and var_8_51.added then
-								var_8_51.added(arg_8_0, var_8_0, var_8_46, var_8_8)
-							end
-						end
-
-						arg_8_0._perks[var_8_49] = var_8_50 + 1
-					end
-				end
-
-				if var_8_12.buff_area then
-					local var_8_52 = Managers.state.unit_spawner
-					local var_8_53 = Managers.state.side.side_by_unit
-					local var_8_54 = var_8_53[var_8_28] or var_8_53[var_8_0]
-					local var_8_55 = {
-						buff_area_system = {
-							duration = var_8_14,
-							radius = var_8_12.area_radius,
-							sub_buff_template = var_8_12,
-							sub_buff_id = iter_8_0,
-							owner_unit = var_8_0,
-							source_unit = var_8_28,
-							side_id = var_8_54 and var_8_54.side_id or 0
-						}
-					}
-					local var_8_56 = arg_8_2 and arg_8_2.buff_area_position or POSITION_LOOKUP[arg_8_0._unit]
-					local var_8_57, var_8_58 = var_8_52:spawn_network_unit(var_8_12.area_unit_name, "buff_aoe_unit", var_8_55, var_8_56, Quaternion.identity(), nil)
-
-					var_8_46.area_buff_unit = var_8_57
-				end
-
-				if var_8_12.status_effect then
-					Managers.state.status_effect:set_status(var_8_0, var_8_12.status_effect, var_8_46, true)
-				end
-
-				local var_8_59 = var_8_12.apply_buff_func
-
-				if var_8_59 then
-					buff_extension_function_params.bonus = var_8_19
-					buff_extension_function_params.multiplier = var_8_21
-					buff_extension_function_params.value = var_8_20
-					buff_extension_function_params.t = var_8_5
-					buff_extension_function_params.end_time = var_8_40
-					buff_extension_function_params.attacker_unit = var_8_46.attacker_unit
-					buff_extension_function_params.source_attacker_unit = var_8_46.source_attacker_unit
-
-					BuffFunctionTemplates.functions[var_8_59](var_8_0, var_8_46, buff_extension_function_params, var_8_7)
-				end
-
-				if var_8_12.delayed_apply_buff_func then
-					local var_8_60 = arg_8_0._delayed_apply_funcs or {}
-
-					var_8_60[#var_8_60 + 1] = var_8_46
-					arg_8_0._delayed_apply_funcs = var_8_60
-				end
-
-				if var_8_12.stat_buff then
-					var_8_46.stat_buff_index = arg_8_0:_add_stat_buff(var_8_12, var_8_46)
-				end
-
-				local var_8_61 = var_8_12.event
-
-				if var_8_61 then
-					var_8_46.buff_func = var_8_12.buff_func
-
-					local var_8_62 = arg_8_0._event_buffs_index
-
-					var_8_46.event_buff_index = var_8_62
-					arg_8_0._event_buffs[var_8_61][var_8_62] = var_8_46
-					arg_8_0._event_buffs_index = var_8_62 + 1
-				end
-
-				if var_8_12.duration_end_func then
-					var_8_46.delayed_remove_func_name = var_8_12.duration_end_func
-				end
-
-				if var_8_12.continuous_effect then
-					arg_8_0._continuous_screen_effects[var_8_6] = arg_8_0:_play_screen_effect(var_8_12.continuous_effect)
-				end
-
-				local var_8_63 = var_8_12.particles
-
-				if var_8_63 then
-					local var_8_64 = var_8_0
-					local var_8_65 = false
-
-					if arg_8_0.is_local and not arg_8_0.is_husk then
-						local var_8_66 = ScriptUnit.has_extension(var_8_64, "first_person_system")
-
-						if var_8_66 and var_8_66.first_person_unit then
-							var_8_64 = var_8_66.first_person_unit
-							var_8_65 = true
-						end
-					end
-
-					local var_8_67 = BuffUtils.create_attached_particles(var_8_7, var_8_63, var_8_64, var_8_65, var_8_0, var_8_40)
-
-					arg_8_0._vfx[var_8_6] = var_8_67
-
-					if var_8_67.update_fx then
-						arg_8_0._vfx_update[var_8_6] = var_8_67
-					end
-				end
-
-				local var_8_68 = var_8_12.sfx
-
-				if var_8_68 then
-					local var_8_69 = var_8_68.activation_sound
-
-					if var_8_69 then
-						arg_8_0:_play_buff_sound(var_8_69, var_8_68.activation_sound_3p)
 					end
 				end
 			end
-		end
+
+			local var_8_46 = {
+				id = var_8_6,
+				start_time = var_8_5,
+				template = var_8_12,
+				buff_type = var_8_12.name,
+				buff_template_name = arg_8_1,
+				bonus = var_8_19,
+				multiplier = var_8_21,
+				value = var_8_20,
+				proc_chance = var_8_22,
+				proc_cooldown = var_8_23,
+				duration = var_8_14,
+				ticks = var_8_15,
+				current_ticks = var_8_15 and 0 or nil,
+				update_frequency = var_8_16,
+				range = var_8_24,
+				damage_source = var_8_25,
+				power_level = var_8_26,
+				attacker_unit = var_8_27,
+				source_attacker_unit = var_8_28,
+				max_stacks = var_8_17,
+				parent_buff_shared_table = var_8_10
+			}
+
+			var_8_9 = var_8_9 or var_8_46
+			arg_8_0._num_buffs = arg_8_0._num_buffs + 1
+			var_8_1[arg_8_0._num_buffs] = var_8_46
+			var_8_11 = var_8_11 + 1
+
+			if var_8_18 then
+				local var_8_47 = arg_8_0._stacking_buffs[var_8_12.name]
+
+				if not var_8_47 then
+					var_8_47 = {}
+					arg_8_0._stacking_buffs[var_8_12.name] = var_8_47
+
+					local var_8_48 = StackingBuffFunctions[var_8_12.on_stack_buff_first_add]
+
+					if var_8_48 then
+						var_8_48(arg_8_0._unit, var_8_12, arg_8_2)
+					end
+				end
+
+				var_8_47[#var_8_47 + 1] = var_8_46
+			end
+
+			if var_8_36 then
+				for iter_8_3 = 1, #var_8_36 do
+					local var_8_49 = var_8_36[iter_8_3]
+					local var_8_50 = arg_8_0._perks[var_8_49] or 0
+
+					if var_8_50 == 0 then
+						local var_8_51 = var_0_0[var_8_49]
+
+						if var_8_51 and var_8_51.added then
+							var_8_51.added(arg_8_0, var_8_0, var_8_46, var_8_8)
+						end
+					end
+
+					arg_8_0._perks[var_8_49] = var_8_50 + 1
+				end
+			end
+
+			if var_8_12.buff_area then
+				local var_8_52 = Managers.state.unit_spawner
+				local var_8_53 = Managers.state.side.side_by_unit
+				local var_8_54 = var_8_53[var_8_28] or var_8_53[var_8_0]
+				local var_8_55 = {
+					buff_area_system = {
+						duration = var_8_14,
+						radius = var_8_12.area_radius,
+						sub_buff_template = var_8_12,
+						sub_buff_id = iter_8_0,
+						owner_unit = var_8_0,
+						source_unit = var_8_28,
+						side_id = var_8_54 and var_8_54.side_id or 0
+					}
+				}
+				local var_8_56 = arg_8_2 and arg_8_2.buff_area_position or POSITION_LOOKUP[arg_8_0._unit]
+
+				var_8_46.area_buff_unit = var_8_52:spawn_network_unit(var_8_12.area_unit_name, "buff_aoe_unit", var_8_55, var_8_56, Quaternion.identity(), nil)
+			end
+
+			if var_8_12.status_effect then
+				Managers.state.status_effect:set_status(var_8_0, var_8_12.status_effect, var_8_46, true)
+			end
+
+			local var_8_57 = var_8_12.apply_buff_func
+
+			if var_8_57 then
+				buff_extension_function_params.bonus = var_8_19
+				buff_extension_function_params.multiplier = var_8_21
+				buff_extension_function_params.value = var_8_20
+				buff_extension_function_params.t = var_8_5
+				buff_extension_function_params.end_time = var_8_40
+				buff_extension_function_params.attacker_unit = var_8_46.attacker_unit
+				buff_extension_function_params.source_attacker_unit = var_8_46.source_attacker_unit
+
+				BuffFunctionTemplates.functions[var_8_57](var_8_0, var_8_46, buff_extension_function_params, var_8_7)
+			end
+
+			if var_8_12.delayed_apply_buff_func then
+				local var_8_58 = arg_8_0._delayed_apply_funcs or {}
+
+				var_8_58[#var_8_58 + 1] = var_8_46
+				arg_8_0._delayed_apply_funcs = var_8_58
+			end
+
+			if var_8_12.stat_buff then
+				var_8_46.stat_buff_index = arg_8_0:_add_stat_buff(var_8_12, var_8_46)
+			end
+
+			local var_8_59 = var_8_12.event
+
+			if var_8_59 then
+				var_8_46.buff_func = var_8_12.buff_func
+
+				local var_8_60 = arg_8_0._event_buffs_index
+
+				var_8_46.event_buff_index = var_8_60
+				arg_8_0._event_buffs[var_8_59][var_8_60] = var_8_46
+				arg_8_0._event_buffs_index = var_8_60 + 1
+			end
+
+			if var_8_12.duration_end_func then
+				var_8_46.delayed_remove_func_name = var_8_12.duration_end_func
+			end
+
+			if var_8_12.continuous_effect then
+				arg_8_0._continuous_screen_effects[var_8_6] = arg_8_0:_play_screen_effect(var_8_12.continuous_effect)
+			end
+
+			local var_8_61 = var_8_12.particles
+
+			if var_8_61 then
+				local var_8_62 = var_8_0
+				local var_8_63 = false
+
+				if arg_8_0.is_local and not arg_8_0.is_husk then
+					local var_8_64 = ScriptUnit.has_extension(var_8_62, "first_person_system")
+
+					if var_8_64 and var_8_64.first_person_unit then
+						var_8_62 = var_8_64.first_person_unit
+						var_8_63 = true
+					end
+				end
+
+				local var_8_65 = BuffUtils.create_attached_particles(var_8_7, var_8_61, var_8_62, var_8_63, var_8_0, var_8_40)
+
+				arg_8_0._vfx[var_8_6] = var_8_65
+
+				if var_8_65.update_fx then
+					arg_8_0._vfx_update[var_8_6] = var_8_65
+				end
+			end
+
+			local var_8_66 = var_8_12.sfx
+
+			if var_8_66 then
+				local var_8_67 = var_8_66.activation_sound
+
+				if var_8_67 then
+					arg_8_0:_play_buff_sound(var_8_67, var_8_66.activation_sound_3p)
+				end
+			end
+		until true
 	end
 
-	local var_8_70 = var_8_2.activation_sound
+	local var_8_68 = var_8_2.activation_sound
 
-	if var_8_70 then
-		arg_8_0:_play_buff_sound(var_8_70, var_8_2.activation_sound_3p)
+	if var_8_68 then
+		arg_8_0:_play_buff_sound(var_8_68, var_8_2.activation_sound_3p)
 	end
 
-	local var_8_71 = var_8_2.activation_effect
+	local var_8_69 = var_8_2.activation_effect
 
-	if var_8_71 then
-		arg_8_0:_play_screen_effect(var_8_71)
+	if var_8_69 then
+		arg_8_0:_play_screen_effect(var_8_69)
 	end
 
 	if var_8_11 > 0 then
@@ -481,16 +482,16 @@ BuffExtension.add_buff = function (arg_8_0, arg_8_1, arg_8_2)
 
 		arg_8_0._buff_id_refs[var_8_6] = var_8_11
 
-		local var_8_72 = var_8_2.deactivation_effect
+		local var_8_70 = var_8_2.deactivation_effect
 
-		if var_8_72 then
-			arg_8_0._deactivation_screen_effects[var_8_6] = var_8_72
+		if var_8_70 then
+			arg_8_0._deactivation_screen_effects[var_8_6] = var_8_70
 		end
 
-		local var_8_73 = var_8_2.deactivation_sound
+		local var_8_71 = var_8_2.deactivation_sound
 
-		if var_8_73 then
-			arg_8_0._deactivation_sounds[var_8_6] = var_8_73
+		if var_8_71 then
+			arg_8_0._deactivation_sounds[var_8_6] = var_8_71
 
 			if var_8_2.activation_sound_3p then
 				arg_8_0._deactivation_sounds_3p[var_8_6] = var_8_2.activation_sound_3p
@@ -501,7 +502,7 @@ BuffExtension.add_buff = function (arg_8_0, arg_8_1, arg_8_2)
 	return var_8_6, var_8_11, var_8_9
 end
 
-BuffExtension._add_stacking_buff = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+function BuffExtension._add_stacking_buff(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
 	local var_9_0 = arg_9_0._stacking_buffs[arg_9_1.name]
 	local var_9_1 = var_9_0 and #var_9_0 or 0
 
@@ -577,7 +578,7 @@ BuffExtension._add_stacking_buff = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3,
 	return var_9_5
 end
 
-BuffExtension._refresh_duration = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+function BuffExtension._refresh_duration(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
 	if arg_10_1.area_buff_unit then
 		local var_10_0 = ScriptUnit.has_extension(arg_10_1.area_buff_unit, "buff_area_system")
 
@@ -609,7 +610,7 @@ BuffExtension._refresh_duration = function (arg_10_0, arg_10_1, arg_10_2, arg_10
 	end
 end
 
-BuffExtension._add_stat_buff = function (arg_11_0, arg_11_1, arg_11_2)
+function BuffExtension._add_stat_buff(arg_11_0, arg_11_1, arg_11_2)
 	if FROZEN[arg_11_0._unit] or arg_11_0._ai_frozen then
 		return
 	end
@@ -687,7 +688,7 @@ BuffExtension._add_stat_buff = function (arg_11_0, arg_11_1, arg_11_2)
 	return var_11_11
 end
 
-BuffExtension.update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+function BuffExtension.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	local var_12_0 = arg_12_0.world
 	local var_12_1 = arg_12_0._buffs
 	local var_12_2 = buff_extension_function_params
@@ -805,7 +806,7 @@ BuffExtension.update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_
 	end
 end
 
-BuffExtension.update_stat_buff = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+function BuffExtension.update_stat_buff(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_0._stat_buffs[arg_13_1]
 	local var_13_1 = StatBuffApplicationMethods[arg_13_1]
 
@@ -828,7 +829,7 @@ BuffExtension.update_stat_buff = function (arg_13_0, arg_13_1, arg_13_2, arg_13_
 	end
 end
 
-BuffExtension.num_sub_buffs = function (arg_14_0, arg_14_1)
+function BuffExtension.num_sub_buffs(arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._buffs
 	local var_14_1 = table.find_by_key(var_14_0, "id", arg_14_1)
 
@@ -853,34 +854,33 @@ BuffExtension.num_sub_buffs = function (arg_14_0, arg_14_1)
 	return var_14_3
 end
 
-BuffExtension.remove_buff = function (arg_15_0, arg_15_1, arg_15_2)
+function BuffExtension.remove_buff(arg_15_0, arg_15_1, arg_15_2)
 	if not arg_15_1 then
 		return 0
 	end
 
 	local var_15_0 = arg_15_0._buffs
 	local var_15_1 = Managers.time:time("game")
-	local var_15_2 = 0
-	local var_15_3 = buff_extension_function_params
+	local var_15_2 = buff_extension_function_params
 
-	var_15_3.t = var_15_1
-	var_15_3.end_time = var_15_1
+	var_15_2.t = var_15_1
+	var_15_2.end_time = var_15_1
 
-	local var_15_4 = 0
+	local var_15_3 = 0
 
 	for iter_15_0 = 1, arg_15_0._num_buffs do
-		local var_15_5 = var_15_0[iter_15_0]
+		local var_15_4 = var_15_0[iter_15_0]
 
-		if var_15_5.id == arg_15_1 then
-			var_15_3.bonus = var_15_5.bonus
-			var_15_3.multiplier = var_15_5.multiplier
-			var_15_3.value = var_15_5.value
-			var_15_3.attacker_unit = var_15_5.attacker_unit
-			var_15_3.source_attacker_unit = var_15_5.source_attacker_unit
+		if var_15_4.id == arg_15_1 then
+			var_15_2.bonus = var_15_4.bonus
+			var_15_2.multiplier = var_15_4.multiplier
+			var_15_2.value = var_15_4.value
+			var_15_2.attacker_unit = var_15_4.attacker_unit
+			var_15_2.source_attacker_unit = var_15_4.source_attacker_unit
 
-			arg_15_0:_remove_sub_buff(var_15_5, iter_15_0, var_15_3, false)
+			arg_15_0:_remove_sub_buff(var_15_4, iter_15_0, var_15_2, false)
 
-			var_15_4 = var_15_4 + 1
+			var_15_3 = var_15_3 + 1
 		end
 	end
 
@@ -894,17 +894,17 @@ BuffExtension.remove_buff = function (arg_15_0, arg_15_1, arg_15_2)
 
 	arg_15_0:_free_sync_id(arg_15_1)
 
-	return var_15_4
+	return var_15_3
 end
 
-BuffExtension.queue_remove_buff = function (arg_16_0, arg_16_1)
+function BuffExtension.queue_remove_buff(arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._remove_buff_queue or {}
 
 	var_16_0[#var_16_0 + 1] = arg_16_1
 	arg_16_0._remove_buff_queue = var_16_0
 end
 
-BuffExtension._remove_sub_buff = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+function BuffExtension._remove_sub_buff(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	local var_17_0 = arg_17_0.world
 	local var_17_1 = arg_17_0._buffs
 	local var_17_2 = arg_17_1.template
@@ -1079,7 +1079,7 @@ BuffExtension._remove_sub_buff = function (arg_17_0, arg_17_1, arg_17_2, arg_17_
 	end
 end
 
-BuffExtension._remove_stat_buff = function (arg_18_0, arg_18_1)
+function BuffExtension._remove_stat_buff(arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_1.template
 	local var_18_1 = arg_18_1.bonus or 0
 	local var_18_2 = arg_18_1.multiplier or 0
@@ -1142,7 +1142,7 @@ BuffExtension._remove_stat_buff = function (arg_18_0, arg_18_1)
 	end
 end
 
-BuffExtension.get_buff_type = function (arg_19_0, arg_19_1)
+function BuffExtension.get_buff_type(arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._buffs
 
 	for iter_19_0 = 1, arg_19_0._num_buffs do
@@ -1156,7 +1156,7 @@ BuffExtension.get_buff_type = function (arg_19_0, arg_19_1)
 	return nil
 end
 
-BuffExtension.get_buff_by_id = function (arg_20_0, arg_20_1)
+function BuffExtension.get_buff_by_id(arg_20_0, arg_20_1)
 	if not arg_20_1 then
 		return nil
 	end
@@ -1174,7 +1174,7 @@ BuffExtension.get_buff_by_id = function (arg_20_0, arg_20_1)
 	return nil
 end
 
-BuffExtension.has_buff_type = function (arg_21_0, arg_21_1)
+function BuffExtension.has_buff_type(arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._buffs
 
 	for iter_21_0 = 1, arg_21_0._num_buffs do
@@ -1186,17 +1186,17 @@ BuffExtension.has_buff_type = function (arg_21_0, arg_21_1)
 	return false
 end
 
-BuffExtension.has_buff_perk = function (arg_22_0, arg_22_1)
+function BuffExtension.has_buff_perk(arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._perks[arg_22_1]
 
 	return var_22_0 and var_22_0 > 0
 end
 
-BuffExtension.num_buff_perk = function (arg_23_0, arg_23_1)
+function BuffExtension.num_buff_perk(arg_23_0, arg_23_1)
 	return arg_23_0._perks[arg_23_1] or 0
 end
 
-BuffExtension.get_non_stacking_buff = function (arg_24_0, arg_24_1)
+function BuffExtension.get_non_stacking_buff(arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0._buffs
 
 	for iter_24_0 = 1, arg_24_0._num_buffs do
@@ -1212,17 +1212,17 @@ BuffExtension.get_non_stacking_buff = function (arg_24_0, arg_24_1)
 	return nil
 end
 
-BuffExtension.get_stacking_buff = function (arg_25_0, arg_25_1)
+function BuffExtension.get_stacking_buff(arg_25_0, arg_25_1)
 	return arg_25_0._stacking_buffs[arg_25_1]
 end
 
-BuffExtension.num_buff_stacks = function (arg_26_0, arg_26_1)
+function BuffExtension.num_buff_stacks(arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0._stacking_buffs[arg_26_1]
 
 	return var_26_0 and #var_26_0 or 0
 end
 
-BuffExtension.num_buff_type = function (arg_27_0, arg_27_1)
+function BuffExtension.num_buff_type(arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0._stacking_buffs[arg_27_1]
 
 	if var_27_0 then
@@ -1241,7 +1241,7 @@ BuffExtension.num_buff_type = function (arg_27_0, arg_27_1)
 	return var_27_2
 end
 
-BuffExtension.has_procced = function (arg_28_0, arg_28_1, arg_28_2)
+function BuffExtension.has_procced(arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0._prd_states
 	local var_28_1
 	local var_28_2 = var_28_0[arg_28_2]
@@ -1262,7 +1262,7 @@ local function var_0_5(arg_30_0, arg_30_1, arg_30_2)
 	return not var_30_0 or var_30_0 == "server" and arg_30_1 or var_30_0 == "client" and arg_30_2
 end
 
-BuffExtension.trigger_procs = function (arg_31_0, arg_31_1, ...)
+function BuffExtension.trigger_procs(arg_31_0, arg_31_1, ...)
 	local var_31_0 = arg_31_0._event_buffs[arg_31_1]
 
 	if table.size(var_31_0) == 0 then
@@ -1321,7 +1321,7 @@ BuffExtension.trigger_procs = function (arg_31_0, arg_31_1, ...)
 	end
 end
 
-BuffExtension.get_buff_value = function (arg_32_0, arg_32_1)
+function BuffExtension.get_buff_value(arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0._stat_buffs[arg_32_1]
 	local var_32_1 = false
 	local var_32_2 = StatBuffApplicationMethods[arg_32_1] == "proc"
@@ -1344,7 +1344,7 @@ BuffExtension.get_buff_value = function (arg_32_0, arg_32_1)
 	return var_32_3, var_32_1, var_32_4
 end
 
-BuffExtension.apply_buffs_to_value = function (arg_33_0, arg_33_1, arg_33_2)
+function BuffExtension.apply_buffs_to_value(arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_0._stat_buffs[arg_33_2]
 	local var_33_1 = arg_33_1
 	local var_33_2 = false
@@ -1398,7 +1398,7 @@ BuffExtension.apply_buffs_to_value = function (arg_33_0, arg_33_1, arg_33_2)
 	return var_33_1 * var_33_5 + var_33_6, var_33_2, var_33_4
 end
 
-BuffExtension._play_buff_sound = function (arg_34_0, arg_34_1, arg_34_2)
+function BuffExtension._play_buff_sound(arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0._unit
 
 	if arg_34_2 then
@@ -1408,7 +1408,7 @@ BuffExtension._play_buff_sound = function (arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-BuffExtension._play_screen_effect = function (arg_35_0, arg_35_1)
+function BuffExtension._play_screen_effect(arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._unit
 
 	if ScriptUnit.has_extension(var_35_0, "first_person_system") then
@@ -1418,7 +1418,7 @@ BuffExtension._play_screen_effect = function (arg_35_0, arg_35_1)
 	return nil
 end
 
-BuffExtension._stop_screen_effect = function (arg_36_0, arg_36_1)
+function BuffExtension._stop_screen_effect(arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_0._unit
 
 	if arg_36_1 and ScriptUnit.has_extension(var_36_0, "first_person_system") then
@@ -1426,15 +1426,15 @@ BuffExtension._stop_screen_effect = function (arg_36_0, arg_36_1)
 	end
 end
 
-BuffExtension.active_buffs = function (arg_37_0)
+function BuffExtension.active_buffs(arg_37_0)
 	return arg_37_0._buffs, arg_37_0._num_buffs
 end
 
-BuffExtension.initial_buff_names = function (arg_38_0)
+function BuffExtension.initial_buff_names(arg_38_0)
 	return arg_38_0._initial_buff_names
 end
 
-BuffExtension.get_persistent_buff_names = function (arg_39_0)
+function BuffExtension.get_persistent_buff_names(arg_39_0)
 	local var_39_0 = {}
 
 	for iter_39_0, iter_39_1 in pairs(arg_39_0._buffs) do
@@ -1448,7 +1448,7 @@ BuffExtension.get_persistent_buff_names = function (arg_39_0)
 	return var_39_0
 end
 
-BuffExtension._activate_initial_buffs = function (arg_40_0)
+function BuffExtension._activate_initial_buffs(arg_40_0)
 	local var_40_0 = arg_40_0._initial_buff_names
 
 	if var_40_0 then
@@ -1458,7 +1458,7 @@ BuffExtension._activate_initial_buffs = function (arg_40_0)
 	end
 end
 
-BuffExtension.set_pending_sync_id = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+function BuffExtension.set_pending_sync_id(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 	arg_41_0:_initalize_sync_tables()
 
 	arg_41_0._id_to_local_sync[arg_41_1] = arg_41_2
@@ -1466,7 +1466,7 @@ BuffExtension.set_pending_sync_id = function (arg_41_0, arg_41_1, arg_41_2, arg_
 	arg_41_0._buff_to_sync_type[arg_41_1] = arg_41_3
 end
 
-BuffExtension.apply_sync_id = function (arg_42_0, arg_42_1, arg_42_2)
+function BuffExtension.apply_sync_id(arg_42_0, arg_42_1, arg_42_2)
 	local var_42_0 = arg_42_0._local_sync_to_id and arg_42_0._local_sync_to_id[arg_42_1]
 
 	if var_42_0 then
@@ -1481,7 +1481,7 @@ BuffExtension.apply_sync_id = function (arg_42_0, arg_42_1, arg_42_2)
 	return false
 end
 
-BuffExtension.apply_remote_sync_id = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+function BuffExtension.apply_remote_sync_id(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
 	if arg_43_1 then
 		arg_43_0:_initalize_sync_tables()
 
@@ -1492,7 +1492,7 @@ BuffExtension.apply_remote_sync_id = function (arg_43_0, arg_43_1, arg_43_2, arg
 	end
 end
 
-BuffExtension.generate_sync_id = function (arg_44_0)
+function BuffExtension.generate_sync_id(arg_44_0)
 	local var_44_0
 	local var_44_1 = arg_44_0._free_sync_ids
 
@@ -1501,7 +1501,7 @@ BuffExtension.generate_sync_id = function (arg_44_0)
 
 		if not var_44_0 then
 			if arg_44_0.debug_buff_names then
-				table.dump(table.select_map(arg_44_0._local_sync_to_id, function (arg_45_0, arg_45_1)
+				table.dump(table.select_map(arg_44_0._local_sync_to_id, function(arg_45_0, arg_45_1)
 					return string.format("(id: %s) %s", arg_45_0, arg_44_0.debug_buff_names[arg_45_1])
 				end), "Synced Buffs")
 			else
@@ -1527,7 +1527,7 @@ BuffExtension.generate_sync_id = function (arg_44_0)
 	return var_44_0
 end
 
-BuffExtension.claim_buff_id = function (arg_46_0, arg_46_1)
+function BuffExtension.claim_buff_id(arg_46_0, arg_46_1)
 	local var_46_0 = arg_46_0.id
 
 	arg_46_0.id = var_46_0 + 1
@@ -1539,19 +1539,19 @@ BuffExtension.claim_buff_id = function (arg_46_0, arg_46_1)
 	return var_46_0
 end
 
-BuffExtension.sync_id_to_id = function (arg_47_0, arg_47_1)
+function BuffExtension.sync_id_to_id(arg_47_0, arg_47_1)
 	return arg_47_0._server_sync_to_id and arg_47_0._server_sync_to_id[arg_47_1]
 end
 
-BuffExtension.id_to_sync_id = function (arg_48_0, arg_48_1)
+function BuffExtension.id_to_sync_id(arg_48_0, arg_48_1)
 	return arg_48_0._id_to_server_sync and arg_48_0._id_to_server_sync[arg_48_1]
 end
 
-BuffExtension.buff_sync_type = function (arg_49_0, arg_49_1)
+function BuffExtension.buff_sync_type(arg_49_0, arg_49_1)
 	return arg_49_0._buff_to_sync_type[arg_49_1]
 end
 
-BuffExtension._free_sync_id = function (arg_50_0, arg_50_1)
+function BuffExtension._free_sync_id(arg_50_0, arg_50_1)
 	local var_50_0 = arg_50_0._buff_to_sync_type
 
 	if not var_50_0 or not var_50_0[arg_50_1] then
@@ -1582,7 +1582,7 @@ BuffExtension._free_sync_id = function (arg_50_0, arg_50_1)
 	arg_50_0._synced_buff_owner[arg_50_1] = nil
 end
 
-BuffExtension._build_free_sync_ids_array = function (arg_51_0)
+function BuffExtension._build_free_sync_ids_array(arg_51_0)
 	local var_51_0 = NetworkConstants.server_controlled_buff_id.max
 
 	arg_51_0._free_sync_ids = Script.new_array(var_51_0)
@@ -1598,7 +1598,7 @@ BuffExtension._build_free_sync_ids_array = function (arg_51_0)
 	end
 end
 
-BuffExtension._initalize_sync_tables = function (arg_52_0)
+function BuffExtension._initalize_sync_tables(arg_52_0)
 	if not arg_52_0._id_to_local_sync then
 		arg_52_0._id_to_local_sync = {}
 		arg_52_0._local_sync_to_id = {}
@@ -1609,7 +1609,7 @@ BuffExtension._initalize_sync_tables = function (arg_52_0)
 	end
 end
 
-BuffExtension.create_shared_lifetime_buff_unit = function (arg_53_0, arg_53_1)
+function BuffExtension.create_shared_lifetime_buff_unit(arg_53_0, arg_53_1)
 	arg_53_0._shared_buff_units = arg_53_0._shared_buff_units or {}
 	arg_53_0._shared_buff_units[#arg_53_0._shared_buff_units + 1] = Managers.state.unit_spawner:spawn_network_unit("units/hub_elements/empty", "buff_unit", arg_53_0._buff_unit_params, arg_53_1, Quaternion.identity(), nil)
 
@@ -1618,7 +1618,7 @@ end
 
 local var_0_6 = Managers
 
-BuffExtension._remove_buff_synced = function (arg_54_0, arg_54_1)
+function BuffExtension._remove_buff_synced(arg_54_0, arg_54_1)
 	local var_54_0 = arg_54_0._id_to_server_sync
 
 	if not var_54_0 then

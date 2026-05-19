@@ -56,7 +56,7 @@ local function var_0_5(arg_3_0)
 	}
 end
 
-BackendInterfaceVersusPlayFab.init = function (arg_4_0, arg_4_1)
+function BackendInterfaceVersusPlayFab.init(arg_4_0, arg_4_1)
 	arg_4_0._backend_mirror = arg_4_1
 	arg_4_0._profile_data = {}
 	arg_4_0._items_interface = Managers.backend:get_interface("items")
@@ -70,22 +70,22 @@ BackendInterfaceVersusPlayFab.init = function (arg_4_0, arg_4_1)
 	arg_4_0._matchmaking_status = nil
 end
 
-BackendInterfaceVersusPlayFab._refresh = function (arg_5_0)
+function BackendInterfaceVersusPlayFab._refresh(arg_5_0)
 	local var_5_0 = arg_5_0._backend_mirror:get_read_only_data("vs_profile_data") or "{}"
 
 	arg_5_0._profile_data = cjson.decode(var_5_0)
 	arg_5_0._dirty = false
 end
 
-BackendInterfaceVersusPlayFab.make_dirty = function (arg_6_0)
+function BackendInterfaceVersusPlayFab.make_dirty(arg_6_0)
 	arg_6_0._dirty = true
 end
 
-BackendInterfaceVersusPlayFab.ready = function (arg_7_0)
+function BackendInterfaceVersusPlayFab.ready(arg_7_0)
 	return true
 end
 
-BackendInterfaceVersusPlayFab.get_profile_data = function (arg_8_0, arg_8_1)
+function BackendInterfaceVersusPlayFab.get_profile_data(arg_8_0, arg_8_1)
 	if arg_8_0._dirty then
 		arg_8_0:_refresh()
 	end
@@ -93,7 +93,7 @@ BackendInterfaceVersusPlayFab.get_profile_data = function (arg_8_0, arg_8_1)
 	return arg_8_0._profile_data[arg_8_1]
 end
 
-BackendInterfaceVersusPlayFab.get_loadout_item_id = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+function BackendInterfaceVersusPlayFab.get_loadout_item_id(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	if arg_9_0._dirty then
 		arg_9_0:_refresh()
 	end
@@ -101,7 +101,7 @@ BackendInterfaceVersusPlayFab.get_loadout_item_id = function (arg_9_0, arg_9_1, 
 	return arg_9_0._items_interface:get_loadout_item_id(arg_9_1, arg_9_2, arg_9_3)
 end
 
-BackendInterfaceVersusPlayFab.set_loadout_item = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+function BackendInterfaceVersusPlayFab.set_loadout_item(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if arg_10_0._dirty then
 		arg_10_0:_refresh()
 	end
@@ -119,7 +119,7 @@ local var_0_7 = {
 	"Accept: application/json"
 }
 
-BackendInterfaceVersusPlayFab.request_regions = function (arg_11_0, arg_11_1)
+function BackendInterfaceVersusPlayFab.request_regions(arg_11_0, arg_11_1)
 	fassert(arg_11_1 ~= nil, "request_regions is missing external_cb")
 
 	local var_11_0 = {
@@ -131,7 +131,7 @@ BackendInterfaceVersusPlayFab.request_regions = function (arg_11_0, arg_11_1)
 	arg_11_0._backend_mirror:request_queue():enqueue(var_11_0, var_11_1, true)
 end
 
-BackendInterfaceVersusPlayFab.request_matchmaking_regions_cb = function (arg_12_0, arg_12_1, arg_12_2)
+function BackendInterfaceVersusPlayFab.request_matchmaking_regions_cb(arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_2.FunctionResult
 
 	arg_12_1(var_12_0)
@@ -147,7 +147,7 @@ BackendInterfaceVersusPlayFab.request_matchmaking_regions_cb = function (arg_12_
 	end
 end
 
-BackendInterfaceVersusPlayFab.get_matchmaking_url = function (arg_13_0)
+function BackendInterfaceVersusPlayFab.get_matchmaking_url(arg_13_0)
 	if arg_13_0._base_url then
 		return arg_13_0._base_url
 	end
@@ -155,7 +155,7 @@ BackendInterfaceVersusPlayFab.get_matchmaking_url = function (arg_13_0)
 	return arg_13_0._backend_mirror:get_matchmaking_url()
 end
 
-BackendInterfaceVersusPlayFab.start_matchmaking = function (arg_14_0, arg_14_1, arg_14_2)
+function BackendInterfaceVersusPlayFab.start_matchmaking(arg_14_0, arg_14_1, arg_14_2)
 	var_0_3("Starting matchmaking")
 
 	local var_14_0 = arg_14_0:get_matchmaking_url()
@@ -168,7 +168,7 @@ BackendInterfaceVersusPlayFab.start_matchmaking = function (arg_14_0, arg_14_1, 
 	Managers.curl:post(var_14_1, var_14_3, var_0_6, var_14_2)
 end
 
-BackendInterfaceVersusPlayFab._start_matchmaking_cb = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+function BackendInterfaceVersusPlayFab._start_matchmaking_cb(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	local var_15_0 = var_0_5(arg_15_5)
 
 	if var_15_0.debug_msg then
@@ -197,7 +197,7 @@ BackendInterfaceVersusPlayFab._start_matchmaking_cb = function (arg_15_0, arg_15
 	end
 end
 
-BackendInterfaceVersusPlayFab.cancel_matchmaking = function (arg_16_0, arg_16_1)
+function BackendInterfaceVersusPlayFab.cancel_matchmaking(arg_16_0, arg_16_1)
 	var_0_3("Cancelling matchmaking")
 
 	if not arg_16_0:is_matchmaking() then
@@ -228,7 +228,7 @@ BackendInterfaceVersusPlayFab.cancel_matchmaking = function (arg_16_0, arg_16_1)
 	Managers.curl:post(var_16_1, var_16_3, var_0_6, var_16_2)
 end
 
-BackendInterfaceVersusPlayFab._cancel_matchmaking_cb = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+function BackendInterfaceVersusPlayFab._cancel_matchmaking_cb(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 	arg_17_0._matchmaking_session_id = nil
 	arg_17_0._is_matchmaking = nil
 
@@ -255,7 +255,7 @@ BackendInterfaceVersusPlayFab._cancel_matchmaking_cb = function (arg_17_0, arg_1
 	end
 end
 
-BackendInterfaceVersusPlayFab.fetch_matchmaking_session_data = function (arg_18_0, arg_18_1)
+function BackendInterfaceVersusPlayFab.fetch_matchmaking_session_data(arg_18_0, arg_18_1)
 	if not arg_18_0._matchmaking_session_id then
 		var_0_3("Failed to fetch matchmaking session data. Reason: missing matchmaking_session_id")
 
@@ -273,7 +273,7 @@ BackendInterfaceVersusPlayFab.fetch_matchmaking_session_data = function (arg_18_
 	Managers.curl:get(var_18_1, var_0_7, var_18_2)
 end
 
-BackendInterfaceVersusPlayFab._fetch_matchmaking_session_data_cb = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+function BackendInterfaceVersusPlayFab._fetch_matchmaking_session_data_cb(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 	local var_19_0 = var_0_5(arg_19_5)
 
 	if var_19_0.debug_msg then
@@ -309,11 +309,11 @@ BackendInterfaceVersusPlayFab._fetch_matchmaking_session_data_cb = function (arg
 	end
 end
 
-BackendInterfaceVersusPlayFab.is_matchmaking = function (arg_20_0)
+function BackendInterfaceVersusPlayFab.is_matchmaking(arg_20_0)
 	return arg_20_0._is_matchmaking
 end
 
-BackendInterfaceVersusPlayFab.request_matchmaking_ticket = function (arg_21_0, arg_21_1, arg_21_2)
+function BackendInterfaceVersusPlayFab.request_matchmaking_ticket(arg_21_0, arg_21_1, arg_21_2)
 	var_0_3("Requesting matchmaking ticket")
 	fassert(arg_21_2 ~= nil, "request_matchmaking_ticket is missing external_cb")
 
@@ -332,7 +332,7 @@ BackendInterfaceVersusPlayFab.request_matchmaking_ticket = function (arg_21_0, a
 	arg_21_0._backend_mirror:request_queue():enqueue(var_21_0, var_21_1, true)
 end
 
-BackendInterfaceVersusPlayFab.request_matchmaking_ticket_cb = function (arg_22_0, arg_22_1, arg_22_2)
+function BackendInterfaceVersusPlayFab.request_matchmaking_ticket_cb(arg_22_0, arg_22_1, arg_22_2)
 	var_0_3("Matchmaking ticket response")
 
 	local var_22_0 = arg_22_2.FunctionResult
@@ -352,7 +352,7 @@ BackendInterfaceVersusPlayFab.request_matchmaking_ticket_cb = function (arg_22_0
 	arg_22_1(var_22_0)
 end
 
-BackendInterfaceVersusPlayFab.reset_fetched_data = function (arg_23_0)
+function BackendInterfaceVersusPlayFab.reset_fetched_data(arg_23_0)
 	assert(DEDICATED_SERVER, "Dedicated server function only")
 
 	arg_23_0._matchmaking_session_id = false
@@ -360,26 +360,26 @@ BackendInterfaceVersusPlayFab.reset_fetched_data = function (arg_23_0)
 	arg_23_0._game_session_id = nil
 end
 
-BackendInterfaceVersusPlayFab.get_game_session_data = function (arg_24_0)
+function BackendInterfaceVersusPlayFab.get_game_session_data(arg_24_0)
 	return arg_24_0._game_session_data
 end
 
-BackendInterfaceVersusPlayFab.set_matchmaking_session_id = function (arg_25_0, arg_25_1)
+function BackendInterfaceVersusPlayFab.set_matchmaking_session_id(arg_25_0, arg_25_1)
 	assert(not DEDICATED_SERVER, "player function only")
 
 	arg_25_0._matchmaking_session_id = arg_25_1
 	arg_25_0._is_matchmaking = arg_25_1 ~= nil
 end
 
-BackendInterfaceVersusPlayFab.get_matchmaking_session_id = function (arg_26_0)
+function BackendInterfaceVersusPlayFab.get_matchmaking_session_id(arg_26_0)
 	return arg_26_0._matchmaking_session_id
 end
 
-BackendInterfaceVersusPlayFab.is_player_in_backfilling_data = function (arg_27_0, arg_27_1)
+function BackendInterfaceVersusPlayFab.is_player_in_backfilling_data(arg_27_0, arg_27_1)
 	return table.contains(arg_27_0._backfilling_player_ids, arg_27_1)
 end
 
-BackendInterfaceVersusPlayFab.matchmaking_enabled = function (arg_28_0, arg_28_1)
+function BackendInterfaceVersusPlayFab.matchmaking_enabled(arg_28_0, arg_28_1)
 	local var_28_0 = Managers.backend:get_title_settings()
 	local var_28_1 = var_28_0.versus and var_28_0.versus.matchmaking_settings
 

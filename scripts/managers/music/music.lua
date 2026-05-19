@@ -8,7 +8,7 @@ end
 
 Music = class(Music)
 
-Music.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+function Music.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	arg_2_0._wwise_world = arg_2_1
 	arg_2_0._stop = arg_2_3
 	arg_2_0._name = arg_2_4
@@ -19,7 +19,7 @@ Music.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg
 	arg_2_0._id = arg_2_0:_trigger_event(arg_2_2)
 end
 
-Music._init_group_states = function (arg_3_0, arg_3_1)
+function Music._init_group_states(arg_3_0, arg_3_1)
 	arg_3_0._group_states = {}
 
 	for iter_3_0, iter_3_1 in pairs(arg_3_1) do
@@ -27,11 +27,11 @@ Music._init_group_states = function (arg_3_0, arg_3_1)
 	end
 end
 
-Music.name = function (arg_4_0)
+function Music.name(arg_4_0)
 	return arg_4_0._name
 end
 
-Music.stop = function (arg_5_0)
+function Music.stop(arg_5_0)
 	if arg_5_0._stop then
 		var_0_0("Stopping Music player", arg_5_0._name, "with switch:", arg_5_0._stop.switch, "and value", arg_5_0._stop.value)
 		arg_5_0:set_group_state(arg_5_0._stop.group, arg_5_0._stop.state)
@@ -43,21 +43,21 @@ Music.stop = function (arg_5_0)
 	arg_5_0._stopped = true
 end
 
-Music.is_stopped = function (arg_6_0)
+function Music.is_stopped(arg_6_0)
 	return arg_6_0._stopped
 end
 
-Music.is_playing = function (arg_7_0)
+function Music.is_playing(arg_7_0)
 	return WwiseWorld.is_playing(arg_7_0._wwise_world, arg_7_0._id)
 end
 
-Music.destroy = function (arg_8_0)
+function Music.destroy(arg_8_0)
 	if arg_8_0:is_playing() then
 		WwiseWorld.stop_event(arg_8_0._wwise_world, arg_8_0._id)
 	end
 end
 
-Music.set_group_state = function (arg_9_0, arg_9_1, arg_9_2)
+function Music.set_group_state(arg_9_0, arg_9_1, arg_9_2)
 	if arg_9_0._group_states[arg_9_1] ~= arg_9_2 then
 		var_0_0("Player", arg_9_0._name, "setting group state:", arg_9_1, "to", arg_9_2)
 		Wwise.set_state(arg_9_1, arg_9_2)
@@ -72,17 +72,17 @@ Music.set_group_state = function (arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-Music.has_game_faction = function (arg_10_0)
+function Music.has_game_faction(arg_10_0)
 	return arg_10_0._group_states.game_faction and arg_10_0._group_states.game_faction ~= "undecided"
 end
 
-Music._trigger_event = function (arg_11_0, arg_11_1)
+function Music._trigger_event(arg_11_0, arg_11_1)
 	var_0_0("trigger event", arg_11_1)
 
 	return WwiseWorld.trigger_event(arg_11_0._wwise_world, arg_11_1)
 end
 
-Music.post_trigger = function (arg_12_0, arg_12_1)
+function Music.post_trigger(arg_12_0, arg_12_1)
 	var_0_0("post trigger", arg_12_1)
 	WwiseWorld.trigger_event(arg_12_0._wwise_world, arg_12_1)
 end

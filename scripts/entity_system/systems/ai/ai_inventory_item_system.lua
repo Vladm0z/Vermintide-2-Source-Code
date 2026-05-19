@@ -7,7 +7,7 @@ local var_0_1 = {
 
 AIInventoryItemSystem = class(AIInventoryItemSystem, ExtensionSystemBase)
 
-AIInventoryItemSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
+function AIInventoryItemSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_1.entity_manager
 
 	var_1_0:register_system(arg_1_0, arg_1_2, var_0_1)
@@ -26,13 +26,13 @@ AIInventoryItemSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.entities = {}
 end
 
-AIInventoryItemSystem.destroy = function (arg_2_0)
+function AIInventoryItemSystem.destroy(arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
 local var_0_2 = {}
 
-AIInventoryItemSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+function AIInventoryItemSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = {}
 
 	ScriptUnit.set_extension(arg_3_2, "ai_inventory_item_system", var_3_0, var_0_2)
@@ -45,16 +45,16 @@ AIInventoryItemSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, ar
 	return var_3_0
 end
 
-AIInventoryItemSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
+function AIInventoryItemSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.entities[arg_4_1] = nil
 
 	ScriptUnit.remove_extension(arg_4_1, arg_4_0.NAME)
 end
 
-AIInventoryItemSystem.hot_join_sync = function (arg_5_0, arg_5_1)
+function AIInventoryItemSystem.hot_join_sync(arg_5_0, arg_5_1)
 	return
 end
 
-AIInventoryItemSystem.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function AIInventoryItemSystem.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	return
 end

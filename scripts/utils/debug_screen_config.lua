@@ -121,7 +121,7 @@ local var_0_2 = {
 		description = "Teleports the player to a portal hub element",
 		category = "Allround useful stuff!",
 		item_source = {},
-		load_items_source_func = function (arg_4_0)
+		load_items_source_func = function(arg_4_0)
 			table.clear(arg_4_0)
 
 			local var_4_0 = ConflictUtils.get_teleporter_portals()
@@ -134,7 +134,7 @@ local var_0_2 = {
 				local var_4_1 = Managers.state.conflict.level_analysis:get_main_paths()
 				local var_4_2 = table.mirror_array(arg_4_0)
 
-				table.sort(arg_4_0, function (arg_5_0, arg_5_1)
+				table.sort(arg_4_0, function(arg_5_0, arg_5_1)
 					local var_5_0 = var_4_0[arg_5_0][1]:unbox()
 					local var_5_1 = var_4_0[arg_5_1][1]:unbox()
 					local var_5_2, var_5_3 = MainPathUtils.closest_pos_at_main_path(var_4_1, var_5_0)
@@ -169,7 +169,7 @@ local var_0_2 = {
 				local var_4_9 = var_4_7 - var_4_8
 				local var_4_10 = table.mirror_array(arg_4_0)
 
-				table.sort(arg_4_0, function (arg_6_0, arg_6_1)
+				table.sort(arg_4_0, function(arg_6_0, arg_6_1)
 					local var_6_0 = var_4_0[arg_6_0][1]:unbox()
 					local var_6_1 = var_4_0[arg_6_1][1]:unbox()
 					local var_6_2 = var_6_0 - var_4_8
@@ -185,7 +185,7 @@ local var_0_2 = {
 				end)
 			end
 		end,
-		func = function (arg_7_0, arg_7_1)
+		func = function(arg_7_0, arg_7_1)
 			local var_7_0 = Managers.player:local_player()
 
 			if var_7_0 then
@@ -213,55 +213,175 @@ local var_0_2 = {
 		end
 	},
 	{
+		setting_name = "teleport player when enter game",
+		description = "When entering a level, Teleports the player to a portal hub element",
+		category = "Allround useful stuff!",
+		item_source = {},
+		load_items_source_func = function(arg_8_0)
+			if not Managers.level_transition_handler:get_current_level_keys() then
+				return
+			end
+
+			table.clear(arg_8_0)
+
+			arg_8_0[1] = "[clear value]"
+
+			local var_8_0 = ConflictUtils.get_teleporter_portals()
+
+			for iter_8_0, iter_8_1 in pairs(var_8_0) do
+				arg_8_0[#arg_8_0 + 1] = iter_8_0
+			end
+
+			if Managers.player.is_server then
+				local var_8_1 = Managers.state.conflict.level_analysis:get_main_paths()
+				local var_8_2 = table.mirror_array(arg_8_0)
+
+				table.sort(arg_8_0, function(arg_9_0, arg_9_1)
+					if arg_9_0 == "[clear value]" or arg_9_1 == "[clear value]" then
+						return arg_9_0 == "[clear value]"
+					end
+
+					local var_9_0 = var_8_0[arg_9_0][1]:unbox()
+					local var_9_1 = var_8_0[arg_9_1][1]:unbox()
+					local var_9_2, var_9_3 = MainPathUtils.closest_pos_at_main_path(var_8_1, var_9_0)
+					local var_9_4, var_9_5 = MainPathUtils.closest_pos_at_main_path(var_8_1, var_9_1)
+
+					var_9_3 = var_9_3 or math.huge
+					var_9_5 = var_9_5 or math.huge
+
+					if var_9_3 ~= var_9_5 then
+						return var_9_3 < var_9_5
+					end
+
+					return var_8_2[arg_9_0] < var_8_2[arg_9_1]
+				end)
+			else
+				local var_8_3 = Managers.player:local_player()
+				local var_8_4 = var_8_3 and var_8_3.player_unit
+
+				if not ALIVE[var_8_4] then
+					return
+				end
+
+				local var_8_5 = Managers.state.entity:get_entities("EndZoneExtension")
+				local var_8_6 = next(var_8_5)
+
+				if not var_8_6 then
+					return
+				end
+
+				local var_8_7 = Unit.world_position(var_8_6, 0)
+				local var_8_8 = Unit.world_position(var_8_4, 0)
+				local var_8_9 = var_8_7 - var_8_8
+				local var_8_10 = table.mirror_array(arg_8_0)
+
+				table.sort(arg_8_0, function(arg_10_0, arg_10_1)
+					if arg_10_0 == "[clear value]" or arg_10_1 == "[clear value]" then
+						return arg_10_0 == "[clear value]"
+					end
+
+					local var_10_0 = var_8_0[arg_10_0][1]:unbox()
+					local var_10_1 = var_8_0[arg_10_1][1]:unbox()
+					local var_10_2 = var_10_0 - var_8_8
+					local var_10_3 = var_10_1 - var_8_8
+					local var_10_4 = Vector3.dot(var_10_2, var_8_9)
+					local var_10_5 = Vector3.dot(var_10_3, var_8_9)
+
+					if var_10_4 == var_10_5 then
+						return var_8_10[arg_10_0] < var_8_10[arg_10_1]
+					end
+
+					return var_10_4 < var_10_5
+				end)
+			end
+		end,
+		func = function(arg_11_0, arg_11_1)
+			if arg_11_0[arg_11_1] == "[clear value]" then
+				return
+			end
+
+			local var_11_0 = Managers.player:local_player()
+
+			if var_11_0 then
+				local var_11_1 = var_11_0.player_unit
+
+				if Unit.alive(var_11_1) then
+					local var_11_2 = ConflictUtils.get_teleporter_portals()
+
+					if table.is_empty(var_11_2) then
+						return
+					end
+
+					local var_11_3 = arg_11_0[arg_11_1]
+					local var_11_4 = var_11_2[var_11_3][1]:unbox()
+					local var_11_5 = var_11_2[var_11_3][2]:unbox()
+					local var_11_6 = ScriptUnit.extension(var_11_1, "locomotion_system")
+					local var_11_7 = Managers.world:world("level_world")
+
+					LevelHelper:flow_event(var_11_7, "teleport_" .. var_11_3)
+					var_11_6:teleport_to(var_11_4, var_11_5)
+				end
+			end
+
+			local var_11_8 = Managers.level_transition_handler:get_current_level_keys()
+
+			script_data["teleport player when enter game"] = var_11_8 .. ":" .. arg_11_0[arg_11_1]
+
+			Development.set_setting("teleport player when enter game", var_11_8 .. ":" .. arg_11_0[arg_11_1])
+			Development.clear_param_cache("teleport player when enter game")
+			print("TELEPORT")
+		end
+	},
+	{
 		setting_name = "teleport player to player",
 		description = "Teleports the player to another player.",
 		category = "Allround useful stuff!",
 		item_source = {},
-		load_items_source_func = function (arg_8_0)
-			table.clear(arg_8_0)
+		load_items_source_func = function(arg_12_0)
+			table.clear(arg_12_0)
 
-			local var_8_0 = {}
+			local var_12_0 = {}
 
-			arg_8_0.data = var_8_0
+			arg_12_0.data = var_12_0
 
-			local var_8_1 = Managers.player:players()
-			local var_8_2 = Managers.player:local_player()
+			local var_12_1 = Managers.player:players()
+			local var_12_2 = Managers.player:local_player()
 
-			for iter_8_0, iter_8_1 in pairs(var_8_1) do
-				if iter_8_1 ~= var_8_2 then
-					arg_8_0[#arg_8_0 + 1] = iter_8_1:name()
-					var_8_0[#var_8_0 + 1] = iter_8_1
+			for iter_12_0, iter_12_1 in pairs(var_12_1) do
+				if iter_12_1 ~= var_12_2 then
+					arg_12_0[#arg_12_0 + 1] = iter_12_1:name()
+					var_12_0[#var_12_0 + 1] = iter_12_1
 				end
 			end
 		end,
-		func = function (arg_9_0, arg_9_1)
-			local var_9_0 = Managers.player:local_player()
-			local var_9_1 = arg_9_0.data
+		func = function(arg_13_0, arg_13_1)
+			local var_13_0 = Managers.player:local_player()
+			local var_13_1 = arg_13_0.data
 
-			if var_9_0 then
-				local var_9_2 = var_9_0.player_unit
+			if var_13_0 then
+				local var_13_2 = var_13_0.player_unit
 
-				if not Unit.alive(var_9_2) then
+				if not Unit.alive(var_13_2) then
 					return
 				end
 
-				if table.is_empty(var_9_1) then
+				if table.is_empty(var_13_1) then
 					return
 				end
 
-				local var_9_3 = var_9_1[arg_9_1].player_unit
+				local var_13_3 = var_13_1[arg_13_1].player_unit
 
-				if not Unit.alive(var_9_3) then
+				if not Unit.alive(var_13_3) then
 					return
 				end
 
-				local var_9_4 = ScriptUnit.extension(var_9_2, "locomotion_system")
-				local var_9_5 = ScriptUnit.extension(var_9_3, "locomotion_system")
-				local var_9_6 = Unit.mover(var_9_3)
-				local var_9_7 = Mover.position(var_9_6)
-				local var_9_8 = var_9_5:current_rotation()
+				local var_13_4 = ScriptUnit.extension(var_13_2, "locomotion_system")
+				local var_13_5 = ScriptUnit.extension(var_13_3, "locomotion_system")
+				local var_13_6 = Unit.mover(var_13_3)
+				local var_13_7 = Mover.position(var_13_6)
+				local var_13_8 = var_13_5:current_rotation()
 
-				var_9_4:teleport_to(var_9_7, var_9_8)
+				var_13_4:teleport_to(var_13_7, var_13_8)
 			end
 		end
 	},
@@ -270,98 +390,98 @@ local var_0_2 = {
 		description = "Teleports the player to another player every 2 seconds.",
 		category = "Allround useful stuff!",
 		item_source = {},
-		load_items_source_func = function (arg_10_0)
-			table.clear(arg_10_0)
+		load_items_source_func = function(arg_14_0)
+			table.clear(arg_14_0)
 
-			local var_10_0 = {}
+			local var_14_0 = {}
 
-			arg_10_0.data = var_10_0
+			arg_14_0.data = var_14_0
 
-			local var_10_1 = Managers.player:players()
-			local var_10_2 = Managers.player:local_player()
+			local var_14_1 = Managers.player:players()
+			local var_14_2 = Managers.player:local_player()
 
-			for iter_10_0, iter_10_1 in pairs(var_10_1) do
-				if iter_10_1 ~= var_10_2 then
-					arg_10_0[#arg_10_0 + 1] = iter_10_1:name()
-					var_10_0[#var_10_0 + 1] = iter_10_1
+			for iter_14_0, iter_14_1 in pairs(var_14_1) do
+				if iter_14_1 ~= var_14_2 then
+					arg_14_0[#arg_14_0 + 1] = iter_14_1:name()
+					var_14_0[#var_14_0 + 1] = iter_14_1
 				end
 			end
 
-			arg_10_0[#arg_10_0 + 1] = "Turn Off"
-			var_10_0[#var_10_0 + 1] = {}
+			arg_14_0[#arg_14_0 + 1] = "Turn Off"
+			var_14_0[#var_14_0 + 1] = {}
 		end,
-		func = function (arg_11_0, arg_11_1)
-			local var_11_0 = arg_11_0.data
+		func = function(arg_15_0, arg_15_1)
+			local var_15_0 = arg_15_0.data
 
-			if table.is_empty(var_11_0) then
+			if table.is_empty(var_15_0) then
 				return
 			end
 
-			local var_11_1 = "teleport player to player repeatedly"
+			local var_15_1 = "teleport player to player repeatedly"
 
-			if Managers.updator:has(var_11_1) then
-				Managers.updator:remove(var_11_1)
+			if Managers.updator:has(var_15_1) then
+				Managers.updator:remove(var_15_1)
 			end
 
-			local var_11_2 = 0
-			local var_11_3 = var_11_0[arg_11_1].player_unit
+			local var_15_2 = 0
+			local var_15_3 = var_15_0[arg_15_1].player_unit
 
-			Managers.updator:add(function (arg_12_0)
-				var_11_2 = var_11_2 - arg_12_0
+			Managers.updator:add(function(arg_16_0)
+				var_15_2 = var_15_2 - arg_16_0
 
-				if var_11_2 > 0 then
+				if var_15_2 > 0 then
 					return
 				end
 
-				var_11_2 = 2
+				var_15_2 = 2
 
 				UPDATE_POSITION_LOOKUP()
 
-				local var_12_0 = Managers.player:local_player()
+				local var_16_0 = Managers.player:local_player()
 
-				if not var_12_0 then
+				if not var_16_0 then
 					return
 				end
 
-				local var_12_1 = var_12_0.player_unit
+				local var_16_1 = var_16_0.player_unit
 
-				if not Unit.alive(var_12_1) then
+				if not Unit.alive(var_16_1) then
 					return
 				end
 
-				if not Unit.alive(var_11_3) then
-					Managers.updator:remove(var_11_1)
+				if not Unit.alive(var_15_3) then
+					Managers.updator:remove(var_15_1)
 
 					return
 				end
 
-				local var_12_2 = ScriptUnit.extension(var_12_1, "locomotion_system")
-				local var_12_3 = ScriptUnit.extension(var_11_3, "locomotion_system")
-				local var_12_4 = Unit.mover(var_11_3)
-				local var_12_5 = Mover.position(var_12_4)
-				local var_12_6 = var_12_3:current_rotation()
+				local var_16_2 = ScriptUnit.extension(var_16_1, "locomotion_system")
+				local var_16_3 = ScriptUnit.extension(var_15_3, "locomotion_system")
+				local var_16_4 = Unit.mover(var_15_3)
+				local var_16_5 = Mover.position(var_16_4)
+				local var_16_6 = var_16_3:current_rotation()
 
-				var_12_2:teleport_to(var_12_5, var_12_6)
-			end, var_11_1)
+				var_16_2:teleport_to(var_16_5, var_16_6)
+			end, var_15_1)
 		end
 	},
 	{
 		description = "Teleports the bots to the local player.",
 		category = "Allround useful stuff!",
 		setting_name = "teleport bots to local player",
-		func = function ()
-			local var_13_0 = Managers.player:bots()
-			local var_13_1 = Managers.player:local_player()
+		func = function()
+			local var_17_0 = Managers.player:bots()
+			local var_17_1 = Managers.player:local_player()
 
-			if var_13_1 and var_13_1.player_unit then
-				local var_13_2 = var_13_1.player_unit
-				local var_13_3 = ScriptUnit.extension(var_13_2, "locomotion_system")
-				local var_13_4 = Unit.mover(var_13_2)
-				local var_13_5 = Mover.position(var_13_4)
-				local var_13_6 = var_13_3:current_rotation()
+			if var_17_1 and var_17_1.player_unit then
+				local var_17_2 = var_17_1.player_unit
+				local var_17_3 = ScriptUnit.extension(var_17_2, "locomotion_system")
+				local var_17_4 = Unit.mover(var_17_2)
+				local var_17_5 = Mover.position(var_17_4)
+				local var_17_6 = var_17_3:current_rotation()
 
-				for iter_13_0, iter_13_1 in pairs(var_13_0) do
-					ScriptUnit.extension(iter_13_1.player_unit, "locomotion_system"):teleport_to(var_13_5, var_13_6)
+				for iter_17_0, iter_17_1 in pairs(var_17_0) do
+					ScriptUnit.extension(iter_17_1.player_unit, "locomotion_system"):teleport_to(var_17_5, var_17_6)
 				end
 			end
 		end
@@ -430,7 +550,7 @@ local var_0_2 = {
 		description = "Will change all true booleans to false, and if there are no true ones, then all will be set to nil (cleared). Press right arrow to do it!",
 		category = "Allround useful stuff!",
 		setting_name = "reset_settings",
-		func = function ()
+		func = function()
 			DebugScreen.reset_settings()
 		end
 	},
@@ -462,81 +582,81 @@ local var_0_2 = {
 		description = "Loads the selected level.",
 		category = "Allround useful stuff!",
 		item_source = {},
-		load_items_source_func = function (arg_15_0)
-			table.clear(arg_15_0)
-			table.keys(LevelSettings, arg_15_0)
+		load_items_source_func = function(arg_19_0)
+			table.clear(arg_19_0)
+			table.keys(LevelSettings, arg_19_0)
 
-			local var_15_0 = {}
+			local var_19_0 = {}
 
-			for iter_15_0 = #arg_15_0, 1, -1 do
-				local var_15_1 = arg_15_0[iter_15_0]
-				local var_15_2 = LevelSettings[var_15_1].environment_variations
+			for iter_19_0 = #arg_19_0, 1, -1 do
+				local var_19_1 = arg_19_0[iter_19_0]
+				local var_19_2 = LevelSettings[var_19_1].environment_variations
 
-				if var_15_2 then
-					for iter_15_1 = #var_15_2, 1, -1 do
-						local var_15_3 = var_15_1 .. "_" .. var_15_2[iter_15_1]
+				if var_19_2 then
+					for iter_19_1 = #var_19_2, 1, -1 do
+						local var_19_3 = var_19_1 .. "_" .. var_19_2[iter_19_1]
 
-						table.insert(arg_15_0, var_15_3)
+						table.insert(arg_19_0, var_19_3)
 
-						arg_15_0[var_15_3] = {
-							var_15_1,
-							iter_15_1
+						arg_19_0[var_19_3] = {
+							var_19_1,
+							iter_19_1
 						}
-						var_15_0[var_15_3] = true
+						var_19_0[var_19_3] = true
 					end
 				end
 			end
 
-			local var_15_4 = table.mirror_array_inplace({
+			local var_19_4 = table.mirror_array_inplace({
 				"inn_level",
 				"whitebox"
 			})
-			local var_15_5 = table.mirror_array_inplace({
+			local var_19_5 = table.mirror_array_inplace({
 				"adventure",
 				"versus",
 				"deus",
 				"weaves"
 			})
 
-			table.sort(arg_15_0, function (arg_16_0, arg_16_1)
-				if var_15_4[arg_16_0] or var_15_4[arg_16_1] then
-					return (var_15_4[arg_16_0] or math.huge) < (var_15_4[arg_16_1] or math.huge)
+			table.sort(arg_19_0, function(arg_20_0, arg_20_1)
+				if var_19_4[arg_20_0] or var_19_4[arg_20_1] then
+					return (var_19_4[arg_20_0] or math.huge) < (var_19_4[arg_20_1] or math.huge)
 				end
 
-				if var_15_0[arg_16_0] or var_15_0[arg_16_1] then
-					if not var_15_0[arg_16_0] or not var_15_0[arg_16_1] then
-						return not var_15_0[arg_16_0]
+				if var_19_0[arg_20_0] or var_19_0[arg_20_1] then
+					if not var_19_0[arg_20_0] or not var_19_0[arg_20_1] then
+						return not var_19_0[arg_20_0]
 					else
-						return arg_16_0 < arg_16_1
+						return arg_20_0 < arg_20_1
 					end
 				end
 
-				local var_16_0 = LevelSettings[arg_16_0]
-				local var_16_1 = LevelSettings[arg_16_1]
+				local var_20_0 = LevelSettings[arg_20_0]
+				local var_20_1 = LevelSettings[arg_20_1]
 
-				if var_16_0.mechanism ~= var_16_1.mechanism then
-					return (var_15_5[var_16_0.mechanism] or math.huge) < (var_15_5[var_16_1.mechanism] or math.huge)
+				if var_20_0.mechanism ~= var_20_1.mechanism then
+					return (var_19_5[var_20_0.mechanism] or math.huge) < (var_19_5[var_20_1.mechanism] or math.huge)
 				end
 
-				local var_16_2 = table.find(GameActsOrder, var_16_0.act) or math.huge
-				local var_16_3 = table.find(GameActsOrder, var_16_1.act) or math.huge
+				local var_20_2 = table.find(GameActsOrder, var_20_0.act) or math.huge
+				local var_20_3 = table.find(GameActsOrder, var_20_1.act) or math.huge
 
-				if var_16_2 < var_16_3 then
+				if var_20_2 < var_20_3 then
 					return true
-				elseif var_16_2 == var_16_3 then
-					local var_16_4 = var_16_0.act_presentation_order
-					local var_16_5 = var_16_1.act_presentation_order
+				elseif var_20_2 == var_20_3 then
+					local var_20_4 = var_20_0.act_presentation_order
+					local var_20_5 = var_20_1.act_presentation_order
 
-					if var_16_4 or var_16_5 then
-						return (var_16_4 or math.huge) < (var_16_5 or math.huge)
+					if var_20_4 or var_20_5 then
+						return (var_20_4 or math.huge) < (var_20_5 or math.huge)
 					else
-						local var_16_6 = var_16_0.map_settings and var_16_0.map_settings.sorting
-						local var_16_7 = var_16_1.map_settings and var_16_1.map_settings.sorting
+						local var_20_6 = var_20_0.map_settings and var_20_0.map_settings.sorting
+						local var_20_7 = var_20_1.map_settings and var_20_1.map_settings.sorting
 
-						if var_16_6 or var_16_7 then
-							return (var_16_6 or math.huge) < (var_16_7 or math.huge)
+						if var_20_6 or var_20_7 then
+							return (var_20_6 or math.huge) < (var_20_7 or math.huge)
 						else
-							return arg_16_0 < arg_16_1
+							return arg_20_0 < arg_20_1
 						end
 					end
 				else
@@ -544,23 +664,27 @@ local var_0_2 = {
 				end
 			end)
 		end,
-		func = function (arg_17_0, arg_17_1)
-			local var_17_0 = arg_17_0[arg_17_1]
-			local var_17_1 = 0
-			local var_17_2 = arg_17_0[var_17_0]
-
-			if var_17_2 then
-				var_17_0 = var_17_2[1]
-				var_17_1 = var_17_2[2]
+		func = function(arg_21_0, arg_21_1)
+			if not Managers.state.network.is_server then
+				return
 			end
 
-			local var_17_3 = LevelSettings[var_17_0]
+			local var_21_0 = arg_21_0[arg_21_1]
+			local var_21_1 = 0
+			local var_21_2 = arg_21_0[var_21_0]
 
-			if var_17_3.hub_level then
-				Managers.mechanism:override_hub_level(var_17_0)
+			if var_21_2 then
+				var_21_0 = var_21_2[1]
+				var_21_1 = var_21_2[2]
 			end
 
-			Debug.load_level(var_17_0, var_17_1, var_17_3.debug_environment_level_flow_event)
+			local var_21_3 = LevelSettings[var_21_0]
+
+			if var_21_3.hub_level then
+				Managers.mechanism:override_hub_level(var_21_0)
+			end
+
+			Debug.load_level(var_21_0, var_21_1, var_21_3.debug_environment_level_flow_event)
 		end
 	},
 	{
@@ -586,7 +710,7 @@ local var_0_2 = {
 		setting_name = "twitch_debug_voting",
 		category = "Twitch",
 		is_boolean = true,
-		func = function ()
+		func = function()
 			Managers.twitch:debug_activate_twitch_game_mode()
 		end
 	},
@@ -840,20 +964,20 @@ local var_0_2 = {
 		setting_name = "player_invisibility",
 		category = "Player mechanics recommended",
 		is_boolean = true,
-		func = function (arg_19_0, arg_19_1)
-			local var_19_0 = arg_19_0[arg_19_1]
-			local var_19_1 = Managers.player:local_player()
-			local var_19_2 = var_19_1 and var_19_1.player_unit
+		func = function(arg_23_0, arg_23_1)
+			local var_23_0 = arg_23_0[arg_23_1]
+			local var_23_1 = Managers.player:local_player()
+			local var_23_2 = var_23_1 and var_23_1.player_unit
 
-			if Unit.alive(var_19_2) then
-				local var_19_3 = ScriptUnit.extension(var_19_2, "status_system")
+			if Unit.alive(var_23_2) then
+				local var_23_3 = ScriptUnit.extension(var_23_2, "status_system")
 
-				if var_19_3:is_invisible() ~= var_19_0 then
-					var_19_3:set_invisible(var_19_0, nil, "debug_invis")
+				if var_23_3:is_invisible() ~= var_23_0 then
+					var_23_3:set_invisible(var_23_0, nil, "debug_invis")
 
-					local var_19_4 = var_19_0 and "Local player is now invisible" or "Local player is now visible"
+					local var_23_4 = var_23_0 and "Local player is now invisible" or "Local player is now visible"
 
-					Debug.sticky_text(var_19_4)
+					Debug.sticky_text(var_23_4)
 				end
 			end
 		end
@@ -898,41 +1022,41 @@ local var_0_2 = {
 		description = "Switch player class to play",
 		category = "Player mechanics recommended",
 		item_source = {},
-		load_items_source_func = function (arg_20_0)
-			table.clear(arg_20_0)
+		load_items_source_func = function(arg_24_0)
+			table.clear(arg_24_0)
 
-			local var_20_0 = {}
+			local var_24_0 = {}
 
-			arg_20_0.data = var_20_0
+			arg_24_0.data = var_24_0
 
-			local var_20_1 = Managers.player:local_player()
-			local var_20_2 = var_20_1:network_id()
-			local var_20_3 = var_20_1:local_player_id()
-			local var_20_4 = Managers.party:get_party_from_player_id(var_20_2, var_20_3)
-			local var_20_5 = Managers.state.side.side_by_party[var_20_4].available_profiles or PROFILES_BY_AFFILIATION.heroes
+			local var_24_1 = Managers.player:local_player()
+			local var_24_2 = var_24_1:network_id()
+			local var_24_3 = var_24_1:local_player_id()
+			local var_24_4 = Managers.party:get_party_from_player_id(var_24_2, var_24_3)
+			local var_24_5 = Managers.state.side.side_by_party[var_24_4].available_profiles or PROFILES_BY_AFFILIATION.heroes
 
-			for iter_20_0 = 1, #var_20_5 do
-				local var_20_6 = var_20_5[iter_20_0]
-				local var_20_7 = #arg_20_0 + 1
+			for iter_24_0 = 1, #var_24_5 do
+				local var_24_6 = var_24_5[iter_24_0]
+				local var_24_7 = #arg_24_0 + 1
 
-				arg_20_0[var_20_7] = var_20_6
-				var_20_0[var_20_7] = var_20_6
+				arg_24_0[var_24_7] = var_24_6
+				var_24_0[var_24_7] = var_24_6
 			end
 		end,
-		func = function (arg_21_0, arg_21_1)
-			local var_21_0 = arg_21_0.data[arg_21_1]
+		func = function(arg_25_0, arg_25_1)
+			local var_25_0 = arg_25_0.data[arg_25_1]
 
-			if var_21_0 then
-				local var_21_1 = FindProfileIndex(var_21_0)
-				local var_21_2 = SPProfiles[var_21_1].careers
-				local var_21_3 = var_21_2[script_data.wanted_career_index] or var_21_2[1]
-				local var_21_4 = true
+			if var_25_0 then
+				local var_25_1 = FindProfileIndex(var_25_0)
+				local var_25_2 = SPProfiles[var_25_1].careers
+				local var_25_3 = var_25_2[script_data.wanted_career_index] or var_25_2[1]
+				local var_25_4 = true
 
-				if var_21_3.display_name == "vs_undecided" then
+				if var_25_3.display_name == "vs_undecided" then
 					return
 				end
 
-				Managers.state.network:request_profile(1, var_21_0, var_21_3.display_name, var_21_4)
+				Managers.state.network:request_profile(1, var_25_0, var_25_3.display_name, var_25_4)
 			end
 		end
 	},
@@ -941,72 +1065,72 @@ local var_0_2 = {
 		description = "Switch party you you want to spawn in. Note: you need to 'switch_class' for it to be fulfilled",
 		category = "Player mechanics recommended",
 		item_source = {},
-		load_items_source_func = function (arg_22_0)
-			local var_22_0 = Managers.party:parties()
+		load_items_source_func = function(arg_26_0)
+			local var_26_0 = Managers.party:parties()
 
-			table.clear(arg_22_0)
+			table.clear(arg_26_0)
 
-			local var_22_1 = {}
+			local var_26_1 = {}
 
-			arg_22_0.data = var_22_1
+			arg_26_0.data = var_26_1
 
-			for iter_22_0, iter_22_1 in ipairs(var_22_0) do
-				local var_22_2 = #arg_22_0 + 1
-				local var_22_3 = iter_22_1.num_used_slots - iter_22_1.num_bots
-				local var_22_4 = iter_22_1.num_slots
+			for iter_26_0, iter_26_1 in ipairs(var_26_0) do
+				local var_26_2 = #arg_26_0 + 1
+				local var_26_3 = iter_26_1.num_used_slots - iter_26_1.num_bots
+				local var_26_4 = iter_26_1.num_slots
 
-				if var_22_3 < var_22_4 then
-					arg_22_0[var_22_2] = string.format("%s (%d/%d)", iter_22_1.party_id, var_22_3, var_22_4)
+				if var_26_3 < var_26_4 then
+					arg_26_0[var_26_2] = string.format("%s (%d/%d)", iter_26_1.party_id, var_26_3, var_26_4)
 				else
-					arg_22_0[var_22_2] = string.format("%s (%d/%d) FULL!", iter_22_1.party_id, var_22_3, var_22_4)
+					arg_26_0[var_26_2] = string.format("%s (%d/%d) FULL!", iter_26_1.party_id, var_26_3, var_26_4)
 				end
 
-				var_22_1[var_22_2] = iter_22_1.party_id
+				var_26_1[var_26_2] = iter_26_1.party_id
 			end
 		end,
-		func = function (arg_23_0, arg_23_1)
-			local var_23_0 = arg_23_0.data[arg_23_1]
+		func = function(arg_27_0, arg_27_1)
+			local var_27_0 = arg_27_0.data[arg_27_1]
 
-			if var_23_0 then
-				local var_23_1 = Managers.party:get_party(var_23_0)
+			if var_27_0 then
+				local var_27_1 = Managers.party:get_party(var_27_0)
 
-				if var_23_1.num_open_slots + var_23_1.num_bots > 0 then
-					print("Debug switching wanted party to:", var_23_0)
+				if var_27_1.num_open_slots + var_27_1.num_bots > 0 then
+					print("Debug switching wanted party to:", var_27_0)
 
-					local var_23_2 = Managers.player:local_player()
-					local var_23_3 = var_23_2:local_player_id()
-					local var_23_4 = var_23_2:network_id()
-					local var_23_5 = Managers.mechanism:current_mechanism_name()
-					local var_23_6 = Managers.state.side.side_by_party[var_23_1]
+					local var_27_2 = Managers.player:local_player()
+					local var_27_3 = var_27_2:local_player_id()
+					local var_27_4 = var_27_2:network_id()
+					local var_27_5 = Managers.mechanism:current_mechanism_name()
+					local var_27_6 = Managers.state.side.side_by_party[var_27_1]
 
-					Managers.party:request_join_party(var_23_4, var_23_3, var_23_0)
+					Managers.party:request_join_party(var_27_4, var_27_3, var_27_0)
 
-					if var_23_2 and var_23_2:needs_despawn() then
-						Managers.state.spawn:delayed_despawn(var_23_2)
+					if var_27_2 and var_27_2:needs_despawn() then
+						Managers.state.spawn:delayed_despawn(var_27_2)
 					end
 
-					local var_23_7 = Managers.state.entity:system("camera_system")
+					local var_27_7 = Managers.state.entity:system("camera_system")
 
-					if var_23_1.name == "spectators" then
-						local var_23_8 = PROFILES_BY_NAME.spectator
+					if var_27_1.name == "spectators" then
+						local var_27_8 = PROFILES_BY_NAME.spectator
 
-						var_23_7:initialize_camera_states(var_23_2, var_23_8.index, 1)
+						var_27_7:initialize_camera_states(var_27_2, var_27_8.index, 1)
 					else
-						local var_23_9 = FindProfileIndex("witch_hunter")
+						local var_27_9 = FindProfileIndex("witch_hunter")
 
-						var_23_7:initialize_camera_states(var_23_2, var_23_9, 1)
+						var_27_7:initialize_camera_states(var_27_2, var_27_9, 1)
 					end
 
-					local var_23_10 = Managers.state.side:sides()
-					local var_23_11
-					local var_23_12
+					local var_27_10 = Managers.state.side:sides()
+					local var_27_11
+					local var_27_12
 
-					for iter_23_0 = 1, #var_23_10 do
-						local var_23_13 = var_23_10[iter_23_0]
-						local var_23_14 = string.format("%s_%s", var_23_5, var_23_13:name())
-						local var_23_15 = var_23_13 == var_23_6
+					for iter_27_0 = 1, #var_27_10 do
+						local var_27_13 = var_27_10[iter_27_0]
+						local var_27_14 = string.format("%s_%s", var_27_5, var_27_13:name())
+						local var_27_15 = var_27_13 == var_27_6
 
-						Managers.state.game_mode:set_object_set_enabled(var_23_14, var_23_15)
+						Managers.state.game_mode:set_object_set_enabled(var_27_14, var_27_15)
 					end
 				end
 			end
@@ -1017,22 +1141,22 @@ local var_0_2 = {
 		description = "automatically puts you in selected party on join",
 		category = "Player mechanics",
 		item_source = {},
-		load_items_source_func = function (arg_24_0)
-			local var_24_0 = Managers.party:parties()
+		load_items_source_func = function(arg_28_0)
+			local var_28_0 = Managers.party:parties()
 
-			table.clear(arg_24_0)
+			table.clear(arg_28_0)
 
-			arg_24_0[#arg_24_0 + 1] = "none"
+			arg_28_0[#arg_28_0 + 1] = "none"
 
-			for iter_24_0 = 1, #var_24_0 do
-				local var_24_1 = var_24_0[iter_24_0]
+			for iter_28_0 = 1, #var_28_0 do
+				local var_28_1 = var_28_0[iter_28_0]
 
-				arg_24_0[#arg_24_0 + 1] = var_24_1.party_id
+				arg_28_0[#arg_28_0 + 1] = var_28_1.party_id
 			end
 		end,
-		func = function (arg_25_0, arg_25_1)
-			if arg_25_0[arg_25_1] then
-				-- Nothing
+		func = function(arg_29_0, arg_29_1)
+			if arg_29_0[arg_29_1] then
+				-- block empty
 			end
 		end
 	},
@@ -1041,20 +1165,20 @@ local var_0_2 = {
 		description = "Switch what party you want debugging spawning (P) AI units to belong to",
 		category = "Player mechanics recommended",
 		item_source = {},
-		load_items_source_func = function (arg_26_0)
-			local var_26_0 = Managers.state.side:sides()
+		load_items_source_func = function(arg_30_0)
+			local var_30_0 = Managers.state.side:sides()
 
-			table.clear(arg_26_0)
+			table.clear(arg_30_0)
 
-			for iter_26_0, iter_26_1 in pairs(var_26_0) do
-				arg_26_0[#arg_26_0 + 1] = iter_26_1.side_id
+			for iter_30_0, iter_30_1 in pairs(var_30_0) do
+				arg_30_0[#arg_30_0 + 1] = iter_30_1.side_id
 			end
 		end,
-		func = function (arg_27_0, arg_27_1)
-			local var_27_0 = arg_27_0[arg_27_1]
+		func = function(arg_31_0, arg_31_1)
+			local var_31_0 = arg_31_0[arg_31_1]
 
-			if var_27_0 then
-				Managers.state.conflict:set_debug_spawn_side(var_27_0)
+			if var_31_0 then
+				Managers.state.conflict:set_debug_spawn_side(var_31_0)
 			end
 		end
 	},
@@ -1176,18 +1300,18 @@ local var_0_2 = {
 		description = "Resets all talents for the current career. Needs to be done outside of a menu to take effect",
 		category = "Player mechanics",
 		setting_name = "reset_career_talents",
-		func = function ()
-			local var_28_0 = Managers.backend
-			local var_28_1 = Managers.player:local_player():career_name()
+		func = function()
+			local var_32_0 = Managers.backend
+			local var_32_1 = Managers.player:local_player():career_name()
 
-			var_28_0:get_interface("talents"):set_talents(var_28_1, {
+			var_32_0:get_interface("talents"):set_talents(var_32_1, {
 				0,
 				0,
 				0,
 				0,
 				0
 			})
-			var_28_0:commit(true)
+			var_32_0:commit(true)
 		end
 	},
 	{
@@ -1273,28 +1397,28 @@ local var_0_2 = {
 		setting_name = "Add Buff",
 		category = "Player mechanics",
 		item_source = {},
-		load_items_source_func = function (arg_29_0)
-			table.clear(arg_29_0)
+		load_items_source_func = function(arg_33_0)
+			table.clear(arg_33_0)
 
-			local var_29_0 = BuffTemplates
+			local var_33_0 = BuffTemplates
 
-			for iter_29_0, iter_29_1 in pairs(var_29_0) do
-				iter_29_1 = BuffUtils.get_buff_template(iter_29_0)
+			for iter_33_0, iter_33_1 in pairs(var_33_0) do
+				iter_33_1 = BuffUtils.get_buff_template(iter_33_0)
 
-				if iter_29_1.buffs and iter_29_1.buffs[1] and not iter_29_1.buffs[1].dormant then
-					arg_29_0[#arg_29_0 + 1] = iter_29_0
+				if iter_33_1.buffs and iter_33_1.buffs[1] and not iter_33_1.buffs[1].dormant then
+					arg_33_0[#arg_33_0 + 1] = iter_33_0
 				end
 			end
 
-			table.sort(arg_29_0)
+			table.sort(arg_33_0)
 		end,
-		func = function (arg_30_0, arg_30_1)
-			local var_30_0 = arg_30_0[arg_30_1]
-			local var_30_1 = Managers.player:local_player().player_unit
-			local var_30_2 = Managers.state.entity:system("buff_system")
-			local var_30_3 = false
+		func = function(arg_34_0, arg_34_1)
+			local var_34_0 = arg_34_0[arg_34_1]
+			local var_34_1 = Managers.player:local_player().player_unit
+			local var_34_2 = Managers.state.entity:system("buff_system")
+			local var_34_3 = false
 
-			var_30_2:add_buff(var_30_1, var_30_0, var_30_1, var_30_3)
+			var_34_2:add_buff(var_34_1, var_34_0, var_34_1, var_34_3)
 		end
 	},
 	{
@@ -1373,7 +1497,7 @@ local var_0_2 = {
 		description = "RESETS all achievements/trophies",
 		category = "Player mechanics",
 		setting_name = "achievement_reset",
-		func = function ()
+		func = function()
 			Managers.state.achievement:reset()
 		end
 	},
@@ -1467,11 +1591,11 @@ local var_0_2 = {
 			1400,
 			1600
 		},
-		custom_item_source_order = function (arg_32_0, arg_32_1)
-			for iter_32_0, iter_32_1 in ipairs(arg_32_0) do
-				local var_32_0 = iter_32_1
+		custom_item_source_order = function(arg_36_0, arg_36_1)
+			for iter_36_0, iter_36_1 in ipairs(arg_36_0) do
+				local var_36_0 = iter_36_1
 
-				arg_32_1[#arg_32_1 + 1] = var_32_0
+				arg_36_1[#arg_36_1 + 1] = var_36_0
 			end
 		end
 	},
@@ -1507,11 +1631,11 @@ local var_0_2 = {
 			775,
 			800
 		},
-		custom_item_source_order = function (arg_33_0, arg_33_1)
-			for iter_33_0, iter_33_1 in ipairs(arg_33_0) do
-				local var_33_0 = iter_33_1
+		custom_item_source_order = function(arg_37_0, arg_37_1)
+			for iter_37_0, iter_37_1 in ipairs(arg_37_0) do
+				local var_37_0 = iter_37_1
 
-				arg_33_1[#arg_33_1 + 1] = var_33_0
+				arg_37_1[#arg_37_1 + 1] = var_37_0
 			end
 		end
 	},
@@ -1569,31 +1693,31 @@ local var_0_2 = {
 		category = "Versus",
 		close_when_selected = true,
 		item_source = {},
-		load_items_source_func = function (arg_34_0)
-			table.clear(arg_34_0)
+		load_items_source_func = function(arg_38_0)
+			table.clear(arg_38_0)
 
 			if Managers.level_transition_handler:in_hub_level() or Managers.mechanism:current_mechanism_name() ~= "versus" then
 				return
 			end
 
-			local var_34_0 = Managers.mechanism:game_mechanism()
-			local var_34_1 = var_34_0:get_objective_settings().num_sets
-			local var_34_2 = var_34_0:get_current_set()
+			local var_38_0 = Managers.mechanism:game_mechanism()
+			local var_38_1 = var_38_0:get_objective_settings().num_sets
+			local var_38_2 = var_38_0:get_current_set()
 
-			for iter_34_0 = 1, var_34_1 do
-				if var_34_2 < iter_34_0 then
-					arg_34_0[#arg_34_0 + 1] = iter_34_0
+			for iter_38_0 = 1, var_38_1 do
+				if var_38_2 < iter_38_0 then
+					arg_38_0[#arg_38_0 + 1] = iter_38_0
 				end
 			end
 		end,
-		func = function (arg_35_0, arg_35_1)
-			local var_35_0 = arg_35_0[arg_35_1]
+		func = function(arg_39_0, arg_39_1)
+			local var_39_0 = arg_39_0[arg_39_1]
 
-			if not var_35_0 then
+			if not var_39_0 then
 				return
 			end
 
-			Managers.mechanism:game_mechanism():debug_skip_to_set(var_35_0)
+			Managers.mechanism:game_mechanism():debug_skip_to_set(var_39_0)
 		end
 	},
 	{
@@ -1602,7 +1726,7 @@ local var_0_2 = {
 		setting_name = "vs_end_match",
 		category = "Versus",
 		propagate_to_server = true,
-		func = function (arg_36_0, arg_36_1)
+		func = function(arg_40_0, arg_40_1)
 			if Managers.level_transition_handler:in_hub_level() or Managers.mechanism:current_mechanism_name() ~= "versus" then
 				return
 			end
@@ -1630,21 +1754,21 @@ local var_0_2 = {
 			50,
 			100
 		},
-		custom_item_source_order = function (arg_37_0, arg_37_1)
-			for iter_37_0, iter_37_1 in ipairs(arg_37_0) do
-				local var_37_0 = iter_37_1
+		custom_item_source_order = function(arg_41_0, arg_41_1)
+			for iter_41_0, iter_41_1 in ipairs(arg_41_0) do
+				local var_41_0 = iter_41_1
 
-				arg_37_1[#arg_37_1 + 1] = var_37_0
+				arg_41_1[#arg_41_1 + 1] = var_41_0
 			end
 		end,
-		func = function (arg_38_0, arg_38_1)
+		func = function(arg_42_0, arg_42_1)
 			if Managers.level_transition_handler:in_hub_level() then
 				return
 			end
 
-			local var_38_0 = arg_38_0[arg_38_1]
+			local var_42_0 = arg_42_0[arg_42_1]
 
-			Managers.mechanism:game_mechanism():win_conditions():debug_add_score(var_38_0)
+			Managers.mechanism:game_mechanism():win_conditions():debug_add_score(var_42_0)
 		end
 	},
 	{
@@ -1657,10 +1781,10 @@ local var_0_2 = {
 		description = "Unhoists local player",
 		setting_name = "vs_unhoist_local_player",
 		category = "Versus",
-		func = function (arg_39_0, arg_39_1)
-			local var_39_0 = Managers.player:local_player(1).player_unit
+		func = function(arg_43_0, arg_43_1)
+			local var_43_0 = Managers.player:local_player(1).player_unit
 
-			StatusUtils.set_grabbed_by_pack_master_network("pack_master_dropping", var_39_0, true, nil)
+			StatusUtils.set_grabbed_by_pack_master_network("pack_master_dropping", var_43_0, true, nil)
 		end
 	},
 	{
@@ -1668,36 +1792,36 @@ local var_0_2 = {
 		description = "Adds Versus Experience to your account.",
 		category = "Versus",
 		item_source = {},
-		load_items_source_func = function (arg_40_0)
-			table.clear(arg_40_0)
+		load_items_source_func = function(arg_44_0)
+			table.clear(arg_44_0)
 
-			arg_40_0[1] = 100
-			arg_40_0[2] = 500
-			arg_40_0[3] = 2000
-			arg_40_0[4] = 5000
-			arg_40_0[5] = 10000
-			arg_40_0[6] = 100000
+			arg_44_0[1] = 100
+			arg_44_0[2] = 500
+			arg_44_0[3] = 2000
+			arg_44_0[4] = 5000
+			arg_44_0[5] = 10000
+			arg_44_0[6] = 100000
 		end,
-		func = function (arg_41_0, arg_41_1)
-			local var_41_0 = Managers.backend
-			local var_41_1 = arg_41_0[arg_41_1] or 1
-			local var_41_2 = Managers.player:local_player(1)
+		func = function(arg_45_0, arg_45_1)
+			local var_45_0 = Managers.backend
+			local var_45_1 = arg_45_0[arg_45_1] or 1
+			local var_45_2 = Managers.player:local_player(1)
 
-			local function var_41_3(arg_42_0)
-				local var_42_0 = arg_42_0.FunctionResult
-				local var_42_1 = arg_42_0.FunctionResult.data.player_profile_data
+			local function var_45_3(arg_46_0)
+				local var_46_0 = arg_46_0.FunctionResult
+				local var_46_1 = arg_46_0.FunctionResult.data.player_profile_data
 
-				Managers.backend:get_backend_mirror():set_read_only_data("vs_profile_data", cjson.encode(var_42_1), true)
+				Managers.backend:get_backend_mirror():set_read_only_data("vs_profile_data", cjson.encode(var_46_1), true)
 			end
 
-			local var_41_4 = {
+			local var_45_4 = {
 				FunctionName = "devAddVersusExperience",
 				FunctionParameter = {
-					experience = var_41_1
+					experience = var_45_1
 				}
 			}
 
-			var_41_0._backend_mirror:request_queue():enqueue(var_41_4, var_41_3, false)
+			var_45_0._backend_mirror:request_queue():enqueue(var_45_4, var_45_3, false)
 		end
 	},
 	{
@@ -1705,36 +1829,36 @@ local var_0_2 = {
 		description = "Adds Versus Versus Currency.",
 		category = "Versus",
 		item_source = {},
-		load_items_source_func = function (arg_43_0)
-			table.clear(arg_43_0)
+		load_items_source_func = function(arg_47_0)
+			table.clear(arg_47_0)
 
-			arg_43_0[1] = 1
-			arg_43_0[2] = 5
-			arg_43_0[3] = 10
-			arg_43_0[4] = 50
-			arg_43_0[5] = 100
+			arg_47_0[1] = 1
+			arg_47_0[2] = 5
+			arg_47_0[3] = 10
+			arg_47_0[4] = 50
+			arg_47_0[5] = 100
 		end,
-		func = function (arg_44_0, arg_44_1)
-			local var_44_0 = Managers.backend
-			local var_44_1 = arg_44_0[arg_44_1] or 1
-			local var_44_2 = var_44_0:get_interface("peddler")
-			local var_44_3 = var_44_2:get_chips("VS")
-			local var_44_4 = Managers.player:local_player(1)
+		func = function(arg_48_0, arg_48_1)
+			local var_48_0 = Managers.backend
+			local var_48_1 = arg_48_0[arg_48_1] or 1
+			local var_48_2 = var_48_0:get_interface("peddler")
+			local var_48_3 = var_48_2:get_chips("VS")
+			local var_48_4 = Managers.player:local_player(1)
 
-			local function var_44_5(arg_45_0)
-				local var_45_0 = arg_45_0.FunctionResult
+			local function var_48_5(arg_49_0)
+				local var_49_0 = arg_49_0.FunctionResult
 
-				var_44_2:set_chips("VS", var_45_0.new_vs_currency)
+				var_48_2:set_chips("VS", var_49_0.new_vs_currency)
 			end
 
-			local var_44_6 = {
+			local var_48_6 = {
 				FunctionName = "devGrantVersusCurrency",
 				FunctionParameter = {
-					amount = var_44_1
+					amount = var_48_1
 				}
 			}
 
-			var_44_0._backend_mirror:request_queue():enqueue(var_44_6, var_44_5, false)
+			var_48_0._backend_mirror:request_queue():enqueue(var_48_6, var_48_5, false)
 		end
 	},
 	{
@@ -1921,28 +2045,28 @@ local var_0_2 = {
 		description = "Spawns a mini patrol right now",
 		category = "AI",
 		item_source = {},
-		load_items_source_func = function (arg_46_0)
-			table.clear(arg_46_0)
+		load_items_source_func = function(arg_50_0)
+			table.clear(arg_50_0)
 
-			for iter_46_0, iter_46_1 in pairs(HordeSettings) do
-				arg_46_0[#arg_46_0 + 1] = iter_46_1.mini_patrol_composition
+			for iter_50_0, iter_50_1 in pairs(HordeSettings) do
+				arg_50_0[#arg_50_0 + 1] = iter_50_1.mini_patrol_composition
 			end
 		end,
-		func = function (arg_47_0, arg_47_1)
-			local var_47_0 = arg_47_0[arg_47_1]
+		func = function(arg_51_0, arg_51_1)
+			local var_51_0 = arg_51_0[arg_51_1]
 
-			if var_47_0 then
-				print("Debug spawning mini patrol of composition:", var_47_0)
+			if var_51_0 then
+				print("Debug spawning mini patrol of composition:", var_51_0)
 
-				local var_47_1 = {
+				local var_51_1 = {
 					size = 0,
 					template = "mini_patrol",
 					id = Managers.state.entity:system("ai_group_system"):generate_group_id()
 				}
-				local var_47_2 = Managers.time:time("game")
-				local var_47_3
+				local var_51_2 = Managers.time:time("game")
+				local var_51_3
 
-				Managers.state.conflict:mini_patrol(var_47_2, nil, var_47_3, var_47_0, var_47_1)
+				Managers.state.conflict:mini_patrol(var_51_2, nil, var_51_3, var_51_0, var_51_1)
 			end
 		end
 	},
@@ -1968,11 +2092,11 @@ local var_0_2 = {
 			2,
 			3
 		},
-		custom_item_source_order = function (arg_48_0, arg_48_1)
-			for iter_48_0, iter_48_1 in ipairs(arg_48_0) do
-				local var_48_0 = iter_48_1
+		custom_item_source_order = function(arg_52_0, arg_52_1)
+			for iter_52_0, iter_52_1 in ipairs(arg_52_0) do
+				local var_52_0 = iter_52_1
 
-				arg_48_1[#arg_48_1 + 1] = var_48_0
+				arg_52_1[#arg_52_1 + 1] = var_52_0
 			end
 		end
 	},
@@ -2034,7 +2158,7 @@ local var_0_2 = {
 		description = "The debug_pickup_spawners option must be set to true when using this feature",
 		category = "Pickup Spawners",
 		setting_name = "Toggle Pickup Spawners Draw Mode",
-		func = function ()
+		func = function()
 			Managers.state.entity:system("pickup_system"):debug_draw_spread_pickups()
 		end
 	},
@@ -2228,7 +2352,7 @@ local var_0_2 = {
 		description = "Draws patrols routes",
 		category = "AI",
 		setting_name = "draw_patrol_routes",
-		func = function ()
+		func = function()
 			Managers.state.conflict.level_analysis:draw_patrol_routes()
 		end
 	},
@@ -2236,7 +2360,7 @@ local var_0_2 = {
 		description = "Draws patrol start positions",
 		category = "AI",
 		setting_name = "draw_patrol_start_positions",
-		func = function ()
+		func = function()
 			Managers.state.conflict.level_analysis:draw_patrol_start_positions()
 		end
 	},
@@ -2251,15 +2375,15 @@ local var_0_2 = {
 			8,
 			16
 		},
-		custom_item_source_order = function (arg_52_0, arg_52_1)
-			table.append(arg_52_1, arg_52_0)
+		custom_item_source_order = function(arg_56_0, arg_56_1)
+			table.append(arg_56_1, arg_56_0)
 		end
 	},
 	{
 		description = "Spawns a boss patrol at the closest spawner, use draw_patrol_start_positions to see spawners",
 		category = "AI",
 		setting_name = "spawn_patrol_at_closest_spawner",
-		func = function ()
+		func = function()
 			Managers.state.conflict:debug_spawn_spline_patrol_closest_spawner()
 		end
 	},
@@ -2286,27 +2410,27 @@ local var_0_2 = {
 		category = "AI",
 		description = "Change which difficulty tweak terror events will be played at.",
 		item_source = {},
-		load_items_source_func = function (arg_54_0)
-			table.clear(arg_54_0)
+		load_items_source_func = function(arg_58_0)
+			table.clear(arg_58_0)
 
-			for iter_54_0 = -DifficultyTweak.range, DifficultyTweak.range do
-				arg_54_0[#arg_54_0 + 1] = iter_54_0
+			for iter_58_0 = -DifficultyTweak.range, DifficultyTweak.range do
+				arg_58_0[#arg_58_0 + 1] = iter_58_0
 			end
 
-			table.sort(arg_54_0)
+			table.sort(arg_58_0)
 
-			arg_54_0[#arg_54_0 + 1] = "[clear value]"
+			arg_58_0[#arg_58_0 + 1] = "[clear value]"
 		end
 	},
 	{
 		description = "Draws a sphere and text at each respawner unit in the level. Must set 'debug_ai_recycler=true'",
 		category = "AI",
 		setting_name = "debug_spawn_ogre_from_closest_boss_spawner",
-		func = function ()
+		func = function()
 			if script_data.debug_ai_recycler then
-				local var_55_0 = false
+				local var_59_0 = false
 
-				Managers.state.conflict.level_analysis:debug_spawn_boss_from_closest_spawner_to_player(var_55_0)
+				Managers.state.conflict.level_analysis:debug_spawn_boss_from_closest_spawner_to_player(var_59_0)
 			end
 		end
 	},
@@ -2314,7 +2438,7 @@ local var_0_2 = {
 		description = "Injects all patrols into the main path'",
 		category = "AI",
 		setting_name = "debug_spawn_all_boss_patrols",
-		func = function ()
+		func = function()
 			print("All boss patrols injected into the main path now")
 			Managers.state.conflict.level_analysis:spawn_all_boss_spline_patrols()
 		end
@@ -2323,7 +2447,7 @@ local var_0_2 = {
 		description = "Injects all bosses into the main path'",
 		category = "AI",
 		setting_name = "debug_inject_bosses_in_all_boss_spawners",
-		func = function ()
+		func = function()
 			print("All boss enemies are now injected into the main path!")
 			Managers.state.conflict.level_analysis:inject_all_bosses_into_main_path()
 		end
@@ -2332,7 +2456,7 @@ local var_0_2 = {
 		description = "Debug spawns one special through the specials spawning system.",
 		category = "AI",
 		setting_name = "debug_spawn_special",
-		func = function ()
+		func = function()
 			Managers.state.conflict.specials_pacing:debug_spawn()
 		end
 	},
@@ -2346,7 +2470,7 @@ local var_0_2 = {
 		description = "Draws lines between all navigation-groups. Remove lines by pressing 'X'. ",
 		category = "AI",
 		setting_name = "draw_navigation_group_connections",
-		func = function ()
+		func = function()
 			Managers.state.conflict.navigation_group_manager:draw_group_connections()
 		end
 	},
@@ -2619,22 +2743,22 @@ local var_0_2 = {
 			short = true,
 			long = true
 		},
-		func = function (arg_60_0, arg_60_1)
-			local var_60_0 = arg_60_0[arg_60_1]
-			local var_60_1 = Managers.state.entity:system("ai_system"):nav_world()
+		func = function(arg_64_0, arg_64_1)
+			local var_64_0 = arg_64_0[arg_64_1]
+			local var_64_1 = Managers.state.entity:system("ai_system"):nav_world()
 
-			if var_60_0 == "off" then
+			if var_64_0 == "off" then
 				print("Not changing pathfinding budget")
-			elseif var_60_0 == "short" then
-				local var_60_2 = 0.1
+			elseif var_64_0 == "short" then
+				local var_64_2 = 0.1
 
-				printf("Changing pathfinding budget to %.1fms", var_60_2)
-				GwNavWorld.set_pathfinder_budget(var_60_1, var_60_2 * 0.001)
+				printf("Changing pathfinding budget to %.1fms", var_64_2)
+				GwNavWorld.set_pathfinder_budget(var_64_1, var_64_2 * 0.001)
 			else
-				local var_60_3 = 100
+				local var_64_3 = 100
 
-				printf("Changing pathfinding budget to %.1fms", var_60_3)
-				GwNavWorld.set_pathfinder_budget(var_60_1, var_60_3 * 0.001)
+				printf("Changing pathfinding budget to %.1fms", var_64_3)
+				GwNavWorld.set_pathfinder_budget(var_64_1, var_64_3 * 0.001)
 			end
 		end
 	},
@@ -2742,16 +2866,16 @@ local var_0_2 = {
 		category = "Gamemode/level",
 		description = "Change which difficulty tweak you play at. Restart required.",
 		item_source = {},
-		load_items_source_func = function (arg_61_0)
-			table.clear(arg_61_0)
+		load_items_source_func = function(arg_65_0)
+			table.clear(arg_65_0)
 
-			for iter_61_0 = -DifficultyTweak.range, DifficultyTweak.range do
-				arg_61_0[#arg_61_0 + 1] = iter_61_0
+			for iter_65_0 = -DifficultyTweak.range, DifficultyTweak.range do
+				arg_65_0[#arg_65_0 + 1] = iter_65_0
 			end
 
-			table.sort(arg_61_0)
+			table.sort(arg_65_0)
 
-			arg_61_0[#arg_61_0 + 1] = "[clear value]"
+			arg_65_0[#arg_65_0 + 1] = "[clear value]"
 		end
 	},
 	{
@@ -2759,33 +2883,33 @@ local var_0_2 = {
 		setting_name = "set_difficulty",
 		category = "Gamemode/level",
 		item_source = {},
-		load_items_source_func = function (arg_62_0)
-			table.clear(arg_62_0)
+		load_items_source_func = function(arg_66_0)
+			table.clear(arg_66_0)
 
-			for iter_62_0, iter_62_1 in pairs(Difficulties) do
-				arg_62_0[#arg_62_0 + 1] = iter_62_1
+			for iter_66_0, iter_66_1 in pairs(Difficulties) do
+				arg_66_0[#arg_66_0 + 1] = iter_66_1
 			end
 
-			table.sort(arg_62_0)
+			table.sort(arg_66_0)
 		end,
-		func = function (arg_63_0, arg_63_1)
-			local var_63_0 = arg_63_0[arg_63_1]
-			local var_63_1, var_63_2 = Managers.state.difficulty:get_difficulty()
+		func = function(arg_67_0, arg_67_1)
+			local var_67_0 = arg_67_0[arg_67_1]
+			local var_67_1, var_67_2 = Managers.state.difficulty:get_difficulty()
 
-			Managers.state.difficulty:set_difficulty(var_63_0, var_63_2)
+			Managers.state.difficulty:set_difficulty(var_67_0, var_67_2)
 
-			local var_63_3 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
+			local var_67_3 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
 
-			for iter_63_0 = 1, #var_63_3 do
-				local var_63_4 = var_63_3[iter_63_0]
-				local var_63_5 = ScriptUnit.has_extension(var_63_4, "attack_intensity_system")
+			for iter_67_0 = 1, #var_67_3 do
+				local var_67_4 = var_67_3[iter_67_0]
+				local var_67_5 = ScriptUnit.has_extension(var_67_4, "attack_intensity_system")
 
-				if var_63_5 then
-					var_63_5:refresh_difficulty()
+				if var_67_5 then
+					var_67_5:refresh_difficulty()
 				end
 			end
 
-			print("Set difficulty to " .. var_63_0 .. var_63_2)
+			print("Set difficulty to " .. var_67_0 .. var_67_2)
 		end
 	},
 	{
@@ -2793,21 +2917,21 @@ local var_0_2 = {
 		category = "Gamemode/level",
 		description = "Set difficulty tweak to make the current difficulty slightly easier/harder. " .. "No restart required for most stuff, mostly used for testing enemies. Some stuff might need restart of level.",
 		item_source = {},
-		load_items_source_func = function (arg_64_0)
-			table.clear(arg_64_0)
+		load_items_source_func = function(arg_68_0)
+			table.clear(arg_68_0)
 
-			for iter_64_0 = -DifficultyTweak.range, DifficultyTweak.range do
-				arg_64_0[#arg_64_0 + 1] = iter_64_0
+			for iter_68_0 = -DifficultyTweak.range, DifficultyTweak.range do
+				arg_68_0[#arg_68_0 + 1] = iter_68_0
 			end
 
-			table.sort(arg_64_0)
+			table.sort(arg_68_0)
 		end,
-		func = function (arg_65_0, arg_65_1)
-			local var_65_0, var_65_1 = Managers.state.difficulty:get_difficulty()
-			local var_65_2 = arg_65_0[arg_65_1]
+		func = function(arg_69_0, arg_69_1)
+			local var_69_0, var_69_1 = Managers.state.difficulty:get_difficulty()
+			local var_69_2 = arg_69_0[arg_69_1]
 
-			Managers.state.difficulty:set_difficulty(var_65_0, var_65_2)
-			print("Set difficulty to " .. var_65_0 .. var_65_2)
+			Managers.state.difficulty:set_difficulty(var_69_0, var_69_2)
+			print("Set difficulty to " .. var_69_0 .. var_69_2)
 		end
 	},
 	{
@@ -2896,20 +3020,20 @@ local var_0_2 = {
 			"Listen",
 			"[clear value]"
 		},
-		load_items_source_func = function (arg_66_0)
-			table.clear(arg_66_0)
+		load_items_source_func = function(arg_70_0)
+			table.clear(arg_70_0)
 
-			arg_66_0[1] = "Listen"
-			arg_66_0[2] = "[clear value]"
+			arg_70_0[1] = "Listen"
+			arg_70_0[2] = "[clear value]"
 
-			local var_66_0 = rawget(_G, "_sound_cue_breakpoint_set")
+			local var_70_0 = rawget(_G, "_sound_cue_breakpoint_set")
 
-			if var_66_0 then
-				local var_66_1 = #arg_66_0
+			if var_70_0 then
+				local var_70_1 = #arg_70_0
 
-				for iter_66_0 in pairs(var_66_0) do
-					var_66_1 = var_66_1 + 1
-					arg_66_0[var_66_1] = iter_66_0
+				for iter_70_0 in pairs(var_70_0) do
+					var_70_1 = var_70_1 + 1
+					arg_70_0[var_70_1] = iter_70_0
 				end
 			end
 		end
@@ -5803,7 +5927,7 @@ local var_0_2 = {
 		description = "Bind to a numpad key and do it.",
 		category = "Visual/audio",
 		setting_name = "take_screenshot",
-		func = function ()
+		func = function()
 			FrameCapture.screen_shot("console_send", 2)
 		end
 	},
@@ -5844,25 +5968,25 @@ local var_0_2 = {
 			rare_protanomaly = true,
 			very_rare_tritanomaly = true
 		},
-		func = function (arg_68_0, arg_68_1)
-			local var_68_0 = arg_68_0[arg_68_1]
-			local var_68_1 = true
-			local var_68_2 = 0
+		func = function(arg_72_0, arg_72_1)
+			local var_72_0 = arg_72_0[arg_72_1]
+			local var_72_1 = true
+			local var_72_2 = 0
 
-			if var_68_0 == "off" then
-				var_68_1 = false
+			if var_72_0 == "off" then
+				var_72_1 = false
 			else
-				var_68_2 = var_68_0 == "rare_protanomaly" and 0 or var_68_0 == "common_deuteranomaly" and 1 or 2
+				var_72_2 = var_72_0 == "rare_protanomaly" and 0 or var_72_0 == "common_deuteranomaly" and 1 or 2
 			end
 
-			if var_68_1 then
-				printf("Turning on mode %d of color blindness simulation.", var_68_2)
-				Application.set_user_setting("render_settings", "color_blindness_mode", var_68_2)
+			if var_72_1 then
+				printf("Turning on mode %d of color blindness simulation.", var_72_2)
+				Application.set_user_setting("render_settings", "color_blindness_mode", var_72_2)
 			else
 				printf("Turning off color blindness simulation.")
 			end
 
-			Application.set_user_setting("render_settings", "simulate_color_blindness", var_68_1)
+			Application.set_user_setting("render_settings", "simulate_color_blindness", var_72_1)
 			Application.apply_user_settings()
 			GlobalShaderFlags.apply_settings()
 		end
@@ -6075,17 +6199,17 @@ local var_0_2 = {
 			8,
 			16
 		},
-		custom_item_source_order = function (arg_69_0, arg_69_1)
-			for iter_69_0, iter_69_1 in ipairs(arg_69_0) do
-				local var_69_0 = iter_69_1
+		custom_item_source_order = function(arg_73_0, arg_73_1)
+			for iter_73_0, iter_73_1 in ipairs(arg_73_0) do
+				local var_73_0 = iter_73_1
 
-				arg_69_1[#arg_69_1 + 1] = var_69_0
+				arg_73_1[#arg_73_1 + 1] = var_73_0
 			end
 		end,
-		func = function (arg_70_0, arg_70_1)
-			local var_70_0 = arg_70_0[arg_70_1]
+		func = function(arg_74_0, arg_74_1)
+			local var_74_0 = arg_74_0[arg_74_1]
 
-			script_data.backend_response_latency = var_70_0
+			script_data.backend_response_latency = var_74_0
 		end
 	},
 	{
@@ -6318,20 +6442,20 @@ local var_0_2 = {
 		item_source = {
 			"[clear value]"
 		},
-		load_items_source_func = function (arg_71_0)
-			table.clear(arg_71_0)
+		load_items_source_func = function(arg_75_0)
+			table.clear(arg_75_0)
 
-			local var_71_0 = Managers.state.entity:system("dialogue_system")
+			local var_75_0 = Managers.state.entity:system("dialogue_system")
 
-			if var_71_0 then
-				local var_71_1 = var_71_0:tagquery_database().rule_id_mapping
+			if var_75_0 then
+				local var_75_1 = var_75_0:tagquery_database().rule_id_mapping
 
-				for iter_71_0 = 1, #var_71_1 do
-					arg_71_0[iter_71_0] = var_71_1[iter_71_0].name
+				for iter_75_0 = 1, #var_75_1 do
+					arg_75_0[iter_75_0] = var_75_1[iter_75_0].name
 				end
 			end
 
-			table.insert(arg_71_0, 1, "[clear value]")
+			table.insert(arg_75_0, 1, "[clear value]")
 		end
 	},
 	{
@@ -6339,22 +6463,22 @@ local var_0_2 = {
 		setting_name = "filter_single_dialogue_file",
 		category = "Dialogue",
 		item_source = {},
-		load_items_source_func = function (arg_72_0)
-			table.clear(arg_72_0)
+		load_items_source_func = function(arg_76_0)
+			table.clear(arg_76_0)
 
 			if Managers.state.entity:system("dialogue_system") then
-				local var_72_0 = Managers.state.entity:system("dialogue_system"):tagquery_loader().debug_loaded_files
+				local var_76_0 = Managers.state.entity:system("dialogue_system"):tagquery_loader().debug_loaded_files
 
-				if var_72_0 then
-					for iter_72_0 in pairs(var_72_0) do
-						arg_72_0[#arg_72_0 + 1] = string.match(iter_72_0, "^.+/(.+)$")
+				if var_76_0 then
+					for iter_76_0 in pairs(var_76_0) do
+						arg_76_0[#arg_76_0 + 1] = string.match(iter_76_0, "^.+/(.+)$")
 					end
 
-					table.sort(arg_72_0)
+					table.sort(arg_76_0)
 				end
 			end
 
-			table.insert(arg_72_0, 1, "[clear value]")
+			table.insert(arg_76_0, 1, "[clear value]")
 		end
 	},
 	{
@@ -6362,27 +6486,27 @@ local var_0_2 = {
 		description = "Used to debug dialog files, facial expressions and missing vo/subtitles. To skip use: DebugVo.jump_to(('line_number/line_id')",
 		category = "Dialogue",
 		item_source = {},
-		load_items_source_func = function (arg_73_0)
-			table.clear(arg_73_0)
+		load_items_source_func = function(arg_77_0)
+			table.clear(arg_77_0)
 
-			local var_73_0 = Managers.state.entity:system("dialogue_system")
+			local var_77_0 = Managers.state.entity:system("dialogue_system")
 
-			if var_73_0 then
-				local var_73_1 = var_73_0:tagquery_loader().debug_loaded_files
+			if var_77_0 then
+				local var_77_1 = var_77_0:tagquery_loader().debug_loaded_files
 
-				if var_73_1 then
-					for iter_73_0 in pairs(var_73_1) do
-						arg_73_0[#arg_73_0 + 1] = string.match(iter_73_0, "^.+/(.+)$")
+				if var_77_1 then
+					for iter_77_0 in pairs(var_77_1) do
+						arg_77_0[#arg_77_0 + 1] = string.match(iter_77_0, "^.+/(.+)$")
 					end
 
-					table.sort(arg_73_0)
+					table.sort(arg_77_0)
 				end
 			end
 
-			table.insert(arg_73_0, 1, "[clear value]")
+			table.insert(arg_77_0, 1, "[clear value]")
 		end,
-		func = function (arg_74_0, arg_74_1)
-			Managers.state.entity:system("dialogue_system"):debug_vo_by_file(arg_74_0[arg_74_1], false)
+		func = function(arg_78_0, arg_78_1)
+			Managers.state.entity:system("dialogue_system"):debug_vo_by_file(arg_78_0[arg_78_1], false)
 		end
 	},
 	{
@@ -6593,7 +6717,7 @@ local var_0_2 = {
 		description = "Marks all shop items as unseen.",
 		category = "UI",
 		setting_name = "mark_all_unseen",
-		func = function ()
+		func = function()
 			PlayerData.seen_shop_items = {}
 
 			Managers.save:auto_save(SaveFileName, SaveData)
@@ -6658,43 +6782,43 @@ local var_0_2 = {
 			15,
 			30
 		},
-		custom_item_source_order = function (arg_76_0, arg_76_1)
-			for iter_76_0, iter_76_1 in ipairs(arg_76_0) do
-				local var_76_0 = iter_76_1
+		custom_item_source_order = function(arg_80_0, arg_80_1)
+			for iter_80_0, iter_80_1 in ipairs(arg_80_0) do
+				local var_80_0 = iter_80_1
 
-				if type(var_76_0) == "string" then
-					arg_76_1[iter_76_0] = var_76_0
-				elseif type(var_76_0) == "table" then
-					arg_76_1[iter_76_0] = {
-						var_76_0[1],
-						var_76_0[2] or var_76_0[1]
+				if type(var_80_0) == "string" then
+					arg_80_1[iter_80_0] = var_80_0
+				elseif type(var_80_0) == "table" then
+					arg_80_1[iter_80_0] = {
+						var_80_0[1],
+						var_80_0[2] or var_80_0[1]
 					}
 				else
-					arg_76_1[iter_76_0] = {
-						var_76_0,
-						var_76_0
+					arg_80_1[iter_80_0] = {
+						var_80_0,
+						var_80_0
 					}
 				end
 			end
 		end,
-		item_display_func = function (arg_77_0, arg_77_1, arg_77_2)
-			if type(arg_77_0) == "string" then
-				return arg_77_0
-			elseif type(arg_77_0) == "table" then
-				return string.format("%s - %s seconds", arg_77_0[1], arg_77_0[2] or arg_77_0[1])
+		item_display_func = function(arg_81_0, arg_81_1, arg_81_2)
+			if type(arg_81_0) == "string" then
+				return arg_81_0
+			elseif type(arg_81_0) == "table" then
+				return string.format("%s - %s seconds", arg_81_0[1], arg_81_0[2] or arg_81_0[1])
 			else
-				return string.format("%s second%s", arg_77_0, arg_77_0 == 1 and "s" or "")
+				return string.format("%s second%s", arg_81_0, arg_81_0 == 1 and "s" or "")
 			end
 		end,
-		func = function (arg_78_0, arg_78_1)
-			local var_78_0 = arg_78_0[arg_78_1]
+		func = function(arg_82_0, arg_82_1)
+			local var_82_0 = arg_82_0[arg_82_1]
 
-			if var_78_0 == "[clear value]" then
+			if var_82_0 == "[clear value]" then
 				script_data.package_loading_latency = nil
 			else
-				script_data.package_loading_latency = type(var_78_0) == "table" and var_78_0 or {
-					var_78_0,
-					var_78_0
+				script_data.package_loading_latency = type(var_82_0) == "table" and var_82_0 or {
+					var_82_0,
+					var_82_0
 				}
 			end
 		end
@@ -6728,7 +6852,7 @@ local var_0_2 = {
 		description = "Spawns all player characters base and husk units, and prints to console if any unit is missing any hit-zone actors etc. Units will spawn in base/husk pairs at (0,0,0) upwards into the sky. They will not be removed.",
 		category = "Misc",
 		setting_name = "check_player_base_and_husk_hitzones",
-		func = function ()
+		func = function()
 			CHECK_PLAYER_HITZONES()
 		end
 	},
@@ -6748,35 +6872,35 @@ local var_0_2 = {
 			throttle_fps_30 = true,
 			throttle_fps_5 = true
 		},
-		func = function (arg_80_0, arg_80_1)
-			local var_80_0 = arg_80_0[arg_80_1]
-			local var_80_1 = 60
+		func = function(arg_84_0, arg_84_1)
+			local var_84_0 = arg_84_0[arg_84_1]
+			local var_84_1 = 60
 
-			if var_80_0 == "default" then
+			if var_84_0 == "default" then
 				Application.set_time_step_policy("no_throttle")
 
 				return
-			elseif var_80_0 == "throttle_fps_1" then
-				var_80_1 = 1
-			elseif var_80_0 == "throttle_fps_5" then
-				var_80_1 = 5
-			elseif var_80_0 == "throttle_fps_10" then
-				var_80_1 = 10
-			elseif var_80_0 == "throttle_fps_15" then
-				var_80_1 = 15
-			elseif var_80_0 == "throttle_fps_20" then
-				var_80_1 = 20
-			elseif var_80_0 == "throttle_fps_25" then
-				var_80_1 = 25
-			elseif var_80_0 == "throttle_fps_30" then
-				var_80_1 = 30
-			elseif var_80_0 == "throttle_fps_45" then
-				var_80_1 = 45
-			elseif var_80_0 == "throttle_fps_60" then
-				var_80_1 = 60
+			elseif var_84_0 == "throttle_fps_1" then
+				var_84_1 = 1
+			elseif var_84_0 == "throttle_fps_5" then
+				var_84_1 = 5
+			elseif var_84_0 == "throttle_fps_10" then
+				var_84_1 = 10
+			elseif var_84_0 == "throttle_fps_15" then
+				var_84_1 = 15
+			elseif var_84_0 == "throttle_fps_20" then
+				var_84_1 = 20
+			elseif var_84_0 == "throttle_fps_25" then
+				var_84_1 = 25
+			elseif var_84_0 == "throttle_fps_30" then
+				var_84_1 = 30
+			elseif var_84_0 == "throttle_fps_45" then
+				var_84_1 = 45
+			elseif var_84_0 == "throttle_fps_60" then
+				var_84_1 = 60
 			end
 
-			Application.set_time_step_policy("throttle", var_80_1)
+			Application.set_time_step_policy("throttle", var_84_1)
 		end
 	},
 	{
@@ -7162,7 +7286,7 @@ local var_0_2 = {
 		description = "You have to restart the game for the settings to take effect",
 		category = "Render Settings",
 		setting_name = "Set high texture quality",
-		func = function ()
+		func = function()
 			DebugScreen.set_texture_quality(0)
 		end
 	},
@@ -7170,7 +7294,7 @@ local var_0_2 = {
 		description = "You have to restart the game for the settings to take effect",
 		category = "Render Settings",
 		setting_name = "Set low texture quality",
-		func = function ()
+		func = function()
 			DebugScreen.set_texture_quality(3)
 		end
 	},
@@ -7429,7 +7553,7 @@ local var_0_2 = {
 			verbose = true,
 			normal = true
 		},
-		func = function ()
+		func = function()
 			Managers.backend:refresh_log_level()
 		end
 	},
@@ -7457,7 +7581,7 @@ local var_0_2 = {
 		setting_name = "Complete current level",
 		propagate_to_server = true,
 		category = "Progression",
-		func = function ()
+		func = function()
 			Managers.state.game_mode:complete_level()
 		end
 	},
@@ -7467,7 +7591,7 @@ local var_0_2 = {
 		setting_name = "End Round",
 		propagate_to_server = true,
 		category = "Versus",
-		func = function ()
+		func = function()
 			Managers.state.game_mode:complete_level()
 
 			script_data.disable_gamemode_end = nil
@@ -7494,16 +7618,16 @@ local var_0_2 = {
 		close_when_selected = true,
 		setting_name = "Force Start Dedicated Server",
 		category = "Versus",
-		func = function ()
+		func = function()
 			if Managers.mechanism:get_state() ~= "inn" then
 				Debug.sticky_text("Tried force starting a dedicated server but was not in the keep.")
 
 				return
 			end
 
-			local var_86_0 = Managers.mechanism:dedicated_server_peer_id()
+			local var_90_0 = Managers.mechanism:dedicated_server_peer_id()
 
-			if not PEER_ID_TO_CHANNEL[var_86_0] then
+			if not PEER_ID_TO_CHANNEL[var_90_0] then
 				Debug.sticky_text("Tried force starting a dedicated server but is not connected to one.")
 
 				return
@@ -7517,7 +7641,7 @@ local var_0_2 = {
 		close_when_selected = true,
 		setting_name = "Start Round",
 		category = "Versus",
-		func = function ()
+		func = function()
 			if Managers.level_transition_handler:in_hub_level() then
 				return false, "Failed to start round - Match not started"
 			end
@@ -7531,9 +7655,12 @@ local var_0_2 = {
 		description = "Restart",
 		close_when_selected = true,
 		setting_name = "Retry current level",
+		propagate_to_server = true,
 		category = "Progression",
-		func = function ()
-			Managers.state.game_mode:retry_level()
+		func = function()
+			if Managers.state.network.is_server then
+				Managers.state.game_mode:retry_level()
+			end
 		end
 	},
 	{
@@ -7541,7 +7668,7 @@ local var_0_2 = {
 		close_when_selected = true,
 		setting_name = "Fail current level",
 		category = "Progression",
-		func = function ()
+		func = function()
 			Managers.state.game_mode:fail_level()
 		end
 	},
@@ -7549,7 +7676,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Complete act \"prologue\"",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_completed_act_levels("prologue", true)
 		end
 	},
@@ -7557,7 +7684,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Uncomplete act \"prologue\"",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_completed_act_levels("prologue", false)
 		end
 	},
@@ -7565,7 +7692,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Complete act \"act_1\"",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_completed_act_levels("act_1", true)
 		end
 	},
@@ -7573,7 +7700,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Uncomplete act \"act_1\"",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_completed_act_levels("act_1", false)
 		end
 	},
@@ -7581,7 +7708,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Complete act \"act_2\"",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_completed_act_levels("act_2", true)
 		end
 	},
@@ -7589,7 +7716,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Uncomplete act \"act_2\"",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_completed_act_levels("act_2", false)
 		end
 	},
@@ -7597,7 +7724,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Complete act \"act_3\"",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_completed_act_levels("act_3", true)
 		end
 	},
@@ -7605,7 +7732,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Uncomplete act \"act_3\"",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_completed_act_levels("act_3", false)
 		end
 	},
@@ -7613,7 +7740,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Complete act \"act_4\"",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_completed_act_levels("act_4", true)
 		end
 	},
@@ -7621,7 +7748,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Uncomplete act \"act_4\"",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_completed_act_levels("act_4", false)
 		end
 	},
@@ -7629,7 +7756,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Set completed game difficulty Normal",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_set_completed_game_difficulty(2)
 		end
 	},
@@ -7637,7 +7764,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Set completed game difficulty Hard",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_set_completed_game_difficulty(3)
 		end
 	},
@@ -7645,7 +7772,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Set completed game difficulty Nightmare",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_set_completed_game_difficulty(4)
 		end
 	},
@@ -7653,7 +7780,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Set completed game difficulty Cataclysm",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_set_completed_game_difficulty(5)
 		end
 	},
@@ -7661,12 +7788,12 @@ local var_0_2 = {
 		description = " ",
 		category = "Progression",
 		setting_name = "Complete DLC Celebrate",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.debug_complete_level("dlc_celebrate_crawl")
 
-			local var_104_0 = Managers.world:world("level_world")
+			local var_108_0 = Managers.world:world("level_world")
 
-			LevelHelper:flow_event(var_104_0, "lua_unlock_challenge_debug_event")
+			LevelHelper:flow_event(var_108_0, "lua_unlock_challenge_debug_event")
 		end
 	},
 	{
@@ -7674,103 +7801,103 @@ local var_0_2 = {
 		description = "Adds Experience to your account.",
 		category = "Progression",
 		item_source = {},
-		load_items_source_func = function (arg_105_0)
-			table.clear(arg_105_0)
+		load_items_source_func = function(arg_109_0)
+			table.clear(arg_109_0)
 
-			arg_105_0[1] = 1
-			arg_105_0[2] = 10
-			arg_105_0[3] = 100
-			arg_105_0[4] = 1000
-			arg_105_0[5] = 10000
-			arg_105_0[6] = 60850
+			arg_109_0[1] = 1
+			arg_109_0[2] = 10
+			arg_109_0[3] = 100
+			arg_109_0[4] = 1000
+			arg_109_0[5] = 10000
+			arg_109_0[6] = 60850
 		end,
-		func = function (arg_106_0, arg_106_1)
-			local var_106_0 = Managers.backend
-			local var_106_1 = arg_106_0[arg_106_1] or 1
-			local var_106_2 = Managers.player:local_player(1):profile_index()
-			local var_106_3 = SPProfiles[var_106_2].display_name
+		func = function(arg_110_0, arg_110_1)
+			local var_110_0 = Managers.backend
+			local var_110_1 = arg_110_0[arg_110_1] or 1
+			local var_110_2 = Managers.player:local_player(1):profile_index()
+			local var_110_3 = SPProfiles[var_110_2].display_name
 
-			local function var_106_4(arg_107_0)
-				local var_107_0 = arg_107_0.FunctionResult
-				local var_107_1 = var_106_0:get_interface("hero_attributes")
+			local function var_110_4(arg_111_0)
+				local var_111_0 = arg_111_0.FunctionResult
+				local var_111_1 = var_110_0:get_interface("hero_attributes")
 
-				var_107_1:set(var_106_3, "experience", var_107_0.data[var_106_3 .. "_experience"])
-				var_107_1:set(var_106_3, "experience_pool", var_107_0.data[var_106_3 .. "_experience_pool"])
+				var_111_1:set(var_110_3, "experience", var_111_0.data[var_110_3 .. "_experience"])
+				var_111_1:set(var_110_3, "experience_pool", var_111_0.data[var_110_3 .. "_experience_pool"])
 			end
 
-			local var_106_5 = {
+			local var_110_5 = {
 				FunctionName = "devAddExperience",
 				FunctionParameter = {
-					hero = var_106_3,
-					experience = var_106_1
+					hero = var_110_3,
+					experience = var_110_1
 				}
 			}
 
-			var_106_0._backend_mirror:request_queue():enqueue(var_106_5, var_106_4, false)
+			var_110_0._backend_mirror:request_queue():enqueue(var_110_5, var_110_4, false)
 		end
 	},
 	{
 		description = "Sets experience to 0.",
 		category = "Progression",
 		setting_name = "Reset Level",
-		func = function ()
-			local var_108_0 = Managers.backend
-			local var_108_1 = Managers.player:local_player(1):profile_index()
-			local var_108_2 = SPProfiles[var_108_1].display_name
-			local var_108_3 = var_108_0:get_interface("hero_attributes")
+		func = function()
+			local var_112_0 = Managers.backend
+			local var_112_1 = Managers.player:local_player(1):profile_index()
+			local var_112_2 = SPProfiles[var_112_1].display_name
+			local var_112_3 = var_112_0:get_interface("hero_attributes")
 
-			local function var_108_4(arg_109_0)
-				assert(arg_109_0.FunctionResult.data, arg_109_0.FunctionResult.reason)
-				var_108_3:set(var_108_2, "experience", arg_109_0.FunctionResult.data[var_108_2 .. "_experience"])
+			local function var_112_4(arg_113_0)
+				assert(arg_113_0.FunctionResult.data, arg_113_0.FunctionResult.reason)
+				var_112_3:set(var_112_2, "experience", arg_113_0.FunctionResult.data[var_112_2 .. "_experience"])
 			end
 
-			local var_108_5 = {
+			local var_112_5 = {
 				FunctionName = "devSetExperience",
 				FunctionParameter = {
 					experience = 1,
-					hero = var_108_2
+					hero = var_112_2
 				}
 			}
 
-			var_108_0._backend_mirror:request_queue():enqueue(var_108_5, var_108_4, false)
+			var_112_0._backend_mirror:request_queue():enqueue(var_112_5, var_112_4, false)
 		end
 	},
 	{
 		description = "Will add experience to above prestige requirements",
 		category = "Progression",
 		setting_name = "Level up above prestige level requirements",
-		func = function ()
-			local var_110_0 = Managers.backend
-			local var_110_1 = Managers.player:local_player(1):profile_index()
-			local var_110_2 = SPProfiles[var_110_1].display_name
+		func = function()
+			local var_114_0 = Managers.backend
+			local var_114_1 = Managers.player:local_player(1):profile_index()
+			local var_114_2 = SPProfiles[var_114_1].display_name
 
-			local function var_110_3(arg_111_0)
-				local var_111_0 = arg_111_0.FunctionResult
+			local function var_114_3(arg_115_0)
+				local var_115_0 = arg_115_0.FunctionResult
 
-				var_110_0:get_interface("hero_attributes"):set(var_110_2, "experience", var_111_0.data[var_110_2 .. "_experience"])
+				var_114_0:get_interface("hero_attributes"):set(var_114_2, "experience", var_115_0.data[var_114_2 .. "_experience"])
 				Debug.load_level("inn_level")
 			end
 
-			local var_110_4 = {
+			local var_114_4 = {
 				FunctionName = "devSetExperience",
 				FunctionParameter = {
 					experience = 1000000,
-					hero = var_110_2
+					hero = var_114_2
 				}
 			}
 
-			var_110_0._backend_mirror:request_queue():enqueue(var_110_4, var_110_3, false)
+			var_114_0._backend_mirror:request_queue():enqueue(var_114_4, var_114_3, false)
 		end
 	},
 	{
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Reset prestige level",
-		func = function ()
-			local var_112_0 = Managers.player:local_player(1):profile_index()
-			local var_112_1 = SPProfiles[var_112_0]
+		func = function()
+			local var_116_0 = Managers.player:local_player(1):profile_index()
+			local var_116_1 = SPProfiles[var_116_0]
 
-			Managers.backend:get_interface("hero_attributes"):set(var_112_1.display_name, "prestige", 0)
+			Managers.backend:get_interface("hero_attributes"):set(var_116_1.display_name, "prestige", 0)
 			Debug.load_level("inn_level")
 		end
 	},
@@ -7778,7 +7905,7 @@ local var_0_2 = {
 		description = "You have to reload the inn for the setting to take effect",
 		category = "Progression",
 		setting_name = "Wipe all progression(used for prestige)",
-		func = function ()
+		func = function()
 			LevelUnlockUtils.set_all_acts_incompleted()
 		end
 	},
@@ -7815,11 +7942,11 @@ local var_0_2 = {
 			1250,
 			1300
 		},
-		custom_item_source_order = function (arg_114_0, arg_114_1)
-			for iter_114_0, iter_114_1 in ipairs(arg_114_0) do
-				local var_114_0 = iter_114_1
+		custom_item_source_order = function(arg_118_0, arg_118_1)
+			for iter_118_0, iter_118_1 in ipairs(arg_118_0) do
+				local var_118_0 = iter_118_1
 
-				arg_114_1[#arg_114_1 + 1] = var_114_0
+				arg_118_1[#arg_118_1 + 1] = var_118_0
 			end
 		end
 	},
@@ -7845,7 +7972,7 @@ local var_0_2 = {
 		description = "Completely resets all stats for local player. Requires that the player is spawned inside a level. REQUIRES RESTART AFTERWARDS!",
 		category = "Progression",
 		setting_name = "reset_statistics_database",
-		func = function ()
+		func = function()
 			print("Starting statistics reset!")
 			Managers.backend:get_interface("statistics"):reset()
 		end
@@ -7884,30 +8011,30 @@ local var_0_2 = {
 		description = "Force activate a specific HUD visibility group",
 		category = "HUD",
 		item_source = {},
-		load_items_source_func = function (arg_116_0)
-			if not arg_116_0.initialized then
-				table.clear(arg_116_0)
+		load_items_source_func = function(arg_120_0)
+			if not arg_120_0.initialized then
+				table.clear(arg_120_0)
 
-				arg_116_0[#arg_116_0 + 1] = "none"
+				arg_120_0[#arg_120_0 + 1] = "none"
 
-				local var_116_0 = local_require("scripts/ui/views/ingame_hud_definitions").visibility_groups
+				local var_120_0 = local_require("scripts/ui/views/ingame_hud_definitions").visibility_groups
 
-				for iter_116_0, iter_116_1 in ipairs(var_116_0) do
-					local var_116_1 = iter_116_1.name
+				for iter_120_0, iter_120_1 in ipairs(var_120_0) do
+					local var_120_1 = iter_120_1.name
 
-					arg_116_0[#arg_116_0 + 1] = var_116_1
+					arg_120_0[#arg_120_0 + 1] = var_120_1
 				end
 
-				arg_116_0.initialized = true
+				arg_120_0.initialized = true
 			end
 		end,
-		func = function (arg_117_0, arg_117_1)
-			local var_117_0 = arg_117_0[arg_117_1]
+		func = function(arg_121_0, arg_121_1)
+			local var_121_0 = arg_121_0[arg_121_1]
 
-			if not var_117_0 or var_117_0 == "none" then
+			if not var_121_0 or var_121_0 == "none" then
 				script_data.debug_hud_visibility_group = nil
 			else
-				script_data.debug_hud_visibility_group = var_117_0
+				script_data.debug_hud_visibility_group = var_121_0
 			end
 		end
 	},
@@ -7946,26 +8073,26 @@ local var_0_2 = {
 		description = "Works on non-local backend. Adds a legend vault",
 		category = "Progression",
 		item_source = {},
-		load_items_source_func = function (arg_118_0)
-			table.clear(arg_118_0)
+		load_items_source_func = function(arg_122_0)
+			table.clear(arg_122_0)
 
-			arg_118_0[#arg_118_0 + 1] = "tier_1"
-			arg_118_0[#arg_118_0 + 1] = "tier_2"
-			arg_118_0[#arg_118_0 + 1] = "tier_3"
-			arg_118_0[#arg_118_0 + 1] = "tier_4"
-			arg_118_0[#arg_118_0 + 1] = "tier_5"
+			arg_122_0[#arg_122_0 + 1] = "tier_1"
+			arg_122_0[#arg_122_0 + 1] = "tier_2"
+			arg_122_0[#arg_122_0 + 1] = "tier_3"
+			arg_122_0[#arg_122_0 + 1] = "tier_4"
+			arg_122_0[#arg_122_0 + 1] = "tier_5"
 
-			table.sort(arg_118_0)
+			table.sort(arg_122_0)
 		end,
-		func = function (arg_119_0, arg_119_1)
-			local var_119_0 = arg_119_0[arg_119_1]
-			local var_119_1 = Managers.backend:get_interface("loot")
-			local var_119_2 = Managers.player:local_player()
-			local var_119_3 = SPProfiles[var_119_2:profile_index()].display_name
-			local var_119_4 = "default"
+		func = function(arg_123_0, arg_123_1)
+			local var_123_0 = arg_123_0[arg_123_1]
+			local var_123_1 = Managers.backend:get_interface("loot")
+			local var_123_2 = Managers.player:local_player()
+			local var_123_3 = SPProfiles[var_123_2:profile_index()].display_name
+			local var_123_4 = "default"
 
-			if var_119_0 == "tier_1" then
-				local var_119_5 = {
+			if var_123_0 == "tier_1" then
+				local var_123_5 = {
 					chest_upgrade_data = {
 						grimoire = 0,
 						tome = 0,
@@ -7974,9 +8101,9 @@ local var_0_2 = {
 					}
 				}
 
-				var_119_1:generate_end_of_level_loot(true, true, "hardest", "bell", var_119_3, 0, 0, var_119_4, nil, nil, "adventure", 0, var_119_5)
-			elseif var_119_0 == "tier_2" then
-				local var_119_6 = {
+				var_123_1:generate_end_of_level_loot(true, true, "hardest", "bell", var_123_3, 0, 0, var_123_4, nil, nil, "adventure", 0, var_123_5)
+			elseif var_123_0 == "tier_2" then
+				local var_123_6 = {
 					chest_upgrade_data = {
 						grimoire = 0,
 						tome = 2,
@@ -7985,9 +8112,9 @@ local var_0_2 = {
 					}
 				}
 
-				var_119_1:generate_end_of_level_loot(true, true, "hardest", "bell", var_119_3, 0, 0, var_119_4, nil, nil, "adventure", 0, var_119_6)
-			elseif var_119_0 == "tier_3" then
-				local var_119_7 = {
+				var_123_1:generate_end_of_level_loot(true, true, "hardest", "bell", var_123_3, 0, 0, var_123_4, nil, nil, "adventure", 0, var_123_6)
+			elseif var_123_0 == "tier_3" then
+				local var_123_7 = {
 					chest_upgrade_data = {
 						grimoire = 1,
 						tome = 2,
@@ -7996,9 +8123,9 @@ local var_0_2 = {
 					}
 				}
 
-				var_119_1:generate_end_of_level_loot(true, true, "hardest", "bell", var_119_3, 0, 0, var_119_4, nil, nil, "adventure", 0, var_119_7)
-			elseif var_119_0 == "tier_4" then
-				local var_119_8 = {
+				var_123_1:generate_end_of_level_loot(true, true, "hardest", "bell", var_123_3, 0, 0, var_123_4, nil, nil, "adventure", 0, var_123_7)
+			elseif var_123_0 == "tier_4" then
+				local var_123_8 = {
 					chest_upgrade_data = {
 						grimoire = 2,
 						tome = 2,
@@ -8007,9 +8134,9 @@ local var_0_2 = {
 					}
 				}
 
-				var_119_1:generate_end_of_level_loot(true, true, "hardest", "bell", var_119_3, 0, 0, var_119_4, nil, nil, "adventure", 0, var_119_8)
-			elseif var_119_0 == "tier_5" then
-				local var_119_9 = {
+				var_123_1:generate_end_of_level_loot(true, true, "hardest", "bell", var_123_3, 0, 0, var_123_4, nil, nil, "adventure", 0, var_123_8)
+			elseif var_123_0 == "tier_5" then
+				local var_123_9 = {
 					chest_upgrade_data = {
 						grimoire = 3,
 						tome = 2,
@@ -8018,7 +8145,7 @@ local var_0_2 = {
 					}
 				}
 
-				var_119_1:generate_end_of_level_loot(true, true, "hardest", "bell", var_119_3, 0, 0, var_119_4, nil, nil, "adventure", 0, var_119_9)
+				var_123_1:generate_end_of_level_loot(true, true, "hardest", "bell", var_123_3, 0, 0, var_123_4, nil, nil, "adventure", 0, var_123_9)
 			end
 		end
 	},
@@ -8027,26 +8154,26 @@ local var_0_2 = {
 		setting_name = "Add Hat Items",
 		category = "Items",
 		item_source = {},
-		load_items_source_func = function (arg_120_0)
-			table.clear(arg_120_0)
+		load_items_source_func = function(arg_124_0)
+			table.clear(arg_124_0)
 
-			local var_120_0 = ItemMasterList
+			local var_124_0 = ItemMasterList
 
-			for iter_120_0, iter_120_1 in pairs(var_120_0) do
-				if iter_120_1.slot_type == "hat" then
-					arg_120_0[#arg_120_0 + 1] = iter_120_0
+			for iter_124_0, iter_124_1 in pairs(var_124_0) do
+				if iter_124_1.slot_type == "hat" then
+					arg_124_0[#arg_124_0 + 1] = iter_124_0
 				end
 			end
 
-			table.sort(arg_120_0)
+			table.sort(arg_124_0)
 		end,
-		func = function (arg_121_0, arg_121_1)
-			local var_121_0 = Managers.backend:get_interface("items")
-			local var_121_1 = arg_121_0[arg_121_1]
+		func = function(arg_125_0, arg_125_1)
+			local var_125_0 = Managers.backend:get_interface("items")
+			local var_125_1 = arg_125_0[arg_125_1]
 
 			var_0_1({
 				{
-					ItemName = var_121_1
+					ItemName = var_125_1
 				}
 			})
 		end
@@ -8055,21 +8182,21 @@ local var_0_2 = {
 		description = "Adds all hat items to your inventory.",
 		setting_name = "Add All Hat Items",
 		category = "Items",
-		func = function ()
-			local var_122_0 = ItemMasterList
-			local var_122_1 = {}
+		func = function()
+			local var_126_0 = ItemMasterList
+			local var_126_1 = {}
 
-			for iter_122_0, iter_122_1 in pairs(var_122_0) do
-				if iter_122_1.slot_type == "hat" then
-					var_122_1[#var_122_1 + 1] = {
-						ItemName = iter_122_0
+			for iter_126_0, iter_126_1 in pairs(var_126_0) do
+				if iter_126_1.slot_type == "hat" then
+					var_126_1[#var_126_1 + 1] = {
+						ItemName = iter_126_0
 					}
 				end
 			end
 
-			local var_122_2 = true
+			local var_126_2 = true
 
-			var_0_1(var_122_1, var_122_2)
+			var_0_1(var_126_1, var_126_2)
 		end
 	},
 	{
@@ -8077,84 +8204,20 @@ local var_0_2 = {
 		setting_name = "Add Skin Items",
 		category = "Items",
 		item_source = {},
-		load_items_source_func = function (arg_123_0)
-			table.clear(arg_123_0)
-
-			local var_123_0 = ItemMasterList
-
-			for iter_123_0, iter_123_1 in pairs(var_123_0) do
-				if iter_123_1.slot_type == "skin" then
-					arg_123_0[#arg_123_0 + 1] = iter_123_0
-				end
-			end
-
-			table.sort(arg_123_0)
-		end,
-		func = function (arg_124_0, arg_124_1)
-			local var_124_0 = Managers.backend:get_interface("items")
-			local var_124_1 = arg_124_0[arg_124_1]
-
-			var_0_1({
-				{
-					ItemName = var_124_1
-				}
-			})
-		end
-	},
-	{
-		description = "Lists all items with functionality to add them to inventory. (hold left shift to add x10)",
-		setting_name = "Add Chest Items",
-		category = "Items",
-		item_source = {},
-		load_items_source_func = function (arg_125_0)
-			table.clear(arg_125_0)
-
-			local var_125_0 = ItemMasterList
-
-			for iter_125_0, iter_125_1 in pairs(var_125_0) do
-				if iter_125_1.slot_type == "loot_chest" then
-					arg_125_0[#arg_125_0 + 1] = iter_125_0
-				end
-			end
-
-			table.sort(arg_125_0)
-		end,
-		func = function (arg_126_0, arg_126_1)
-			local var_126_0 = Managers.backend:get_interface("items")
-			local var_126_1 = arg_126_0[arg_126_1]
-			local var_126_2 = 1
-
-			if Keyboard.button(Keyboard.button_index("left shift")) > 0 then
-				var_126_2 = 10
-			end
-
-			var_0_1({
-				{
-					ItemName = var_126_1,
-					Amount = var_126_2
-				}
-			})
-		end
-	},
-	{
-		description = "Lists all items with functionality to add them to inventory.",
-		setting_name = "Add Frame Items",
-		category = "Items",
-		item_source = {},
-		load_items_source_func = function (arg_127_0)
+		load_items_source_func = function(arg_127_0)
 			table.clear(arg_127_0)
 
 			local var_127_0 = ItemMasterList
 
 			for iter_127_0, iter_127_1 in pairs(var_127_0) do
-				if iter_127_1.slot_type == "frame" then
+				if iter_127_1.slot_type == "skin" then
 					arg_127_0[#arg_127_0 + 1] = iter_127_0
 				end
 			end
 
 			table.sort(arg_127_0)
 		end,
-		func = function (arg_128_0, arg_128_1)
+		func = function(arg_128_0, arg_128_1)
 			local var_128_0 = Managers.backend:get_interface("items")
 			local var_128_1 = arg_128_0[arg_128_1]
 
@@ -8166,35 +8229,99 @@ local var_0_2 = {
 		end
 	},
 	{
-		description = "Lists all deeds with functionality to add them to inventory.",
-		setting_name = "Add Deed Items",
+		description = "Lists all items with functionality to add them to inventory. (hold left shift to add x10)",
+		setting_name = "Add Chest Items",
 		category = "Items",
 		item_source = {},
-		load_items_source_func = function (arg_129_0)
+		load_items_source_func = function(arg_129_0)
 			table.clear(arg_129_0)
 
 			local var_129_0 = ItemMasterList
 
 			for iter_129_0, iter_129_1 in pairs(var_129_0) do
-				if iter_129_1.slot_type == "deed" then
+				if iter_129_1.slot_type == "loot_chest" then
 					arg_129_0[#arg_129_0 + 1] = iter_129_0
 				end
 			end
 
 			table.sort(arg_129_0)
 		end,
-		func = function (arg_130_0, arg_130_1)
+		func = function(arg_130_0, arg_130_1)
 			local var_130_0 = Managers.backend:get_interface("items")
 			local var_130_1 = arg_130_0[arg_130_1]
-			local var_130_2 = ItemMasterList[var_130_1].difficulties[1]
-			local var_130_3 = "farmlands"
+			local var_130_2 = 1
+
+			if Keyboard.button(Keyboard.button_index("left shift")) > 0 then
+				var_130_2 = 10
+			end
 
 			var_0_1({
 				{
 					ItemName = var_130_1,
+					Amount = var_130_2
+				}
+			})
+		end
+	},
+	{
+		description = "Lists all items with functionality to add them to inventory.",
+		setting_name = "Add Frame Items",
+		category = "Items",
+		item_source = {},
+		load_items_source_func = function(arg_131_0)
+			table.clear(arg_131_0)
+
+			local var_131_0 = ItemMasterList
+
+			for iter_131_0, iter_131_1 in pairs(var_131_0) do
+				if iter_131_1.slot_type == "frame" then
+					arg_131_0[#arg_131_0 + 1] = iter_131_0
+				end
+			end
+
+			table.sort(arg_131_0)
+		end,
+		func = function(arg_132_0, arg_132_1)
+			local var_132_0 = Managers.backend:get_interface("items")
+			local var_132_1 = arg_132_0[arg_132_1]
+
+			var_0_1({
+				{
+					ItemName = var_132_1
+				}
+			})
+		end
+	},
+	{
+		description = "Lists all deeds with functionality to add them to inventory.",
+		setting_name = "Add Deed Items",
+		category = "Items",
+		item_source = {},
+		load_items_source_func = function(arg_133_0)
+			table.clear(arg_133_0)
+
+			local var_133_0 = ItemMasterList
+
+			for iter_133_0, iter_133_1 in pairs(var_133_0) do
+				if iter_133_1.slot_type == "deed" then
+					arg_133_0[#arg_133_0 + 1] = iter_133_0
+				end
+			end
+
+			table.sort(arg_133_0)
+		end,
+		func = function(arg_134_0, arg_134_1)
+			local var_134_0 = Managers.backend:get_interface("items")
+			local var_134_1 = arg_134_0[arg_134_1]
+			local var_134_2 = ItemMasterList[var_134_1].difficulties[1]
+			local var_134_3 = "farmlands"
+
+			var_0_1({
+				{
+					ItemName = var_134_1,
 					CustomData = {
-						difficulty = var_130_2,
-						level_key = var_130_3
+						difficulty = var_134_2,
+						level_key = var_134_3
 					}
 				}
 			})
@@ -8204,29 +8331,29 @@ local var_0_2 = {
 		description = "Adds one weapon per skin with that skin applied.",
 		setting_name = "Add All Weapon Skins",
 		category = "Items",
-		func = function ()
-			local var_131_0 = ItemMasterList
-			local var_131_1 = WeaponSkins
-			local var_131_2 = Managers.backend:get_interface("items")
-			local var_131_3 = {}
-			local var_131_4 = {}
+		func = function()
+			local var_135_0 = ItemMasterList
+			local var_135_1 = WeaponSkins
+			local var_135_2 = Managers.backend:get_interface("items")
+			local var_135_3 = {}
+			local var_135_4 = {}
 
-			for iter_131_0, iter_131_1 in pairs(var_131_0) do
-				local var_131_5 = iter_131_1.slot_type
-				local var_131_6 = iter_131_1.skin_combination_table
+			for iter_135_0, iter_135_1 in pairs(var_135_0) do
+				local var_135_5 = iter_135_1.slot_type
+				local var_135_6 = iter_135_1.skin_combination_table
 
-				if (var_131_5 == "melee" or var_131_5 == "ranged") and var_131_6 and iter_131_1.rarity ~= "magic" then
-					local var_131_7 = var_131_1.skin_combinations[var_131_6]
+				if (var_135_5 == "melee" or var_135_5 == "ranged") and var_135_6 and iter_135_1.rarity ~= "magic" then
+					local var_135_7 = var_135_1.skin_combinations[var_135_6]
 
-					for iter_131_2, iter_131_3 in pairs(var_131_7) do
-						for iter_131_4, iter_131_5 in ipairs(iter_131_3) do
-							if not var_131_3[iter_131_5] then
-								var_131_3[iter_131_5] = true
-								var_131_4[#var_131_4 + 1] = {
-									ItemName = iter_131_0,
+					for iter_135_2, iter_135_3 in pairs(var_135_7) do
+						for iter_135_4, iter_135_5 in ipairs(iter_135_3) do
+							if not var_135_3[iter_135_5] then
+								var_135_3[iter_135_5] = true
+								var_135_4[#var_135_4 + 1] = {
+									ItemName = iter_135_0,
 									CustomData = {
 										power_level = 5,
-										skin = iter_131_5
+										skin = iter_135_5
 									}
 								}
 							end
@@ -8235,18 +8362,18 @@ local var_0_2 = {
 				end
 			end
 
-			local var_131_8 = Managers.backend._backend_mirror
-			local var_131_9 = {
+			local var_135_8 = Managers.backend._backend_mirror
+			local var_135_9 = {
 				FunctionName = "devUnlockAllWeaponSkins",
 				FunctionParameter = {}
 			}
-			local var_131_10 = true
+			local var_135_10 = true
 
-			local function var_131_11(arg_132_0)
-				var_0_1(var_131_4, var_131_10)
+			local function var_135_11(arg_136_0)
+				var_0_1(var_135_4, var_135_10)
 			end
 
-			var_131_8:request_queue():enqueue(var_131_9, var_131_11, false)
+			var_135_8:request_queue():enqueue(var_135_9, var_135_11, false)
 		end
 	},
 	{
@@ -8260,92 +8387,17 @@ local var_0_2 = {
 		setting_name = "Activate or Deactivate Mutator",
 		category = "Items",
 		item_source = {},
-		load_items_source_func = function (arg_133_0)
-			table.clear(arg_133_0)
-
-			for iter_133_0, iter_133_1 in pairs(MutatorTemplates) do
-				arg_133_0[#arg_133_0 + 1] = iter_133_0
-			end
-
-			table.sort(arg_133_0)
-		end,
-		func = function (arg_134_0, arg_134_1)
-			local var_134_0 = script_data.debug_activated_mutators or {}
-			local var_134_1 = arg_134_0[arg_134_1]
-			local var_134_2
-
-			for iter_134_0 = 1, #var_134_0 do
-				if var_134_0[iter_134_0] == var_134_1 then
-					var_134_2 = iter_134_0
-				end
-			end
-
-			if var_134_2 then
-				table.remove(var_134_0, var_134_2)
-				Debug.sticky_text("Deactivated mutator %s", var_134_1)
-			else
-				var_134_0[#var_134_0 + 1] = var_134_1
-
-				Debug.sticky_text("Activated mutator %s", var_134_1)
-			end
-
-			if #var_134_0 > 0 then
-				script_data.debug_activated_mutators = var_134_0
-			else
-				script_data.debug_activated_mutators = nil
-			end
-		end
-	},
-	{
-		description = "Lists all mutators with functionality to immediately start or stop them. Does not require restart of level. !! Does not work for every mutator.",
-		setting_name = "Start or stop mutator",
-		category = "Items",
-		item_source = {},
-		load_items_source_func = function (arg_135_0)
-			table.clear(arg_135_0)
-
-			for iter_135_0, iter_135_1 in pairs(MutatorTemplates) do
-				arg_135_0[#arg_135_0 + 1] = iter_135_0
-			end
-
-			table.sort(arg_135_0)
-		end,
-		func = function (arg_136_0, arg_136_1)
-			local var_136_0 = Managers.state.game_mode:mutator_handler()
-			local var_136_1 = arg_136_0[arg_136_1]
-
-			if not var_136_0:has_mutator(var_136_1) then
-				var_136_0:initialize_mutators({
-					var_136_1
-				})
-				Debug.sticky_text("Initialized mutator %s", var_136_1)
-			end
-
-			if var_136_0:has_activated_mutator(var_136_1) then
-				var_136_0:deactivate_mutator(var_136_1)
-				Debug.sticky_text("Stopped mutator %s", var_136_1)
-			else
-				var_136_0:activate_mutator(var_136_1)
-				Debug.sticky_text("Started mutator %s", var_136_1)
-			end
-		end
-	},
-	{
-		description = "Lists all blessings with functionality to activate them. Requires restart of a deus level or loading the next one",
-		setting_name = "Activate or Deactivate Blessings",
-		category = "Items",
-		item_source = {},
-		load_items_source_func = function (arg_137_0)
+		load_items_source_func = function(arg_137_0)
 			table.clear(arg_137_0)
 
-			for iter_137_0, iter_137_1 in pairs(DeusBlessingSettings) do
+			for iter_137_0, iter_137_1 in pairs(MutatorTemplates) do
 				arg_137_0[#arg_137_0 + 1] = iter_137_0
 			end
 
 			table.sort(arg_137_0)
 		end,
-		func = function (arg_138_0, arg_138_1)
-			local var_138_0 = script_data.debug_activated_blessings or {}
+		func = function(arg_138_0, arg_138_1)
+			local var_138_0 = script_data.debug_activated_mutators or {}
 			local var_138_1 = arg_138_0[arg_138_1]
 			local var_138_2
 
@@ -8357,15 +8409,90 @@ local var_0_2 = {
 
 			if var_138_2 then
 				table.remove(var_138_0, var_138_2)
-				Debug.sticky_text("Deactivated blessing %s", var_138_1)
+				Debug.sticky_text("Deactivated mutator %s", var_138_1)
 			else
 				var_138_0[#var_138_0 + 1] = var_138_1
 
-				Debug.sticky_text("Activated blessing %s", var_138_1)
+				Debug.sticky_text("Activated mutator %s", var_138_1)
 			end
 
 			if #var_138_0 > 0 then
-				script_data.debug_activated_blessings = var_138_0
+				script_data.debug_activated_mutators = var_138_0
+			else
+				script_data.debug_activated_mutators = nil
+			end
+		end
+	},
+	{
+		description = "Lists all mutators with functionality to immediately start or stop them. Does not require restart of level. !! Does not work for every mutator.",
+		setting_name = "Start or stop mutator",
+		category = "Items",
+		item_source = {},
+		load_items_source_func = function(arg_139_0)
+			table.clear(arg_139_0)
+
+			for iter_139_0, iter_139_1 in pairs(MutatorTemplates) do
+				arg_139_0[#arg_139_0 + 1] = iter_139_0
+			end
+
+			table.sort(arg_139_0)
+		end,
+		func = function(arg_140_0, arg_140_1)
+			local var_140_0 = Managers.state.game_mode:mutator_handler()
+			local var_140_1 = arg_140_0[arg_140_1]
+
+			if not var_140_0:has_mutator(var_140_1) then
+				var_140_0:initialize_mutators({
+					var_140_1
+				})
+				Debug.sticky_text("Initialized mutator %s", var_140_1)
+			end
+
+			if var_140_0:has_activated_mutator(var_140_1) then
+				var_140_0:deactivate_mutator(var_140_1)
+				Debug.sticky_text("Stopped mutator %s", var_140_1)
+			else
+				var_140_0:activate_mutator(var_140_1)
+				Debug.sticky_text("Started mutator %s", var_140_1)
+			end
+		end
+	},
+	{
+		description = "Lists all blessings with functionality to activate them. Requires restart of a deus level or loading the next one",
+		setting_name = "Activate or Deactivate Blessings",
+		category = "Items",
+		item_source = {},
+		load_items_source_func = function(arg_141_0)
+			table.clear(arg_141_0)
+
+			for iter_141_0, iter_141_1 in pairs(DeusBlessingSettings) do
+				arg_141_0[#arg_141_0 + 1] = iter_141_0
+			end
+
+			table.sort(arg_141_0)
+		end,
+		func = function(arg_142_0, arg_142_1)
+			local var_142_0 = script_data.debug_activated_blessings or {}
+			local var_142_1 = arg_142_0[arg_142_1]
+			local var_142_2
+
+			for iter_142_0 = 1, #var_142_0 do
+				if var_142_0[iter_142_0] == var_142_1 then
+					var_142_2 = iter_142_0
+				end
+			end
+
+			if var_142_2 then
+				table.remove(var_142_0, var_142_2)
+				Debug.sticky_text("Deactivated blessing %s", var_142_1)
+			else
+				var_142_0[#var_142_0 + 1] = var_142_1
+
+				Debug.sticky_text("Activated blessing %s", var_142_1)
+			end
+
+			if #var_142_0 > 0 then
+				script_data.debug_activated_blessings = var_142_0
 			else
 				script_data.debug_activated_blessings = nil
 			end
@@ -8376,30 +8503,30 @@ local var_0_2 = {
 		setting_name = "Force Twitch Mode Vote Template",
 		category = "Items",
 		item_source = {},
-		load_items_source_func = function (arg_139_0)
-			table.clear(arg_139_0)
+		load_items_source_func = function(arg_143_0)
+			table.clear(arg_143_0)
 
-			for iter_139_0, iter_139_1 in pairs(TwitchVoteTemplates) do
-				arg_139_0[#arg_139_0 + 1] = iter_139_0
+			for iter_143_0, iter_143_1 in pairs(TwitchVoteTemplates) do
+				arg_143_0[#arg_143_0 + 1] = iter_143_0
 			end
 
-			arg_139_0[#arg_139_0 + 1] = "clear_votes"
+			arg_143_0[#arg_143_0 + 1] = "clear_votes"
 
-			table.sort(arg_139_0)
+			table.sort(arg_143_0)
 		end,
-		func = function (arg_140_0, arg_140_1)
+		func = function(arg_144_0, arg_144_1)
 			if not script_data.debug_activated_mutators then
-				local var_140_0 = {}
+				local var_144_0 = {}
 			end
 
-			local var_140_1 = arg_140_0[arg_140_1]
+			local var_144_1 = arg_144_0[arg_144_1]
 
-			if var_140_1 == "clear_votes" then
+			if var_144_1 == "clear_votes" then
 				script_data.twitch_mode_force_vote_template = nil
 			else
-				local var_140_2 = TwitchVoteTemplates[var_140_1]
+				local var_144_2 = TwitchVoteTemplates[var_144_1]
 
-				script_data.twitch_mode_force_vote_template = var_140_2
+				script_data.twitch_mode_force_vote_template = var_144_2
 			end
 		end
 	},
@@ -8415,33 +8542,33 @@ local var_0_2 = {
 		category = "Progression",
 		clear_when_selected = true,
 		item_source = {},
-		load_items_source_func = function (arg_141_0)
-			table.clear(arg_141_0)
+		load_items_source_func = function(arg_145_0)
+			table.clear(arg_145_0)
 
-			for iter_141_0, iter_141_1 in pairs(AchievementTemplates.achievements) do
-				if iter_141_1.debug_unlock then
-					table.insert(arg_141_0, iter_141_0)
+			for iter_145_0, iter_145_1 in pairs(AchievementTemplates.achievements) do
+				if iter_145_1.debug_unlock then
+					table.insert(arg_145_0, iter_145_0)
 				end
 			end
 
-			table.sort(arg_141_0)
+			table.sort(arg_145_0)
 		end,
-		func = function (arg_142_0, arg_142_1)
+		func = function(arg_146_0, arg_146_1)
 			if AchievementTemplates then
-				local var_142_0 = AchievementTemplates.achievements[arg_142_0[arg_142_1]]
+				local var_146_0 = AchievementTemplates.achievements[arg_146_0[arg_146_1]]
 
-				if var_142_0 ~= nil then
-					if var_142_0.debug_unlock then
-						local var_142_1 = Managers.state.game_mode.statistics_db
-						local var_142_2 = Managers.player:local_player():stats_id()
+				if var_146_0 ~= nil then
+					if var_146_0.debug_unlock then
+						local var_146_1 = Managers.state.game_mode.statistics_db
+						local var_146_2 = Managers.player:local_player():stats_id()
 
-						if var_142_1 and var_142_2 then
-							var_142_0.debug_unlock(var_142_1, var_142_2)
-							print("Unlocked challenge ", arg_142_0[arg_142_1])
+						if var_146_1 and var_146_2 then
+							var_146_0.debug_unlock(var_146_1, var_146_2)
+							print("Unlocked challenge ", arg_146_0[arg_146_1])
 
-							local var_142_3 = Managers.world:world("level_world")
+							local var_146_3 = Managers.world:world("level_world")
 
-							LevelHelper:flow_event(var_142_3, "lua_unlock_challenge_debug_event")
+							LevelHelper:flow_event(var_146_3, "lua_unlock_challenge_debug_event")
 							var_0_0()
 
 							return
@@ -8452,7 +8579,7 @@ local var_0_2 = {
 				end
 			end
 
-			print("Could not unlock challenge ", arg_142_0[arg_142_1])
+			print("Could not unlock challenge ", arg_146_0[arg_146_1])
 		end
 	},
 	{
@@ -8461,29 +8588,29 @@ local var_0_2 = {
 		category = "Progression",
 		clear_when_selected = true,
 		item_source = {},
-		load_items_source_func = function (arg_143_0)
-			table.clear(arg_143_0)
+		load_items_source_func = function(arg_147_0)
+			table.clear(arg_147_0)
 
-			for iter_143_0, iter_143_1 in pairs(AchievementTemplates.achievements) do
-				if iter_143_1.debug_reset then
-					table.insert(arg_143_0, iter_143_0)
+			for iter_147_0, iter_147_1 in pairs(AchievementTemplates.achievements) do
+				if iter_147_1.debug_reset then
+					table.insert(arg_147_0, iter_147_0)
 				end
 			end
 
-			table.sort(arg_143_0)
+			table.sort(arg_147_0)
 		end,
-		func = function (arg_144_0, arg_144_1)
+		func = function(arg_148_0, arg_148_1)
 			if AchievementTemplates then
-				local var_144_0 = AchievementTemplates.achievements[arg_144_0[arg_144_1]]
+				local var_148_0 = AchievementTemplates.achievements[arg_148_0[arg_148_1]]
 
-				if var_144_0 ~= nil then
-					if var_144_0.debug_reset then
-						local var_144_1 = Managers.state.game_mode.statistics_db
-						local var_144_2 = Managers.player:local_player():stats_id()
+				if var_148_0 ~= nil then
+					if var_148_0.debug_reset then
+						local var_148_1 = Managers.state.game_mode.statistics_db
+						local var_148_2 = Managers.player:local_player():stats_id()
 
-						if var_144_1 and var_144_2 then
-							var_144_0.debug_reset(var_144_1, var_144_2)
-							print("Reset challenge ", arg_144_0[arg_144_1])
+						if var_148_1 and var_148_2 then
+							var_148_0.debug_reset(var_148_1, var_148_2)
+							print("Reset challenge ", arg_148_0[arg_148_1])
 							var_0_0()
 
 							return
@@ -8494,7 +8621,7 @@ local var_0_2 = {
 				end
 			end
 
-			print("Could not reset challenge ", arg_144_0[arg_144_1])
+			print("Could not reset challenge ", arg_148_0[arg_148_1])
 		end
 	},
 	{
@@ -8549,45 +8676,45 @@ local var_0_2 = {
 		description = "Activates all objectives for the current weave",
 		setting_name = "activate_all_weave_objectives",
 		category = "Gamemode/level",
-		func = function ()
-			local var_145_0 = Managers.world:world("level_world")
-			local var_145_1 = World.units(var_145_0)
-			local var_145_2 = {}
+		func = function()
+			local var_149_0 = Managers.world:world("level_world")
+			local var_149_1 = World.units(var_149_0)
+			local var_149_2 = {}
 
-			for iter_145_0, iter_145_1 in ipairs(var_145_1) do
-				if not Unit.is_frozen(iter_145_1) then
-					local var_145_3 = Unit.debug_name(iter_145_1)
+			for iter_149_0, iter_149_1 in ipairs(var_149_1) do
+				if not Unit.is_frozen(iter_149_1) then
+					local var_149_3 = Unit.debug_name(iter_149_1)
 
-					if var_145_3:match(".*weave_capture_point_spawner") or var_145_3:match(".*weave_interaction_spawner") or var_145_3:match(".*weave_prop_skaven_doom_wheel_01_spawner") or var_145_3:match(".*weave_limited_item_track_spawner") then
-						local var_145_4 = Unit.get_data(iter_145_1, "weave_objective_id")
-						local var_145_5 = #NetworkLookup.objective_names + 1
+					if var_149_3:match(".*weave_capture_point_spawner") or var_149_3:match(".*weave_interaction_spawner") or var_149_3:match(".*weave_prop_skaven_doom_wheel_01_spawner") or var_149_3:match(".*weave_limited_item_track_spawner") then
+						local var_149_4 = Unit.get_data(iter_149_1, "weave_objective_id")
+						local var_149_5 = #NetworkLookup.objective_names + 1
 
-						NetworkLookup.objective_names[var_145_5] = var_145_4
-						NetworkLookup.objective_names[var_145_4] = var_145_5
-						var_145_2[var_145_4] = {}
+						NetworkLookup.objective_names[var_149_5] = var_149_4
+						NetworkLookup.objective_names[var_149_4] = var_149_5
+						var_149_2[var_149_4] = {}
 
-						print(var_145_3)
+						print(var_149_3)
 					end
 				end
 			end
 
-			local var_145_6 = #NetworkLookup.objective_names + 1
+			local var_149_6 = #NetworkLookup.objective_names + 1
 
-			NetworkLookup.objective_names[var_145_6] = "kill_enemies"
-			NetworkLookup.objective_names.kill_enemies = var_145_6
-			var_145_2.kill_enemies = {}
+			NetworkLookup.objective_names[var_149_6] = "kill_enemies"
+			NetworkLookup.objective_names.kill_enemies = var_149_6
+			var_149_2.kill_enemies = {}
 			script_data.temp_objective_list_counter = (script_data.temp_objective_list_counter or 0) + 1
 
-			local var_145_7 = "temp_objective_list_" .. script_data.temp_objective_list_counter
+			local var_149_7 = "temp_objective_list_" .. script_data.temp_objective_list_counter
 
-			ObjectiveLists[var_145_7] = {
-				var_145_2
+			ObjectiveLists[var_149_7] = {
+				var_149_2
 			}
 
-			local var_145_8 = Managers.state.entity:system("objective_system")
+			local var_149_8 = Managers.state.entity:system("objective_system")
 
-			var_145_8:server_register_objectives(var_145_7)
-			var_145_8:server_activate_first_objective()
+			var_149_8:server_register_objectives(var_149_7)
+			var_149_8:server_activate_first_objective()
 		end
 	},
 	{
@@ -8618,7 +8745,7 @@ local var_0_2 = {
 		description = "sets the weave timer to 1 sec",
 		setting_name = "deplete_weave_timer",
 		category = "Player mechanics",
-		func = function ()
+		func = function()
 			Managers.weave:_set_time_left(1)
 		end
 	},
@@ -8626,7 +8753,7 @@ local var_0_2 = {
 		description = "Adds 10 Weave Essence to your account",
 		setting_name = "10 Weave Essence",
 		category = "Gamemode/level",
-		func = function ()
+		func = function()
 			Managers.backend:get_interface("weaves"):debug_grant_essence(10)
 		end
 	},
@@ -8634,7 +8761,7 @@ local var_0_2 = {
 		description = "Adds 100 Weave Essence to your account",
 		setting_name = "100 Weave Essence",
 		category = "Gamemode/level",
-		func = function ()
+		func = function()
 			Managers.backend:get_interface("weaves"):debug_grant_essence(100)
 		end
 	},
@@ -8642,7 +8769,7 @@ local var_0_2 = {
 		description = "Adds 1000 Weave Essence to your account",
 		setting_name = "1,000 Weave Essence",
 		category = "Gamemode/level",
-		func = function ()
+		func = function()
 			Managers.backend:get_interface("weaves"):debug_grant_essence(1000)
 		end
 	},
@@ -8650,7 +8777,7 @@ local var_0_2 = {
 		description = "Adds 10000 Weave Essence to your account",
 		setting_name = "10,000 Weave Essence",
 		category = "Gamemode/level",
-		func = function ()
+		func = function()
 			Managers.backend:get_interface("weaves"):debug_grant_essence(10000)
 		end
 	},
@@ -8658,7 +8785,7 @@ local var_0_2 = {
 		description = "Adds $$$ ONE MILLION $$$ Weave Essence to your account",
 		setting_name = "1,000,000 Weave Essence",
 		category = "Gamemode/level",
-		func = function ()
+		func = function()
 			Managers.backend:get_interface("weaves"):debug_grant_essence(1000000)
 		end
 	},
@@ -8666,7 +8793,7 @@ local var_0_2 = {
 		description = "Removes all magic weave weapons from the inventory except for default weapons equipped ones",
 		setting_name = "Remove Magic Weave Weapons",
 		category = "Gamemode/level",
-		func = function ()
+		func = function()
 			Managers.backend:get_interface("weaves"):debug_remove_magic_items()
 		end
 	},
@@ -8675,31 +8802,31 @@ local var_0_2 = {
 		description = "change onboarding stat",
 		category = "Onboarding",
 		item_source = {},
-		load_items_source_func = function (arg_153_0)
-			table.clear(arg_153_0)
+		load_items_source_func = function(arg_157_0)
+			table.clear(arg_157_0)
 
-			arg_153_0[#arg_153_0 + 1] = "1"
-			arg_153_0[#arg_153_0 + 1] = "2"
-			arg_153_0[#arg_153_0 + 1] = "3"
-			arg_153_0[#arg_153_0 + 1] = "4"
-			arg_153_0[#arg_153_0 + 1] = "5"
-			arg_153_0[#arg_153_0 + 1] = "6"
-			arg_153_0[#arg_153_0 + 1] = "7"
-			arg_153_0[#arg_153_0 + 1] = "8"
-			arg_153_0[#arg_153_0 + 1] = "9"
-			arg_153_0[#arg_153_0 + 1] = "clear"
+			arg_157_0[#arg_157_0 + 1] = "1"
+			arg_157_0[#arg_157_0 + 1] = "2"
+			arg_157_0[#arg_157_0 + 1] = "3"
+			arg_157_0[#arg_157_0 + 1] = "4"
+			arg_157_0[#arg_157_0 + 1] = "5"
+			arg_157_0[#arg_157_0 + 1] = "6"
+			arg_157_0[#arg_157_0 + 1] = "7"
+			arg_157_0[#arg_157_0 + 1] = "8"
+			arg_157_0[#arg_157_0 + 1] = "9"
+			arg_157_0[#arg_157_0 + 1] = "clear"
 
-			table.sort(arg_153_0)
+			table.sort(arg_157_0)
 		end,
-		func = function (arg_154_0, arg_154_1)
-			local var_154_0 = arg_154_0[arg_154_1]
-			local var_154_1 = Managers.player:statistics_db()
-			local var_154_2 = Managers.player:local_player():stats_id()
+		func = function(arg_158_0, arg_158_1)
+			local var_158_0 = arg_158_0[arg_158_1]
+			local var_158_1 = Managers.player:statistics_db()
+			local var_158_2 = Managers.player:local_player():stats_id()
 
-			if var_154_0 == "clear" then
-				var_154_1:set_stat(var_154_2, "scorpion_onboarding_step", 0)
+			if var_158_0 == "clear" then
+				var_158_1:set_stat(var_158_2, "scorpion_onboarding_step", 0)
 			else
-				var_154_1:set_stat(var_154_2, "scorpion_onboarding_step", tonumber(var_154_0))
+				var_158_1:set_stat(var_158_2, "scorpion_onboarding_step", tonumber(var_158_0))
 			end
 
 			var_0_0()
@@ -8709,11 +8836,11 @@ local var_0_2 = {
 		description = "complete the weave onboarding ui tutorial",
 		setting_name = "Weave Onboarding UI",
 		category = "Onboarding",
-		func = function ()
-			local var_155_0 = Managers.player:statistics_db()
-			local var_155_1 = Managers.player:local_player():stats_id()
+		func = function()
+			local var_159_0 = Managers.player:statistics_db()
+			local var_159_1 = Managers.player:local_player():stats_id()
 
-			var_155_0:set_stat(var_155_1, "scorpion_ui_onboarding_state", -1)
+			var_159_0:set_stat(var_159_1, "scorpion_ui_onboarding_state", -1)
 			var_0_0()
 		end
 	},
@@ -8721,11 +8848,11 @@ local var_0_2 = {
 		description = "resets weave onboarding ui tutorial",
 		setting_name = "Weave Onboarding UI Reset",
 		category = "Onboarding",
-		func = function ()
-			local var_156_0 = Managers.player:statistics_db()
-			local var_156_1 = Managers.player:local_player():stats_id()
+		func = function()
+			local var_160_0 = Managers.player:statistics_db()
+			local var_160_1 = Managers.player:local_player():stats_id()
 
-			var_156_0:set_stat(var_156_1, "scorpion_ui_onboarding_state", 0)
+			var_160_0:set_stat(var_160_1, "scorpion_ui_onboarding_state", 0)
 			var_0_0()
 		end
 	},
@@ -8733,11 +8860,11 @@ local var_0_2 = {
 		description = "resets the flag keeps track of Olesya's VO that is played when player first fails a weave.",
 		setting_name = "Clear Olesya Failed VO Played Flag ",
 		category = "Onboarding",
-		func = function ()
-			local var_157_0 = Managers.player:statistics_db()
-			local var_157_1 = Managers.player:local_player():stats_id()
+		func = function()
+			local var_161_0 = Managers.player:statistics_db()
+			local var_161_1 = Managers.player:local_player():stats_id()
 
-			var_157_0:set_stat(var_157_1, "scorpion_onboarding_weave_first_fail_vo_played", 0)
+			var_161_0:set_stat(var_161_1, "scorpion_onboarding_weave_first_fail_vo_played", 0)
 			var_0_0()
 		end
 	},
@@ -8775,49 +8902,49 @@ local var_0_2 = {
 		description = "Trigger the \"first_time_store_release\" level flow event",
 		setting_name = "Trigger \"first_time_store_release\"",
 		category = "Onboarding",
-		func = function ()
-			local var_158_0 = Managers.world:world("level_world")
+		func = function()
+			local var_162_0 = Managers.world:world("level_world")
 
-			LevelHelper:flow_event(var_158_0, "first_time_store_release")
+			LevelHelper:flow_event(var_162_0, "first_time_store_release")
 		end
 	},
 	{
 		description = "Trigger the \"store_new_items\" level flow event",
 		setting_name = "Trigger \"store_new_items\"",
 		category = "Onboarding",
-		func = function ()
-			local var_159_0 = Managers.world:world("level_world")
+		func = function()
+			local var_163_0 = Managers.world:world("level_world")
 
-			LevelHelper:flow_event(var_159_0, "store_new_items")
+			LevelHelper:flow_event(var_163_0, "store_new_items")
 		end
 	},
 	{
 		description = "Trigger the \"first_time_started_game\" level flow event",
 		setting_name = "Trigger \"first_time_started_game\"",
 		category = "Onboarding",
-		func = function ()
-			local var_160_0 = Managers.world:world("level_world")
+		func = function()
+			local var_164_0 = Managers.world:world("level_world")
 
-			LevelHelper:flow_event(var_160_0, "first_time_started_game")
-			LevelHelper:flow_event(var_160_0, "first_time_started_deus_game")
-			LevelHelper:flow_event(var_160_0, "first_time_started_versus_game")
+			LevelHelper:flow_event(var_164_0, "first_time_started_game")
+			LevelHelper:flow_event(var_164_0, "first_time_started_deus_game")
+			LevelHelper:flow_event(var_164_0, "first_time_started_versus_game")
 		end
 	},
 	{
 		description = "Clears the seen_handbook_pages table, allowing all popups to trigger again.",
 		setting_name = "Clear seen_handbook_pages",
 		category = "Onboarding",
-		func = function ()
-			local var_161_0 = SaveData.seen_handbook_pages
+		func = function()
+			local var_165_0 = SaveData.seen_handbook_pages
 
-			if var_161_0 then
-				table.clear(var_161_0)
+			if var_165_0 then
+				table.clear(var_165_0)
 			end
 
-			local var_161_1 = SaveData.seen_handbook_popups
+			local var_165_1 = SaveData.seen_handbook_popups
 
-			if var_161_1 then
-				table.clear(var_161_1)
+			if var_165_1 then
+				table.clear(var_165_1)
 			end
 		end
 	},
@@ -8850,7 +8977,7 @@ local var_0_2 = {
 		close_when_selected = true,
 		setting_name = "Run Diorama Prototype",
 		category = "Diorama",
-		func = function ()
+		func = function()
 			Managers.ui:handle_transition("diorama_prototype", {})
 		end
 	},
@@ -8858,11 +8985,11 @@ local var_0_2 = {
 		description = "Starts a Deus run directly on a map",
 		setting_name = "Run Deus Map Node",
 		category = "Deus",
-		func = function ()
-			local var_163_0 = Managers.mechanism:game_mechanism()
+		func = function()
+			local var_167_0 = Managers.mechanism:game_mechanism()
 
-			if var_163_0.debug_load_map then
-				var_163_0:debug_load_map()
+			if var_167_0.debug_load_map then
+				var_167_0:debug_load_map()
 			end
 		end
 	},
@@ -8870,11 +8997,11 @@ local var_0_2 = {
 		description = "Starts a Deus run directly on a shrine",
 		setting_name = "Run Deus Shrine Node",
 		category = "Deus",
-		func = function ()
-			local var_164_0 = Managers.mechanism:game_mechanism()
+		func = function()
+			local var_168_0 = Managers.mechanism:game_mechanism()
 
-			if var_164_0.debug_load_shrine_node then
-				var_164_0:debug_load_shrine_node()
+			if var_168_0.debug_load_shrine_node then
+				var_168_0:debug_load_shrine_node()
 			end
 		end
 	},
@@ -8883,19 +9010,19 @@ local var_0_2 = {
 		setting_name = "Clear Finished Journey",
 		category = "Deus",
 		item_source = {},
-		load_items_source_func = function (arg_165_0)
-			table.clear(arg_165_0)
+		load_items_source_func = function(arg_169_0)
+			table.clear(arg_169_0)
 
-			for iter_165_0, iter_165_1 in pairs(DeusJourneySettings) do
-				arg_165_0[#arg_165_0 + 1] = iter_165_0
+			for iter_169_0, iter_169_1 in pairs(DeusJourneySettings) do
+				arg_169_0[#arg_169_0 + 1] = iter_169_0
 			end
 
-			table.sort(arg_165_0)
+			table.sort(arg_169_0)
 		end,
-		func = function (arg_166_0, arg_166_1)
-			local var_166_0 = arg_166_0[arg_166_1]
+		func = function(arg_170_0, arg_170_1)
+			local var_170_0 = arg_170_0[arg_170_1]
 
-			LevelUnlockUtils.debug_set_completed_journey_difficulty(var_166_0, 0)
+			LevelUnlockUtils.debug_set_completed_journey_difficulty(var_170_0, 0)
 		end
 	},
 	{
@@ -8903,22 +9030,22 @@ local var_0_2 = {
 		setting_name = "Set completed journey difficulty",
 		category = "Deus",
 		item_source = {},
-		load_items_source_func = function (arg_167_0)
-			table.clear(arg_167_0)
+		load_items_source_func = function(arg_171_0)
+			table.clear(arg_171_0)
 
-			for iter_167_0, iter_167_1 in ipairs(AvailableJourneyOrder) do
-				for iter_167_2, iter_167_3 in ipairs(DefaultDifficulties) do
-					arg_167_0[#arg_167_0 + 1] = iter_167_1 .. "/" .. iter_167_3
+			for iter_171_0, iter_171_1 in ipairs(AvailableJourneyOrder) do
+				for iter_171_2, iter_171_3 in ipairs(DefaultDifficulties) do
+					arg_171_0[#arg_171_0 + 1] = iter_171_1 .. "/" .. iter_171_3
 				end
 			end
 		end,
-		func = function (arg_168_0, arg_168_1)
-			local var_168_0 = string.split_deprecated(arg_168_0[arg_168_1], "/")
-			local var_168_1 = var_168_0[1]
-			local var_168_2 = var_168_0[2]
-			local var_168_3 = table.index_of(DefaultDifficulties, var_168_2)
+		func = function(arg_172_0, arg_172_1)
+			local var_172_0 = string.split_deprecated(arg_172_0[arg_172_1], "/")
+			local var_172_1 = var_172_0[1]
+			local var_172_2 = var_172_0[2]
+			local var_172_3 = table.index_of(DefaultDifficulties, var_172_2)
 
-			LevelUnlockUtils.debug_set_completed_journey_difficulty(var_168_1, var_168_3)
+			LevelUnlockUtils.debug_set_completed_journey_difficulty(var_172_1, var_172_3)
 		end
 	},
 	{
@@ -8926,32 +9053,32 @@ local var_0_2 = {
 		setting_name = "Set completed hero journey difficulty",
 		category = "Deus",
 		item_source = {},
-		load_items_source_func = function (arg_169_0)
-			local var_169_0 = "journey_citadel"
+		load_items_source_func = function(arg_173_0)
+			local var_173_0 = "journey_citadel"
 
-			table.clear(arg_169_0)
+			table.clear(arg_173_0)
 
-			for iter_169_0, iter_169_1 in ipairs(SPProfilesAbbreviation) do
-				for iter_169_2, iter_169_3 in ipairs(DefaultDifficulties) do
-					arg_169_0[#arg_169_0 + 1] = iter_169_1 .. "/" .. var_169_0 .. "/" .. iter_169_3
+			for iter_173_0, iter_173_1 in ipairs(SPProfilesAbbreviation) do
+				for iter_173_2, iter_173_3 in ipairs(DefaultDifficulties) do
+					arg_173_0[#arg_173_0 + 1] = iter_173_1 .. "/" .. var_173_0 .. "/" .. iter_173_3
 				end
 			end
 		end,
-		func = function (arg_170_0, arg_170_1)
-			local var_170_0 = string.split_deprecated(arg_170_0[arg_170_1], "/")
-			local var_170_1 = var_170_0[1]
-			local var_170_2 = var_170_0[2]
-			local var_170_3 = var_170_0[3]
-			local var_170_4 = table.index_of(DefaultDifficulties, var_170_3)
+		func = function(arg_174_0, arg_174_1)
+			local var_174_0 = string.split_deprecated(arg_174_0[arg_174_1], "/")
+			local var_174_1 = var_174_0[1]
+			local var_174_2 = var_174_0[2]
+			local var_174_3 = var_174_0[3]
+			local var_174_4 = table.index_of(DefaultDifficulties, var_174_3)
 
-			LevelUnlockUtils.debug_set_completed_hero_journey_difficulty(var_170_1, var_170_2, var_170_4)
+			LevelUnlockUtils.debug_set_completed_hero_journey_difficulty(var_174_1, var_174_2, var_174_4)
 		end
 	},
 	{
 		description = "Clears all deus meta progression, which is just rolled over coins at the moment.",
 		setting_name = "Clear Deus meta progression",
 		category = "Deus",
-		func = function ()
+		func = function()
 			Managers.backend:get_interface("deus"):debug_clear_meta_progression()
 		end
 	},
@@ -8960,51 +9087,51 @@ local var_0_2 = {
 		setting_name = "Activate Deus PowerUp",
 		category = "Deus",
 		item_source = {},
-		load_items_source_func = function (arg_172_0)
-			table.clear(arg_172_0)
+		load_items_source_func = function(arg_176_0)
+			table.clear(arg_176_0)
 
-			for iter_172_0, iter_172_1 in pairs(DeusPowerUps) do
-				for iter_172_2, iter_172_3 in pairs(iter_172_1) do
-					arg_172_0[#arg_172_0 + 1] = iter_172_0 .. "/" .. iter_172_2
+			for iter_176_0, iter_176_1 in pairs(DeusPowerUps) do
+				for iter_176_2, iter_176_3 in pairs(iter_176_1) do
+					arg_176_0[#arg_176_0 + 1] = iter_176_0 .. "/" .. iter_176_2
 				end
 			end
 
-			table.sort(arg_172_0)
+			table.sort(arg_176_0)
 		end,
-		func = function (arg_173_0, arg_173_1)
+		func = function(arg_177_0, arg_177_1)
 			if not Managers.mechanism:current_mechanism_name() == "deus" then
 				return
 			end
 
-			local var_173_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
+			local var_177_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
-			if not var_173_0 then
+			if not var_177_0 then
 				return
 			end
 
-			local var_173_1 = Managers.player:local_player()
-			local var_173_2 = var_173_1:local_player_id()
-			local var_173_3 = arg_173_0[arg_173_1]
-			local var_173_4 = string.split_deprecated(var_173_3, "/")
-			local var_173_5 = var_173_4[1]
-			local var_173_6 = var_173_4[2]
-			local var_173_7 = var_173_0:get_player_power_ups(var_173_1.peer_id, var_173_2)
-			local var_173_8
+			local var_177_1 = Managers.player:local_player()
+			local var_177_2 = var_177_1:local_player_id()
+			local var_177_3 = arg_177_0[arg_177_1]
+			local var_177_4 = string.split_deprecated(var_177_3, "/")
+			local var_177_5 = var_177_4[1]
+			local var_177_6 = var_177_4[2]
+			local var_177_7 = var_177_0:get_player_power_ups(var_177_1.peer_id, var_177_2)
+			local var_177_8
 
-			for iter_173_0, iter_173_1 in ipairs(var_173_7) do
-				if iter_173_1.name == var_173_6 then
-					var_173_8 = true
+			for iter_177_0, iter_177_1 in ipairs(var_177_7) do
+				if iter_177_1.name == var_177_6 then
+					var_177_8 = true
 
 					break
 				end
 			end
 
-			if not var_173_8 then
-				local var_173_9 = DeusPowerUpUtils.generate_specific_power_up(var_173_6, var_173_5)
+			if not var_177_8 then
+				local var_177_9 = DeusPowerUpUtils.generate_specific_power_up(var_177_6, var_177_5)
 
-				var_173_0:add_power_ups({
-					var_173_9
-				}, var_173_2, false)
+				var_177_0:add_power_ups({
+					var_177_9
+				}, var_177_2, false)
 			end
 		end
 	},
@@ -9012,29 +9139,29 @@ local var_0_2 = {
 		description = "Adds 10.000 deus soft currency",
 		setting_name = "add_soft_currency",
 		category = "Deus",
-		func = function (arg_174_0, arg_174_1)
-			local var_174_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
-			local var_174_1 = var_174_0._run_state:get_own_peer_id()
+		func = function(arg_178_0, arg_178_1)
+			local var_178_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
+			local var_178_1 = var_178_0._run_state:get_own_peer_id()
 
-			var_174_0:_add_soft_currency_to_peer(var_174_1, 10000)
+			var_178_0:_add_soft_currency_to_peer(var_178_1, 10000)
 		end
 	},
 	{
 		description = "Adds a random boon, the type obtained from boon shrines",
 		setting_name = "add_random_boon",
 		category = "Deus",
-		func = function (arg_175_0, arg_175_1)
-			local var_175_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
-			local var_175_1 = var_175_0:generate_random_power_ups(DeusPowerUpSettings.weapon_chest_choice_amount, DeusPowerUpAvailabilityTypes.weapon_chest, math.random_seed())[1]
-			local var_175_2 = Managers.player:local_player():local_player_id()
+		func = function(arg_179_0, arg_179_1)
+			local var_179_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
+			local var_179_1 = var_179_0:generate_random_power_ups(DeusPowerUpSettings.weapon_chest_choice_amount, DeusPowerUpAvailabilityTypes.weapon_chest, math.random_seed())[1]
+			local var_179_2 = Managers.player:local_player():local_player_id()
 
-			var_175_0:add_power_ups({
-				var_175_1
-			}, var_175_2, true)
+			var_179_0:add_power_ups({
+				var_179_1
+			}, var_179_2, true)
 			Managers.state.event:trigger("present_rewards", {
 				{
 					type = "deus_power_up",
-					power_up = var_175_1
+					power_up = var_179_1
 				}
 			})
 		end
@@ -9044,61 +9171,61 @@ local var_0_2 = {
 		setting_name = "Activate all Deus PowerUps",
 		category = "Deus",
 		item_source = {},
-		func = function (arg_176_0, arg_176_1)
+		func = function(arg_180_0, arg_180_1)
 			if not Managers.mechanism:current_mechanism_name() == "deus" then
 				return
 			end
 
-			local var_176_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
+			local var_180_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
-			if not var_176_0 then
+			if not var_180_0 then
 				return
 			end
 
-			local var_176_1 = Managers.player:local_player()
-			local var_176_2 = var_176_1:local_player_id()
-			local var_176_3 = var_176_1:network_id()
-			local var_176_4 = var_176_0:get_player_power_ups(var_176_3, var_176_2)
-			local var_176_5 = 50
-			local var_176_6 = 0
-			local var_176_7 = {}
+			local var_180_1 = Managers.player:local_player()
+			local var_180_2 = var_180_1:local_player_id()
+			local var_180_3 = var_180_1:network_id()
+			local var_180_4 = var_180_0:get_player_power_ups(var_180_3, var_180_2)
+			local var_180_5 = 50
+			local var_180_6 = 0
+			local var_180_7 = {}
 
-			for iter_176_0, iter_176_1 in pairs(DeusPowerUps) do
-				for iter_176_2, iter_176_3 in pairs(iter_176_1) do
-					local var_176_8
+			for iter_180_0, iter_180_1 in pairs(DeusPowerUps) do
+				for iter_180_2, iter_180_3 in pairs(iter_180_1) do
+					local var_180_8
 
-					for iter_176_4, iter_176_5 in ipairs(var_176_4) do
-						if iter_176_5.name == iter_176_2 then
-							var_176_8 = true
-
-							break
-						end
-					end
-
-					local var_176_9 = iter_176_3.mutators
-					local var_176_10 = table.is_empty(var_176_9)
-
-					for iter_176_6 = 1, #var_176_9 do
-						if Managers.state.game_mode:has_activated_mutator(var_176_9[iter_176_6]) then
-							var_176_10 = true
+					for iter_180_4, iter_180_5 in ipairs(var_180_4) do
+						if iter_180_5.name == iter_180_2 then
+							var_180_8 = true
 
 							break
 						end
 					end
 
-					if var_176_10 and not var_176_8 then
-						var_176_6 = var_176_6 + 1
+					local var_180_9 = iter_180_3.mutators
+					local var_180_10 = table.is_empty(var_180_9)
 
-						local var_176_11 = math.ceil(var_176_6 / var_176_5)
+					for iter_180_6 = 1, #var_180_9 do
+						if Managers.state.game_mode:has_activated_mutator(var_180_9[iter_180_6]) then
+							var_180_10 = true
 
-						var_176_7[var_176_11] = var_176_7[var_176_11] or {}
-						var_176_7[var_176_11][#var_176_7[var_176_11] + 1] = DeusPowerUpUtils.generate_specific_power_up(iter_176_2, iter_176_0)
+							break
+						end
+					end
+
+					if var_180_10 and not var_180_8 then
+						var_180_6 = var_180_6 + 1
+
+						local var_180_11 = math.ceil(var_180_6 / var_180_5)
+
+						var_180_7[var_180_11] = var_180_7[var_180_11] or {}
+						var_180_7[var_180_11][#var_180_7[var_180_11] + 1] = DeusPowerUpUtils.generate_specific_power_up(iter_180_2, iter_180_0)
 					end
 				end
 			end
 
-			for iter_176_7 = 1, #var_176_7 do
-				var_176_0:add_power_ups(var_176_7[iter_176_7], var_176_2, false)
+			for iter_180_7 = 1, #var_180_7 do
+				var_180_0:add_power_ups(var_180_7[iter_180_7], var_180_2, false)
 			end
 		end
 	},
@@ -9107,18 +9234,18 @@ local var_0_2 = {
 		setting_name = "Draw Weapon Position",
 		category = "Weapons",
 		item_source = {},
-		load_items_source_func = function (arg_177_0)
-			table.clear(arg_177_0)
-			table.insert(arg_177_0, "all")
-			table.insert(arg_177_0, "right_hand")
-			table.insert(arg_177_0, "left_hand")
-			table.insert(arg_177_0, "right_hand_ammo")
-			table.insert(arg_177_0, "left_hand_ammo")
-			table.insert(arg_177_0, "[clear value]")
-			table.sort(arg_177_0)
+		load_items_source_func = function(arg_181_0)
+			table.clear(arg_181_0)
+			table.insert(arg_181_0, "all")
+			table.insert(arg_181_0, "right_hand")
+			table.insert(arg_181_0, "left_hand")
+			table.insert(arg_181_0, "right_hand_ammo")
+			table.insert(arg_181_0, "left_hand_ammo")
+			table.insert(arg_181_0, "[clear value]")
+			table.sort(arg_181_0)
 		end,
-		func = function (arg_178_0, arg_178_1)
-			script_data.debug_draw_weapon_position = arg_178_0[arg_178_1]
+		func = function(arg_182_0, arg_182_1)
+			script_data.debug_draw_weapon_position = arg_182_0[arg_182_1]
 		end
 	},
 	{
@@ -9156,16 +9283,16 @@ local var_0_2 = {
 		category = "Deus",
 		description = "override the run progress when using this menu's load level. 900 == 0.9 ",
 		item_source = {},
-		load_items_source_func = function (arg_179_0)
-			table.clear(arg_179_0)
+		load_items_source_func = function(arg_183_0)
+			table.clear(arg_183_0)
 
-			for iter_179_0 = 0, 999, 10 do
-				arg_179_0[#arg_179_0 + 1] = iter_179_0
+			for iter_183_0 = 0, 999, 10 do
+				arg_183_0[#arg_183_0 + 1] = iter_183_0
 			end
 
-			table.sort(arg_179_0)
+			table.sort(arg_183_0)
 
-			arg_179_0[#arg_179_0 + 1] = "[clear value]"
+			arg_183_0[#arg_183_0 + 1] = "[clear value]"
 		end
 	},
 	{
@@ -9173,16 +9300,16 @@ local var_0_2 = {
 		category = "Deus",
 		description = "Force a default graph seed",
 		item_source = {},
-		load_items_source_func = function (arg_180_0)
-			table.clear(arg_180_0)
+		load_items_source_func = function(arg_184_0)
+			table.clear(arg_184_0)
 
-			for iter_180_0, iter_180_1 in pairs(DeusDefaultGraphs) do
-				arg_180_0[#arg_180_0 + 1] = iter_180_0
+			for iter_184_0, iter_184_1 in pairs(DeusDefaultGraphs) do
+				arg_184_0[#arg_184_0 + 1] = iter_184_0
 			end
 
-			arg_180_0[#arg_180_0 + 1] = "[clear value]"
+			arg_184_0[#arg_184_0 + 1] = "[clear value]"
 
-			table.sort(arg_180_0)
+			table.sort(arg_184_0)
 		end
 	},
 	{
@@ -9190,16 +9317,16 @@ local var_0_2 = {
 		category = "Deus",
 		description = "Force a deus journey",
 		item_source = {},
-		load_items_source_func = function (arg_181_0)
-			table.clear(arg_181_0)
+		load_items_source_func = function(arg_185_0)
+			table.clear(arg_185_0)
 
-			for iter_181_0, iter_181_1 in pairs(AvailableJourneyOrder) do
-				arg_181_0[#arg_181_0 + 1] = iter_181_1
+			for iter_185_0, iter_185_1 in pairs(AvailableJourneyOrder) do
+				arg_185_0[#arg_185_0 + 1] = iter_185_1
 			end
 
-			arg_181_0[#arg_181_0 + 1] = "[clear value]"
+			arg_185_0[#arg_185_0 + 1] = "[clear value]"
 
-			table.sort(arg_181_0)
+			table.sort(arg_185_0)
 		end
 	},
 	{
@@ -9207,16 +9334,16 @@ local var_0_2 = {
 		category = "Deus",
 		description = "Force a deus dominant god",
 		item_source = {},
-		load_items_source_func = function (arg_182_0)
-			table.clear(arg_182_0)
+		load_items_source_func = function(arg_186_0)
+			table.clear(arg_186_0)
 
-			for iter_182_0, iter_182_1 in pairs(DEUS_GOD_INDEX) do
-				arg_182_0[#arg_182_0 + 1] = iter_182_1
+			for iter_186_0, iter_186_1 in pairs(DEUS_GOD_INDEX) do
+				arg_186_0[#arg_186_0 + 1] = iter_186_1
 			end
 
-			arg_182_0[#arg_182_0 + 1] = "[clear value]"
+			arg_186_0[#arg_186_0 + 1] = "[clear value]"
 
-			table.sort(arg_182_0)
+			table.sort(arg_186_0)
 		end
 	},
 	{
@@ -9283,7 +9410,7 @@ local var_0_2 = {
 		description = "Primes your user setting to trigger the new UI popup",
 		category = "New UI Popup",
 		setting_name = "Activate New Popup UI Prompt",
-		func = function ()
+		func = function()
 			Application.set_user_setting("use_pc_menu_layout", false)
 			Application.set_user_setting("use_gamepad_menu_layout", false)
 			Managers.save:auto_save(SaveFileName, SaveData)
@@ -9326,17 +9453,17 @@ local var_0_2 = {
 			4000,
 			5000
 		},
-		custom_item_source_order = function (arg_184_0, arg_184_1)
-			for iter_184_0, iter_184_1 in ipairs(arg_184_0) do
-				local var_184_0 = iter_184_1
+		custom_item_source_order = function(arg_188_0, arg_188_1)
+			for iter_188_0, iter_188_1 in ipairs(arg_188_0) do
+				local var_188_0 = iter_188_1
 
-				arg_184_1[#arg_184_1 + 1] = var_184_0
+				arg_188_1[#arg_188_1 + 1] = var_188_0
 			end
 		end,
-		func = function (arg_185_0, arg_185_1)
-			local var_185_0 = arg_185_0[arg_185_1]
+		func = function(arg_189_0, arg_189_1)
+			local var_189_0 = arg_189_0[arg_189_1]
 
-			Managers.state.crafting:debug_set_crafted_items_stat(var_185_0)
+			Managers.state.crafting:debug_set_crafted_items_stat(var_189_0)
 		end
 	},
 	{
@@ -9369,17 +9496,17 @@ local var_0_2 = {
 			4000,
 			5000
 		},
-		custom_item_source_order = function (arg_186_0, arg_186_1)
-			for iter_186_0, iter_186_1 in ipairs(arg_186_0) do
-				local var_186_0 = iter_186_1
+		custom_item_source_order = function(arg_190_0, arg_190_1)
+			for iter_190_0, iter_190_1 in ipairs(arg_190_0) do
+				local var_190_0 = iter_190_1
 
-				arg_186_1[#arg_186_1 + 1] = var_186_0
+				arg_190_1[#arg_190_1 + 1] = var_190_0
 			end
 		end,
-		func = function (arg_187_0, arg_187_1)
-			local var_187_0 = arg_187_0[arg_187_1]
+		func = function(arg_191_0, arg_191_1)
+			local var_191_0 = arg_191_0[arg_191_1]
 
-			Managers.state.crafting:debug_set_salvaged_items_stat(var_187_0)
+			Managers.state.crafting:debug_set_salvaged_items_stat(var_191_0)
 		end
 	},
 	{
@@ -9398,7 +9525,7 @@ local var_0_2 = {
 		description = "starts the round",
 		setting_name = "start_player_hosted_round",
 		category = "Versus",
-		func = function (arg_188_0, arg_188_1)
+		func = function(arg_192_0, arg_192_1)
 			Managers.state.game_mode:round_started()
 			printf("Round started!")
 		end
@@ -9407,7 +9534,7 @@ local var_0_2 = {
 		description = "Trigger boss terror event",
 		setting_name = "inject_playable_boss_into_main_path",
 		category = "Versus",
-		func = function (arg_189_0, arg_189_1)
+		func = function(arg_193_0, arg_193_1)
 			print("Playable boss patrols injected into the main path now")
 			Managers.state.conflict.level_analysis:inject_playable_boss_into_main_path()
 		end
@@ -9416,7 +9543,7 @@ local var_0_2 = {
 		description = "Trigger boss terror event",
 		setting_name = "trigger_playable_boss_event",
 		category = "Versus",
-		func = function (arg_190_0, arg_190_1)
+		func = function(arg_194_0, arg_194_1)
 			print("[DEBUG] Triggered Playable boss")
 			Managers.state.game_mode:game_mode():set_playable_boss_can_be_picked(true)
 		end
@@ -9437,7 +9564,7 @@ local var_0_2 = {
 		description = "starts the round",
 		setting_name = "end_player_hosted_round",
 		category = "Versus",
-		func = function (arg_191_0, arg_191_1)
+		func = function(arg_195_0, arg_195_1)
 			if Managers.level_transition_handler:in_hub_level() then
 				printf("Failed to end round - Match not started")
 
@@ -9468,161 +9595,161 @@ local var_0_2 = {
 	}
 }
 
-local function var_0_3(arg_192_0)
+local function var_0_3(arg_196_0)
 	return {
 		{
 			description = "Lists all items with functionality to add them to inventory.",
 			category = "Items",
-			setting_name = "Add Melee Items (" .. arg_192_0 .. ")",
+			setting_name = "Add Melee Items (" .. arg_196_0 .. ")",
 			item_source = {},
-			load_items_source_func = function (arg_193_0)
-				table.clear(arg_193_0)
+			load_items_source_func = function(arg_197_0)
+				table.clear(arg_197_0)
 
-				local var_193_0 = ItemMasterList
+				local var_197_0 = ItemMasterList
 
-				for iter_193_0, iter_193_1 in pairs(var_193_0) do
-					if iter_193_1.slot_type == "melee" then
-						arg_193_0[#arg_193_0 + 1] = iter_193_0
+				for iter_197_0, iter_197_1 in pairs(var_197_0) do
+					if iter_197_1.slot_type == "melee" then
+						arg_197_0[#arg_197_0 + 1] = iter_197_0
 					end
 				end
 
-				table.sort(arg_193_0)
+				table.sort(arg_197_0)
 			end,
-			func = function (arg_194_0, arg_194_1)
-				local var_194_0 = Managers.backend:get_interface("items")
-				local var_194_1 = arg_194_0[arg_194_1]
+			func = function(arg_198_0, arg_198_1)
+				local var_198_0 = Managers.backend:get_interface("items")
+				local var_198_1 = arg_198_0[arg_198_1]
 
-				if var_194_1 then
-					var_194_0:award_item(var_194_1, nil, nil, arg_192_0)
+				if var_198_1 then
+					var_198_0:award_item(var_198_1, nil, nil, arg_196_0)
 				end
 			end
 		}
 	}
 end
 
-local function var_0_4(arg_195_0)
+local function var_0_4(arg_199_0)
 	return {
 		{
 			description = "Lists all items with functionality to add them to inventory.",
 			category = "Items",
-			setting_name = "Add Ranged Items (" .. arg_195_0 .. ")",
+			setting_name = "Add Ranged Items (" .. arg_199_0 .. ")",
 			item_source = {},
-			load_items_source_func = function (arg_196_0)
-				table.clear(arg_196_0)
+			load_items_source_func = function(arg_200_0)
+				table.clear(arg_200_0)
 
-				local var_196_0 = ItemMasterList
+				local var_200_0 = ItemMasterList
 
-				for iter_196_0, iter_196_1 in pairs(var_196_0) do
-					if iter_196_1.slot_type == "ranged" then
-						arg_196_0[#arg_196_0 + 1] = iter_196_0
+				for iter_200_0, iter_200_1 in pairs(var_200_0) do
+					if iter_200_1.slot_type == "ranged" then
+						arg_200_0[#arg_200_0 + 1] = iter_200_0
 					end
 				end
 
-				table.sort(arg_196_0)
+				table.sort(arg_200_0)
 			end,
-			func = function (arg_197_0, arg_197_1)
-				local var_197_0 = Managers.backend:get_interface("items")
-				local var_197_1 = arg_197_0[arg_197_1]
+			func = function(arg_201_0, arg_201_1)
+				local var_201_0 = Managers.backend:get_interface("items")
+				local var_201_1 = arg_201_0[arg_201_1]
 
-				if var_197_1 then
-					var_197_0:award_item(var_197_1, nil, nil, arg_195_0)
+				if var_201_1 then
+					var_201_0:award_item(var_201_1, nil, nil, arg_199_0)
 				end
 			end
 		}
 	}
 end
 
-local function var_0_5(arg_198_0)
+local function var_0_5(arg_202_0)
 	return {
 		{
 			description = "Lists all items with functionality to add them to inventory.",
 			category = "Items",
-			setting_name = "Add Ring Items (" .. arg_198_0 .. ")",
+			setting_name = "Add Ring Items (" .. arg_202_0 .. ")",
 			item_source = {},
-			load_items_source_func = function (arg_199_0)
-				table.clear(arg_199_0)
+			load_items_source_func = function(arg_203_0)
+				table.clear(arg_203_0)
 
-				local var_199_0 = ItemMasterList
+				local var_203_0 = ItemMasterList
 
-				for iter_199_0, iter_199_1 in pairs(var_199_0) do
-					if iter_199_1.slot_type == "ring" then
-						arg_199_0[#arg_199_0 + 1] = iter_199_0
+				for iter_203_0, iter_203_1 in pairs(var_203_0) do
+					if iter_203_1.slot_type == "ring" then
+						arg_203_0[#arg_203_0 + 1] = iter_203_0
 					end
 				end
 
-				table.sort(arg_199_0)
+				table.sort(arg_203_0)
 			end,
-			func = function (arg_200_0, arg_200_1)
-				local var_200_0 = Managers.backend:get_interface("items")
-				local var_200_1 = arg_200_0[arg_200_1]
+			func = function(arg_204_0, arg_204_1)
+				local var_204_0 = Managers.backend:get_interface("items")
+				local var_204_1 = arg_204_0[arg_204_1]
 
-				if var_200_1 then
-					var_200_0:award_item(var_200_1, nil, nil, arg_198_0)
+				if var_204_1 then
+					var_204_0:award_item(var_204_1, nil, nil, arg_202_0)
 				end
 			end
 		}
 	}
 end
 
-local function var_0_6(arg_201_0)
+local function var_0_6(arg_205_0)
 	return {
 		{
 			no_nil = true,
 			description = "Lists all items with functionality to add them to inventory.",
 			category = "Items",
-			setting_name = "Add Necklace Items (" .. arg_201_0 .. ")",
+			setting_name = "Add Necklace Items (" .. arg_205_0 .. ")",
 			item_source = {},
-			load_items_source_func = function (arg_202_0)
-				table.clear(arg_202_0)
+			load_items_source_func = function(arg_206_0)
+				table.clear(arg_206_0)
 
-				local var_202_0 = ItemMasterList
+				local var_206_0 = ItemMasterList
 
-				for iter_202_0, iter_202_1 in pairs(var_202_0) do
-					if iter_202_1.slot_type == "necklace" then
-						arg_202_0[#arg_202_0 + 1] = iter_202_0
+				for iter_206_0, iter_206_1 in pairs(var_206_0) do
+					if iter_206_1.slot_type == "necklace" then
+						arg_206_0[#arg_206_0 + 1] = iter_206_0
 					end
 				end
 
-				table.sort(arg_202_0)
+				table.sort(arg_206_0)
 			end,
-			func = function (arg_203_0, arg_203_1)
-				local var_203_0 = Managers.backend:get_interface("items")
-				local var_203_1 = arg_203_0[arg_203_1]
+			func = function(arg_207_0, arg_207_1)
+				local var_207_0 = Managers.backend:get_interface("items")
+				local var_207_1 = arg_207_0[arg_207_1]
 
-				if var_203_1 then
-					var_203_0:award_item(var_203_1, nil, nil, arg_201_0)
+				if var_207_1 then
+					var_207_0:award_item(var_207_1, nil, nil, arg_205_0)
 				end
 			end
 		}
 	}
 end
 
-local function var_0_7(arg_204_0)
+local function var_0_7(arg_208_0)
 	return {
 		{
 			description = "Lists all items with functionality to add them to inventory.",
 			category = "Items",
-			setting_name = "Add Trinket Items (" .. arg_204_0 .. ")",
+			setting_name = "Add Trinket Items (" .. arg_208_0 .. ")",
 			item_source = {},
-			load_items_source_func = function (arg_205_0)
-				table.clear(arg_205_0)
+			load_items_source_func = function(arg_209_0)
+				table.clear(arg_209_0)
 
-				local var_205_0 = ItemMasterList
+				local var_209_0 = ItemMasterList
 
-				for iter_205_0, iter_205_1 in pairs(var_205_0) do
-					if iter_205_1.slot_type == "trinket" then
-						arg_205_0[#arg_205_0 + 1] = iter_205_0
+				for iter_209_0, iter_209_1 in pairs(var_209_0) do
+					if iter_209_1.slot_type == "trinket" then
+						arg_209_0[#arg_209_0 + 1] = iter_209_0
 					end
 				end
 
-				table.sort(arg_205_0)
+				table.sort(arg_209_0)
 			end,
-			func = function (arg_206_0, arg_206_1)
-				local var_206_0 = Managers.backend:get_interface("items")
-				local var_206_1 = arg_206_0[arg_206_1]
+			func = function(arg_210_0, arg_210_1)
+				local var_210_0 = Managers.backend:get_interface("items")
+				local var_210_1 = arg_210_0[arg_210_1]
 
-				if var_206_1 then
-					var_206_0:award_item(var_206_1, nil, nil, arg_204_0)
+				if var_210_1 then
+					var_210_0:award_item(var_210_1, nil, nil, arg_208_0)
 				end
 			end
 		}
@@ -9657,87 +9784,87 @@ for iter_0_8, iter_0_9 in ipairs(var_0_8) do
 	table.append(var_0_2, var_0_7(iter_0_9))
 end
 
-local function var_0_9(arg_207_0, arg_207_1)
-	local function var_207_0(arg_208_0)
-		table.clear(arg_208_0)
+local function var_0_9(arg_211_0, arg_211_1)
+	local function var_211_0(arg_212_0)
+		table.clear(arg_212_0)
 
-		local var_208_0 = Managers.player:local_player()
-		local var_208_1 = var_208_0:profile_index()
-		local var_208_2 = SPProfiles[var_208_1]
-		local var_208_3 = var_208_0:career_index()
-		local var_208_4 = var_208_2.careers[var_208_3].name
-		local var_208_5 = ItemMasterList
-		local var_208_6 = Managers.backend:get_interface("common")
+		local var_212_0 = Managers.player:local_player()
+		local var_212_1 = var_212_0:profile_index()
+		local var_212_2 = SPProfiles[var_212_1]
+		local var_212_3 = var_212_0:career_index()
+		local var_212_4 = var_212_2.careers[var_212_3].name
+		local var_212_5 = ItemMasterList
+		local var_212_6 = Managers.backend:get_interface("common")
 
-		for iter_208_0, iter_208_1 in pairs(var_208_5) do
-			if iter_208_1.slot_type == arg_207_0 and var_208_6:can_wield(var_208_4, iter_208_1) then
-				arg_208_0[#arg_208_0 + 1] = iter_208_0
+		for iter_212_0, iter_212_1 in pairs(var_212_5) do
+			if iter_212_1.slot_type == arg_211_0 and var_212_6:can_wield(var_212_4, iter_212_1) then
+				arg_212_0[#arg_212_0 + 1] = iter_212_0
 			end
 		end
 
-		table.sort(arg_208_0)
+		table.sort(arg_212_0)
 	end
 
-	local function var_207_1(arg_209_0, arg_209_1)
-		local var_209_0 = arg_209_0[arg_209_1]
+	local function var_211_1(arg_213_0, arg_213_1)
+		local var_213_0 = arg_213_0[arg_213_1]
 
-		if not var_209_0 then
+		if not var_213_0 then
 			return
 		end
 
-		local var_209_1 = Managers.backend:get_interface("items")
-		local var_209_2 = var_209_1:get_item_from_key(var_209_0)
+		local var_213_1 = Managers.backend:get_interface("items")
+		local var_213_2 = var_213_1:get_item_from_key(var_213_0)
 
-		if not var_209_2 then
-			var_209_1:award_item(var_209_0, nil, nil, arg_207_1)
+		if not var_213_2 then
+			var_213_1:award_item(var_213_0, nil, nil, arg_211_1)
 
-			var_209_2 = var_209_1:get_item_from_key(var_209_0)
+			var_213_2 = var_213_1:get_item_from_key(var_213_0)
 		end
 
-		if not var_209_2 then
+		if not var_213_2 then
 			return
 		end
 
-		local var_209_3 = ItemMasterList[var_209_0]
-		local var_209_4 = Managers.player:local_player()
-		local var_209_5 = var_209_4.player_unit
-		local var_209_6 = ScriptUnit.extension(var_209_5, "inventory_system")
+		local var_213_3 = ItemMasterList[var_213_0]
+		local var_213_4 = Managers.player:local_player()
+		local var_213_5 = var_213_4.player_unit
+		local var_213_6 = ScriptUnit.extension(var_213_5, "inventory_system")
 
-		if var_209_6:resyncing_loadout() then
+		if var_213_6:resyncing_loadout() then
 			return
 		end
 
-		local var_209_7 = var_209_2.backend_id
-		local var_209_8 = var_209_3.slot_type
-		local var_209_9 = InventorySettings.slots_by_slot_index
-		local var_209_10
+		local var_213_7 = var_213_2.backend_id
+		local var_213_8 = var_213_3.slot_type
+		local var_213_9 = InventorySettings.slots_by_slot_index
+		local var_213_10
 
-		for iter_209_0, iter_209_1 in pairs(var_209_9) do
-			if var_209_8 == iter_209_1.type then
-				var_209_10 = iter_209_1.name
+		for iter_213_0, iter_213_1 in pairs(var_213_9) do
+			if var_213_8 == iter_213_1.type then
+				var_213_10 = iter_213_1.name
 
 				break
 			end
 		end
 
-		local var_209_11 = var_209_4:profile_index()
-		local var_209_12 = SPProfiles[var_209_11]
-		local var_209_13 = var_209_12.display_name
-		local var_209_14 = Managers.backend:get_interface("hero_attributes"):get(var_209_13, "career")
-		local var_209_15 = var_209_12.careers[var_209_14].name
+		local var_213_11 = var_213_4:profile_index()
+		local var_213_12 = SPProfiles[var_213_11]
+		local var_213_13 = var_213_12.display_name
+		local var_213_14 = Managers.backend:get_interface("hero_attributes"):get(var_213_13, "career")
+		local var_213_15 = var_213_12.careers[var_213_14].name
 
-		BackendUtils.set_loadout_item(var_209_7, var_209_15, var_209_10)
-		var_209_6:create_equipment_in_slot(var_209_10, var_209_7)
+		BackendUtils.set_loadout_item(var_213_7, var_213_15, var_213_10)
+		var_213_6:create_equipment_in_slot(var_213_10, var_213_7)
 	end
 
 	return {
 		{
 			description = "Lists all items for current career to equip them, adding to inventory if necessary.",
 			category = "Items",
-			setting_name = "Equip " .. arg_207_0 .. " Items (" .. arg_207_1 .. ")",
+			setting_name = "Equip " .. arg_211_0 .. " Items (" .. arg_211_1 .. ")",
 			item_source = {},
-			load_items_source_func = var_207_0,
-			func = var_207_1
+			load_items_source_func = var_211_0,
+			func = var_211_1
 		}
 	}
 end
@@ -9772,43 +9899,43 @@ if IS_CONSOLE then
 			description = "",
 			category = "Breed",
 			item_source = {},
-			load_items_source_func = function (arg_210_0)
-				table.clear(arg_210_0)
+			load_items_source_func = function(arg_214_0)
+				table.clear(arg_214_0)
 
-				arg_210_0[1] = "Switch Breed"
-				arg_210_0[2] = "Spawn Breed"
-				arg_210_0[3] = "Spawn Group"
-				arg_210_0[4] = "Spawn Horde"
-				arg_210_0[5] = "Unspawn All Breed"
-				arg_210_0[6] = "Unspawn Nearby Breed"
-				arg_210_0[7] = "Unspawn Specials"
+				arg_214_0[1] = "Switch Breed"
+				arg_214_0[2] = "Spawn Breed"
+				arg_214_0[3] = "Spawn Group"
+				arg_214_0[4] = "Spawn Horde"
+				arg_214_0[5] = "Unspawn All Breed"
+				arg_214_0[6] = "Unspawn Nearby Breed"
+				arg_214_0[7] = "Unspawn Specials"
 			end,
-			func = function (arg_211_0, arg_211_1)
-				local var_211_0 = Managers.state.conflict
+			func = function(arg_215_0, arg_215_1)
+				local var_215_0 = Managers.state.conflict
 
-				if var_211_0 then
-					local var_211_1 = arg_211_0[arg_211_1]
+				if var_215_0 then
+					local var_215_1 = arg_215_0[arg_215_1]
 
-					if var_211_1 == "Switch Breed" then
-						local var_211_2 = Managers.time:time("main")
+					if var_215_1 == "Switch Breed" then
+						local var_215_2 = Managers.time:time("main")
 
-						var_211_0:debug_spawn_switch_breed(var_211_2)
-					elseif var_211_1 == "Spawn Breed" then
-						local var_211_3 = Managers.time:time("main")
+						var_215_0:debug_spawn_switch_breed(var_215_2)
+					elseif var_215_1 == "Spawn Breed" then
+						local var_215_3 = Managers.time:time("main")
 
-						var_211_0:debug_spawn_breed(var_211_3)
-					elseif var_211_1 == "Spawn Group" then
-						local var_211_4 = Managers.time:time("main")
+						var_215_0:debug_spawn_breed(var_215_3)
+					elseif var_215_1 == "Spawn Group" then
+						local var_215_4 = Managers.time:time("main")
 
-						var_211_0:debug_spawn_group(var_211_4)
-					elseif var_211_1 == "Spawn Horde" then
-						var_211_0:debug_spawn_horde()
-					elseif var_211_1 == "Unspawn All Breed" then
-						var_211_0:destroy_all_units()
-					elseif var_211_1 == "Unspawn Nearby Breed" then
-						var_211_0:destroy_close_units(nil, nil, 144)
-					elseif var_211_1 == "Unspawn Specials" then
-						var_211_0:destroy_specials()
+						var_215_0:debug_spawn_group(var_215_4)
+					elseif var_215_1 == "Spawn Horde" then
+						var_215_0:debug_spawn_horde()
+					elseif var_215_1 == "Unspawn All Breed" then
+						var_215_0:destroy_all_units()
+					elseif var_215_1 == "Unspawn Nearby Breed" then
+						var_215_0:destroy_close_units(nil, nil, 144)
+					elseif var_215_1 == "Unspawn Specials" then
+						var_215_0:destroy_specials()
 					end
 				end
 			end
@@ -9818,23 +9945,23 @@ if IS_CONSOLE then
 			description = "",
 			category = "Time",
 			item_source = {},
-			load_items_source_func = function (arg_212_0)
-				table.clear(arg_212_0)
+			load_items_source_func = function(arg_216_0)
+				table.clear(arg_216_0)
 
-				arg_212_0[1] = 1
-				arg_212_0[2] = 50
-				arg_212_0[3] = 100
-				arg_212_0[4] = 200
+				arg_216_0[1] = 1
+				arg_216_0[2] = 50
+				arg_216_0[3] = 100
+				arg_216_0[4] = 200
 			end,
-			func = function (arg_213_0, arg_213_1)
-				local var_213_0 = Managers.state.debug
+			func = function(arg_217_0, arg_217_1)
+				local var_217_0 = Managers.state.debug
 
-				if var_213_0 then
-					local var_213_1 = arg_213_0[arg_213_1]
-					local var_213_2 = table.find(var_213_0.time_scale_list, var_213_1)
+				if var_217_0 then
+					local var_217_1 = arg_217_0[arg_217_1]
+					local var_217_2 = table.find(var_217_0.time_scale_list, var_217_1)
 
-					assert(var_213_2, "[DebugScreen] Selected time scale not found in Managers.state.debug.time_scale_list")
-					var_213_0:set_time_scale(var_213_2)
+					assert(var_217_2, "[DebugScreen] Selected time scale not found in Managers.state.debug.time_scale_list")
+					var_217_0:set_time_scale(var_217_2)
 				end
 			end
 		}
@@ -9852,13 +9979,13 @@ for iter_0_14, iter_0_15 in pairs(var_0_2) do
 end
 
 local var_0_13 = {
-	visualize_sound_occlusion = function (arg_214_0)
+	visualize_sound_occlusion = function(arg_218_0)
 		World.visualize_sound_occlusion()
 	end,
-	enable_chain_constraints = function (arg_215_0)
-		World.enable_chain_constraints(arg_215_0)
+	enable_chain_constraints = function(arg_219_0)
+		World.enable_chain_constraints(arg_219_0)
 	end,
-	update_using_luajit = function (arg_216_0)
+	update_using_luajit = function(arg_220_0)
 		if script_data.luajit_disabled then
 			jit.off()
 			print("lua jit is disabled")
@@ -9867,18 +9994,18 @@ local var_0_13 = {
 			print("lua jit is enabled")
 		end
 	end,
-	enable_navigation_visual_debug = function (arg_217_0)
-		if arg_217_0 and not VISUAL_DEBUGGING_ENABLED and Managers.state.entity then
+	enable_navigation_visual_debug = function(arg_221_0)
+		if arg_221_0 and not VISUAL_DEBUGGING_ENABLED and Managers.state.entity then
 			VISUAL_DEBUGGING_ENABLED = true
 
-			local var_217_0 = Managers.state.entity:system("ai_system"):nav_world()
+			local var_221_0 = Managers.state.entity:system("ai_system"):nav_world()
 
-			GwNavWorld.init_visual_debug_server(var_217_0, 4888)
+			GwNavWorld.init_visual_debug_server(var_221_0, 4888)
 		end
 	end,
-	disable_outlines = function (arg_218_0)
+	disable_outlines = function(arg_222_0)
 		if Managers.state and Managers.state.entity then
-			Managers.state.entity:system("outline_system"):set_disabled(arg_218_0)
+			Managers.state.entity:system("outline_system"):set_disabled(arg_222_0)
 		end
 	end
 }

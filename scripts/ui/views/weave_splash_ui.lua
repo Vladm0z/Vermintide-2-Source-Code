@@ -11,7 +11,7 @@ local var_0_5 = 5
 
 WeaveSplashUI = class(WeaveSplashUI)
 
-WeaveSplashUI.init = function (arg_1_0, arg_1_1)
+function WeaveSplashUI.init(arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0._current_splash_index = 1
 	arg_1_0._current_timer = #var_0_4 > 1 and var_0_5
@@ -20,14 +20,14 @@ WeaveSplashUI.init = function (arg_1_0, arg_1_1)
 	arg_1_0:_create_ui_elements()
 end
 
-WeaveSplashUI._setup_ui = function (arg_2_0)
+function WeaveSplashUI._setup_ui(arg_2_0)
 	arg_2_0._render_settings = {
 		alpha_multiplier = 1
 	}
 	arg_2_0._ui_renderer = UIRenderer.create(arg_2_0._world, "material", "materials/ui/loading_screens/loading_screen_default")
 end
 
-WeaveSplashUI._create_ui_elements = function (arg_3_0)
+function WeaveSplashUI._create_ui_elements(arg_3_0)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_3_0._animations = {}
 	arg_3_0._widgets = {}
@@ -51,13 +51,13 @@ WeaveSplashUI._create_ui_elements = function (arg_3_0)
 	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 end
 
-WeaveSplashUI.update = function (arg_4_0, arg_4_1, arg_4_2)
+function WeaveSplashUI.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_update_animations(arg_4_1, arg_4_2)
 	arg_4_0:_draw(arg_4_1, arg_4_2)
 	arg_4_0:_update_current_splash(arg_4_1, arg_4_2)
 end
 
-WeaveSplashUI._update_animations = function (arg_5_0, arg_5_1, arg_5_2)
+function WeaveSplashUI._update_animations(arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._animations
 
 	for iter_5_0, iter_5_1 in pairs(var_5_0) do
@@ -73,7 +73,7 @@ WeaveSplashUI._update_animations = function (arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-WeaveSplashUI._update_current_splash = function (arg_6_0, arg_6_1, arg_6_2)
+function WeaveSplashUI._update_current_splash(arg_6_0, arg_6_1, arg_6_2)
 	if not arg_6_0._current_timer then
 		return
 	end
@@ -98,7 +98,7 @@ WeaveSplashUI._update_current_splash = function (arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-WeaveSplashUI._draw = function (arg_7_0, arg_7_1, arg_7_2)
+function WeaveSplashUI._draw(arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._ui_renderer
 	local var_7_1 = arg_7_0._ui_scenegraph
 	local var_7_2 = arg_7_0._render_settings
@@ -117,10 +117,10 @@ WeaveSplashUI._draw = function (arg_7_0, arg_7_1, arg_7_2)
 	UIRenderer.end_pass(var_7_0)
 end
 
-WeaveSplashUI.destroy = function (arg_8_0)
+function WeaveSplashUI.destroy(arg_8_0)
 	UIRenderer.destroy(arg_8_0._ui_renderer, arg_8_0._world)
 end
 
-WeaveSplashUI.clear_user_name = function (arg_9_0)
+function WeaveSplashUI.clear_user_name(arg_9_0)
 	return
 end

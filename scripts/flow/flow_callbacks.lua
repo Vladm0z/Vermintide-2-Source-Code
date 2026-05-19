@@ -997,7 +997,7 @@ end
 function flow_callback_setup_profiling_level_step_1()
 	local var_90_0 = Mouse.pressed
 
-	Mouse.pressed = function (arg_91_0)
+	function Mouse.pressed(arg_91_0)
 		if arg_91_0 == 0 then
 			Mouse.pressed = var_90_0
 
@@ -1011,7 +1011,7 @@ end
 function flow_callback_setup_profiling_level_step_2()
 	local var_92_0 = Keyboard.pressed
 
-	Keyboard.pressed = function (arg_93_0)
+	function Keyboard.pressed(arg_93_0)
 		if arg_93_0 == 120 then
 			Keyboard.pressed = var_92_0
 
@@ -5154,7 +5154,7 @@ function flow_callback_spawn_skulls_tower_end(arg_349_0)
 
 	var_349_1.sofia_unit_pos = Vector3Box(var_349_2)
 
-	var_349_1.spawned_func = function (arg_350_0, arg_350_1, arg_350_2)
+	function var_349_1.spawned_func(arg_350_0, arg_350_1, arg_350_2)
 		local var_350_0 = BLACKBOARDS[arg_350_0]
 
 		if var_350_0 then
@@ -5162,7 +5162,7 @@ function flow_callback_spawn_skulls_tower_end(arg_349_0)
 		end
 	end
 
-	var_349_1.prepare_func = function (arg_351_0, arg_351_1)
+	function var_349_1.prepare_func(arg_351_0, arg_351_1)
 		local var_351_0 = false
 
 		arg_351_0.modify_extension_init_data(arg_351_0, var_351_0, arg_351_1)
@@ -5982,29 +5982,38 @@ function flow_callback_string_or_default(arg_435_0)
 	return var_0_0
 end
 
+function flow_callback_actor_has_collision_filter(arg_436_0)
+	local var_436_0 = arg_436_0.actor
+	local var_436_1 = arg_436_0.collision_filter
+
+	var_0_0.result = Actor.has_collision_filter(var_436_0, var_436_1)
+
+	return var_0_0
+end
+
 local var_0_12 = {}
 
-function flow_callback_once_by_unit(arg_436_0)
-	local var_436_0 = arg_436_0.unit
-	local var_436_1 = Application.flow_callback_context_level()
+function flow_callback_once_by_unit(arg_437_0)
+	local var_437_0 = arg_437_0.unit
+	local var_437_1 = Application.flow_callback_context_level()
 
-	if not var_436_1 then
+	if not var_437_1 then
 		var_0_0.out = false
 
 		return var_0_0
 	end
 
-	if not var_0_12[var_436_1] then
+	if not var_0_12[var_437_1] then
 		table.clear(var_0_12)
 
-		var_0_12[var_436_1] = {}
+		var_0_12[var_437_1] = {}
 	end
 
-	if var_436_0 == Unit.null_reference() then
+	if var_437_0 == Unit.null_reference() then
 		var_0_0.out = false
 	else
-		var_0_0.out = not var_0_12[var_436_1][var_436_0]
-		var_0_12[var_436_1][var_436_0] = true
+		var_0_0.out = not var_0_12[var_437_1][var_437_0]
+		var_0_12[var_437_1][var_437_0] = true
 	end
 
 	return var_0_0

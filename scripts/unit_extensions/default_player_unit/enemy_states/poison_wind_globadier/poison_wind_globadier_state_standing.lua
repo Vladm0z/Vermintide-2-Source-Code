@@ -2,13 +2,13 @@
 
 PoisonWindGlobadierStateStanding = class(PoisonWindGlobadierStateStanding, EnemyCharacterStateStanding)
 
-PoisonWindGlobadierStateStanding.init = function (arg_1_0, arg_1_1)
+function PoisonWindGlobadierStateStanding.init(arg_1_0, arg_1_1)
 	PoisonWindGlobadierStateStanding.super.init(arg_1_0, arg_1_1)
 
 	arg_1_0._gas_ability_id = arg_1_0._career_extension:ability_id("gas")
 end
 
-PoisonWindGlobadierStateStanding.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+function PoisonWindGlobadierStateStanding.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if arg_2_0:common_state_changes() then
 		return
 	end

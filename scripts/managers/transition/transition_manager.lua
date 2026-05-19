@@ -12,7 +12,7 @@ end
 
 TransitionManager = class(TransitionManager)
 
-TransitionManager.init = function (arg_1_0)
+function TransitionManager.init(arg_1_0)
 	arg_1_0:_setup_names()
 	arg_1_0:_setup_world()
 
@@ -34,11 +34,11 @@ TransitionManager.init = function (arg_1_0)
 	arg_1_0._fade = 0
 end
 
-TransitionManager._setup_names = function (arg_2_0)
+function TransitionManager._setup_names(arg_2_0)
 	arg_2_0._world_name = "top_ingame_view"
 end
 
-TransitionManager.set_multiplayer_values = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+function TransitionManager.set_multiplayer_values(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0._multiplayer_tracking = arg_3_0._multiplayer_tracking or {}
 	arg_3_0._multiplayer_tracking[arg_3_1] = arg_3_0._multiplayer_tracking[arg_3_1] or {}
 	arg_3_0._multiplayer_tracking[arg_3_1][#arg_3_0._multiplayer_tracking[arg_3_1] + 1] = arg_3_2
@@ -46,7 +46,7 @@ TransitionManager.set_multiplayer_values = function (arg_3_0, arg_3_1, arg_3_2, 
 	arg_3_0._multiplayer_tracking.string[#arg_3_0._multiplayer_tracking.string + 1] = arg_3_3
 end
 
-TransitionManager.dump_multiplayer_data = function (arg_4_0)
+function TransitionManager.dump_multiplayer_data(arg_4_0)
 	Application.warning(" ")
 	Application.warning("##################################")
 	Application.warning(" ")
@@ -63,7 +63,7 @@ TransitionManager.dump_multiplayer_data = function (arg_4_0)
 	Application.warning(" ")
 end
 
-TransitionManager._setup_world = function (arg_5_0)
+function TransitionManager._setup_world(arg_5_0)
 	local var_5_0 = Managers.world:create_world(arg_5_0._world_name, GameSettingsDevelopment.default_environment, nil, 991, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
 
 	ScriptWorld.activate(var_5_0)
@@ -73,7 +73,7 @@ TransitionManager._setup_world = function (arg_5_0)
 	arg_5_0._gui = World.create_screen_gui(arg_5_0._world, "material", "materials/fonts/gw_fonts", "immediate")
 end
 
-TransitionManager.destroy = function (arg_6_0)
+function TransitionManager.destroy(arg_6_0)
 	arg_6_0._loading_icon_view:destroy()
 
 	arg_6_0._loading_icon_view = nil
@@ -107,12 +107,12 @@ TransitionManager.destroy = function (arg_6_0)
 	Managers.world:destroy_world(arg_6_0._world_name)
 end
 
-TransitionManager.show_waiting_for_peers_message = function (arg_7_0, arg_7_1)
+function TransitionManager.show_waiting_for_peers_message(arg_7_0, arg_7_1)
 	arg_7_0._waiting_for_peers_message = arg_7_1
 	arg_7_0._waiting_for_peers_timer = Managers.time:time("main")
 end
 
-TransitionManager.show_loading_icon = function (arg_8_0, arg_8_1)
+function TransitionManager.show_loading_icon(arg_8_0, arg_8_1)
 	arg_8_0._loading_icon_view:show_loading_icon()
 
 	if arg_8_1 then
@@ -122,41 +122,41 @@ TransitionManager.show_loading_icon = function (arg_8_0, arg_8_1)
 	end
 end
 
-TransitionManager.show_video = function (arg_9_0, arg_9_1)
+function TransitionManager.show_video(arg_9_0, arg_9_1)
 	if arg_9_0._transition_video then
 		arg_9_0._transition_video:activate(arg_9_1)
 	end
 end
 
-TransitionManager.is_video_done = function (arg_10_0)
+function TransitionManager.is_video_done(arg_10_0)
 	if arg_10_0._transition_video then
 		return arg_10_0._transition_video:completed()
 	end
 end
 
-TransitionManager.is_video_active = function (arg_11_0)
+function TransitionManager.is_video_active(arg_11_0)
 	if arg_11_0._transition_video then
 		return arg_11_0._transition_video:is_active()
 	end
 end
 
-TransitionManager.hide_loading_icon = function (arg_12_0)
+function TransitionManager.hide_loading_icon(arg_12_0)
 	arg_12_0._loading_icon_view:hide_loading_icon()
 end
 
-TransitionManager.show_icon_background = function (arg_13_0)
+function TransitionManager.show_icon_background(arg_13_0)
 	arg_13_0._loading_icon_view:show_icon_background()
 end
 
-TransitionManager.hide_icon_background = function (arg_14_0)
+function TransitionManager.hide_icon_background(arg_14_0)
 	arg_14_0._loading_icon_view:hide_icon_background()
 end
 
-TransitionManager.loading_icon_active = function (arg_15_0)
+function TransitionManager.loading_icon_active(arg_15_0)
 	return arg_15_0._loading_icon_view and arg_15_0._loading_icon_view:active()
 end
 
-TransitionManager.fade_in = function (arg_16_0, arg_16_1, arg_16_2)
+function TransitionManager.fade_in(arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0._fade_state = "fade_in"
 	arg_16_0._fade_speed = arg_16_1
 	arg_16_0._callback = arg_16_2
@@ -166,7 +166,7 @@ TransitionManager.fade_in = function (arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-TransitionManager.fade_out = function (arg_17_0, arg_17_1, arg_17_2)
+function TransitionManager.fade_out(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0._fade_state = "fade_out"
 	arg_17_0._fade_speed = -arg_17_1
 	arg_17_0._callback = arg_17_2
@@ -176,7 +176,7 @@ TransitionManager.fade_out = function (arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-TransitionManager.force_fade_in = function (arg_18_0)
+function TransitionManager.force_fade_in(arg_18_0)
 	arg_18_0._fade_state = "in"
 	arg_18_0._fade_speed = 0
 	arg_18_0._fade = 1
@@ -188,7 +188,7 @@ TransitionManager.force_fade_in = function (arg_18_0)
 	end
 end
 
-TransitionManager.force_fade_out = function (arg_19_0)
+function TransitionManager.force_fade_out(arg_19_0)
 	arg_19_0._fade_state = "out"
 	arg_19_0._fade_speed = 0
 	arg_19_0._fade = 0
@@ -200,27 +200,27 @@ TransitionManager.force_fade_out = function (arg_19_0)
 	end
 end
 
-TransitionManager.fade_state = function (arg_20_0)
+function TransitionManager.fade_state(arg_20_0)
 	return arg_20_0._fade_state
 end
 
-TransitionManager.in_fade_active = function (arg_21_0)
+function TransitionManager.in_fade_active(arg_21_0)
 	return arg_21_0._fade ~= 0
 end
 
-TransitionManager.fade_value = function (arg_22_0)
+function TransitionManager.fade_value(arg_22_0)
 	return arg_22_0._fade
 end
 
-TransitionManager.fade_in_completed = function (arg_23_0)
+function TransitionManager.fade_in_completed(arg_23_0)
 	return arg_23_0._fade_state == "in" and arg_23_0._fade == 1
 end
 
-TransitionManager.fade_out_completed = function (arg_24_0)
+function TransitionManager.fade_out_completed(arg_24_0)
 	return arg_24_0._fade_state == "out" and arg_24_0._fade == 0
 end
 
-TransitionManager._render = function (arg_25_0, arg_25_1)
+function TransitionManager._render(arg_25_0, arg_25_1)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -236,7 +236,7 @@ local var_0_0 = {
 	font_size = 56
 }
 
-TransitionManager._render_waiting_message = function (arg_26_0, arg_26_1)
+function TransitionManager._render_waiting_message(arg_26_0, arg_26_1)
 	if not arg_26_0._waiting_for_peers_message then
 		return
 	end
@@ -270,7 +270,7 @@ TransitionManager._render_waiting_message = function (arg_26_0, arg_26_1)
 	arg_26_0._waiting_for_peers_timer = arg_26_0._waiting_for_peers_timer + arg_26_1
 end
 
-TransitionManager.force_render = function (arg_27_0, arg_27_1)
+function TransitionManager.force_render(arg_27_0, arg_27_1)
 	if arg_27_0:loading_icon_active() and not Development.parameter("disable_loading_icon") then
 		arg_27_0._loading_icon_view:update(arg_27_1)
 	end
@@ -290,7 +290,7 @@ TransitionManager.force_render = function (arg_27_0, arg_27_1)
 	arg_27_0:_render()
 end
 
-TransitionManager.update = function (arg_28_0, arg_28_1)
+function TransitionManager.update(arg_28_0, arg_28_1)
 	if Managers.eac ~= nil then
 		Managers.eac:draw_panel(arg_28_0._gui, arg_28_1)
 	end

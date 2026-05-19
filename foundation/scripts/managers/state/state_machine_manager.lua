@@ -6,14 +6,14 @@ StateMachineManager.FONT = "foundation/fonts/debug"
 StateMachineManager.FONT_MATERIAL = "debug"
 StateMachineManager.FONT_SIZE = 14
 
-StateMachineManager.init = function (arg_1_0)
+function StateMachineManager.init(arg_1_0)
 	arg_1_0._state_machines = {}
 	arg_1_0._world = nil
 	arg_1_0._gui = nil
 	arg_1_0._column1_width = 0
 end
 
-StateMachineManager.update = function (arg_2_0, arg_2_1)
+function StateMachineManager.update(arg_2_0, arg_2_1)
 	if StateMachineManager.DEBUG then
 		if arg_2_0._world == nil then
 			arg_2_0._world = Application.debug_world()
@@ -29,7 +29,7 @@ StateMachineManager.update = function (arg_2_0, arg_2_1)
 	end
 end
 
-StateMachineManager.destroy = function (arg_3_0)
+function StateMachineManager.destroy(arg_3_0)
 	if StateMachineManager.DEBUG and arg_3_0._gui ~= nil then
 		World.destroy_gui(arg_3_0._world, arg_3_0._gui)
 
@@ -37,18 +37,18 @@ StateMachineManager.destroy = function (arg_3_0)
 	end
 end
 
-StateMachineManager._register_state_machine = function (arg_4_0, arg_4_1)
+function StateMachineManager._register_state_machine(arg_4_0, arg_4_1)
 	arg_4_0._state_machines[#arg_4_0._state_machines + 1] = arg_4_1
 end
 
-StateMachineManager._unregister_state_machine = function (arg_5_0, arg_5_1)
+function StateMachineManager._unregister_state_machine(arg_5_0, arg_5_1)
 	local var_5_0 = table.find(arg_5_0._state_machines, arg_5_1)
 
 	assert(var_5_0, "unregister a state machine " .. arg_5_1._name .. " that was not registered")
 	table.remove(arg_5_0._state_machines, var_5_0)
 end
 
-StateMachineManager._root_state_machines = function (arg_6_0)
+function StateMachineManager._root_state_machines(arg_6_0)
 	local var_6_0 = {}
 
 	for iter_6_0, iter_6_1 in ipairs(arg_6_0._state_machines) do
@@ -60,7 +60,7 @@ StateMachineManager._root_state_machines = function (arg_6_0)
 	return var_6_0
 end
 
-StateMachineManager._state_machines_column_width = function (arg_7_0, arg_7_1)
+function StateMachineManager._state_machines_column_width(arg_7_0, arg_7_1)
 	local var_7_0 = 0
 
 	for iter_7_0, iter_7_1 in ipairs(arg_7_1) do
@@ -73,7 +73,7 @@ StateMachineManager._state_machines_column_width = function (arg_7_0, arg_7_1)
 	return var_7_0
 end
 
-StateMachineManager._draw_panel = function (arg_8_0)
+function StateMachineManager._draw_panel(arg_8_0)
 	local var_8_0, var_8_1 = Gui.resolution()
 	local var_8_2 = 16
 	local var_8_3 = 4

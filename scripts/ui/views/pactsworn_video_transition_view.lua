@@ -8,7 +8,7 @@ local var_0_0 = require("scripts/ui/views/pactsworn_video_transition_view_defini
 
 PactswornVideoTransitionView = class(PactswornVideoTransitionView)
 
-PactswornVideoTransitionView.init = function (arg_1_0, arg_1_1)
+function PactswornVideoTransitionView.init(arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0._video_enabled = false
 	arg_1_0._sound_started = false
@@ -19,7 +19,7 @@ PactswornVideoTransitionView.init = function (arg_1_0, arg_1_1)
 	arg_1_0._reference_name = var_0_0.reference_name
 end
 
-PactswornVideoTransitionView.play_video = function (arg_2_0, arg_2_1)
+function PactswornVideoTransitionView.play_video(arg_2_0, arg_2_1)
 	local var_2_0 = var_0_0.pactsworn_video_data[arg_2_1]
 
 	arg_2_0._pactsworn_video_widget = UIWidget.init(UIWidgets.create_splash_video(var_2_0, arg_2_0._reference_name))
@@ -27,11 +27,11 @@ PactswornVideoTransitionView.play_video = function (arg_2_0, arg_2_1)
 	arg_2_0._video_data = var_2_0
 end
 
-PactswornVideoTransitionView.enable_video = function (arg_3_0, arg_3_1)
+function PactswornVideoTransitionView.enable_video(arg_3_0, arg_3_1)
 	arg_3_0._video_enabled = arg_3_1
 end
 
-PactswornVideoTransitionView._draw = function (arg_4_0, arg_4_1)
+function PactswornVideoTransitionView._draw(arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._video_data
 
 	if not arg_4_0._pactsworn_video_widget.content.video_content.video_completed then
@@ -63,12 +63,12 @@ PactswornVideoTransitionView._draw = function (arg_4_0, arg_4_1)
 	return arg_4_0._pactsworn_video_widget.content.video_content.video_completed
 end
 
-PactswornVideoTransitionView.update = function (arg_5_0, arg_5_1)
+function PactswornVideoTransitionView.update(arg_5_0, arg_5_1)
 	if arg_5_0._video_enabled then
 		arg_5_0:_draw(arg_5_1)
 	end
 end
 
-PactswornVideoTransitionView.destroy = function (arg_6_0)
+function PactswornVideoTransitionView.destroy(arg_6_0)
 	UIRenderer.destroy(arg_6_0._ui_renderer, arg_6_0._world)
 end

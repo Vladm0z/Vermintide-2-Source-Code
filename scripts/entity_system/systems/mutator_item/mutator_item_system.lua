@@ -9,7 +9,7 @@ local var_0_1 = {
 	"MutatorItemSpawnerExtension"
 }
 
-MutatorItemSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
+function MutatorItemSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	MutatorItemSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -22,7 +22,7 @@ MutatorItemSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._spawners_by_name = {}
 end
 
-MutatorItemSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
+function MutatorItemSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
 	if arg_2_3 == "MutatorItemSpawnerExtension" then
 		local var_2_0 = arg_2_0._spawners
 
@@ -38,7 +38,7 @@ end
 
 local var_0_2 = {}
 
-MutatorItemSystem.spawn_mutator_items = function (arg_3_0, arg_3_1)
+function MutatorItemSystem.spawn_mutator_items(arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._spawners
 	local var_3_1 = arg_3_0._spawners_by_name
 
@@ -66,20 +66,20 @@ MutatorItemSystem.spawn_mutator_items = function (arg_3_0, arg_3_1)
 	return var_0_2
 end
 
-MutatorItemSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2, ...)
+function MutatorItemSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2, ...)
 	return MutatorItemSystem.super.on_remove_extension(arg_4_0, arg_4_1, arg_4_2, ...)
 end
 
-MutatorItemSystem.update = function (arg_5_0, arg_5_1, arg_5_2)
+function MutatorItemSystem.update(arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0.is_server then
-		-- Nothing
+		-- block empty
 	end
 end
 
-MutatorItemSystem.destroy = function (arg_6_0)
+function MutatorItemSystem.destroy(arg_6_0)
 	arg_6_0.network_event_delegate:unregister(arg_6_0)
 end
 
-MutatorItemSystem.hot_join_sync = function (arg_7_0, arg_7_1)
+function MutatorItemSystem.hot_join_sync(arg_7_0, arg_7_1)
 	return
 end

@@ -20,21 +20,21 @@ end
 
 LobbyInternal.TYPE = "lan"
 
-LobbyInternal.network_initialized = function ()
+function LobbyInternal.network_initialized()
 	return not not LobbyInternal.client
 end
 
-LobbyInternal.create_lobby = function (arg_2_0)
+function LobbyInternal.create_lobby(arg_2_0)
 	return Network.create_lan_lobby(arg_2_0.max_members)
 end
 
-LobbyInternal.join_lobby = function (arg_3_0)
+function LobbyInternal.join_lobby(arg_3_0)
 	return Network.join_lan_lobby(arg_3_0.id)
 end
 
 LobbyInternal.leave_lobby = Network.leave_lan_lobby
 
-LobbyInternal.open_channel = function (arg_4_0, arg_4_1)
+function LobbyInternal.open_channel(arg_4_0, arg_4_1)
 	local var_4_0 = LanLobby.open_channel(arg_4_0, arg_4_1)
 
 	print("LobbyInternal.open_channel lobby: %s, to peer: %s channel: %s", arg_4_0, arg_4_1, var_4_0)
@@ -42,20 +42,20 @@ LobbyInternal.open_channel = function (arg_4_0, arg_4_1)
 	return var_4_0
 end
 
-LobbyInternal.close_channel = function (arg_5_0, arg_5_1)
+function LobbyInternal.close_channel(arg_5_0, arg_5_1)
 	printf("LobbyInternal.close_channel lobby: %s, channel: %s", arg_5_0, arg_5_1)
 	LanLobby.close_channel(arg_5_0, arg_5_1)
 end
 
-LobbyInternal.is_orphaned = function (arg_6_0)
+function LobbyInternal.is_orphaned(arg_6_0)
 	return false
 end
 
-LobbyInternal.game_session_host = function (arg_7_0)
+function LobbyInternal.game_session_host(arg_7_0)
 	return LanLobby.game_session_host(arg_7_0)
 end
 
-LobbyInternal.init_client = function (arg_8_0)
+function LobbyInternal.init_client(arg_8_0)
 	local var_8_0 = arg_8_0.server_port
 
 	if Development.parameter("client") then
@@ -76,59 +76,59 @@ LobbyInternal.init_client = function (arg_8_0)
 	GameSettingsDevelopment.set_ignored_rpc_logs()
 end
 
-LobbyInternal.shutdown_client = function ()
+function LobbyInternal.shutdown_client()
 	Network.shutdown_lan_client(LobbyInternal.client)
 
 	LobbyInternal.client = nil
 end
 
-LobbyInternal.get_lobby_data_from_id = function (arg_10_0)
+function LobbyInternal.get_lobby_data_from_id(arg_10_0)
 	return nil
 end
 
-LobbyInternal.get_lobby_data_from_id_by_key = function (arg_11_0, arg_11_1)
+function LobbyInternal.get_lobby_data_from_id_by_key(arg_11_0, arg_11_1)
 	return nil
 end
 
-LobbyInternal.ping = function (arg_12_0)
+function LobbyInternal.ping(arg_12_0)
 	return Network.ping(arg_12_0)
 end
 
 LobbyInternal.get_lobby = LanLobbyBrowser.lobby
 
 local var_0_0 = {
-	is_refreshing = function ()
+	is_refreshing = function()
 		return false
 	end,
-	refresh = function ()
+	refresh = function()
 		return
 	end,
-	num_lobbies = function ()
+	num_lobbies = function()
 		return 0
 	end
 }
 
-LobbyInternal.lobby_browser = function ()
+function LobbyInternal.lobby_browser()
 	return var_0_0
 end
 
-LobbyInternal.clear_filter_requirements = function ()
+function LobbyInternal.clear_filter_requirements()
 	return
 end
 
-LobbyInternal.add_filter_requirements = function (arg_18_0)
+function LobbyInternal.add_filter_requirements(arg_18_0)
 	return
 end
 
-LobbyInternal.user_name = function (arg_19_0)
+function LobbyInternal.user_name(arg_19_0)
 	return Network.peer_id()
 end
 
-LobbyInternal.lobby_id = function (arg_20_0)
+function LobbyInternal.lobby_id(arg_20_0)
 	return 10000
 end
 
-LobbyInternal.is_friend = function (arg_21_0)
+function LobbyInternal.is_friend(arg_21_0)
 	local var_21_0 = rawget(_G, "Steam") or stingray.Steam
 
 	if var_21_0 and var_21_0.user_id() == arg_21_0 then
@@ -144,15 +144,15 @@ LobbyInternal.is_friend = function (arg_21_0)
 	return false
 end
 
-LobbyInternal.client_ready = function ()
+function LobbyInternal.client_ready()
 	return false
 end
 
-LobbyInternal.set_max_members = function (arg_23_0, arg_23_1)
+function LobbyInternal.set_max_members(arg_23_0, arg_23_1)
 	LanLobby.set_max_members(arg_23_0, arg_23_1)
 end
 
-LobbyInternal.lobby_id_match = function (arg_24_0, arg_24_1)
+function LobbyInternal.lobby_id_match(arg_24_0, arg_24_1)
 	if arg_24_0 == nil or arg_24_1 == nil then
 		return true
 	end

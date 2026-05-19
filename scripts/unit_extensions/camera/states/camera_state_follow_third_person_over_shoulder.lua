@@ -2,14 +2,14 @@
 
 CameraStateFollowThirdPersonOverShoulder = class(CameraStateFollowThirdPersonOverShoulder, CameraState)
 
-CameraStateFollowThirdPersonOverShoulder.init = function (arg_1_0, arg_1_1)
+function CameraStateFollowThirdPersonOverShoulder.init(arg_1_0, arg_1_1)
 	CameraState.init(arg_1_0, arg_1_1, "follow_third_person_over_shoulder")
 
 	arg_1_0._follow_unit = nil
 	arg_1_0._follow_node = 0
 end
 
-CameraStateFollowThirdPersonOverShoulder.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+function CameraStateFollowThirdPersonOverShoulder.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0.camera_extension
 	local var_2_1, var_2_2 = var_2_0:get_follow_data()
 	local var_2_3 = var_2_0.viewport_name
@@ -28,16 +28,16 @@ CameraStateFollowThirdPersonOverShoulder.on_enter = function (arg_2_0, arg_2_1, 
 	Unit.set_data(arg_2_1, "camera", "settings_node", "over_shoulder")
 end
 
-CameraStateFollowThirdPersonOverShoulder.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+function CameraStateFollowThirdPersonOverShoulder.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0._follow_unit = nil
 end
 
-CameraStateFollowThirdPersonOverShoulder.refresh_follow_unit = function (arg_4_0, arg_4_1, arg_4_2)
+function CameraStateFollowThirdPersonOverShoulder.refresh_follow_unit(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._follow_unit = arg_4_1
 	arg_4_0._follow_node = arg_4_2
 end
 
-CameraStateFollowThirdPersonOverShoulder.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+function CameraStateFollowThirdPersonOverShoulder.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.unit
 	local var_5_2 = arg_5_0.camera_extension

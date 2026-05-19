@@ -12,7 +12,7 @@ local var_0_3 = 0.5
 local var_0_4 = 2.5
 local var_0_5 = 0.25
 
-ActionCareerBWNecromancerTargetting.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+function ActionCareerBWNecromancerTargetting.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerBWNecromancerTargetting.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0._ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
@@ -29,14 +29,14 @@ ActionCareerBWNecromancerTargetting.init = function (arg_1_0, arg_1_1, arg_1_2, 
 	arg_1_0._decal_unit = nil
 	arg_1_0._decal_unit_name = "units/decals/decal_arrow_kerillian"
 
-	arg_1_0._nav_callback = function ()
+	function arg_1_0._nav_callback()
 		local var_2_0 = Managers.time:time("game")
 
 		arg_1_0:_update_targetting(var_2_0)
 	end
 end
 
-ActionCareerBWNecromancerTargetting.client_owner_start_action = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+function ActionCareerBWNecromancerTargetting.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_5 = arg_3_5 or {}
 
 	ActionCareerBWNecromancerTargetting.super.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
@@ -56,11 +56,11 @@ ActionCareerBWNecromancerTargetting.client_owner_start_action = function (arg_3_
 	arg_3_0._first_person_extension:play_hud_sound_event("Play_career_necro_ability_withering_wave_target", nil, false)
 end
 
-ActionCareerBWNecromancerTargetting.client_owner_post_update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+function ActionCareerBWNecromancerTargetting.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_0._ai_navigation_system:add_safe_navigation_callback(arg_4_0._nav_callback)
 end
 
-ActionCareerBWNecromancerTargetting._get_first_person_position_direction = function (arg_5_0)
+function ActionCareerBWNecromancerTargetting._get_first_person_position_direction(arg_5_0)
 	local var_5_0 = arg_5_0._first_person_extension
 	local var_5_1 = var_5_0:current_position()
 	local var_5_2 = var_5_0:current_rotation()
@@ -76,7 +76,7 @@ ActionCareerBWNecromancerTargetting._get_first_person_position_direction = funct
 	return var_5_1, var_5_10
 end
 
-ActionCareerBWNecromancerTargetting._update_targetting = function (arg_6_0, arg_6_1)
+function ActionCareerBWNecromancerTargetting._update_targetting(arg_6_0, arg_6_1)
 	local var_6_0 = 1
 	local var_6_1 = 2
 	local var_6_2 = arg_6_0._nav_world
@@ -125,7 +125,7 @@ ActionCareerBWNecromancerTargetting._update_targetting = function (arg_6_0, arg_
 	end
 end
 
-ActionCareerBWNecromancerTargetting.finish = function (arg_7_0, arg_7_1)
+function ActionCareerBWNecromancerTargetting.finish(arg_7_0, arg_7_1)
 	if arg_7_0._decal_unit then
 		Managers.state.unit_spawner:mark_for_deletion(arg_7_0._decal_unit)
 

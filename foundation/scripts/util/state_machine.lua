@@ -29,7 +29,7 @@ local function var_0_2(arg_2_0, ...)
 	cprintf("[StateMachine] " .. arg_2_0, ...)
 end
 
-StateMachine.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+function StateMachine.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0._parent = arg_3_1
 	arg_3_0._params = arg_3_3
 	arg_3_0._profiling_debugging_enabled = arg_3_4
@@ -37,7 +37,7 @@ StateMachine.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0:_change_state(arg_3_2, arg_3_3)
 end
 
-StateMachine._change_state = function (arg_4_0, arg_4_1, arg_4_2)
+function StateMachine._change_state(arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._state then
 		if arg_4_0._state.on_exit and arg_4_0._profiling_debugging_enabled then
 			local var_4_0 = var_0_1(arg_4_0._state.NAME, "exit")
@@ -67,11 +67,11 @@ StateMachine._change_state = function (arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-StateMachine.state = function (arg_5_0)
+function StateMachine.state(arg_5_0)
 	return arg_5_0._state
 end
 
-StateMachine.update = function (arg_6_0, arg_6_1, arg_6_2)
+function StateMachine.update(arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._state:update(arg_6_1, arg_6_2)
 
 	if var_6_0 then
@@ -79,13 +79,13 @@ StateMachine.update = function (arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-StateMachine.destroy = function (arg_7_0, ...)
+function StateMachine.destroy(arg_7_0, ...)
 	if arg_7_0._state and arg_7_0._state.on_exit then
 		arg_7_0._state:on_exit(...)
 	end
 end
 
-StateMachine.on_close = function (arg_8_0)
+function StateMachine.on_close(arg_8_0)
 	if arg_8_0._state and arg_8_0._state.on_close then
 		return arg_8_0._state:on_close()
 	end

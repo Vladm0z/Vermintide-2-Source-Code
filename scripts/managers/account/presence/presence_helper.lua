@@ -2,11 +2,11 @@
 
 PresenceHelper = PresenceHelper or {}
 
-PresenceHelper.lobby_level = function ()
+function PresenceHelper.lobby_level()
 	return (Managers.level_transition_handler:get_current_level_key())
 end
 
-PresenceHelper.lobby_difficulty = function ()
+function PresenceHelper.lobby_difficulty()
 	return (Managers.level_transition_handler:get_current_difficulty())
 end
 
@@ -15,13 +15,13 @@ local var_0_0 = {
 	deus = "deus_hub"
 }
 
-PresenceHelper.get_hub_presence = function ()
+function PresenceHelper.get_hub_presence()
 	local var_3_0 = Managers.mechanism:current_mechanism_name()
 
 	return var_0_0[var_3_0] or "adventure_hub"
 end
 
-PresenceHelper.lobby_gamemode = function (arg_4_0)
+function PresenceHelper.lobby_gamemode(arg_4_0)
 	local var_4_0 = Managers.mechanism:current_mechanism_name()
 	local var_4_1 = Managers.level_transition_handler:get_current_level_key() == "prologue"
 	local var_4_2 = Managers.level_transition_handler:get_current_level_key() == "plaza"
@@ -79,7 +79,7 @@ PresenceHelper.lobby_gamemode = function (arg_4_0)
 	return "gamemode_none"
 end
 
-PresenceHelper.has_eac = function ()
+function PresenceHelper.has_eac()
 	return not IS_WINDOWS or lobby_data.eac_authorized
 end
 
@@ -87,13 +87,13 @@ local function var_0_1()
 	return Managers.state.network:lobby():members():get_member_count()
 end
 
-PresenceHelper.lobby_num_players = function ()
+function PresenceHelper.lobby_num_players()
 	local var_7_0, var_7_1 = pcall(var_0_1)
 
 	return var_7_0 and var_7_1 or 1
 end
 
-PresenceHelper.get_side = function ()
+function PresenceHelper.get_side()
 	local var_8_0 = Network.peer_id()
 	local var_8_1 = Managers.party
 	local var_8_2 = var_8_1 and var_8_1:get_party_from_player_id(var_8_0, 1)
@@ -103,7 +103,7 @@ PresenceHelper.get_side = function ()
 	return var_8_4 and var_8_4:name() or "heroes"
 end
 
-PresenceHelper.get_game_score = function ()
+function PresenceHelper.get_game_score()
 	local var_9_0 = Network.peer_id()
 	local var_9_1 = Managers.mechanism:game_mechanism()
 	local var_9_2 = var_9_1 and var_9_1:win_conditions()
@@ -125,7 +125,7 @@ PresenceHelper.get_game_score = function ()
 	end
 end
 
-PresenceHelper.get_current_set = function ()
+function PresenceHelper.get_current_set()
 	local var_10_0 = Managers.mechanism:game_mechanism()
 	local var_10_1 = var_10_0 and var_10_0:win_conditions()
 	local var_10_2 = var_10_1 and var_10_1:get_current_round()

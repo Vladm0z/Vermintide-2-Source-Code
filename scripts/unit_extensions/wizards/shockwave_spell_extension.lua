@@ -2,7 +2,7 @@
 
 ShockwaveSpellExtension = class(ShockwaveSpellExtension)
 
-ShockwaveSpellExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function ShockwaveSpellExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._position = Vector3Box(Unit.local_position(arg_1_2, 0))
 	arg_1_0._shockwave_radius_min = Unit.get_data(arg_1_2, "wave_distance") or 2
@@ -26,7 +26,7 @@ local var_0_4 = 0
 local var_0_5 = 0
 local var_0_6 = 0.25
 
-ShockwaveSpellExtension.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+function ShockwaveSpellExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if not arg_2_0._spell_triggerd then
 		return
 	end
@@ -52,7 +52,7 @@ ShockwaveSpellExtension.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, a
 	end
 end
 
-ShockwaveSpellExtension.damage_enemies = function (arg_3_0, arg_3_1, arg_3_2)
+function ShockwaveSpellExtension.damage_enemies(arg_3_0, arg_3_1, arg_3_2)
 	if var_0_5 > 0 then
 		local var_3_0 = math.min(var_0_5, 3)
 
@@ -83,7 +83,7 @@ ShockwaveSpellExtension.damage_enemies = function (arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-ShockwaveSpellExtension.damage_player = function (arg_4_0, arg_4_1, arg_4_2)
+function ShockwaveSpellExtension.damage_player(arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0._players
 	local var_4_1 = arg_4_2 * arg_4_2
 	local var_4_2 = 1
@@ -116,7 +116,7 @@ ShockwaveSpellExtension.damage_player = function (arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-ShockwaveSpellExtension.setup_shockwave = function (arg_5_0, arg_5_1)
+function ShockwaveSpellExtension.setup_shockwave(arg_5_0, arg_5_1)
 	arg_5_0._enemy_damage = arg_5_1.enemy_damage
 	arg_5_0._start_time = Managers.time:time("game")
 	arg_5_0._spell_triggerd = true
@@ -124,12 +124,12 @@ ShockwaveSpellExtension.setup_shockwave = function (arg_5_0, arg_5_1)
 	World.create_particles(arg_5_0._world, arg_5_0._vfx, arg_5_0._position:unbox())
 end
 
-ShockwaveSpellExtension.reset_shockwave = function (arg_6_0)
+function ShockwaveSpellExtension.reset_shockwave(arg_6_0)
 	arg_6_0._spell_triggerd = false
 
 	table.clear(var_0_2)
 end
 
-ShockwaveSpellExtension.destroy = function (arg_7_0)
+function ShockwaveSpellExtension.destroy(arg_7_0)
 	Managers.state.event:unregister("on_failed_guardians_event", arg_7_0)
 end

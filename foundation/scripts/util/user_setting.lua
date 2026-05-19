@@ -6,7 +6,7 @@ PATCHED_USER_SETTINGS = PATCHED_USER_SETTINGS or false
 if IS_CONSOLE and not PATCHED_USER_SETTINGS then
 	UserSettings = UserSettings or {}
 
-	Application.set_user_setting = function (...)
+	function Application.set_user_setting(...)
 		local var_1_0 = UserSettings
 		local var_1_1 = select("#", ...)
 
@@ -20,7 +20,7 @@ if IS_CONSOLE and not PATCHED_USER_SETTINGS then
 		var_1_0[select(var_1_1 - 1, ...)] = select(var_1_1, ...)
 	end
 
-	Application.user_setting = function (...)
+	function Application.user_setting(...)
 		local var_2_0 = UserSettings
 		local var_2_1 = select("#", ...)
 
@@ -35,14 +35,14 @@ if IS_CONSOLE and not PATCHED_USER_SETTINGS then
 		return var_2_0[select(var_2_1, ...)]
 	end
 
-	Application.save_user_settings = function ()
+	function Application.save_user_settings()
 		return
 	end
 
 	PATCHED_USER_SETTINGS = true
 end
 
-Development.user_setting_disable = function ()
+function Development.user_setting_disable()
 	local function var_4_0()
 		return
 	end
@@ -50,7 +50,7 @@ Development.user_setting_disable = function ()
 	Development.set_setting, Development.setting = var_4_0, var_4_0
 end
 
-Development.init_user_settings = function ()
+function Development.init_user_settings()
 	if not ({
 		ps4 = true,
 		win32 = true,
@@ -68,11 +68,11 @@ Development.init_user_settings = function ()
 		return
 	end
 
-	Development.set_setting = function (...)
+	function Development.set_setting(...)
 		Application.set_user_setting("development_settings", ...)
 	end
 
-	Development.setting = function (...)
+	function Development.setting(...)
 		return Application.user_setting("development_settings", ...)
 	end
 
@@ -99,7 +99,7 @@ Development.init_user_settings = function ()
 	print("VALUES END")
 end
 
-Application.test_user_setting = function (...)
+function Application.test_user_setting(...)
 	local var_9_0 = UserSettings
 	local var_9_1 = select("#", ...)
 
@@ -114,7 +114,7 @@ Application.test_user_setting = function (...)
 	return var_9_0[select(var_9_1, ...)]
 end
 
-Development._patch_deprecated_development_settings = function ()
+function Development._patch_deprecated_development_settings()
 	Development.set_setting("use_lan_backend", nil)
 	Development.set_setting("use_local_backend", nil)
 end

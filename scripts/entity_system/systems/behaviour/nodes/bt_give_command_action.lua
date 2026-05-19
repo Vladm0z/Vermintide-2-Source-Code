@@ -9,13 +9,13 @@ local var_0_1 = {
 
 BTGiveCommandAction = class(BTGiveCommandAction, BTNode)
 
-BTGiveCommandAction.init = function (arg_1_0, ...)
+function BTGiveCommandAction.init(arg_1_0, ...)
 	BTGiveCommandAction.super.init(arg_1_0, ...)
 end
 
 BTGiveCommandAction.name = "BTGiveCommandAction"
 
-BTGiveCommandAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function BTGiveCommandAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -41,7 +41,7 @@ BTGiveCommandAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-BTGiveCommandAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+function BTGiveCommandAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.navigation_extension:set_enabled(true)
 
 	arg_3_2.target_unit = arg_3_2.command_target
@@ -56,7 +56,7 @@ BTGiveCommandAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_
 	arg_3_2.anim_cb_stormvermin_voice = nil
 end
 
-BTGiveCommandAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+function BTGiveCommandAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.command_target
 
 	if not var_0_0(var_4_0) then
@@ -84,9 +84,9 @@ BTGiveCommandAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 				var_4_2:trigger_networked_dialogue_event("command_change_target", var_4_3)
 			end
 		elseif var_4_4 == "cheer" then
-			-- Nothing
+			-- block empty
 		elseif var_4_4 == "rally" then
-			-- Nothing
+			-- block empty
 		elseif var_4_4 == "command_globadier" then
 			var_4_2:trigger_networked_dialogue_event("command_globadier", var_4_3)
 		elseif var_4_4 == "command_gutter_runner" then

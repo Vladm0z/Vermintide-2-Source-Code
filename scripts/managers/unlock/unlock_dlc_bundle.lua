@@ -2,7 +2,7 @@
 
 UnlockDlcBundle = class(UnlockDlcBundle)
 
-UnlockDlcBundle.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9)
+function UnlockDlcBundle.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9)
 	arg_1_0._name = arg_1_1
 	arg_1_0._id = arg_1_2
 	arg_1_0._backend_reward_id = arg_1_3
@@ -24,39 +24,39 @@ UnlockDlcBundle.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 	arg_1_0:update_is_installed()
 end
 
-UnlockDlcBundle.is_legacy_console_dlc = function (arg_2_0)
+function UnlockDlcBundle.is_legacy_console_dlc(arg_2_0)
 	return false
 end
 
-UnlockDlcBundle.ready = function (arg_3_0)
+function UnlockDlcBundle.ready(arg_3_0)
 	return true
 end
 
-UnlockDlcBundle.has_error = function (arg_4_0)
+function UnlockDlcBundle.has_error(arg_4_0)
 	return false
 end
 
-UnlockDlcBundle.id = function (arg_5_0)
+function UnlockDlcBundle.id(arg_5_0)
 	return arg_5_0._id
 end
 
-UnlockDlcBundle.backend_reward_id = function (arg_6_0)
+function UnlockDlcBundle.backend_reward_id(arg_6_0)
 	return arg_6_0._backend_reward_id
 end
 
-UnlockDlcBundle.remove_backend_reward_id = function (arg_7_0)
+function UnlockDlcBundle.remove_backend_reward_id(arg_7_0)
 	arg_7_0._backend_reward_id = nil
 end
 
-UnlockDlcBundle.unlocked = function (arg_8_0)
+function UnlockDlcBundle.unlocked(arg_8_0)
 	return arg_8_0._unlocked
 end
 
-UnlockDlcBundle.installed = function (arg_9_0)
+function UnlockDlcBundle.installed(arg_9_0)
 	return arg_9_0._installed
 end
 
-UnlockDlcBundle.check_all_children_dlc_owned = function (arg_10_0)
+function UnlockDlcBundle.check_all_children_dlc_owned(arg_10_0)
 	if arg_10_0._always_unlocked_for_app_id then
 		return
 	end
@@ -76,19 +76,19 @@ UnlockDlcBundle.check_all_children_dlc_owned = function (arg_10_0)
 	arg_10_0._unlocked = var_10_0
 end
 
-UnlockDlcBundle.set_status_changed = function (arg_11_0, arg_11_1)
+function UnlockDlcBundle.set_status_changed(arg_11_0, arg_11_1)
 	arg_11_0._status_changed = arg_11_1
 end
 
-UnlockDlcBundle.is_cosmetic = function (arg_12_0)
+function UnlockDlcBundle.is_cosmetic(arg_12_0)
 	return false
 end
 
-UnlockDlcBundle.requires_restart = function (arg_13_0)
+function UnlockDlcBundle.requires_restart(arg_13_0)
 	return arg_13_0._status_changed and arg_13_0._requires_restart
 end
 
-UnlockDlcBundle.update_is_installed = function (arg_14_0)
+function UnlockDlcBundle.update_is_installed(arg_14_0)
 	if not HAS_STEAM then
 		return arg_14_0._installed
 	end

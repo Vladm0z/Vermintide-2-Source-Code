@@ -7,7 +7,7 @@ GarbageLeakDetector = GarbageLeakDetector or {
 	})
 }
 
-GarbageLeakDetector.register_object = function (arg_1_0, arg_1_1)
+function GarbageLeakDetector.register_object(arg_1_0, arg_1_1)
 	return
 end
 
@@ -172,6 +172,6 @@ end
 
 local var_0_5
 
-GarbageLeakDetector.run_leak_detection = function (arg_6_0)
+function GarbageLeakDetector.run_leak_detection(arg_6_0)
 	return
 end

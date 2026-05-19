@@ -4,7 +4,7 @@ ThornMutatorExtension = class(ThornMutatorExtension)
 
 local var_0_0 = 1
 
-ThornMutatorExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function ThornMutatorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.spawn_time = arg_1_3.spawn_animation_time or 0
 	arg_1_0.despawn_time = arg_1_3.despawn_animation_time or 0
 	arg_1_0._spawn_timer = 0
@@ -25,20 +25,20 @@ ThornMutatorExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._despawning = false
 end
 
-ThornMutatorExtension.current_progress = function (arg_2_0)
+function ThornMutatorExtension.current_progress(arg_2_0)
 	return arg_2_0._spawn_timer
 end
 
-ThornMutatorExtension.get_spawn_time = function (arg_3_0)
+function ThornMutatorExtension.get_spawn_time(arg_3_0)
 	return arg_3_0.spawn_time
 end
 
-ThornMutatorExtension.setup_rpc_sync = function (arg_4_0, arg_4_1, arg_4_2)
+function ThornMutatorExtension.setup_rpc_sync(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.spawn_time = arg_4_1
 	arg_4_0._spawn_timer = arg_4_2
 end
 
-ThornMutatorExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+function ThornMutatorExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.spawn_time
 	local var_5_1 = arg_5_0._spawn_timer
 
@@ -93,12 +93,12 @@ ThornMutatorExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg
 	end
 end
 
-ThornMutatorExtension.trigger_area_damage = function (arg_6_0)
+function ThornMutatorExtension.trigger_area_damage(arg_6_0)
 	Unit.flow_event(arg_6_0._unit, "set_static_material")
 	ScriptUnit.extension(arg_6_0._unit, "area_damage_system"):enable_area_damage(true)
 end
 
-ThornMutatorExtension.despawn = function (arg_7_0)
+function ThornMutatorExtension.despawn(arg_7_0)
 	Unit.flow_event(arg_7_0._unit, "despawn")
 
 	arg_7_0._despawning = true
@@ -106,7 +106,7 @@ ThornMutatorExtension.despawn = function (arg_7_0)
 	ScriptUnit.extension(arg_7_0._unit, "area_damage_system"):enable_area_damage(false)
 end
 
-ThornMutatorExtension._check_for_deletion = function (arg_8_0, arg_8_1)
+function ThornMutatorExtension._check_for_deletion(arg_8_0, arg_8_1)
 	if arg_8_0._despawn_done_time and arg_8_1 > arg_8_0._despawn_done_time then
 		Managers.state.unit_spawner:mark_for_deletion(arg_8_0._unit)
 	end

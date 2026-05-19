@@ -7,28 +7,28 @@ local var_0_0 = {
 	"LureWhereaboutsExtension"
 }
 
-WhereaboutsSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
+function WhereaboutsSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	WhereaboutsSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	local var_1_0 = arg_1_1.world
 end
 
-WhereaboutsSystem.destroy = function (arg_2_0)
+function WhereaboutsSystem.destroy(arg_2_0)
 	return
 end
 
-WhereaboutsSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+function WhereaboutsSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return (WhereaboutsSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4))
 end
 
-WhereaboutsSystem.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+function WhereaboutsSystem.extensions_ready(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return
 end
 
-WhereaboutsSystem.hot_join_sync = function (arg_5_0, arg_5_1, arg_5_2)
+function WhereaboutsSystem.hot_join_sync(arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-WhereaboutsSystem.update = function (arg_6_0, arg_6_1, arg_6_2)
+function WhereaboutsSystem.update(arg_6_0, arg_6_1, arg_6_2)
 	WhereaboutsSystem.super.update(arg_6_0, arg_6_1, arg_6_2)
 end

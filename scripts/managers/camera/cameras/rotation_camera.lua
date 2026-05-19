@@ -4,7 +4,7 @@ require("scripts/managers/camera/cameras/base_camera")
 
 RotationCamera = class(RotationCamera, BaseCamera)
 
-RotationCamera.init = function (arg_1_0, ...)
+function RotationCamera.init(arg_1_0, ...)
 	RotationCamera.super.init(arg_1_0, ...)
 
 	arg_1_0._offset_pitch = 0
@@ -13,7 +13,7 @@ end
 
 local var_0_0 = 0.005555555555555556
 
-RotationCamera.parse_parameters = function (arg_2_0, arg_2_1, arg_2_2)
+function RotationCamera.parse_parameters(arg_2_0, arg_2_1, arg_2_2)
 	BaseCamera.parse_parameters(arg_2_0, arg_2_1, arg_2_2)
 
 	if arg_2_1.offset_pitch then
@@ -25,7 +25,7 @@ RotationCamera.parse_parameters = function (arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-RotationCamera.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+function RotationCamera.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = Quaternion(Vector3.up(), arg_3_0._offset_yaw)
 	local var_3_1 = Quaternion(Vector3.right(), arg_3_0._offset_pitch)
 	local var_3_2 = Quaternion.multiply(Quaternion.multiply(arg_3_3, var_3_1), var_3_0)

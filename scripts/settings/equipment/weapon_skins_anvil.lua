@@ -19,12 +19,13 @@ local var_0_0 = {
 		data = {
 			description = "bw_1h_flail_flaming_skin_01_runed_01_description",
 			rarity = "promo",
+			right_hand_unit = "units/weapons/player/wpn_brw_flaming_flail_01/wpn_brw_flaming_flail_01_runed_01",
 			hud_icon = "weapon_generic_icon_falken",
-			display_unit = "units/weapons/weapon_display/display_1h_flail",
 			inventory_icon = "icon_brw_flaming_flail_01_runed_01",
 			display_name = "bw_1h_flail_flaming_skin_01_runed_01_name",
+			material_settings_name = "blue_glow",
 			template = "one_handed_flails_flaming_template",
-			right_hand_unit = "units/weapons/player/wpn_brw_flaming_flail_01/wpn_brw_flaming_flail_01_runed_01"
+			display_unit = "units/weapons/weapon_display/display_1h_flail"
 		}
 	},
 	{
@@ -73,6 +74,7 @@ local var_0_0 = {
 			right_hand_unit = "units/weapons/player/wpn_invisible_weapon",
 			template = "one_handed_throwing_axes_template",
 			display_unit = "units/weapons/weapon_display/display_1h_throwing_axes",
+			material_settings_name = "blue_glow",
 			projectile_units_template = "throwing_axe_01_t1_runed_01"
 		}
 	},
@@ -112,12 +114,13 @@ local var_0_0 = {
 		data = {
 			description = "es_2h_heavy_spear_skin_01_runed_01_description",
 			rarity = "promo",
+			right_hand_unit = "units/weapons/player/wpn_emp_boar_spear_01/wpn_emp_boar_spear_01_runed_01",
 			hud_icon = "weapon_generic_icon_falken",
-			display_unit = "units/weapons/weapon_display/display_2h_heavy_spears",
 			inventory_icon = "icon_emp_boar_spear_01_runed_01",
 			display_name = "es_2h_heavy_spear_skin_01_runed_01_name",
+			material_settings_name = "blue_glow",
 			template = "two_handed_heavy_spears_template",
-			right_hand_unit = "units/weapons/player/wpn_emp_boar_spear_01/wpn_emp_boar_spear_01_runed_01"
+			display_unit = "units/weapons/weapon_display/display_2h_heavy_spears"
 		}
 	},
 	{
@@ -152,10 +155,11 @@ local var_0_0 = {
 		data = {
 			description = "we_1h_spears_shield_skin_01_runed_01_description",
 			rarity = "promo",
-			right_hand_unit = "units/weapons/player/wpn_we_spear_03/wpn_we_spear_03",
+			right_hand_unit = "units/weapons/player/wpn_we_spear_03/wpn_we_spear_03_runed_01",
 			template = "one_handed_spears_shield_template",
 			inventory_icon = "icon_we_spear_03_icon_we_shield_01_runed_01",
 			left_hand_unit = "units/weapons/player/wpn_we_shield_01/wpn_we_shield_01_runed_01",
+			material_settings_name = "blue_glow",
 			display_name = "we_1h_spears_shield_skin_01_runed_01_name",
 			hud_icon = "weapon_generic_icon_falken",
 			display_unit = "units/weapons/weapon_display/display_shield_spear"
@@ -193,12 +197,13 @@ local var_0_0 = {
 		data = {
 			description = "wh_2h_billhook_skin_01_runed_01_description",
 			rarity = "promo",
+			right_hand_unit = "units/weapons/player/wpn_wh_billhook_01/wpn_wh_billhook_01_runed_01",
 			hud_icon = "weapon_generic_icon_falken",
-			display_unit = "units/weapons/weapon_display/display_2h_billhooks",
 			inventory_icon = "icon_wh_billhook_01_runed_01",
 			display_name = "wh_2h_billhook_skin_01_runed_01_name",
+			material_settings_name = "blue_glow",
 			template = "two_handed_billhooks_template",
-			right_hand_unit = "units/weapons/player/wpn_wh_billhook_01/wpn_wh_billhook_01_runed_01"
+			display_unit = "units/weapons/weapon_display/display_2h_billhooks"
 		}
 	},
 	{

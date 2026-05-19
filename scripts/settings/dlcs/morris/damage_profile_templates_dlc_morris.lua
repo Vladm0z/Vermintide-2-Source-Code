@@ -276,7 +276,7 @@ local var_0_0 = {
 			damage_type = "burn",
 			power_distribution = {
 				attack = 0.25,
-				impact = 0.5
+				impact = 2.5
 			}
 		}
 	},

@@ -8,7 +8,7 @@ BTNinjaSkulkAction.name = "BTNinjaSkulkAction"
 local var_0_0 = POSITION_LOOKUP
 local var_0_1 = script_data
 
-BTNinjaSkulkAction.init = function (arg_1_0, ...)
+function BTNinjaSkulkAction.init(arg_1_0, ...)
 	BTNinjaSkulkAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_2(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-BTNinjaSkulkAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+function BTNinjaSkulkAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.action = arg_3_0._tree_node.action_data
 
 	LocomotionUtils.set_animation_driven_movement(arg_3_1, false)
@@ -46,9 +46,9 @@ BTNinjaSkulkAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-BTNinjaSkulkAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+function BTNinjaSkulkAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if arg_4_4 == "aborted" then
-		-- Nothing
+		-- block empty
 	end
 
 	arg_4_2.in_los = nil
@@ -63,7 +63,7 @@ end
 local var_0_3 = {}
 local var_0_4 = 8
 
-BTNinjaSkulkAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+function BTNinjaSkulkAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.locomotion_extension
 	local var_5_1 = arg_5_2.breed
 
@@ -233,7 +233,7 @@ local var_0_6 = {
 	1.5
 }
 
-BTNinjaSkulkAction.check_free_los = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function BTNinjaSkulkAction.check_free_los(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = Unit.world_position(arg_6_2.target_unit, 0) + Vector3(0, 0, 0.2)
 	local var_6_1 = POSITION_LOOKUP[arg_6_2.target_unit]
 
@@ -256,7 +256,7 @@ BTNinjaSkulkAction.check_free_los = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3
 	return var_6_4
 end
 
-BTNinjaSkulkAction.try_dodge_pos = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+function BTNinjaSkulkAction.try_dodge_pos(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0, var_7_1 = GwNavQueries.triangle_from_position(arg_7_2.nav_world, arg_7_4, 3, 3)
 
 	if var_7_0 then
@@ -283,7 +283,7 @@ end
 local var_0_7 = 2
 local var_0_8 = var_0_7 - 0.3
 
-BTNinjaSkulkAction.dodge = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+function BTNinjaSkulkAction.dodge(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = var_0_0[arg_8_1]
 	local var_8_1 = arg_8_2.locomotion_extension:current_velocity()
 	local var_8_2 = Vector3.normalize(var_8_1)
@@ -314,7 +314,7 @@ BTNinjaSkulkAction.dodge = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4
 	end
 end
 
-BTNinjaSkulkAction.in_crosshairs = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+function BTNinjaSkulkAction.in_crosshairs(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_2.side.ENEMY_PLAYER_AND_BOT_UNITS
 
 	for iter_9_0 = 1, #var_9_0 do
@@ -336,7 +336,7 @@ BTNinjaSkulkAction.in_crosshairs = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3,
 	end
 end
 
-BTNinjaSkulkAction.get_fallback_goal = function (arg_10_0, arg_10_1, arg_10_2)
+function BTNinjaSkulkAction.get_fallback_goal(arg_10_0, arg_10_1, arg_10_2)
 	table.clear(var_0_3)
 
 	local var_10_0 = var_0_0[arg_10_2.target_unit]
@@ -355,7 +355,7 @@ BTNinjaSkulkAction.get_fallback_goal = function (arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-BTNinjaSkulkAction.set_goal_at_target = function (arg_11_0, arg_11_1, arg_11_2)
+function BTNinjaSkulkAction.set_goal_at_target(arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = POSITION_LOOKUP[arg_11_2.target_unit] + Vector3(0, 0, 0)
 	local var_11_1 = ConflictUtils.find_center_tri(arg_11_2.nav_world, var_11_0)
 
@@ -368,7 +368,7 @@ BTNinjaSkulkAction.set_goal_at_target = function (arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-BTNinjaSkulkAction.get_new_goal = function (arg_12_0, arg_12_1, arg_12_2)
+function BTNinjaSkulkAction.get_new_goal(arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_2.target_unit
 
 	if Unit.alive(var_12_0) then
@@ -393,11 +393,11 @@ BTNinjaSkulkAction.get_new_goal = function (arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-BTNinjaSkulkAction.anim_cb_dodge_finished = function (arg_13_0, arg_13_1, arg_13_2)
+function BTNinjaSkulkAction.anim_cb_dodge_finished(arg_13_0, arg_13_1, arg_13_2)
 	blackboard.anim_cb_dodge_finished = nil
 end
 
-BTNinjaSkulkAction.debug = function (arg_14_0, arg_14_1, arg_14_2)
+function BTNinjaSkulkAction.debug(arg_14_0, arg_14_1, arg_14_2)
 	if arg_14_2.skulk_pos then
 		local var_14_0 = arg_14_2.skulk_pos:unbox()
 

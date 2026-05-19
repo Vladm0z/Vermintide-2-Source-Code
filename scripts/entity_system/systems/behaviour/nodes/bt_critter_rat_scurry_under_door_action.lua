@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCritterRatScurryUnderDoorAction = class(BTCritterRatScurryUnderDoorAction, BTNode)
 
-BTCritterRatScurryUnderDoorAction.init = function (arg_1_0, ...)
+function BTCritterRatScurryUnderDoorAction.init(arg_1_0, ...)
 	BTCritterRatScurryUnderDoorAction.super.init(arg_1_0, ...)
 end
 
 BTCritterRatScurryUnderDoorAction.name = "BTCritterRatScurryUnderDoorAction"
 
-BTCritterRatScurryUnderDoorAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function BTCritterRatScurryUnderDoorAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 
 	local var_2_0 = arg_2_2.next_smart_object_data
@@ -32,7 +32,7 @@ BTCritterRatScurryUnderDoorAction.enter = function (arg_2_0, arg_2_1, arg_2_2, a
 	arg_2_2.scurry_state = "moving_to_door"
 end
 
-BTCritterRatScurryUnderDoorAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+function BTCritterRatScurryUnderDoorAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.scurry_under_entrance_pos = nil
 	arg_3_2.scurry_under_exit_pos = nil
 	arg_3_2.scurry_state = nil
@@ -60,7 +60,7 @@ BTCritterRatScurryUnderDoorAction.leave = function (arg_3_0, arg_3_1, arg_3_2, a
 	end
 end
 
-BTCritterRatScurryUnderDoorAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+function BTCritterRatScurryUnderDoorAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = POSITION_LOOKUP[arg_4_1]
 	local var_4_1 = arg_4_2.locomotion_extension
 	local var_4_2 = arg_4_2.navigation_extension
@@ -94,7 +94,7 @@ BTCritterRatScurryUnderDoorAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg
 	return "running"
 end
 
-BTCritterRatScurryUnderDoorAction._moving_to_door_update = function (arg_5_0, arg_5_1, arg_5_2)
+function BTCritterRatScurryUnderDoorAction._moving_to_door_update(arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = POSITION_LOOKUP[arg_5_1]
 	local var_5_1 = arg_5_2.scurry_under_entrance_pos:unbox()
 
@@ -122,7 +122,7 @@ BTCritterRatScurryUnderDoorAction._moving_to_door_update = function (arg_5_0, ar
 	return true
 end
 
-BTCritterRatScurryUnderDoorAction._move_towards_smartobject_entrance_update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function BTCritterRatScurryUnderDoorAction._move_towards_smartobject_entrance_update(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = POSITION_LOOKUP[arg_6_1]
 	local var_6_1 = arg_6_2.scurry_under_entrance_pos:unbox()
 	local var_6_2 = arg_6_2.scurry_under_lookat_direction:unbox()
@@ -151,7 +151,7 @@ BTCritterRatScurryUnderDoorAction._move_towards_smartobject_entrance_update = fu
 	end
 end
 
-BTCritterRatScurryUnderDoorAction._waiting_to_reach_end_update = function (arg_7_0, arg_7_1, arg_7_2)
+function BTCritterRatScurryUnderDoorAction._waiting_to_reach_end_update(arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_2.anim_cb_scurry_under_finished then
 		local var_7_0 = arg_7_2.scurry_under_exit_pos:unbox()
 

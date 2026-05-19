@@ -2,7 +2,7 @@
 
 HuskTalentExtension = class(HuskTalentExtension)
 
-HuskTalentExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function HuskTalentExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.is_server = Managers.player.is_server
@@ -14,7 +14,7 @@ HuskTalentExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._initial_talent_sync_completed = false
 end
 
-HuskTalentExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
+function HuskTalentExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = ScriptUnit.extension(arg_2_2, "career_system")
 
 	arg_2_0.buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
@@ -26,7 +26,7 @@ HuskTalentExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._career_name, arg_2_0._hero_name = var_2_0:career_name(), var_2_2
 end
 
-HuskTalentExtension.set_talent_ids = function (arg_3_0, arg_3_1)
+function HuskTalentExtension.set_talent_ids(arg_3_0, arg_3_1)
 	arg_3_0._talent_ids = arg_3_1
 
 	if arg_3_0.is_server or not arg_3_0.is_husk then
@@ -42,7 +42,7 @@ end
 
 local var_0_0 = {}
 
-HuskTalentExtension.apply_buffs_from_talents = function (arg_4_0)
+function HuskTalentExtension.apply_buffs_from_talents(arg_4_0)
 	local var_4_0 = arg_4_0._talent_ids
 	local var_4_1 = arg_4_0._hero_name
 	local var_4_2 = arg_4_0.buff_extension
@@ -125,7 +125,7 @@ HuskTalentExtension.apply_buffs_from_talents = function (arg_4_0)
 	end
 end
 
-HuskTalentExtension._clear_buffs_from_talents = function (arg_5_0)
+function HuskTalentExtension._clear_buffs_from_talents(arg_5_0)
 	local var_5_0 = arg_5_0.buff_extension
 	local var_5_1 = arg_5_0._talent_buff_ids
 	local var_5_2 = #var_5_1
@@ -139,7 +139,7 @@ HuskTalentExtension._clear_buffs_from_talents = function (arg_5_0)
 	table.clear(arg_5_0._talent_buff_ids)
 end
 
-HuskTalentExtension.has_talent = function (arg_6_0, arg_6_1)
+function HuskTalentExtension.has_talent(arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._talent_ids
 	local var_6_1 = TalentIDLookup[arg_6_1]
 
@@ -162,11 +162,11 @@ HuskTalentExtension.has_talent = function (arg_6_0, arg_6_1)
 	return false
 end
 
-HuskTalentExtension.get_talent_ids = function (arg_7_0)
+function HuskTalentExtension.get_talent_ids(arg_7_0)
 	return arg_7_0._talent_ids
 end
 
-HuskTalentExtension.get_talent_names = function (arg_8_0, arg_8_1)
+function HuskTalentExtension.get_talent_names(arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._talent_ids
 	local var_8_1 = arg_8_0._hero_name
 
@@ -182,10 +182,10 @@ HuskTalentExtension.get_talent_names = function (arg_8_0, arg_8_1)
 	return arg_8_1
 end
 
-HuskTalentExtension.destroy = function (arg_9_0)
+function HuskTalentExtension.destroy(arg_9_0)
 	return
 end
 
-HuskTalentExtension.initial_talent_synced = function (arg_10_0)
+function HuskTalentExtension.initial_talent_synced(arg_10_0)
 	return arg_10_0._initial_talent_sync_completed
 end

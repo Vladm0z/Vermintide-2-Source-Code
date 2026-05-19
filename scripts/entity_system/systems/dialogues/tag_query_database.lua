@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/dialogues/tag_query")
 
 TagQueryDatabase = class(TagQueryDatabase)
 
-TagQueryDatabase.init = function (arg_1_0)
+function TagQueryDatabase.init(arg_1_0)
 	arg_1_0.database = RuleDatabase.initialize()
 	arg_1_0.rule_id_mapping = {}
 	arg_1_0.rules_n = 0
@@ -12,7 +12,7 @@ TagQueryDatabase.init = function (arg_1_0)
 	arg_1_0.queries = {}
 end
 
-TagQueryDatabase.destroy = function (arg_2_0)
+function TagQueryDatabase.destroy(arg_2_0)
 	RuleDatabase.destroy(arg_2_0.database)
 
 	arg_2_0.database = nil
@@ -21,37 +21,37 @@ TagQueryDatabase.destroy = function (arg_2_0)
 	arg_2_0.queries = nil
 end
 
-TagQueryDatabase.add_object_context = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+function TagQueryDatabase.add_object_context(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0.contexts_by_object[arg_3_1] or {}
 
 	arg_3_0.contexts_by_object[arg_3_1] = var_3_0
 	var_3_0[arg_3_2] = arg_3_3
 end
 
-TagQueryDatabase.get_object_context = function (arg_4_0, arg_4_1)
+function TagQueryDatabase.get_object_context(arg_4_0, arg_4_1)
 	return arg_4_0.contexts_by_object[arg_4_1]
 end
 
-TagQueryDatabase.remove_object = function (arg_5_0, arg_5_1)
+function TagQueryDatabase.remove_object(arg_5_0, arg_5_1)
 	arg_5_0.contexts_by_object[arg_5_1] = nil
 end
 
-TagQueryDatabase.set_global_context = function (arg_6_0, arg_6_1)
+function TagQueryDatabase.set_global_context(arg_6_0, arg_6_1)
 	arg_6_0.global_context = arg_6_1
 end
 
-TagQueryDatabase.create_query = function (arg_7_0)
+function TagQueryDatabase.create_query(arg_7_0)
 	return setmetatable({
 		query_context = {},
 		tagquery_database = arg_7_0
 	}, TagQuery)
 end
 
-TagQueryDatabase.add_query = function (arg_8_0, arg_8_1)
+function TagQueryDatabase.add_query(arg_8_0, arg_8_1)
 	arg_8_0.queries[#arg_8_0.queries + 1] = arg_8_1
 end
 
-TagQueryDatabase.finalize_rules = function (arg_9_0)
+function TagQueryDatabase.finalize_rules(arg_9_0)
 	RuleDatabase.sort_rules(arg_9_0.database)
 end
 
@@ -75,7 +75,7 @@ local var_0_1 = table.mirror_array_inplace({
 	"faction_memory"
 })
 
-TagQueryDatabase.define_rule = function (arg_10_0, arg_10_1)
+function TagQueryDatabase.define_rule(arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.name
 	local var_10_1 = {}
 
@@ -109,7 +109,7 @@ local var_0_2 = table.set({
 	"on_done"
 })
 
-TagQueryDatabase._optimize_rule_definition = function (arg_11_0, arg_11_1)
+function TagQueryDatabase._optimize_rule_definition(arg_11_0, arg_11_1)
 	for iter_11_0, iter_11_1 in pairs(arg_11_1) do
 		if not var_0_2[iter_11_0] then
 			arg_11_1[iter_11_0] = nil
@@ -197,7 +197,7 @@ local function var_0_10(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	return var_14_2, var_14_1
 end
 
-TagQueryDatabase.parse_criteria = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+function TagQueryDatabase.parse_criteria(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = arg_15_1[var_0_3.context_name]
 	local var_15_1 = arg_15_1[var_0_3.criteria_key]
 	local var_15_2 = arg_15_1[var_0_3.operator]
@@ -248,7 +248,7 @@ local var_0_13 = {
 	[0] = 0
 }
 
-TagQueryDatabase.iterate_queries = function (arg_17_0, arg_17_1, arg_17_2)
+function TagQueryDatabase.iterate_queries(arg_17_0, arg_17_1, arg_17_2)
 	table.clear(var_0_11)
 
 	local var_17_0 = 0
@@ -280,7 +280,7 @@ end
 
 local var_0_14 = {}
 
-TagQueryDatabase.iterate_query = function (arg_18_0, arg_18_1)
+function TagQueryDatabase.iterate_query(arg_18_0, arg_18_1)
 	local var_18_0 = table.remove(arg_18_0.queries, 1)
 
 	if not var_18_0 then
@@ -314,11 +314,11 @@ TagQueryDatabase.iterate_query = function (arg_18_0, arg_18_1)
 	return var_18_0
 end
 
-TagQueryDatabase.has_queries = function (arg_19_0)
+function TagQueryDatabase.has_queries(arg_19_0)
 	return not table.is_empty(arg_19_0.queries)
 end
 
-TagQueryDatabase._debug_print_query = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+function TagQueryDatabase._debug_print_query(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = {}
 
 	table.insert(var_20_0, "--------------- STARTING NEW QUERY ---------------")
@@ -354,7 +354,7 @@ end
 
 local var_0_15 = {}
 
-TagQueryDatabase.debug_test_query = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+function TagQueryDatabase.debug_test_query(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 	print("--------------- TESTING FOLLOWING QUERY ---------------")
 	print(arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 	table.dump(arg_21_3.query_context)

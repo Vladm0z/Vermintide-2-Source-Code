@@ -6,7 +6,7 @@ local var_0_0 = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceCraftingPlayfab = class(BackendInterfaceCraftingPlayfab, BackendInterfaceCraftingBase)
 
-BackendInterfaceCraftingPlayfab.init = function (arg_1_0, arg_1_1)
+function BackendInterfaceCraftingPlayfab.init(arg_1_0, arg_1_1)
 	BackendInterfaceCraftingPlayfab.super.init(arg_1_0)
 
 	arg_1_0.is_local = false
@@ -15,21 +15,21 @@ BackendInterfaceCraftingPlayfab.init = function (arg_1_0, arg_1_1)
 	arg_1_0._craft_requests = {}
 end
 
-BackendInterfaceCraftingPlayfab.ready = function (arg_2_0)
+function BackendInterfaceCraftingPlayfab.ready(arg_2_0)
 	return true
 end
 
-BackendInterfaceCraftingPlayfab.update = function (arg_3_0, arg_3_1)
+function BackendInterfaceCraftingPlayfab.update(arg_3_0, arg_3_1)
 	return
 end
 
-BackendInterfaceCraftingPlayfab._new_id = function (arg_4_0)
+function BackendInterfaceCraftingPlayfab._new_id(arg_4_0)
 	arg_4_0._last_id = arg_4_0._last_id + 1
 
 	return arg_4_0._last_id
 end
 
-BackendInterfaceCraftingPlayfab.craft = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+function BackendInterfaceCraftingPlayfab.craft(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0, var_5_1 = arg_5_0:_get_valid_recipe(arg_5_2, arg_5_3)
 	local var_5_2 = CareerSettings[arg_5_1].profile_name
 
@@ -52,7 +52,7 @@ BackendInterfaceCraftingPlayfab.craft = function (arg_5_0, arg_5_1, arg_5_2, arg
 	return nil
 end
 
-BackendInterfaceCraftingPlayfab.craft_request_cb = function (arg_6_0, arg_6_1, arg_6_2)
+function BackendInterfaceCraftingPlayfab.craft_request_cb(arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.backend
 	local var_6_1 = var_6_0:get_interface("items")
 	local var_6_2 = arg_6_0._backend_mirror
@@ -120,7 +120,7 @@ BackendInterfaceCraftingPlayfab.craft_request_cb = function (arg_6_0, arg_6_1, a
 	arg_6_0._craft_requests[arg_6_1] = var_6_8
 end
 
-BackendInterfaceCraftingPlayfab.is_craft_complete = function (arg_7_0, arg_7_1)
+function BackendInterfaceCraftingPlayfab.is_craft_complete(arg_7_0, arg_7_1)
 	if arg_7_0._craft_requests[arg_7_1] then
 		return true
 	end
@@ -128,14 +128,14 @@ BackendInterfaceCraftingPlayfab.is_craft_complete = function (arg_7_0, arg_7_1)
 	return false
 end
 
-BackendInterfaceCraftingPlayfab.get_craft_result = function (arg_8_0, arg_8_1)
+function BackendInterfaceCraftingPlayfab.get_craft_result(arg_8_0, arg_8_1)
 	return arg_8_0._craft_requests[arg_8_1]
 end
 
-BackendInterfaceCraftingPlayfab.get_unlocked_weapon_skins = function (arg_9_0)
+function BackendInterfaceCraftingPlayfab.get_unlocked_weapon_skins(arg_9_0)
 	return arg_9_0._backend_mirror:get_unlocked_weapon_skins()
 end
 
-BackendInterfaceCraftingPlayfab.get_unlocked_cosmetics = function (arg_10_0)
+function BackendInterfaceCraftingPlayfab.get_unlocked_cosmetics(arg_10_0)
 	return arg_10_0._backend_mirror:get_unlocked_cosmetics()
 end

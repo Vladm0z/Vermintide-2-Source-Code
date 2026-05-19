@@ -4,7 +4,7 @@ GameServerFinder = class(GameServerFinder)
 
 local var_0_0 = 10
 
-GameServerFinder.init = function (arg_1_0, arg_1_1, arg_1_2)
+function GameServerFinder.init(arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_1.config_file_name
 	local var_1_1 = arg_1_1.project_hash
 
@@ -14,11 +14,11 @@ GameServerFinder.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._browser_wrapper = GameServerInternal.server_browser() or GameServerInternal.create_server_browser_wrapper()
 end
 
-GameServerFinder.destroy = function (arg_2_0)
+function GameServerFinder.destroy(arg_2_0)
 	GameServerInternal.forget_server_browser()
 end
 
-GameServerFinder.refresh = function (arg_3_0)
+function GameServerFinder.refresh(arg_3_0)
 	arg_3_0._browser_wrapper:refresh()
 
 	arg_3_0._pending_refresh_request = true
@@ -26,33 +26,33 @@ GameServerFinder.refresh = function (arg_3_0)
 	table.clear(arg_3_0._cached_servers)
 end
 
-GameServerFinder.set_search_type = function (arg_4_0, arg_4_1)
+function GameServerFinder.set_search_type(arg_4_0, arg_4_1)
 	arg_4_0._browser_wrapper:set_search_type(arg_4_1)
 end
 
-GameServerFinder.add_to_favorites = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+function GameServerFinder.add_to_favorites(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_0._browser_wrapper:add_to_favorites(arg_5_1, arg_5_2, arg_5_3)
 end
 
-GameServerFinder.remove_from_favorites = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function GameServerFinder.remove_from_favorites(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_0._browser_wrapper:remove_from_favorites(arg_6_1, arg_6_2, arg_6_3)
 end
 
-GameServerFinder.add_filter_requirements = function (arg_7_0, arg_7_1, arg_7_2)
+function GameServerFinder.add_filter_requirements(arg_7_0, arg_7_1, arg_7_2)
 	GameServerInternal.add_filter_requirements(arg_7_1)
 
 	arg_7_0._skip_verify_lobby_data = arg_7_2
 end
 
-GameServerFinder.servers = function (arg_8_0)
+function GameServerFinder.servers(arg_8_0)
 	return arg_8_0._cached_servers
 end
 
-GameServerFinder.is_refreshing = function (arg_9_0)
+function GameServerFinder.is_refreshing(arg_9_0)
 	return arg_9_0._pending_refresh_request
 end
 
-GameServerFinder.update = function (arg_10_0, arg_10_1)
+function GameServerFinder.update(arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._browser_wrapper
 
 	var_10_0:update(arg_10_1)

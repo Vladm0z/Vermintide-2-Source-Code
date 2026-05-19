@@ -498,6 +498,12 @@ NetworkLookup.husks = {
 	"units/weapons/player/pup_wizards_barrel_01/pup_wizards_barrel_01",
 	"units/weapons/player/pup_wizards_barrel_01/wpn_wizards_barrel_01",
 	"units/weapons/player/pup_wizards_barrel_01/wpn_wizards_barrel_01_3p",
+	"units/weapons/player/pup_dwarf_barrel_01/pup_dwarf_barrel_01",
+	"units/weapons/player/wpn_dwarf_barrel_01/wpn_dwarf_barrel_01",
+	"units/weapons/player/wpn_dwarf_barrel_01/wpn_dwarf_barrel_01_3p",
+	"units/weapons/player/pup_dwarf_barrel_02/pup_dwarf_barrel_02",
+	"units/weapons/player/wpn_dwarf_barrel_02/wpn_dwarf_barrel_02",
+	"units/weapons/player/wpn_dwarf_barrel_02/wpn_dwarf_barrel_02_3p",
 	"units/beings/enemies/undead_ethereal_skeleton/chr_undead_ethereal_skeleton",
 	"units/beings/enemies/undead_ethereal_skeleton/chr_undead_ethereal_skeleton_skull",
 	"units/gameplay/wizards_tower_rotating_wall/wizards_tower_rotating_wall",
@@ -2349,7 +2355,7 @@ local function var_0_56(arg_4_0, arg_4_1)
 
 	local var_4_0 = "[NetworkLookup.lua] Table " .. arg_4_1 .. " does not contain key: "
 	local var_4_1 = {
-		__index = function (arg_5_0, arg_5_1)
+		__index = function(arg_5_0, arg_5_1)
 			error(var_4_0 .. tostring(arg_5_1))
 		end
 	}
@@ -2369,7 +2375,7 @@ NetworkLookup.dialogue_profiles = {
 	"npc_empire_soldier"
 }
 
-table.append_unique(NetworkLookup.dialogue_profiles, table.values(table.select_map(SPProfiles, function (arg_6_0, arg_6_1)
+table.append_unique(NetworkLookup.dialogue_profiles, table.values(table.select_map(SPProfiles, function(arg_6_0, arg_6_1)
 	return arg_6_1.character_vo
 end)))
 

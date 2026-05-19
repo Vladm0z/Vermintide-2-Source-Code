@@ -12,7 +12,7 @@ local var_0_1 = {
 	"HuskTalentExtension"
 }
 
-TalentSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
+function TalentSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	TalentSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -22,17 +22,17 @@ TalentSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	var_1_0:register(arg_1_0, unpack(var_0_0))
 end
 
-TalentSystem.destroy = function (arg_2_0)
+function TalentSystem.destroy(arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 
 	arg_2_0.network_event_delegate = nil
 end
 
-TalentSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+function TalentSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return (TalentSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4))
 end
 
-TalentSystem.rpc_sync_talents = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+function TalentSystem.rpc_sync_talents(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	printf("TalentSystem:rpc_sync_talents %d %d", arg_4_1, arg_4_2)
 
 	local var_4_0 = arg_4_0.unit_storage:unit(arg_4_2)
@@ -48,7 +48,7 @@ TalentSystem.rpc_sync_talents = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	end
 end
 
-TalentSystem.hot_join_sync = function (arg_5_0, arg_5_1)
+function TalentSystem.hot_join_sync(arg_5_0, arg_5_1)
 	if not arg_5_0.is_server then
 		return
 	end

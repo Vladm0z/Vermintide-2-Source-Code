@@ -11,7 +11,7 @@ local var_0_6 = "confirm_press"
 StartGameWindowVersusMissionSelection = class(StartGameWindowVersusMissionSelection)
 StartGameWindowVersusMissionSelection.NAME = "StartGameWindowVersusMissionSelection"
 
-StartGameWindowVersusMissionSelection.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
+function StartGameWindowVersusMissionSelection.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowVersusMissionSelection")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -51,7 +51,7 @@ local function var_0_7(arg_2_0, arg_2_1)
 	return arg_2_0.act_presentation_order < arg_2_1.act_presentation_order
 end
 
-StartGameWindowVersusMissionSelection._gather_level_information = function (arg_3_0)
+function StartGameWindowVersusMissionSelection._gather_level_information(arg_3_0)
 	local var_3_0 = UnlockableLevelsByGameMode.versus
 	local var_3_1 = {}
 
@@ -83,7 +83,7 @@ StartGameWindowVersusMissionSelection._gather_level_information = function (arg_
 	}
 end
 
-StartGameWindowVersusMissionSelection._start_transition_animation = function (arg_4_0, arg_4_1)
+function StartGameWindowVersusMissionSelection._start_transition_animation(arg_4_0, arg_4_1)
 	local var_4_0 = {
 		render_settings = arg_4_0._render_settings
 	}
@@ -93,7 +93,7 @@ StartGameWindowVersusMissionSelection._start_transition_animation = function (ar
 	arg_4_0._animations[arg_4_1] = var_4_2
 end
 
-StartGameWindowVersusMissionSelection._create_ui_elements = function (arg_5_0, arg_5_1, arg_5_2)
+function StartGameWindowVersusMissionSelection._create_ui_elements(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_5_0._widgets, arg_5_0._widgets_by_name = UIUtils.create_widgets(var_0_1)
 
@@ -262,7 +262,7 @@ StartGameWindowVersusMissionSelection._create_ui_elements = function (arg_5_0, a
 	arg_5_0:_populate_description()
 end
 
-StartGameWindowVersusMissionSelection.on_exit = function (arg_6_0, arg_6_1)
+function StartGameWindowVersusMissionSelection.on_exit(arg_6_0, arg_6_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowVersusMissionSelection")
 
 	arg_6_0._ui_animator = nil
@@ -270,7 +270,7 @@ StartGameWindowVersusMissionSelection.on_exit = function (arg_6_0, arg_6_1)
 	arg_6_0._parent:set_input_description(nil)
 end
 
-StartGameWindowVersusMissionSelection.update = function (arg_7_0, arg_7_1, arg_7_2)
+function StartGameWindowVersusMissionSelection.update(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_update_animations(arg_7_1)
 	arg_7_0:_handle_input(arg_7_1, arg_7_2)
 	arg_7_0:_update_gamepad_scroller(arg_7_1, arg_7_2)
@@ -278,7 +278,7 @@ StartGameWindowVersusMissionSelection.update = function (arg_7_0, arg_7_1, arg_7
 	arg_7_0:_draw(arg_7_1)
 end
 
-StartGameWindowVersusMissionSelection._update_gamepad_scroller = function (arg_8_0, arg_8_1, arg_8_2)
+function StartGameWindowVersusMissionSelection._update_gamepad_scroller(arg_8_0, arg_8_1, arg_8_2)
 	if not Managers.input:is_device_active("gamepad") then
 		return
 	end
@@ -309,17 +309,17 @@ StartGameWindowVersusMissionSelection._update_gamepad_scroller = function (arg_8
 	arg_8_0._old_grid_y_selection = var_8_6
 end
 
-StartGameWindowVersusMissionSelection._update_scroller = function (arg_9_0, arg_9_1, arg_9_2)
+function StartGameWindowVersusMissionSelection._update_scroller(arg_9_0, arg_9_1, arg_9_2)
 	if Managers.input:is_device_active("gamepad") then
 		return
 	end
 end
 
-StartGameWindowVersusMissionSelection.post_update = function (arg_10_0, arg_10_1, arg_10_2)
+function StartGameWindowVersusMissionSelection.post_update(arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-StartGameWindowVersusMissionSelection._update_animations = function (arg_11_0, arg_11_1)
+function StartGameWindowVersusMissionSelection._update_animations(arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._ui_animator
 
 	var_11_0:update(arg_11_1)
@@ -345,7 +345,7 @@ StartGameWindowVersusMissionSelection._update_animations = function (arg_11_0, a
 	end
 end
 
-StartGameWindowVersusMissionSelection._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
+function StartGameWindowVersusMissionSelection._handle_input(arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._parent:window_input_service()
 
 	if var_12_0:get("move_right_hold_continuous") then
@@ -409,7 +409,7 @@ StartGameWindowVersusMissionSelection._handle_input = function (arg_12_0, arg_12
 	end
 end
 
-StartGameWindowVersusMissionSelection._set_selection = function (arg_13_0, arg_13_1, arg_13_2)
+function StartGameWindowVersusMissionSelection._set_selection(arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._selected_grid_index
 
 	var_13_0[1] = arg_13_1
@@ -418,7 +418,7 @@ StartGameWindowVersusMissionSelection._set_selection = function (arg_13_0, arg_1
 	arg_13_0:_populate_description()
 end
 
-StartGameWindowVersusMissionSelection._update_selection = function (arg_14_0, arg_14_1, arg_14_2)
+function StartGameWindowVersusMissionSelection._update_selection(arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._current_grid_entries
 	local var_14_1 = arg_14_0._selected_grid_index
 
@@ -437,7 +437,7 @@ StartGameWindowVersusMissionSelection._update_selection = function (arg_14_0, ar
 	arg_14_0:_populate_description()
 end
 
-StartGameWindowVersusMissionSelection._handle_input_desc = function (arg_15_0)
+function StartGameWindowVersusMissionSelection._handle_input_desc(arg_15_0)
 	local var_15_0 = arg_15_0._current_grid_entries
 	local var_15_1 = arg_15_0._selected_grid_index
 	local var_15_2 = var_15_1[1]
@@ -455,11 +455,11 @@ StartGameWindowVersusMissionSelection._handle_input_desc = function (arg_15_0)
 	do return end
 
 	if not arg_15_0._level_preferences[1][var_15_5] and arg_15_0._level_preferences[2][var_15_5] then
-		-- Nothing
+		-- block empty
 	end
 end
 
-StartGameWindowVersusMissionSelection._populate_description = function (arg_16_0)
+function StartGameWindowVersusMissionSelection._populate_description(arg_16_0)
 	local var_16_0 = arg_16_0._selected_grid_index
 	local var_16_1 = var_16_0[1]
 	local var_16_2 = var_16_0[2]
@@ -516,7 +516,7 @@ StartGameWindowVersusMissionSelection._populate_description = function (arg_16_0
 	var_16_11.locked_text.content.text = var_16_10
 end
 
-StartGameWindowVersusMissionSelection._draw = function (arg_17_0, arg_17_1)
+function StartGameWindowVersusMissionSelection._draw(arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._ui_top_renderer
 	local var_17_1 = arg_17_0._ui_scenegraph
 	local var_17_2 = arg_17_0._parent:window_input_service()

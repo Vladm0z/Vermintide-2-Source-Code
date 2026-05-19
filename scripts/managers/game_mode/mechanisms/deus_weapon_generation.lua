@@ -306,7 +306,7 @@ end
 
 DeusWeaponGeneration = DeusWeaponGeneration or {}
 
-DeusWeaponGeneration.serialize_weapon = function (arg_13_0)
+function DeusWeaponGeneration.serialize_weapon(arg_13_0)
 	local var_13_0 = {}
 
 	fassert(arg_13_0.deus_item_key, "weapon malformed.")
@@ -347,7 +347,7 @@ DeusWeaponGeneration.serialize_weapon = function (arg_13_0)
 	return table.concat(var_13_0)
 end
 
-DeusWeaponGeneration.deserialize_weapon = function (arg_14_0)
+function DeusWeaponGeneration.deserialize_weapon(arg_14_0)
 	local var_14_0
 	local var_14_1
 	local var_14_2
@@ -383,11 +383,11 @@ DeusWeaponGeneration.deserialize_weapon = function (arg_14_0)
 	return var_0_15(var_14_0, var_14_1, var_14_2, var_14_3, var_14_4, var_14_5)
 end
 
-DeusWeaponGeneration.create_weapon = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+function DeusWeaponGeneration.create_weapon(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	return var_0_15(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 end
 
-DeusWeaponGeneration.get_possibilities_for_item_key = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+function DeusWeaponGeneration.get_possibilities_for_item_key(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = var_0_14(arg_16_0)
 	local var_16_1 = var_0_11(arg_16_0, arg_16_3)
 	local var_16_2 = var_0_6(arg_16_3, arg_16_1, arg_16_2)
@@ -402,25 +402,25 @@ DeusWeaponGeneration.get_possibilities_for_item_key = function (arg_16_0, arg_16
 	return var_16_2, var_16_0, var_16_3, var_16_4, var_16_1 and #var_16_1 > 0 and var_16_1 or nil
 end
 
-DeusWeaponGeneration.generate_item_from_item_key = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+function DeusWeaponGeneration.generate_item_from_item_key(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	local var_17_0 = DeusGenUtils.create_random_generator(arg_17_4)
 
 	return var_0_16(arg_17_0, arg_17_1, arg_17_2, arg_17_3, var_17_0)
 end
 
-DeusWeaponGeneration.get_random_rarity = function (arg_18_0, arg_18_1, arg_18_2)
+function DeusWeaponGeneration.get_random_rarity(arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = DeusGenUtils.create_random_generator(arg_18_2)
 
 	return var_0_5(var_18_0, arg_18_0, arg_18_1)
 end
 
-DeusWeaponGeneration.upgrade_item = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+function DeusWeaponGeneration.upgrade_item(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	local var_19_0 = DeusGenUtils.create_random_generator(arg_19_4)
 
 	return var_0_17(arg_19_0, arg_19_1, arg_19_2, arg_19_3, var_19_0)
 end
 
-DeusWeaponGeneration.generate_weapon = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
+function DeusWeaponGeneration.generate_weapon(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
 	local var_20_0 = DeusGenUtils.create_random_generator(arg_20_3)
 	local var_20_1 = var_0_8(arg_20_2, var_20_0, arg_20_4, arg_20_5, arg_20_6)
 	local var_20_2 = var_0_9(var_20_1, arg_20_2, arg_20_4, var_20_0)
@@ -432,7 +432,7 @@ DeusWeaponGeneration.generate_weapon = function (arg_20_0, arg_20_1, arg_20_2, a
 	return var_0_16(var_20_2, arg_20_0, arg_20_1, arg_20_2, var_20_0)
 end
 
-DeusWeaponGeneration.generate_weapon_for_slot = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+function DeusWeaponGeneration.generate_weapon_for_slot(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 	local var_21_0 = DeusGenUtils.create_random_generator(arg_21_3)
 	local var_21_1 = var_0_9(arg_21_5, arg_21_2, arg_21_4, var_21_0)
 
@@ -443,7 +443,7 @@ DeusWeaponGeneration.generate_weapon_for_slot = function (arg_21_0, arg_21_1, ar
 	return var_0_16(var_21_1, arg_21_0, arg_21_1, arg_21_2, var_21_0)
 end
 
-DeusWeaponGeneration.generate_weapon_pool = function (arg_22_0, arg_22_1)
+function DeusWeaponGeneration.generate_weapon_pool(arg_22_0, arg_22_1)
 	local var_22_0 = {}
 
 	for iter_22_0, iter_22_1 in pairs(DeusDropRarityWeights) do
@@ -473,7 +473,7 @@ DeusWeaponGeneration.generate_weapon_pool = function (arg_22_0, arg_22_1)
 	return var_22_0
 end
 
-DeusWeaponGeneration.get_weapon_pool_slot_amounts = function (arg_23_0, arg_23_1)
+function DeusWeaponGeneration.get_weapon_pool_slot_amounts(arg_23_0, arg_23_1)
 	local var_23_0 = {}
 	local var_23_1 = DeusWeaponGroups
 

@@ -45,12 +45,13 @@ local var_0_0 = {
 		data = {
 			description = "es_bastard_sword_skin_03_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t1/wpn_emp_gk_sword_02_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
 			inventory_icon = "icon_wpn_emp_gk_sword_02_t1_runed_01",
 			display_name = "es_bastard_sword_skin_03_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t1/wpn_emp_gk_sword_02_t1_runed_01",
-			template = "bastard_sword_template"
+			material_settings_name = "blue_glow",
+			template = "bastard_sword_template",
+			display_unit = "units/weapons/weapon_display/display_2h_swords"
 		}
 	},
 	{
@@ -85,12 +86,13 @@ local var_0_0 = {
 		data = {
 			description = "es_bastard_sword_skin_04_description",
 			rarity = "magic",
+			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t2/wpn_emp_gk_sword_02_t2_magic_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
 			inventory_icon = "icon_wpn_emp_gk_sword_02_t2_magic_01",
 			display_name = "es_bastard_sword_skin_04_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t2/wpn_emp_gk_sword_02_t2_magic_01",
-			template = "bastard_sword_template"
+			material_settings_name = "weaves",
+			template = "bastard_sword_template",
+			display_unit = "units/weapons/weapon_display/display_2h_swords"
 		}
 	},
 	{
@@ -144,6 +146,7 @@ local var_0_0 = {
 			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t1/wpn_emp_gk_sword_02_t1_runed_01",
 			inventory_icon = "icon_wpn_emp_gk_sword_02_t1_runed_01_wpn_emp_gk_shield_02_runed_01",
 			left_hand_unit = "units/weapons/player/wpn_emp_gk_shield_02/wpn_emp_gk_shield_02_runed_01",
+			material_settings_name = "blue_glow",
 			template = "one_handed_sword_shield_template_2",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_shield_sword"
@@ -187,6 +190,7 @@ local var_0_0 = {
 			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t2/wpn_emp_gk_sword_02_t2_magic_01",
 			inventory_icon = "icon_wpn_emp_gk_sword_02_t2_wpn_emp_gk_shield_01_magic_01",
 			left_hand_unit = "units/weapons/player/wpn_emp_gk_shield_01/wpn_emp_gk_shield_01_magic_01",
+			material_settings_name = "weaves",
 			template = "one_handed_sword_shield_template_2",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_shield_sword"

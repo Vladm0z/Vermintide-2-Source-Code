@@ -26,7 +26,7 @@ local function var_0_6(arg_1_0)
 	return true
 end
 
-ProjectileEtherealSkullLocomotionExtension.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function ProjectileEtherealSkullLocomotionExtension.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = Managers.time:time("game")
 
 	arg_2_0._spawn_time = var_2_0
@@ -60,7 +60,7 @@ ProjectileEtherealSkullLocomotionExtension.init = function (arg_2_0, arg_2_1, ar
 	Managers.state.event:register(arg_2_0, "set_tower_skulls_target", "set_target")
 end
 
-ProjectileEtherealSkullLocomotionExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+function ProjectileEtherealSkullLocomotionExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_0._moved = false
 
 	if arg_3_0._stopped then
@@ -89,7 +89,7 @@ ProjectileEtherealSkullLocomotionExtension.update = function (arg_3_0, arg_3_1, 
 	arg_3_0._moved = true
 end
 
-ProjectileEtherealSkullLocomotionExtension.get_homing_movement = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+function ProjectileEtherealSkullLocomotionExtension.get_homing_movement(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_0._patrol_origin:unbox()
 
 	if Vector3.distance_squared(var_4_0, arg_4_2) > var_0_0.despawn_dist_sq then
@@ -105,7 +105,7 @@ ProjectileEtherealSkullLocomotionExtension.get_homing_movement = function (arg_4
 	return arg_4_2 + var_4_5 * var_4_4 * arg_4_4, var_4_5
 end
 
-ProjectileEtherealSkullLocomotionExtension.get_patrol_movement = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+function ProjectileEtherealSkullLocomotionExtension.get_patrol_movement(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = Vector3(arg_5_0._origin_x, arg_5_0._origin_y, arg_5_2.z)
 	local var_5_1, var_5_2 = var_0_4(arg_5_2 - var_5_0)
 	local var_5_3 = var_5_2 - var_0_0.patrol_target_horizontal_dist_from_origin
@@ -143,7 +143,7 @@ ProjectileEtherealSkullLocomotionExtension.get_patrol_movement = function (arg_5
 	return var_5_11, var_5_12
 end
 
-ProjectileEtherealSkullLocomotionExtension.get_spawn_traversal_movement = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+function ProjectileEtherealSkullLocomotionExtension.get_spawn_traversal_movement(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = (arg_6_3 - arg_6_0._spawn_traversal_start) / var_0_0.spawn_traversal_duration
 	local var_6_1 = Vector3(arg_6_0._origin_x, arg_6_0._origin_y, arg_6_2.z)
 	local var_6_2, var_6_3 = var_0_4(arg_6_2 - var_6_1)
@@ -164,7 +164,7 @@ ProjectileEtherealSkullLocomotionExtension.get_spawn_traversal_movement = functi
 	return var_6_11, var_6_12
 end
 
-ProjectileEtherealSkullLocomotionExtension.set_movement = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
+function ProjectileEtherealSkullLocomotionExtension.set_movement(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
 	if not arg_7_4 and arg_7_5 then
 		return
 	end
@@ -214,7 +214,7 @@ ProjectileEtherealSkullLocomotionExtension.set_movement = function (arg_7_0, arg
 	GameSession.set_game_object_field(arg_7_4, arg_7_5, "velocity", var_7_11)
 end
 
-ProjectileEtherealSkullLocomotionExtension.set_knockback = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+function ProjectileEtherealSkullLocomotionExtension.set_knockback(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	arg_8_2 = Vector3(arg_8_2[1], arg_8_2[2], arg_8_2[3])
 	arg_8_0._knockback_end = arg_8_4 + var_0_0.knockback_duration
 	arg_8_0._knockback_start = arg_8_4
@@ -239,7 +239,7 @@ ProjectileEtherealSkullLocomotionExtension.set_knockback = function (arg_8_0, ar
 	arg_8_0._knockback_velocity = Vector3Box(var_8_5)
 end
 
-ProjectileEtherealSkullLocomotionExtension.set_rotation = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+function ProjectileEtherealSkullLocomotionExtension.set_rotation(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	if not arg_9_3 and arg_9_4 then
 		return
 	end
@@ -258,7 +258,7 @@ ProjectileEtherealSkullLocomotionExtension.set_rotation = function (arg_9_0, arg
 	arg_9_0._cached_direction:store(arg_9_2)
 end
 
-ProjectileEtherealSkullLocomotionExtension.get_vertical_offset = function (arg_10_0, arg_10_1)
+function ProjectileEtherealSkullLocomotionExtension.get_vertical_offset(arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1 - arg_10_0._spawn_time
 	local var_10_1 = arg_10_0._target_direction
 	local var_10_2 = arg_10_0._direction
@@ -270,7 +270,7 @@ ProjectileEtherealSkullLocomotionExtension.get_vertical_offset = function (arg_1
 	return Vector3.normalize(var_10_5) * var_0_0.vertical_offset_multiplier * var_10_6(var_10_0 * var_0_0.vertical_offset_frequency_multiplier)
 end
 
-ProjectileEtherealSkullLocomotionExtension.get_homing_target_direction = function (arg_11_0, arg_11_1)
+function ProjectileEtherealSkullLocomotionExtension.get_homing_target_direction(arg_11_0, arg_11_1)
 	local var_11_0
 
 	if not arg_11_0:has_target() then
@@ -285,7 +285,7 @@ ProjectileEtherealSkullLocomotionExtension.get_homing_target_direction = functio
 	return var_11_0
 end
 
-ProjectileEtherealSkullLocomotionExtension.set_target = function (arg_12_0, arg_12_1, arg_12_2)
+function ProjectileEtherealSkullLocomotionExtension.set_target(arg_12_0, arg_12_1, arg_12_2)
 	if AIGroupTemplates.ethereal_skulls.last_state == "spawned" then
 		return
 	end
@@ -294,7 +294,7 @@ ProjectileEtherealSkullLocomotionExtension.set_target = function (arg_12_0, arg_
 	arg_12_0._target_unit = arg_12_1
 end
 
-ProjectileEtherealSkullLocomotionExtension.get_target_node_position = function (arg_13_0, arg_13_1)
+function ProjectileEtherealSkullLocomotionExtension.get_target_node_position(arg_13_0, arg_13_1)
 	local var_13_0 = BLACKBOARDS[arg_13_1]
 	local var_13_1 = var_13_0 and var_13_0.breed
 	local var_13_2 = ScriptUnit.has_extension(arg_13_1, "pickup_system")
@@ -308,21 +308,21 @@ ProjectileEtherealSkullLocomotionExtension.get_target_node_position = function (
 	end
 end
 
-ProjectileEtherealSkullLocomotionExtension.has_target = function (arg_14_0)
+function ProjectileEtherealSkullLocomotionExtension.has_target(arg_14_0)
 	return arg_14_0._target_unit and Unit.alive(arg_14_0._target_unit)
 end
 
-ProjectileEtherealSkullLocomotionExtension.moved_this_frame = function (arg_15_0)
+function ProjectileEtherealSkullLocomotionExtension.moved_this_frame(arg_15_0)
 	return not arg_15_0._stopped and arg_15_0._moved
 end
 
-ProjectileEtherealSkullLocomotionExtension.destroy = function (arg_16_0)
+function ProjectileEtherealSkullLocomotionExtension.destroy(arg_16_0)
 	arg_16_0._stopped = true
 	arg_16_0._target_unit = nil
 
 	Managers.state.event:unregister("set_tower_skulls_target", arg_16_0)
 end
 
-ProjectileEtherealSkullLocomotionExtension.stop = function (arg_17_0)
+function ProjectileEtherealSkullLocomotionExtension.stop(arg_17_0)
 	arg_17_0._stopped = true
 end

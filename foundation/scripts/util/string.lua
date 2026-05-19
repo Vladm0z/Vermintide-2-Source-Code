@@ -4,15 +4,15 @@ local var_0_0 = string.format
 local var_0_1 = string.gsub
 local var_0_2 = string.sub
 
-string.starts_with = function (arg_1_0, arg_1_1)
+function string.starts_with(arg_1_0, arg_1_1)
 	return var_0_2(arg_1_0, 1, #arg_1_1) == arg_1_1
 end
 
-string.ends_with = function (arg_2_0, arg_2_1)
+function string.ends_with(arg_2_0, arg_2_1)
 	return arg_2_1 == "" or var_0_2(arg_2_0, -#arg_2_1) == arg_2_1
 end
 
-string.insert = function (arg_3_0, arg_3_1, arg_3_2)
+function string.insert(arg_3_0, arg_3_1, arg_3_2)
 	return var_0_2(arg_3_0, 1, arg_3_2) .. arg_3_1 .. var_0_2(arg_3_0, arg_3_2 + 1)
 end
 
@@ -22,7 +22,7 @@ local function var_0_4(arg_4_0)
 	var_0_3[#var_0_3 + 1] = arg_4_0
 end
 
-string.split_deprecated = function (arg_5_0, arg_5_1, arg_5_2)
+function string.split_deprecated(arg_5_0, arg_5_1, arg_5_2)
 	var_0_3 = arg_5_2 or {}
 
 	local var_5_0 = var_0_0("([^%s]+)", arg_5_1 or " ")
@@ -32,7 +32,7 @@ string.split_deprecated = function (arg_5_0, arg_5_1, arg_5_2)
 	return var_0_3
 end
 
-string.split = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function string.split(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_1 = arg_6_1 or " "
 	arg_6_2 = arg_6_2 or {}
 
@@ -69,15 +69,15 @@ string.split = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	return arg_6_2, var_6_5
 end
 
-string.trim = function (arg_7_0)
+function string.trim(arg_7_0)
 	return var_0_1(var_0_1(arg_7_0, "^%s+", ""), "%s+$", "")
 end
 
-string.remove = function (arg_8_0, arg_8_1, arg_8_2)
+function string.remove(arg_8_0, arg_8_1, arg_8_2)
 	return var_0_2(arg_8_0, 1, arg_8_1 - 1) .. var_0_2(arg_8_0, arg_8_2 + 1)
 end
 
-string.value_or_nil = function (arg_9_0)
+function string.value_or_nil(arg_9_0)
 	if arg_9_0 == "" or arg_9_0 == false then
 		return nil
 	else
@@ -85,7 +85,7 @@ string.value_or_nil = function (arg_9_0)
 	end
 end
 
-string.is_snake_case = function (arg_10_0)
+function string.is_snake_case(arg_10_0)
 	if string.ends_with(arg_10_0, "_") then
 		return false
 	end
@@ -101,7 +101,7 @@ string.is_snake_case = function (arg_10_0)
 	return true
 end
 
-string.levenshtein = function (arg_11_0, arg_11_1)
+function string.levenshtein(arg_11_0, arg_11_1)
 	local var_11_0 = #arg_11_0
 	local var_11_1 = #arg_11_1
 
@@ -143,7 +143,7 @@ string.levenshtein = function (arg_11_0, arg_11_1)
 	return var_11_2[var_11_0][var_11_1]
 end
 
-string.damerau_levenshtein_distance = function (arg_12_0, arg_12_1, arg_12_2)
+function string.damerau_levenshtein_distance(arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = #arg_12_0
 	local var_12_1 = #arg_12_1
 
@@ -202,7 +202,7 @@ string.damerau_levenshtein_distance = function (arg_12_0, arg_12_1, arg_12_2)
 	return var_12_4[#var_12_4]
 end
 
-string.pad_left = function (arg_13_0, arg_13_1, arg_13_2)
+function string.pad_left(arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = #arg_13_0
 	local var_13_1 = #arg_13_2
 
@@ -219,7 +219,7 @@ string.pad_left = function (arg_13_0, arg_13_1, arg_13_2)
 	return arg_13_0
 end
 
-string.pad_right = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+function string.pad_right(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = #arg_14_0
 	local var_14_1 = #arg_14_2
 
@@ -251,7 +251,7 @@ string.pad_right = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	return arg_14_0 .. var_14_4
 end
 
-string.rep = function (arg_15_0, arg_15_1)
+function string.rep(arg_15_0, arg_15_1)
 	local var_15_0 = ""
 
 	for iter_15_0 = 1, arg_15_1 do
@@ -263,7 +263,7 @@ end
 
 local var_0_5 = {}
 
-string.chunk_from_right = function (arg_16_0, arg_16_1, arg_16_2)
+function string.chunk_from_right(arg_16_0, arg_16_1, arg_16_2)
 	arg_16_2 = arg_16_2 or " "
 
 	local var_16_0 = #arg_16_0
@@ -291,6 +291,6 @@ local function var_0_6(arg_17_0)
 	return var_0_0("%02x", string.byte(arg_17_0))
 end
 
-string.tohex = function (arg_18_0)
+function string.tohex(arg_18_0)
 	return var_0_1(arg_18_0, ".", var_0_6)
 end

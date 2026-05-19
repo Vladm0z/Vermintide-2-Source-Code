@@ -2,7 +2,7 @@
 
 ProjectileFixedImpactUnitExtension = class(ProjectileFixedImpactUnitExtension, ProjectileBaseImpactUnitExtension)
 
-ProjectileFixedImpactUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function ProjectileFixedImpactUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	ProjectileFixedImpactUnitExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0.is_server = Managers.player.is_server
@@ -16,11 +16,11 @@ ProjectileFixedImpactUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, a
 	arg_1_0._time_to_impact = arg_1_0.impact_data.time
 end
 
-ProjectileFixedImpactUnitExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
+function ProjectileFixedImpactUnitExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.locomotion_extension = ScriptUnit.extension(arg_2_2, "projectile_locomotion_system")
 end
 
-ProjectileFixedImpactUnitExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+function ProjectileFixedImpactUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	ProjectileFixedImpactUnitExtension.super.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 
 	if not arg_3_0.is_server then

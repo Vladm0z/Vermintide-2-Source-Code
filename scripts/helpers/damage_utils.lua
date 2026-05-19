@@ -51,7 +51,7 @@ local function var_0_22(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	return false
 end
 
-DamageUtils.get_breed_damage_multiplier_type = function (arg_2_0, arg_2_1)
+function DamageUtils.get_breed_damage_multiplier_type(arg_2_0, arg_2_1)
 	local var_2_0
 
 	if arg_2_0 and arg_2_0.hitzone_multiplier_types then
@@ -71,7 +71,7 @@ local function var_0_23(arg_3_0, arg_3_1)
 	end
 end
 
-DamageUtils.get_boost_curve_multiplier = function (arg_4_0, arg_4_1)
+function DamageUtils.get_boost_curve_multiplier(arg_4_0, arg_4_1)
 	local var_4_0 = (#arg_4_0 - 1) * arg_4_1
 	local var_4_1 = math.floor(var_4_0) + 1
 	local var_4_2 = var_4_0 - math.floor(var_4_0)
@@ -405,7 +405,7 @@ local function var_0_26(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	return var_7_1
 end
 
-DamageUtils.calculate_damage_tooltip = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11, arg_8_12, arg_8_13, arg_8_14, arg_8_15)
+function DamageUtils.calculate_damage_tooltip(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11, arg_8_12, arg_8_13, arg_8_14, arg_8_15)
 	local var_8_0 = DamageOutput
 	local var_8_1 = false
 	local var_8_2 = false
@@ -416,27 +416,27 @@ DamageUtils.calculate_damage_tooltip = function (arg_8_0, arg_8_1, arg_8_2, arg_
 	return (DamageUtils.networkify_damage(var_8_5))
 end
 
-DamageUtils.calculate_dot_buff_damage = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+function DamageUtils.calculate_dot_buff_damage(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
 	arg_9_2 = arg_9_2 or "full"
+	arg_9_4 = arg_9_4 or DefaultPowerLevel
 
-	local var_9_0 = arg_9_4 or DefaultPowerLevel
-	local var_9_1 = false
+	local var_9_0 = false
 
 	arg_9_5 = arg_9_5 or "default"
 
-	local var_9_2 = DamageProfileTemplates[arg_9_5]
-	local var_9_3 = var_9_2.default_target.boost_curve_type
-	local var_9_4 = BoostCurves[var_9_3]
-	local var_9_5 = 0
+	local var_9_1 = DamageProfileTemplates[arg_9_5]
+	local var_9_2 = var_9_1.default_target.boost_curve_type
+	local var_9_3 = BoostCurves[var_9_2]
+	local var_9_4 = 0
+	local var_9_5
 	local var_9_6
-	local var_9_7
 
 	arg_9_3 = arg_9_3 or "dot_debuff"
 
-	return DamageUtils.calculate_damage(DamageOutput, arg_9_0, arg_9_1, arg_9_2, var_9_0, var_9_4, var_9_5, var_9_1, var_9_2, var_9_6, var_9_7, arg_9_3)
+	return DamageUtils.calculate_damage(DamageOutput, arg_9_0, arg_9_1, arg_9_2, arg_9_4, var_9_3, var_9_4, var_9_0, var_9_1, var_9_5, var_9_6, arg_9_3)
 end
 
-DamageUtils.calculate_damage = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8, arg_10_9, arg_10_10, arg_10_11)
+function DamageUtils.calculate_damage(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8, arg_10_9, arg_10_10, arg_10_11)
 	local var_10_0 = Managers.state.difficulty:get_difficulty_settings()
 	local var_10_1
 	local var_10_2
@@ -521,19 +521,15 @@ DamageUtils.calculate_damage = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3,
 		local var_10_27 = 0
 
 		if var_10_26 then
-			if not arg_10_8.no_stagger_damage_reduction then
-				local var_10_28 = var_10_1.no_stagger_damage_reduction
-			end
+			local var_10_28 = 0
+			local var_10_29 = 2
 
-			local var_10_29 = 0
-			local var_10_30 = 2
-
-			var_10_27 = var_10_26.is_climbing and 2 or math.min(var_10_26.stagger or var_10_29, var_10_30)
+			var_10_27 = var_10_26.is_climbing and 2 or math.min(var_10_26.stagger or var_10_28, var_10_29)
 
 			if arg_10_8.no_stagger_damage_reduction_ranged then
-				local var_10_31 = 1
+				local var_10_30 = 1
 
-				var_10_27 = math.max(var_10_31, var_10_27)
+				var_10_27 = math.max(var_10_30, var_10_27)
 			end
 
 			if not arg_10_8.no_stagger_damage_reduction_ranged then
@@ -541,25 +537,25 @@ DamageUtils.calculate_damage = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3,
 			end
 		end
 
-		local var_10_32 = var_10_0.min_stagger_damage_coefficient
-		local var_10_33 = var_10_0.stagger_damage_multiplier
+		local var_10_31 = var_10_0.min_stagger_damage_coefficient
+		local var_10_32 = var_10_0.stagger_damage_multiplier
 
-		if var_10_33 then
-			local var_10_34 = var_10_27 * var_10_33
-			local var_10_35 = ScriptUnit.has_extension(arg_10_1, "buff_system")
+		if var_10_32 then
+			local var_10_33 = var_10_27 * var_10_32
+			local var_10_34 = ScriptUnit.has_extension(arg_10_1, "buff_system")
 
-			if var_10_35 and not arg_10_8.no_stagger_damage_reduction_ranged then
-				var_10_34 = var_10_35:apply_buffs_to_value(var_10_34, "unbalanced_damage_taken")
+			if var_10_34 and not arg_10_8.no_stagger_damage_reduction_ranged then
+				var_10_33 = var_10_34:apply_buffs_to_value(var_10_33, "unbalanced_damage_taken")
 			end
 
-			var_10_25 = var_10_25 * (var_10_32 + var_10_34)
+			var_10_25 = var_10_25 * (var_10_31 + var_10_33)
 		end
 	end
 
-	local var_10_36 = Managers.weave
+	local var_10_35 = Managers.weave
 
-	if var_10_12 and var_10_10 and var_10_36:get_active_weave() then
-		var_10_25 = var_10_25 * (1 + var_10_36:get_scaling_value("enemy_damage"))
+	if var_10_12 and var_10_10 and var_10_35:get_active_weave() then
+		var_10_25 = var_10_25 * (1 + var_10_35:get_scaling_value("enemy_damage"))
 	end
 
 	return var_10_25
@@ -689,43 +685,42 @@ local function var_0_27(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 			end
 
 			if var_11_2 > 0 then
-				local var_11_39 = var_11_31
-				local var_11_40 = arg_11_1.stagger_threshold_light and arg_11_1.stagger_threshold_light * var_11_33 or 0.25 * var_11_33
-				local var_11_41 = arg_11_1.stagger_threshold_medium and arg_11_1.stagger_threshold_medium * var_11_33 or 1 * var_11_33
-				local var_11_42 = arg_11_1.stagger_threshold_heavy and arg_11_1.stagger_threshold_heavy * var_11_33 or 2.5 * var_11_33
+				local var_11_39 = arg_11_1.stagger_threshold_light and arg_11_1.stagger_threshold_light * var_11_33 or 0.25 * var_11_33
+				local var_11_40 = arg_11_1.stagger_threshold_medium and arg_11_1.stagger_threshold_medium * var_11_33 or 1 * var_11_33
+				local var_11_41 = arg_11_1.stagger_threshold_heavy and arg_11_1.stagger_threshold_heavy * var_11_33 or 2.5 * var_11_33
 
 				if var_11_37 then
-					var_11_42 = var_11_42 * 2
+					var_11_41 = var_11_41 * 2
 				end
 
-				local var_11_43 = arg_11_1.stagger_threshold_explosion and arg_11_1.stagger_threshold_explosion * var_11_33 or 10 * var_11_33
-				local var_11_44 = 0
-				local var_11_45
-				local var_11_46 = 1
+				local var_11_42 = arg_11_1.stagger_threshold_explosion and arg_11_1.stagger_threshold_explosion * var_11_33 or 10 * var_11_33
+				local var_11_43 = 0
+				local var_11_44
+				local var_11_45 = 1
 
-				if var_11_2 < var_11_40 then
+				if var_11_2 < var_11_39 then
 					var_11_1 = var_0_0.none
-				elseif var_11_2 < var_11_41 then
+				elseif var_11_2 < var_11_40 then
 					var_11_1 = var_0_0.weak
-					var_11_44 = var_11_2
+					var_11_43 = var_11_2
 
-					local var_11_47 = var_11_44 > 0 and var_11_44 / var_11_33 or 0
+					local var_11_46 = var_11_43 > 0 and var_11_43 / var_11_33 or 0
 
-					var_11_46 = 0.5 + 0.5 * math.clamp(var_11_47, 0, 1)
-				elseif var_11_2 < var_11_42 then
+					var_11_45 = 0.5 + 0.5 * math.clamp(var_11_46, 0, 1)
+				elseif var_11_2 < var_11_41 then
 					var_11_1 = var_0_0.medium
-					var_11_44 = var_11_2 - var_11_41
+					var_11_43 = var_11_2 - var_11_40
 
-					local var_11_48 = var_11_44 > 0 and var_11_44 / var_11_33 or 0
+					local var_11_47 = var_11_43 > 0 and var_11_43 / var_11_33 or 0
 
-					var_11_46 = 0.5 + 0.5 * math.clamp(var_11_48, 0, 1)
-				elseif var_11_2 < var_11_43 then
+					var_11_45 = 0.5 + 0.5 * math.clamp(var_11_47, 0, 1)
+				elseif var_11_2 < var_11_42 then
 					var_11_1 = var_0_0.heavy
-					var_11_44 = var_11_2 - var_11_42
+					var_11_43 = var_11_2 - var_11_41
 
-					local var_11_49 = var_11_44 > 0 and var_11_44 / var_11_33 or 0
+					local var_11_48 = var_11_43 > 0 and var_11_43 / var_11_33 or 0
 
-					var_11_46 = 0.5 + 0.5 * math.clamp(var_11_49, 0, 1)
+					var_11_45 = 0.5 + 0.5 * math.clamp(var_11_48, 0, 1)
 				elseif arg_11_9.is_explosion then
 					var_11_1 = var_0_0.explosion
 				elseif arg_11_9.is_pull then
@@ -735,13 +730,13 @@ local function var_0_27(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 				end
 
 				if arg_11_1.stagger_duration_difficulty_mod then
-					local var_11_50 = arg_11_1.stagger_duration_difficulty_mod
+					local var_11_49 = arg_11_1.stagger_duration_difficulty_mod
 
-					var_11_3 = var_11_3 * (var_11_50[var_11_32] or var_11_50[2] or 1)
+					var_11_3 = var_11_3 * (var_11_49[var_11_32] or var_11_49[2] or 1)
 				end
 
-				var_11_3 = var_11_3 * (0.75 + 0.25 * math.clamp(var_11_44 / var_11_33, 0, 2))
-				var_11_4 = math.clamp(var_11_4 * var_11_46, 0.5, 1)
+				var_11_3 = var_11_3 * (0.75 + 0.25 * math.clamp(var_11_43 / var_11_33, 0, 2))
+				var_11_4 = math.clamp(var_11_4 * var_11_45, 0.5, 1)
 			end
 		end
 	end
@@ -758,14 +753,14 @@ local function var_0_27(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 		end
 	end
 
-	local var_11_51 = var_11_9 and var_11_9.stagger_value or 1
+	local var_11_50 = var_11_9 and var_11_9.stagger_value or 1
 
-	var_11_14.stagger_value = var_11_51
+	var_11_14.stagger_value = var_11_50
 
-	local var_11_52
+	local var_11_51
 
 	if arg_11_1.stagger_modifier_function then
-		var_11_1, var_11_3, var_11_4, var_11_52 = arg_11_1.stagger_modifier_function(var_11_1, var_11_3, var_11_4, arg_11_5, arg_11_2, arg_11_1, var_11_14)
+		var_11_1, var_11_3, var_11_4, var_11_51 = arg_11_1.stagger_modifier_function(var_11_1, var_11_3, var_11_4, arg_11_5, arg_11_2, arg_11_1, var_11_14)
 	end
 
 	if arg_11_11 then
@@ -773,9 +768,9 @@ local function var_0_27(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 			arg_11_14.blocked_previous_attack = true
 		end
 
-		if var_11_1 == var_0_0.none and not var_11_52 then
+		if var_11_1 == var_0_0.none and not var_11_51 then
 			var_11_1 = var_0_0.weak
-		elseif var_11_1 == var_0_0.heavy and var_11_51 == 1 then
+		elseif var_11_1 == var_0_0.heavy and var_11_50 == 1 then
 			var_11_1 = var_0_0.medium
 		end
 	end
@@ -784,14 +779,14 @@ local function var_0_27(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 		var_11_1 = var_0_0.none
 	end
 
-	local var_11_53 = var_11_12 and var_11_11:breed_action() or arg_11_2.action
-	local var_11_54 = var_11_53 and var_11_53.ignore_staggers
+	local var_11_52 = var_11_12 and var_11_11:breed_action() or arg_11_2.action
+	local var_11_53 = var_11_52 and var_11_52.ignore_staggers
 
-	if var_11_54 and var_11_5 and var_11_5:has_buff_type("push_increase") then
-		var_11_54 = false
+	if var_11_53 and var_11_5 and var_11_5:has_buff_type("push_increase") then
+		var_11_53 = false
 	end
 
-	if (not var_11_9.always_stagger or arg_11_1.boss) and var_11_54 and var_11_54[var_11_1] and (not var_11_54.allow_push or not var_11_9 or not var_11_9.is_push) then
+	if (not var_11_9.always_stagger or arg_11_1.boss) and var_11_53 and var_11_53[var_11_1] and (not var_11_53.allow_push or not var_11_9 or not var_11_9.is_push) then
 		return var_0_0.none, 0, 0, 0, 0
 	end
 
@@ -803,45 +798,45 @@ local function var_0_27(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 		var_11_1 = var_0_0.explosion
 	end
 
-	local var_11_55 = var_11_7.stagger_duration_modifier or arg_11_9.stagger_duration_modifier or DefaultStaggerDurationModifier
-	local var_11_56 = var_11_7.stagger_distance_modifier or arg_11_9.stagger_distance_modifier or DefaultStaggerDistanceModifier
-	local var_11_57 = var_11_3 * (arg_11_1.stagger_duration and arg_11_1.stagger_duration[var_11_1] or DefaultStaggerDuration) * var_11_55
-	local var_11_58 = var_11_4 * var_11_56
+	local var_11_54 = var_11_7.stagger_duration_modifier or arg_11_9.stagger_duration_modifier or DefaultStaggerDurationModifier
+	local var_11_55 = var_11_7.stagger_distance_modifier or arg_11_9.stagger_distance_modifier or DefaultStaggerDistanceModifier
+	local var_11_56 = var_11_3 * (arg_11_1.stagger_duration and arg_11_1.stagger_duration[var_11_1] or DefaultStaggerDuration) * var_11_54
+	local var_11_57 = var_11_4 * var_11_55
 
 	if var_11_6 then
-		var_11_58 = var_11_6:apply_buffs_to_value(var_11_58, "stagger_distance")
+		var_11_57 = var_11_6:apply_buffs_to_value(var_11_57, "stagger_distance")
 	end
 
 	if var_11_5 then
-		var_11_58 = var_11_5:apply_buffs_to_value(var_11_58, "applied_stagger_distance")
+		var_11_57 = var_11_5:apply_buffs_to_value(var_11_57, "applied_stagger_distance")
 	end
 
 	if not arg_11_1.no_random_stagger_duration then
-		var_11_57 = math.max(var_11_57 + math.random() * 0.25, 0)
+		var_11_56 = math.max(var_11_56 + math.random() * 0.25, 0)
 	end
 
 	if arg_11_1.max_stagger_duration then
-		var_11_57 = math.min(var_11_57, arg_11_1.max_stagger_duration)
+		var_11_56 = math.min(var_11_56, arg_11_1.max_stagger_duration)
 	end
 
 	if arg_11_9.is_pull and arg_11_4 then
-		local var_11_59 = var_0_4[arg_11_4] or Unit.world_position(arg_11_4, 0)
-		local var_11_60 = var_0_4[arg_11_3] or Unit.world_position(arg_11_3, 0)
-		local var_11_61 = Vector3.length(var_11_59 - var_11_60) - 2.25
+		local var_11_58 = var_0_4[arg_11_4] or Unit.world_position(arg_11_4, 0)
+		local var_11_59 = var_0_4[arg_11_3] or Unit.world_position(arg_11_3, 0)
+		local var_11_60 = Vector3.length(var_11_58 - var_11_59) - 2.25
 
-		var_11_58 = math.max(math.min(var_11_58, var_11_61), 0)
+		var_11_57 = math.max(math.min(var_11_57, var_11_60), 0)
 	end
 
 	if var_11_5 then
 		var_11_5:trigger_procs("stagger_calculation_ended", arg_11_4)
 	end
 
-	return var_11_1, var_11_57, var_11_58, var_11_51, var_11_2
+	return var_11_1, var_11_56, var_11_57, var_11_50, var_11_2
 end
 
 local var_0_28 = {}
 
-DamageUtils.calculate_stagger_player_tooltip = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8, arg_12_9, arg_12_10, arg_12_11, arg_12_12)
+function DamageUtils.calculate_stagger_player_tooltip(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8, arg_12_9, arg_12_10, arg_12_11, arg_12_12)
 	local var_12_0 = ImpactTypeOutput
 
 	arg_12_0 = arg_12_0 or var_0_28
@@ -856,7 +851,7 @@ DamageUtils.calculate_stagger_player_tooltip = function (arg_12_0, arg_12_1, arg
 	return var_12_6, var_12_7, var_12_8, var_12_9, var_12_10
 end
 
-DamageUtils.calculate_stagger_player = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10)
+function DamageUtils.calculate_stagger_player(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10)
 	local var_13_0 = var_0_2[arg_13_1]
 	local var_13_1 = var_13_0.breed
 	local var_13_2 = Managers.state.difficulty:get_difficulty()
@@ -879,7 +874,7 @@ DamageUtils.calculate_stagger_player = function (arg_13_0, arg_13_1, arg_13_2, a
 	return var_13_9, var_13_10, var_13_11, var_13_12, var_13_13
 end
 
-DamageUtils.calculate_stagger = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+function DamageUtils.calculate_stagger(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
 	local var_14_0 = var_0_2[arg_14_2]
 	local var_14_1 = var_14_0.breed
 	local var_14_2 = var_14_1.stagger_armor_category or var_14_1.armor_category or 1
@@ -944,11 +939,11 @@ DamageUtils.calculate_stagger = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3
 	return var_14_4, var_14_5
 end
 
-DamageUtils.is_player_unit = function (arg_15_0)
+function DamageUtils.is_player_unit(arg_15_0)
 	return Managers.player:is_player_unit(arg_15_0)
 end
 
-DamageUtils.stagger_player = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11)
+function DamageUtils.stagger_player(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11)
 	fassert(arg_16_4 > 0, "Tried to use invalid stagger type %q", arg_16_4)
 
 	local var_16_0 = Managers.state.difficulty:get_difficulty_settings().stagger_modifier
@@ -976,7 +971,7 @@ DamageUtils.stagger_player = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, a
 	end
 end
 
-DamageUtils.hit_zone = function (arg_17_0, arg_17_1)
+function DamageUtils.hit_zone(arg_17_0, arg_17_1)
 	local var_17_0 = AiUtils.unit_breed(arg_17_0)
 
 	if var_17_0 then
@@ -988,7 +983,7 @@ DamageUtils.hit_zone = function (arg_17_0, arg_17_1)
 	end
 end
 
-DamageUtils.aoe_hit_zone = function (arg_18_0, arg_18_1)
+function DamageUtils.aoe_hit_zone(arg_18_0, arg_18_1)
 	local var_18_0 = AiUtils.unit_breed(arg_18_0)
 
 	if var_18_0 then
@@ -1001,7 +996,7 @@ DamageUtils.aoe_hit_zone = function (arg_18_0, arg_18_1)
 	end
 end
 
-DamageUtils.draw_aoe_size = function (arg_19_0, arg_19_1)
+function DamageUtils.draw_aoe_size(arg_19_0, arg_19_1)
 	local var_19_0, var_19_1 = DamageUtils.calculate_aoe_size(arg_19_0)
 	local var_19_2 = var_0_4[arg_19_0]
 	local var_19_3 = var_19_2 + Vector3(0, 0, math.max(var_19_1 - var_19_0 * 0.5, var_19_1 * 0.5))
@@ -1010,7 +1005,7 @@ DamageUtils.draw_aoe_size = function (arg_19_0, arg_19_1)
 	QuickDrawer:capsule(var_19_4, var_19_3, var_19_0, Color(255, 255, 0, 255))
 end
 
-DamageUtils.calculate_aoe_size = function (arg_20_0, arg_20_1)
+function DamageUtils.calculate_aoe_size(arg_20_0, arg_20_1)
 	local var_20_0
 	local var_20_1
 
@@ -1032,7 +1027,7 @@ local var_0_29 = {}
 local var_0_30 = {}
 local var_0_31 = {}
 
-DamageUtils.create_explosion = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9, arg_21_10, arg_21_11, arg_21_12)
+function DamageUtils.create_explosion(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9, arg_21_10, arg_21_11, arg_21_12)
 	local var_21_0 = DamageUtils
 	local var_21_1 = arg_21_4.explosion
 	local var_21_2 = Managers.weave:get_active_wind()
@@ -1216,46 +1211,45 @@ DamageUtils.create_explosion = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3,
 			var_21_65 = var_21_1.ai_friendly_fire
 		end
 
-		local var_21_66 = ScriptUnit.has_extension(arg_21_1, "buff_system")
-
-		if var_21_66 and var_21_66:has_buff_perk(var_0_1.no_explosion_friendly_fire) then
+		if var_21_42 and var_21_42:has_buff_perk(var_0_1.no_explosion_friendly_fire) then
 			var_21_65 = false
 		end
 
-		local var_21_67 = var_21_65 and not var_21_63
-		local var_21_68 = World.physics_world(arg_21_0)
-		local var_21_69, var_21_70 = PhysicsWorld.immediate_overlap(var_21_68, "shape", "sphere", "position", arg_21_2, "size", var_21_34, "collision_filter", var_21_58)
-		local var_21_71 = var_0_29
-		local var_21_72 = var_0_30
-		local var_21_73 = var_0_31
+		local var_21_66 = var_21_65 and not var_21_63
+		local var_21_67 = World.physics_world(arg_21_0)
+		local var_21_68, var_21_69 = PhysicsWorld.immediate_overlap(var_21_67, "shape", "sphere", "position", arg_21_2, "size", var_21_34, "collision_filter", var_21_58)
+		local var_21_70 = var_0_29
+		local var_21_71 = var_0_30
+		local var_21_72 = var_0_31
 
+		table.clear(var_21_70)
 		table.clear(var_21_71)
 		table.clear(var_21_72)
-		table.clear(var_21_73)
 
-		local var_21_74 = var_21_1.explosion_forward_scaling
+		local var_21_73 = var_21_1.explosion_forward_scaling
+		local var_21_74 = var_21_1.explosion_right_scaling
 		local var_21_75 = var_21_1.explosion_cone_angle
 
 		var_21_75 = var_21_75 and math.cos(var_21_75 / 2)
 
 		local var_21_76
 
-		if var_21_74 or var_21_75 then
+		if var_21_73 or var_21_74 or var_21_75 then
 			var_21_76 = Quaternion.forward(arg_21_3)
 		end
 
 		local var_21_77 = 0
 
-		for iter_21_0 = 1, var_21_70 do
-			local var_21_78 = var_21_69[iter_21_0]
+		for iter_21_0 = 1, var_21_69 do
+			local var_21_78 = var_21_68[iter_21_0]
 			local var_21_79 = var_21_78 and var_0_18(var_21_78)
 
 			if ScriptUnit.has_extension(var_21_79, "health_system") then
-				if not var_0_5(var_21_79, "ignore_explosion_damage") and not var_21_71[var_21_79] and (not var_21_57 or var_21_79 ~= arg_21_1) and var_21_0.aoe_hit_zone(var_21_79, var_21_78) ~= "afro" then
+				if not var_0_5(var_21_79, "ignore_explosion_damage") and not var_21_70[var_21_79] and (not var_21_57 or var_21_79 ~= arg_21_1) and var_21_0.aoe_hit_zone(var_21_79, var_21_78) ~= "afro" then
 					if not var_21_60 then
 						local var_21_80 = true
 
-						if var_21_75 or var_21_74 then
+						if var_21_75 or var_21_73 then
 							local var_21_81 = Unit.world_position(var_21_79, 0) + Vector3.up() - arg_21_2
 							local var_21_82 = Vector3.normalize(var_21_81)
 
@@ -1263,8 +1257,8 @@ DamageUtils.create_explosion = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3,
 								var_21_80 = var_21_75 <= Vector3.dot(var_21_82, var_21_76)
 							end
 
-							if var_21_80 and var_21_74 then
-								local var_21_83 = math.lerp(var_21_34, var_21_34 * var_21_74, math.abs(Vector3.dot(var_21_82, var_21_76)))
+							if var_21_80 and var_21_73 then
+								local var_21_83 = math.lerp(var_21_34, var_21_34 * var_21_73, math.abs(Vector3.dot(var_21_82, var_21_76)))
 
 								var_21_80 = var_21_83 * var_21_83 >= Vector3.length_squared(var_21_81)
 							end
@@ -1272,8 +1266,8 @@ DamageUtils.create_explosion = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3,
 
 						if var_21_80 then
 							var_21_77 = var_21_77 + 1
-							var_21_71[var_21_79] = true
-							var_21_72[var_21_77] = var_21_78
+							var_21_70[var_21_79] = true
+							var_21_71[var_21_77] = var_21_78
 						end
 					else
 						local var_21_84 = Unit.world_position(var_21_79, 0) + Vector3.up() - arg_21_2
@@ -1287,22 +1281,22 @@ DamageUtils.create_explosion = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3,
 
 						local var_21_88 = true
 
-						if var_21_87 and var_21_74 then
-							local var_21_89 = math.lerp(var_21_34, var_21_34 * var_21_74, math.abs(Vector3.dot(var_21_85, var_21_76)))
+						if var_21_87 and var_21_73 then
+							local var_21_89 = math.lerp(var_21_34, var_21_34 * var_21_73, math.abs(Vector3.dot(var_21_85, var_21_76)))
 
 							var_21_88 = var_21_89 * var_21_89 <= Vector3.length_squared(var_21_84)
 						end
 
-						if var_21_87 and explosion_right_scaling then
-							local var_21_90 = math.lerp(var_21_34, var_21_34 * explosion_right_scaling, 1 - math.abs(Vector3.dot(var_21_85, explosion_right_scaling)))
+						if var_21_87 and var_21_74 then
+							local var_21_90 = math.lerp(var_21_34, var_21_34 * var_21_74, 1 - math.abs(Vector3.dot(var_21_85, var_21_74)))
 
 							var_21_88 = var_21_90 * var_21_90 <= Vector3.length_squared(var_21_84)
 						end
 
 						if var_21_87 and var_21_88 then
-							PhysicsWorld.prepare_actors_for_raycast(var_21_68, arg_21_2, var_21_85, 0.1)
+							PhysicsWorld.prepare_actors_for_raycast(var_21_67, arg_21_2, var_21_85, 0.1)
 
-							local var_21_91 = PhysicsWorld.immediate_raycast(var_21_68, arg_21_2, var_21_85, var_21_86, "all", "collision_filter", "filter_explosion_overlap_no_static")
+							local var_21_91 = PhysicsWorld.immediate_raycast(var_21_67, arg_21_2, var_21_85, var_21_86, "all", "collision_filter", "filter_explosion_overlap_no_static")
 
 							if var_21_91 then
 								local var_21_92 = #var_21_91
@@ -1317,8 +1311,8 @@ DamageUtils.create_explosion = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3,
 
 									if var_21_79 == var_21_94 then
 										var_21_77 = var_21_77 + 1
-										var_21_71[var_21_79] = true
-										var_21_72[var_21_77] = var_21_78
+										var_21_70[var_21_79] = true
+										var_21_71[var_21_77] = var_21_78
 
 										break
 									end
@@ -1327,8 +1321,8 @@ DamageUtils.create_explosion = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3,
 						end
 					end
 				end
-			elseif var_21_79 and var_0_6(var_21_79) and var_21_78 and not var_21_1.no_prop_damage and not var_21_73[var_21_79] then
-				var_21_73[var_21_79] = true
+			elseif var_21_79 and var_0_6(var_21_79) and var_21_78 and not var_21_1.no_prop_damage and not var_21_72[var_21_79] then
+				var_21_72[var_21_79] = true
 
 				local var_21_95 = Vector3.normalize(var_0_17(var_21_78) - arg_21_2)
 
@@ -1344,7 +1338,7 @@ DamageUtils.create_explosion = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3,
 		end
 
 		if var_21_77 > 0 then
-			table.sort(var_21_72, function (arg_22_0, arg_22_1)
+			table.sort(var_21_71, function(arg_22_0, arg_22_1)
 				local var_22_0 = var_0_18(arg_22_0)
 				local var_22_1 = var_0_18(arg_22_1)
 				local var_22_2 = var_0_4[var_22_0] or var_0_7(var_22_0, 0)
@@ -1362,14 +1356,14 @@ DamageUtils.create_explosion = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3,
 		local var_21_101 = 0
 
 		for iter_21_2 = 1, var_21_77 do
-			local var_21_102 = var_21_72[iter_21_2]
+			local var_21_102 = var_21_71[iter_21_2]
 			local var_21_103 = var_0_18(var_21_102)
 			local var_21_104 = var_0_2[var_21_103]
 			local var_21_105 = var_21_104 and var_21_104.breed
 			local var_21_106 = var_21_105 and var_21_105.is_player
 			local var_21_107 = var_21_105 and not var_21_106
 			local var_21_108 = var_21_96:is_ally(arg_21_1, var_21_103)
-			local var_21_109 = not var_21_108 or var_21_67
+			local var_21_109 = not var_21_108 or var_21_66
 
 			if var_21_106 then
 				if var_21_100 then
@@ -1430,42 +1424,41 @@ DamageUtils.create_explosion = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3,
 					var_21_98 = var_21_98 + 1
 				end
 
-				local var_21_124 = DamageProfileTemplates[arg_21_4.explosion.damage_profile]
-				local var_21_125 = AiUtils.attack_is_shield_blocked(var_21_103, arg_21_1)
-				local var_21_126 = var_21_0.aoe_hit_zone(var_21_103, var_21_102)
+				local var_21_124 = AiUtils.attack_is_shield_blocked(var_21_103, arg_21_1)
+				local var_21_125 = var_21_0.aoe_hit_zone(var_21_103, var_21_102)
 
 				if script_data.debug_projectiles then
 					QuickDrawerStay:vector(arg_21_2, var_21_116, Colors.get("brown"))
 				end
 
-				local var_21_127 = false
+				local var_21_126 = false
 
-				var_21_97:add_aoe_damage_target(var_21_103, arg_21_1, arg_21_2, var_21_125, var_21_56, var_21_126, arg_21_6, var_21_117, var_21_31, var_21_34, var_21_35, var_21_37, var_21_38, var_21_49, var_21_123, var_21_118, arg_21_4.name, arg_21_11, var_21_127, arg_21_12, var_21_98)
+				var_21_97:add_aoe_damage_target(var_21_103, arg_21_1, arg_21_2, var_21_124, var_21_56, var_21_125, arg_21_6, var_21_117, var_21_31, var_21_34, var_21_35, var_21_37, var_21_38, var_21_49, var_21_123, var_21_118, arg_21_4.name, arg_21_11, var_21_126, arg_21_12, var_21_98)
 
 				if var_21_1.buff_to_apply and var_21_0.is_player_unit(var_21_103) then
 					if not var_21_1.only_facing then
 						Managers.state.entity:system("buff_system"):add_buff(var_21_103, var_21_1.buff_to_apply, var_21_103, false)
 					else
-						local var_21_128 = Unit.local_position(arg_21_1, 0)
-						local var_21_129 = var_0_4[var_21_103] or Unit.local_position(var_21_103, 0)
-						local var_21_130 = Unit.local_rotation(var_21_103, 0)
-						local var_21_131, var_21_132, var_21_133 = Quaternion.to_euler_angles_xyz(var_21_130)
-						local var_21_134 = var_21_133 - math.radians_to_degrees(math.angle(var_21_128.x, var_21_128.y, var_21_129.x, var_21_129.y))
+						local var_21_127 = Unit.local_position(arg_21_1, 0)
+						local var_21_128 = var_0_4[var_21_103] or Unit.local_position(var_21_103, 0)
+						local var_21_129 = Unit.local_rotation(var_21_103, 0)
+						local var_21_130, var_21_131, var_21_132 = Quaternion.to_euler_angles_xyz(var_21_129)
+						local var_21_133 = var_21_132 - math.radians_to_degrees(math.angle(var_21_127.x, var_21_127.y, var_21_128.x, var_21_128.y))
 
-						if var_21_134 < 0 then
-							var_21_134 = var_21_134 + 360
+						if var_21_133 < 0 then
+							var_21_133 = var_21_133 + 360
 						end
 
-						if math.abs(90 - var_21_134) < 90 then
+						if math.abs(90 - var_21_133) < 90 then
 							Managers.state.entity:system("buff_system"):add_buff(var_21_103, var_21_1.buff_to_apply, var_21_103, false)
 						end
 					end
 				elseif var_21_1.enemy_debuff and var_21_0.is_enemy(arg_21_1, var_21_103) then
-					local var_21_135 = Managers.state.entity:system("buff_system")
-					local var_21_136 = var_21_1.enemy_debuff
+					local var_21_134 = Managers.state.entity:system("buff_system")
+					local var_21_135 = var_21_1.enemy_debuff
 
-					for iter_21_3, iter_21_4 in pairs(var_21_136) do
-						var_21_135:add_buff(var_21_103, iter_21_4, var_21_103, false)
+					for iter_21_3, iter_21_4 in pairs(var_21_135) do
+						var_21_134:add_buff(var_21_103, iter_21_4, var_21_103, false)
 					end
 				end
 
@@ -1480,24 +1473,24 @@ DamageUtils.create_explosion = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3,
 				end
 
 				if var_21_1.catapult_players and var_21_0.is_player_unit(var_21_103) and not (Managers.player:owner(var_21_103) and not Managers.player:owner(var_21_103):is_player_controlled() and var_21_1.bot_knockback_immunity or false) then
-					local var_21_137 = var_21_1.catapult_force
-					local var_21_138 = var_21_1.catapult_force_z
-					local var_21_139 = var_21_1.catapult_blocked_multiplier
-
-					if var_21_139 then
-						local var_21_140 = var_21_0.check_block(arg_21_1, var_21_103, var_21_1.fatigue_type) and var_21_139 or 1
-
-						var_21_137 = var_21_137 * var_21_140
-						var_21_138 = var_21_138 * var_21_140
-					end
-
-					local var_21_141 = var_21_137 * Vector3.normalize(var_21_116)
+					local var_21_136 = var_21_1.catapult_force
+					local var_21_137 = var_21_1.catapult_force_z
+					local var_21_138 = var_21_1.catapult_blocked_multiplier
 
 					if var_21_138 then
-						Vector3.set_z(var_21_141, var_21_138)
+						local var_21_139 = var_21_0.check_block(arg_21_1, var_21_103, var_21_1.fatigue_type) and var_21_138 or 1
+
+						var_21_136 = var_21_136 * var_21_139
+						var_21_137 = var_21_137 * var_21_139
 					end
 
-					StatusUtils.set_catapulted_network(var_21_103, true, var_21_141)
+					local var_21_140 = var_21_136 * Vector3.normalize(var_21_116)
+
+					if var_21_137 then
+						Vector3.set_z(var_21_140, var_21_137)
+					end
+
+					StatusUtils.set_catapulted_network(var_21_103, true, var_21_140)
 				end
 			end
 		end
@@ -1506,7 +1499,7 @@ end
 
 local var_0_32 = {}
 
-DamageUtils.create_taunt = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+function DamageUtils.create_taunt(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	local var_23_0 = arg_23_4.taunt
 	local var_23_1 = AiUtils.broadphase_query(arg_23_3, var_23_0.target_selection_range, var_0_32)
 	local var_23_2 = -math.huge
@@ -1563,44 +1556,46 @@ DamageUtils.create_taunt = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg
 	return var_23_8
 end
 
-DamageUtils.create_aoe = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+function DamageUtils.create_aoe(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
 	local var_24_0 = arg_24_4.aoe
-	local var_24_1 = arg_24_5 or var_24_0.radius
-	local var_24_2 = arg_24_6 or var_24_0.duration
-	local var_24_3 = AiUtils.get_actual_attacker_unit(arg_24_1)
-	local var_24_4 = arg_24_4.is_grenade
-	local var_24_5 = ScriptUnit.has_extension(var_24_3, "buff_system")
 
-	if var_24_5 then
-		local var_24_6 = 1
+	arg_24_5 = arg_24_5 or var_24_0.radius
+	arg_24_6 = arg_24_6 or var_24_0.duration
+	arg_24_1 = AiUtils.get_actual_attacker_unit(arg_24_1)
 
-		if var_24_4 then
-			var_24_6 = var_24_6 + (var_24_5:apply_buffs_to_value(1, "grenade_radius") - 1)
+	local var_24_1 = arg_24_4.is_grenade
+	local var_24_2 = ScriptUnit.has_extension(arg_24_1, "buff_system")
+
+	if var_24_2 then
+		local var_24_3 = 1
+
+		if var_24_1 then
+			var_24_3 = var_24_3 + (var_24_2:apply_buffs_to_value(1, "grenade_radius") - 1)
 		end
 
-		var_24_1 = var_24_1 * (var_24_6 + (var_24_5:apply_buffs_to_value(1, "explosion_radius") - 1))
+		arg_24_5 = arg_24_5 * (var_24_3 + (var_24_2:apply_buffs_to_value(1, "explosion_radius") - 1))
 	end
 
-	local var_24_7 = Managers.player:owner(var_24_3)
-	local var_24_8 = true
-	local var_24_9 = Managers.mechanism:current_mechanism_name()
+	local var_24_4 = Managers.player:owner(arg_24_1)
+	local var_24_5 = true
+	local var_24_6 = Managers.mechanism:current_mechanism_name()
 
-	if var_24_7 ~= nil and var_24_9 ~= "versus" then
-		local var_24_10 = Managers.state.difficulty:get_difficulty_settings()
-		local var_24_11 = var_24_0.no_friendly_fire
-		local var_24_12 = DamageUtils.allow_friendly_fire_ranged(var_24_10, var_24_7)
+	if var_24_4 ~= nil and var_24_6 ~= "versus" then
+		local var_24_7 = Managers.state.difficulty:get_difficulty_settings()
+		local var_24_8 = var_24_0.no_friendly_fire
+		local var_24_9 = DamageUtils.allow_friendly_fire_ranged(var_24_7, var_24_4)
 
-		var_24_8 = var_24_0.allow_friendly_fire or var_24_12 and not var_24_11
+		var_24_5 = var_24_0.allow_friendly_fire or var_24_9 and not var_24_8
 	end
 
-	local var_24_13 = {
+	local var_24_10 = {
 		area_damage_system = {
 			invisible_unit = true,
 			aoe_dot_damage = 0,
 			aoe_dot_damage_interval = var_24_0.damage_interval,
-			radius = var_24_1,
-			life_time = var_24_2,
-			damage_players = var_24_8,
+			radius = arg_24_5,
+			life_time = arg_24_6,
+			damage_players = var_24_5,
 			player_screen_effect_name = var_24_0.player_screen_effect_name,
 			dot_effect_name = var_24_0.effect_name,
 			extra_dot_effect_name = var_24_0.extra_effect_name,
@@ -1610,21 +1605,21 @@ DamageUtils.create_aoe = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_2
 			create_nav_tag_volume = var_24_0.create_nav_tag_volume,
 			nav_tag_volume_layer = var_24_0.nav_tag_volume_layer,
 			explosion_template_name = arg_24_4.name,
-			owner_player = var_24_7,
-			source_attacker_unit = var_24_3
+			owner_player = var_24_4,
+			source_attacker_unit = arg_24_1
 		}
 	}
-	local var_24_14 = "units/hub_elements/empty"
-	local var_24_15 = Managers.state.unit_spawner:spawn_network_unit(var_24_14, "aoe_unit", var_24_13, arg_24_2)
-	local var_24_16 = Managers.state.unit_storage:go_id(var_24_15)
+	local var_24_11 = "units/hub_elements/empty"
+	local var_24_12 = Managers.state.unit_spawner:spawn_network_unit(var_24_11, "aoe_unit", var_24_10, arg_24_2)
+	local var_24_13 = Managers.state.unit_storage:go_id(var_24_12)
 
-	Unit.set_unit_visibility(var_24_15, false)
-	Managers.state.network.network_transmit:send_rpc_all("rpc_area_damage", var_24_16, arg_24_2)
+	Unit.set_unit_visibility(var_24_12, false)
+	Managers.state.network.network_transmit:send_rpc_all("rpc_area_damage", var_24_13, arg_24_2)
 
-	return var_24_15
+	return var_24_12
 end
 
-DamageUtils.networkify_damage = function (arg_25_0)
+function DamageUtils.networkify_damage(arg_25_0)
 	local var_25_0 = NetworkConstants.damage
 
 	arg_25_0 = math.clamp(arg_25_0, var_25_0.min, var_25_0.max)
@@ -1635,7 +1630,7 @@ DamageUtils.networkify_damage = function (arg_25_0)
 	return math.floor(arg_25_0) + var_25_2
 end
 
-DamageUtils.networkify_health = function (arg_26_0)
+function DamageUtils.networkify_health(arg_26_0)
 	local var_26_0 = NetworkConstants.health
 
 	arg_26_0 = math.clamp(arg_26_0, var_26_0.min, var_26_0.max)
@@ -1646,7 +1641,7 @@ DamageUtils.networkify_health = function (arg_26_0)
 	return math.floor(arg_26_0) + var_26_2
 end
 
-DamageUtils.create_hit_zone_lookup = function (arg_27_0, arg_27_1)
+function DamageUtils.create_hit_zone_lookup(arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_1.hit_zones
 	local var_27_1 = {}
 	local var_27_2 = arg_27_1.name
@@ -1680,7 +1675,7 @@ DamageUtils.create_hit_zone_lookup = function (arg_27_0, arg_27_1)
 	BreedHitZonesLookup[var_27_2] = var_27_1
 end
 
-DamageUtils.vs_register_dark_pact_player_damage = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6)
+function DamageUtils.vs_register_dark_pact_player_damage(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6)
 	local var_28_0 = arg_28_4:owner(arg_28_0)
 	local var_28_1 = arg_28_4:owner(arg_28_1)
 
@@ -1695,7 +1690,7 @@ DamageUtils.vs_register_dark_pact_player_damage = function (arg_28_0, arg_28_1, 
 	end
 end
 
-DamageUtils.add_damage_network = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9, arg_29_10, arg_29_11, arg_29_12, arg_29_13, arg_29_14, arg_29_15, arg_29_16, arg_29_17, arg_29_18)
+function DamageUtils.add_damage_network(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9, arg_29_10, arg_29_11, arg_29_12, arg_29_13, arg_29_14, arg_29_15, arg_29_16, arg_29_17, arg_29_18)
 	local var_29_0 = Managers.state.network
 
 	if not var_29_0:game() then
@@ -1799,7 +1794,7 @@ DamageUtils.add_damage_network = function (arg_29_0, arg_29_1, arg_29_2, arg_29_
 	return var_29_9
 end
 
-DamageUtils.get_damage_type = function (arg_30_0, arg_30_1)
+function DamageUtils.get_damage_type(arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_0.targets and arg_30_0.targets[arg_30_1] or arg_30_0.default_target
 	local var_30_1 = var_30_0.attack_template
 	local var_30_2 = DamageUtils.get_attack_template(var_30_1)
@@ -1807,7 +1802,7 @@ DamageUtils.get_damage_type = function (arg_30_0, arg_30_1)
 	return var_30_0.damage_type or arg_30_0.damage_type or var_30_2.damage_type
 end
 
-DamageUtils.add_damage_network_player = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_10, arg_31_11, arg_31_12, arg_31_13, arg_31_14, arg_31_15, arg_31_16)
+function DamageUtils.add_damage_network_player(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_10, arg_31_11, arg_31_12, arg_31_13, arg_31_14, arg_31_15, arg_31_16)
 	if not Managers.state.network:game() then
 		return 0
 	end
@@ -1863,68 +1858,62 @@ DamageUtils.add_damage_network_player = function (arg_31_0, arg_31_1, arg_31_2, 
 	arg_31_6 = arg_31_6 or Unit.world_position(arg_31_3, 0)
 	arg_31_6 = NetworkUtils.network_clamp_position(arg_31_6)
 
-	local var_31_12 = arg_31_4 and ScriptUnit.has_extension(arg_31_4, "buff_system")
-	local var_31_13 = arg_31_16 and ScriptUnit.has_extension(arg_31_16, "buff_system")
+	local var_31_12 = ScriptUnit.has_extension(arg_31_4, "buff_system") or ScriptUnit.has_extension(arg_31_16, "buff_system")
 
-	if (var_31_12 or var_31_13) and HEALTH_ALIVE[arg_31_3] then
-		local var_31_14 = rawget(ItemMasterList, arg_31_8)
-		local var_31_15 = var_31_14 and var_31_14.template
-		local var_31_16 = "other"
-		local var_31_17 = var_31_11
+	if var_31_12 and HEALTH_ALIVE[arg_31_3] then
+		local var_31_13 = rawget(ItemMasterList, arg_31_8)
+		local var_31_14 = var_31_13 and var_31_13.template
+		local var_31_15 = var_31_11
 
-		if var_31_15 then
-			local var_31_18 = WeaponUtils.get_weapon_template(var_31_15).buff_type
-
-			var_31_17 = DamageUtils.calculate_damage(DamageOutput, arg_31_3, arg_31_4, "torso", arg_31_2, var_31_7, arg_31_10, false, arg_31_0, arg_31_1, arg_31_15, arg_31_8)
+		if var_31_14 then
+			var_31_15 = DamageUtils.calculate_damage(DamageOutput, arg_31_3, arg_31_4, "torso", arg_31_2, var_31_7, arg_31_10, false, arg_31_0, arg_31_1, arg_31_15, arg_31_8)
 		end
 
 		if arg_31_0.deal_min_damage then
 			var_31_11 = math.max(var_31_11, 0.25)
 		end
 
-		local var_31_19 = FrameTable.alloc_table()
+		local var_31_16 = FrameTable.alloc_table()
 
-		var_31_19.damage_amount = var_31_11
+		var_31_16.damage_amount = var_31_11
 
-		local var_31_20 = var_31_12 or var_31_13
+		var_31_12:trigger_procs("on_player_damage_dealt", arg_31_3, var_31_11, arg_31_5, var_31_15, arg_31_11, var_31_4, arg_31_1, arg_31_8, arg_31_13, var_31_16)
+		var_31_12:trigger_procs("on_damage_dealt", arg_31_3, arg_31_4, var_31_11, arg_31_5, var_31_15, arg_31_11, var_31_4, arg_31_1, arg_31_8, var_31_3, arg_31_13, var_31_16)
 
-		var_31_20:trigger_procs("on_player_damage_dealt", arg_31_3, var_31_11, arg_31_5, var_31_17, arg_31_11, var_31_4, arg_31_1, arg_31_8, arg_31_13, var_31_19)
-		var_31_20:trigger_procs("on_damage_dealt", arg_31_3, arg_31_4, var_31_11, arg_31_5, var_31_17, arg_31_11, var_31_4, arg_31_1, arg_31_8, var_31_3, arg_31_13, var_31_19)
-
-		var_31_11 = var_31_19.damage_amount
+		var_31_11 = var_31_16.damage_amount
 	end
 
 	if var_31_1.is_server or LEVEL_EDITOR_TEST then
-		local var_31_21 = #var_31_9
-		local var_31_22, var_31_23, var_31_24 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "hero_damage_taken")
+		local var_31_17 = #var_31_9
+		local var_31_18, var_31_19, var_31_20 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "hero_damage_taken")
 
-		var_31_11 = var_31_22 and var_31_24 and var_31_0 and var_31_0:name() == "heroes" and var_31_11 * var_31_23 or var_31_11
+		var_31_11 = var_31_18 and var_31_20 and var_31_0 and var_31_0:name() == "heroes" and var_31_11 * var_31_19 or var_31_11
 
-		local var_31_25 = Managers.time:time("game")
+		local var_31_21 = Managers.time:time("game")
 
-		for iter_31_0 = 1, var_31_21 do
-			local var_31_26 = var_31_9[iter_31_0]
+		for iter_31_0 = 1, var_31_17 do
+			local var_31_22 = var_31_9[iter_31_0]
 
-			var_31_3 = var_31_26 == arg_31_3 and var_31_3 or "buff"
+			var_31_3 = var_31_22 == arg_31_3 and var_31_3 or "buff"
 
-			local var_31_27 = ScriptUnit.extension(var_31_26, "health_system")
+			local var_31_23 = ScriptUnit.extension(var_31_22, "health_system")
 
 			if var_31_10 < var_31_11 then
-				local var_31_28 = math.floor(var_31_11 / var_31_10)
+				local var_31_24 = math.floor(var_31_11 / var_31_10)
 
-				for iter_31_1 = 1, var_31_28 do
-					var_31_27:add_damage(arg_31_4, var_31_10, arg_31_5, var_31_3, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_16, nil, arg_31_11, arg_31_12, arg_31_13, arg_31_14, var_31_4, arg_31_15, arg_31_1)
+				for iter_31_1 = 1, var_31_24 do
+					var_31_23:add_damage(arg_31_4, var_31_10, arg_31_5, var_31_3, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_16, nil, arg_31_11, arg_31_12, arg_31_13, arg_31_14, var_31_4, arg_31_15, arg_31_1)
 				end
 
-				var_31_11 = var_31_11 - var_31_10 * var_31_28
+				var_31_11 = var_31_11 - var_31_10 * var_31_24
 			end
 
-			local var_31_29 = DamageUtils.networkify_damage(var_31_11)
+			local var_31_25 = DamageUtils.networkify_damage(var_31_11)
 
-			var_31_27:add_damage(arg_31_4, var_31_29, arg_31_5, var_31_3, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_16, nil, arg_31_11, arg_31_12, arg_31_13, arg_31_14, var_31_4, arg_31_15, arg_31_1)
+			var_31_23:add_damage(arg_31_4, var_31_25, arg_31_5, var_31_3, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_16, nil, arg_31_11, arg_31_12, arg_31_13, arg_31_14, var_31_4, arg_31_15, arg_31_1)
 
-			if not HEALTH_ALIVE[var_31_26] then
-				Managers.state.unit_spawner:prioritize_death_watch_unit(arg_31_3, var_31_25)
+			if not HEALTH_ALIVE[var_31_22] then
+				Managers.state.unit_spawner:prioritize_death_watch_unit(arg_31_3, var_31_21)
 			end
 		end
 	end
@@ -1938,7 +1927,7 @@ local var_0_34 = {
 	"weakspot"
 }
 
-DamageUtils.handle_hit_indication = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+function DamageUtils.handle_hit_indication(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
 	local var_32_0 = ScriptUnit.has_extension(arg_32_0, "hud_system")
 
 	if var_32_0 and HEALTH_ALIVE[arg_32_1] and arg_32_0 ~= arg_32_1 then
@@ -1974,7 +1963,7 @@ DamageUtils.handle_hit_indication = function (arg_32_0, arg_32_1, arg_32_2, arg_
 	end
 end
 
-DamageUtils.get_item_buff_type = function (arg_33_0)
+function DamageUtils.get_item_buff_type(arg_33_0)
 	local var_33_0 = rawget(ItemMasterList, arg_33_0)
 	local var_33_1 = var_33_0 and var_33_0.template or var_33_0.temporary_template
 	local var_33_2
@@ -1986,7 +1975,7 @@ DamageUtils.get_item_buff_type = function (arg_33_0)
 	return var_33_2 or "n/a"
 end
 
-DamageUtils.buff_on_attack = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6, arg_34_7, arg_34_8, arg_34_9)
+function DamageUtils.buff_on_attack(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6, arg_34_7, arg_34_8, arg_34_9)
 	local var_34_0 = ScriptUnit.has_extension(arg_34_0, "buff_system")
 
 	if not var_34_0 then
@@ -2066,7 +2055,7 @@ local var_0_38 = {
 	life_tap = true
 }
 
-DamageUtils.apply_buffs_to_damage = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7, arg_35_8)
+function DamageUtils.apply_buffs_to_damage(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7, arg_35_8)
 	local var_35_0 = arg_35_0
 	local var_35_1 = Managers.state.network
 	local var_35_2 = ScriptUnit.has_extension(arg_35_2, "buff_system") or ScriptUnit.has_extension(arg_35_8, "buff_system")
@@ -2353,7 +2342,7 @@ DamageUtils.apply_buffs_to_damage = function (arg_35_0, arg_35_1, arg_35_2, arg_
 	return var_35_0
 end
 
-DamageUtils.apply_damage_to_overcharge = function (arg_36_0, arg_36_1)
+function DamageUtils.apply_damage_to_overcharge(arg_36_0, arg_36_1)
 	local var_36_0 = ScriptUnit.has_extension(arg_36_0, "overcharge_system")
 
 	if var_36_0 then
@@ -2361,7 +2350,7 @@ DamageUtils.apply_damage_to_overcharge = function (arg_36_0, arg_36_1)
 	end
 end
 
-DamageUtils.assist_shield_network = function (arg_37_0, arg_37_1, arg_37_2)
+function DamageUtils.assist_shield_network(arg_37_0, arg_37_1, arg_37_2)
 	assert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 	ScriptUnit.extension(arg_37_0, "health_system"):shield(arg_37_2)
 	ScriptUnit.extension(arg_37_0, "status_system"):set_shielded(true)
@@ -2378,7 +2367,7 @@ end
 
 local var_0_39 = {}
 
-DamageUtils.heal_network = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+function DamageUtils.heal_network(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST, "Only server can heal")
 
 	local var_38_0 = ScriptUnit.has_extension(arg_38_0, "buff_system")
@@ -2444,7 +2433,7 @@ DamageUtils.heal_network = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 	end
 end
 
-DamageUtils.apply_buffs_to_heal = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+function DamageUtils.apply_buffs_to_heal(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 	local var_39_0 = false
 
 	arg_39_4[#arg_39_4 + 1] = arg_39_0
@@ -2481,7 +2470,7 @@ DamageUtils.apply_buffs_to_heal = function (arg_39_0, arg_39_1, arg_39_2, arg_39
 	return arg_39_2, var_39_0
 end
 
-DamageUtils.debug_heal = function (arg_40_0, arg_40_1)
+function DamageUtils.debug_heal(arg_40_0, arg_40_1)
 	if Managers.player.is_server then
 		DamageUtils.heal_network(arg_40_0, arg_40_0, arg_40_1, "debug")
 	else
@@ -2494,7 +2483,7 @@ DamageUtils.debug_heal = function (arg_40_0, arg_40_1)
 	end
 end
 
-DamageUtils.debug_deal_damage = function (arg_41_0, arg_41_1)
+function DamageUtils.debug_deal_damage(arg_41_0, arg_41_1)
 	if not ALIVE[arg_41_0] then
 		return
 	end
@@ -2502,7 +2491,7 @@ DamageUtils.debug_deal_damage = function (arg_41_0, arg_41_1)
 	DamageUtils.add_damage_network(arg_41_0, arg_41_0, arg_41_1, "torso", "undefined", nil, Vector3(0, 0, 1), "debug", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 end
 
-DamageUtils.check_distance = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+function DamageUtils.check_distance(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	local var_42_0 = arg_42_1.breed
 	local var_42_1 = var_0_4[arg_42_2]
 	local var_42_2 = var_0_4[arg_42_3] or Unit.world_position(arg_42_3, 0)
@@ -2513,30 +2502,32 @@ DamageUtils.check_distance = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 
 	local var_42_3 = var_42_2 - var_42_1
 	local var_42_4 = ScriptUnit.has_extension(arg_42_3, "ai_system")
-	local var_42_5 = arg_42_1.is_player and not var_42_4 and status_extension:breed_action() or arg_42_1.action
-	local var_42_6 = 1
+	local var_42_5 = arg_42_1.is_player and not var_42_4
+	local var_42_6 = ScriptUnit.has_extension(arg_42_3, "status_system")
+	local var_42_7 = var_42_5 and var_42_6 and var_42_6:breed_action() or arg_42_1.action
+	local var_42_8 = 1
 
 	if arg_42_1.target_dodged_during_attack or arg_42_1.set_dodge_rotation_timer or arg_42_1.locked_attack_rotation then
-		var_42_6 = var_42_6 * (var_42_5.player_dodged_radius or var_42_0.player_dodged_radius or 0.75)
+		var_42_8 = var_42_8 * (var_42_7.player_dodged_radius or var_42_0.player_dodged_radius or 0.75)
 	end
 
 	if arg_42_0.use_box_range then
-		local var_42_7 = var_42_3.x
-		local var_42_8 = var_42_3.y
-		local var_42_9 = var_42_3.z
-		local var_42_10 = arg_42_1.attack_range_flat + var_42_6
+		local var_42_9 = var_42_3.x
+		local var_42_10 = var_42_3.y
+		local var_42_11 = var_42_3.z
+		local var_42_12 = arg_42_1.attack_range_flat + var_42_8
 
-		if var_42_9 < arg_42_1.attack_range_up and var_42_9 > arg_42_1.attack_range_down and var_42_7 * var_42_7 + var_42_8 * var_42_8 < var_42_10 * var_42_10 then
+		if var_42_11 < arg_42_1.attack_range_up and var_42_11 > arg_42_1.attack_range_down and var_42_9 * var_42_9 + var_42_10 * var_42_10 < var_42_12 * var_42_12 then
 			return true
 		end
-	elseif Vector3.length(var_42_3) <= (var_42_5.weapon_reach or var_42_0.weapon_reach or var_42_0.radius) + var_42_6 then
+	elseif Vector3.length(var_42_3) <= (var_42_7.weapon_reach or var_42_0.weapon_reach or var_42_0.radius) + var_42_8 then
 		return true
 	end
 
 	return false
 end
 
-DamageUtils.check_infront = function (arg_43_0, arg_43_1)
+function DamageUtils.check_infront(arg_43_0, arg_43_1)
 	local var_43_0 = var_0_4[arg_43_0]
 	local var_43_1 = var_0_4[arg_43_1] or Unit.world_position(arg_43_1, 0)
 
@@ -2566,7 +2557,7 @@ DamageUtils.check_infront = function (arg_43_0, arg_43_1)
 	return false
 end
 
-DamageUtils.check_block = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+function DamageUtils.check_block(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	if arg_44_0 == arg_44_1 then
 		return false
 	end
@@ -2619,9 +2610,7 @@ DamageUtils.check_block = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 				local var_44_19 = ScriptUnit.has_extension(arg_44_1, "ai_system")
 				local var_44_20 = var_44_18.is_player and not var_44_19 and var_44_5:breed_action() or var_44_18.action
 
-				if var_44_20 and var_44_20.no_block_stagger then
-					-- Nothing
-				elseif not var_44_18.stagger then
+				if (not var_44_20 or not var_44_20.no_block_stagger) and not var_44_18.stagger then
 					var_44_18.blocked = true
 				end
 			end
@@ -2633,7 +2622,7 @@ DamageUtils.check_block = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	return false
 end
 
-DamageUtils.check_ranged_block = function (arg_45_0, arg_45_1, arg_45_2)
+function DamageUtils.check_ranged_block(arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = ScriptUnit.extension(arg_45_1, "status_system")
 	local var_45_1 = var_45_0:is_blocking()
 	local var_45_2, var_45_3, var_45_4, var_45_5 = var_45_0:can_block(arg_45_0)
@@ -2688,7 +2677,7 @@ DamageUtils.check_ranged_block = function (arg_45_0, arg_45_1, arg_45_2)
 	return false
 end
 
-DamageUtils.camera_shake_by_distance = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7)
+function DamageUtils.camera_shake_by_distance(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7)
 	local var_46_0 = Managers.player:local_player()
 
 	if not var_46_0 then
@@ -2725,13 +2714,13 @@ local var_0_42 = 4
 local var_0_43 = {}
 local var_0_44 = {}
 
-DamageUtils.is_enemy = function (arg_47_0, arg_47_1)
+function DamageUtils.is_enemy(arg_47_0, arg_47_1)
 	local var_47_0 = Managers.state.side.side_by_unit[arg_47_0]
 
 	return var_47_0 and var_47_0.enemy_units_lookup[arg_47_1] ~= nil
 end
 
-DamageUtils.is_ai = function (arg_48_0)
+function DamageUtils.is_ai(arg_48_0)
 	local var_48_0 = AiUtils.unit_breed(arg_48_0)
 
 	if var_48_0 then
@@ -2739,11 +2728,11 @@ DamageUtils.is_ai = function (arg_48_0)
 	end
 end
 
-DamageUtils.is_character = function (arg_49_0)
+function DamageUtils.is_character(arg_49_0)
 	return Unit.has_data(arg_49_0, "breed") or false
 end
 
-DamageUtils.can_bots_damage = function (arg_50_0)
+function DamageUtils.can_bots_damage(arg_50_0)
 	local var_50_0, var_50_1 = DamageUtils.is_character(arg_50_0)
 	local var_50_2 = Managers.state.network:level_object_id(arg_50_0)
 	local var_50_3 = ScriptUnit.extension(arg_50_0, "health_system")
@@ -2751,7 +2740,7 @@ DamageUtils.can_bots_damage = function (arg_50_0)
 	return var_50_0 or var_50_2 or var_50_3.bots_can_do_damage
 end
 
-DamageUtils.vs_dark_pact_can_damage = function (arg_51_0, arg_51_1)
+function DamageUtils.vs_dark_pact_can_damage(arg_51_0, arg_51_1)
 	local var_51_0, var_51_1 = DamageUtils.is_character(arg_51_1)
 	local var_51_2 = Managers.state.network:level_object_id(arg_51_1)
 	local var_51_3 = ScriptUnit.has_extension(arg_51_1, "props_system")
@@ -2761,7 +2750,7 @@ DamageUtils.vs_dark_pact_can_damage = function (arg_51_0, arg_51_1)
 	return var_51_0 or var_51_2 or var_51_5
 end
 
-DamageUtils.allow_friendly_fire_ranged = function (arg_52_0, arg_52_1)
+function DamageUtils.allow_friendly_fire_ranged(arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_0.friendly_fire_ranged
 	local var_52_1, var_52_2, var_52_3 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "friendly_fire")
 
@@ -2776,11 +2765,11 @@ DamageUtils.allow_friendly_fire_ranged = function (arg_52_0, arg_52_1)
 	return var_52_0 and arg_52_1 and not arg_52_1.bot_player
 end
 
-DamageUtils.allow_friendly_fire_melee = function (arg_53_0, arg_53_1)
+function DamageUtils.allow_friendly_fire_melee(arg_53_0, arg_53_1)
 	return arg_53_0.friendly_fire_melee and not arg_53_1.bot_player
 end
 
-DamageUtils.damage_level_unit = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8, arg_54_9)
+function DamageUtils.damage_level_unit(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8, arg_54_9)
 	if var_0_5(arg_54_0, "no_damage_from_players") then
 		return
 	end
@@ -2817,7 +2806,7 @@ DamageUtils.damage_level_unit = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3
 	DamageUtils.add_damage_network(arg_54_0, arg_54_1, var_54_4, arg_54_2, var_54_5, nil, arg_54_8, arg_54_9, var_54_6, var_54_7, var_54_8, var_54_9, arg_54_5, var_54_10, nil, nil, nil, nil, arg_54_7)
 end
 
-DamageUtils._projectile_hit_object = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8, arg_55_9, arg_55_10, arg_55_11, arg_55_12, arg_55_13, arg_55_14, arg_55_15, arg_55_16, arg_55_17, arg_55_18, arg_55_19, arg_55_20, arg_55_21, arg_55_22, arg_55_23, arg_55_24, arg_55_25, arg_55_26, arg_55_27, arg_55_28, arg_55_29)
+function DamageUtils._projectile_hit_object(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8, arg_55_9, arg_55_10, arg_55_11, arg_55_12, arg_55_13, arg_55_14, arg_55_15, arg_55_16, arg_55_17, arg_55_18, arg_55_19, arg_55_20, arg_55_21, arg_55_22, arg_55_23, arg_55_24, arg_55_25, arg_55_26, arg_55_27, arg_55_28, arg_55_29)
 	local var_55_0 = var_0_43
 	local var_55_1 = var_0_44
 	local var_55_2 = Managers.state.entity:system("ai_system")
@@ -2905,7 +2894,7 @@ DamageUtils._projectile_hit_object = function (arg_55_0, arg_55_1, arg_55_2, arg
 	return var_55_9
 end
 
-DamageUtils._projectile_hit_character = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8, arg_56_9, arg_56_10, arg_56_11, arg_56_12, arg_56_13, arg_56_14, arg_56_15, arg_56_16, arg_56_17, arg_56_18, arg_56_19, arg_56_20, arg_56_21, arg_56_22, arg_56_23, arg_56_24, arg_56_25, arg_56_26, arg_56_27, arg_56_28, arg_56_29)
+function DamageUtils._projectile_hit_character(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8, arg_56_9, arg_56_10, arg_56_11, arg_56_12, arg_56_13, arg_56_14, arg_56_15, arg_56_16, arg_56_17, arg_56_18, arg_56_19, arg_56_20, arg_56_21, arg_56_22, arg_56_23, arg_56_24, arg_56_25, arg_56_26, arg_56_27, arg_56_28, arg_56_29)
 	local var_56_0 = var_0_43
 	local var_56_1 = var_0_44
 	local var_56_2 = Managers.state.network
@@ -2914,19 +2903,18 @@ DamageUtils._projectile_hit_character = function (arg_56_0, arg_56_1, arg_56_2, 
 	local var_56_7 = "torso"
 	local var_56_8 = 0
 	local var_56_9 = false
-	local var_56_10 = false
-	local var_56_11 = arg_56_27
-	local var_56_12 = arg_56_28
+	local var_56_10 = arg_56_27
+	local var_56_11 = arg_56_28
 
 	if arg_56_11 then
-		local var_56_13 = var_0_19(arg_56_6)
+		local var_56_12 = var_0_19(arg_56_6)
 
-		var_56_7 = arg_56_11.hit_zones_lookup[var_56_13].name
+		var_56_7 = arg_56_11.hit_zones_lookup[var_56_12].name
 
 		if var_56_7 ~= "afro" then
-			var_56_10 = AiUtils.attack_is_shield_blocked(arg_56_5, arg_56_1) and not arg_56_0.ignore_shield_hit
+			var_56_9 = AiUtils.attack_is_shield_blocked(arg_56_5, arg_56_1) and not arg_56_0.ignore_shield_hit
 
-			if var_56_10 then
+			if var_56_9 then
 				var_56_1.blocked_by_unit = arg_56_5
 			end
 		end
@@ -2936,43 +2924,39 @@ DamageUtils._projectile_hit_character = function (arg_56_0, arg_56_1, arg_56_2, 
 		var_56_7 = arg_56_0.hit_zone_override
 	end
 
-	local var_56_14 = true
+	local var_56_13 = true
 
-	if var_56_7 ~= "head" and HEALTH_ALIVE[arg_56_5] and arg_56_11 and arg_56_11.hit_zones and arg_56_11.hit_zones.head then
-		local var_56_15 = ScriptUnit.has_extension(arg_56_1, "buff_system")
+	if var_56_7 ~= "head" and HEALTH_ALIVE[arg_56_5] and arg_56_11 and arg_56_11.hit_zones and arg_56_11.hit_zones.head and arg_56_3 and arg_56_3:has_buff_perk("auto_headshot") and var_56_7 ~= "afro" then
+		var_56_7 = "head"
+		var_56_13 = false
 
-		if var_56_15 and var_56_15:has_buff_perk("auto_headshot") and var_56_7 ~= "afro" then
-			var_56_7 = "head"
-			var_56_14 = false
-
-			var_56_15:trigger_procs("on_auto_headshot")
-		end
+		arg_56_3:trigger_procs("on_auto_headshot")
 	end
 
-	if arg_56_11 and var_56_7 == "head" and arg_56_2 and not var_56_10 then
-		local var_56_16 = ScriptUnit.extension(arg_56_1, "first_person_system")
-		local var_56_17, var_56_18 = arg_56_3:apply_buffs_to_value(0, "coop_stamina")
+	if arg_56_11 and var_56_7 == "head" and arg_56_2 and not var_56_9 then
+		local var_56_14 = ScriptUnit.extension(arg_56_1, "first_person_system")
+		local var_56_15, var_56_16 = arg_56_3:apply_buffs_to_value(0, "coop_stamina")
 
-		if var_56_18 and HEALTH_ALIVE[arg_56_5] then
-			local var_56_19 = arg_56_11.headshot_coop_stamina_fatigue_type or "headshot_clan_rat"
-			local var_56_20 = NetworkLookup.fatigue_types[var_56_19]
+		if var_56_16 and HEALTH_ALIVE[arg_56_5] then
+			local var_56_17 = arg_56_11.headshot_coop_stamina_fatigue_type or "headshot_clan_rat"
+			local var_56_18 = NetworkLookup.fatigue_types[var_56_17]
 
 			if arg_56_12 then
-				var_56_2.network_transmit:send_rpc_clients("rpc_replenish_fatigue_other_players", var_56_20)
+				var_56_2.network_transmit:send_rpc_clients("rpc_replenish_fatigue_other_players", var_56_18)
 			else
-				var_56_2.network_transmit:send_rpc_server("rpc_replenish_fatigue_other_players", var_56_20)
+				var_56_2.network_transmit:send_rpc_server("rpc_replenish_fatigue_other_players", var_56_18)
 			end
 
-			StatusUtils.replenish_stamina_local_players(arg_56_1, var_56_19)
-			var_56_16:play_hud_sound_event("hud_player_buff_headshot", nil, false)
+			StatusUtils.replenish_stamina_local_players(arg_56_1, var_56_17)
+			var_56_14:play_hud_sound_event("hud_player_buff_headshot", nil, false)
 		end
 
 		if not arg_56_0.no_headshot_sound and HEALTH_ALIVE[arg_56_5] then
-			var_56_16:play_hud_sound_event("Play_hud_headshot", nil, false)
+			var_56_14:play_hud_sound_event("Play_hud_headshot", nil, false)
 		end
 	end
 
-	local var_56_21 = Managers.player:owner(arg_56_5)
+	local var_56_19 = Managers.player:owner(arg_56_5)
 
 	if var_56_7 == "afro" then
 		if arg_56_11.is_ai and Managers.state.side:is_enemy(arg_56_5, arg_56_1) then
@@ -2984,54 +2968,55 @@ DamageUtils._projectile_hit_character = function (arg_56_0, arg_56_1, arg_56_2, 
 				var_56_2.network_transmit:send_rpc_server("rpc_alert_enemy", var_56_5, var_56_3)
 			end
 		end
-	elseif var_56_21 and arg_56_6 == var_0_12(arg_56_5, "c_afro") then
-		local var_56_22 = arg_56_0.afro_hit_sound
+	elseif var_56_19 and arg_56_6 == var_0_12(arg_56_5, "c_afro") then
+		local var_56_20 = arg_56_0.afro_hit_sound
 
-		if var_56_22 and not var_56_21.bot_player and Managers.state.network:game() then
-			local var_56_23 = NetworkLookup.sound_events[var_56_22]
+		if var_56_20 and not var_56_19.bot_player and Managers.state.network:game() then
+			local var_56_21 = NetworkLookup.sound_events[var_56_20]
 
-			var_56_2.network_transmit:send_rpc("rpc_play_first_person_sound", var_56_21.peer_id, var_56_5, var_56_23, arg_56_7)
+			var_56_2.network_transmit:send_rpc("rpc_play_first_person_sound", var_56_19.peer_id, var_56_5, var_56_21, arg_56_7)
 		end
 	else
 		var_56_0[arg_56_5] = true
 
-		local var_56_24 = NetworkLookup.hit_zones[var_56_7]
-		local var_56_25 = arg_56_4.attack_template
-		local var_56_26 = DamageUtils.get_attack_template(var_56_25)
+		local var_56_22 = NetworkLookup.hit_zones[var_56_7]
+		local var_56_23 = arg_56_4.attack_template
+		local var_56_24 = DamageUtils.get_attack_template(var_56_23)
 
-		if arg_56_2 and arg_56_11 and arg_56_13 and not var_56_10 then
-			local var_56_27 = true
-			local var_56_28 = DamageUtils.get_item_buff_type(arg_56_19)
-			local var_56_29 = DamageUtils.buff_on_attack(arg_56_1, arg_56_5, "instant_projectile", arg_56_14, var_56_7, arg_56_29 or var_56_11 + 1, var_56_27, var_56_28, var_56_14, arg_56_19)
+		if arg_56_2 and arg_56_11 and arg_56_13 and not var_56_9 then
+			local var_56_25 = true
+			local var_56_26 = DamageUtils.get_item_buff_type(arg_56_19)
+			local var_56_27 = DamageUtils.buff_on_attack(arg_56_1, arg_56_5, "instant_projectile", arg_56_14, var_56_7, arg_56_29 or var_56_10 + 1, var_56_25, var_56_26, var_56_13, arg_56_19)
 
-			var_56_1.buffs_checked = var_56_1.buffs_checked or var_56_29
+			var_56_1.buffs_checked = var_56_1.buffs_checked or var_56_27
 		end
 
 		if arg_56_11 and HEALTH_ALIVE[arg_56_5] then
-			local var_56_30 = arg_56_0.hit_mass_count
+			local var_56_28 = arg_56_0.hit_mass_count
 
-			if var_56_30 and var_56_30[arg_56_11.name] then
-				var_56_12 = var_56_12 + (arg_56_0.hit_mass_count[arg_56_11.name] or 1)
+			if var_56_28 and var_56_28[arg_56_11.name] then
+				var_56_11 = var_56_11 + (arg_56_0.hit_mass_count[arg_56_11.name] or 1)
 			else
-				var_56_12 = var_56_12 + (var_56_10 and (arg_56_11.hit_mass_counts_block and arg_56_11.hit_mass_counts_block[arg_56_15] or arg_56_11.hit_mass_count_block) or arg_56_11.hit_mass_counts and arg_56_11.hit_mass_counts[arg_56_15] or arg_56_11.hit_mass_count or 1)
+				var_56_11 = var_56_11 + (var_56_9 and (arg_56_11.hit_mass_counts_block and arg_56_11.hit_mass_counts_block[arg_56_15] or arg_56_11.hit_mass_count_block) or arg_56_11.hit_mass_counts and arg_56_11.hit_mass_counts[arg_56_15] or arg_56_11.hit_mass_count or 1)
 			end
 
-			local var_56_31 = ScriptUnit.has_extension(arg_56_5, "buff_system")
+			local var_56_29 = ScriptUnit.has_extension(arg_56_5, "buff_system")
 
-			if var_56_31 then
-				var_56_12 = var_56_31:apply_buffs_to_value(var_56_12, "hit_mass_amount")
+			if var_56_29 then
+				var_56_11 = var_56_29:apply_buffs_to_value(var_56_11, "hit_mass_amount")
 			end
 		end
 
-		local var_56_32 = math.ceil(var_56_12)
-		local var_56_33 = var_56_26.sound_type
-		local var_56_34
+		local var_56_30 = math.ceil(var_56_11)
+		local var_56_31
+		local var_56_32 = var_56_24.sound_type
+		local var_56_33
 
-		var_56_8, var_56_34 = DamageUtils.calculate_damage(DamageOutput, arg_56_5, arg_56_1, var_56_7, arg_56_16, BoostCurves[arg_56_4.boost_curve_type], arg_56_17, arg_56_14, arg_56_18, var_56_32, nil, arg_56_19)
+		var_56_8, var_56_33 = DamageUtils.calculate_damage(DamageOutput, arg_56_5, arg_56_1, var_56_7, arg_56_16, BoostCurves[arg_56_4.boost_curve_type], arg_56_17, arg_56_14, arg_56_18, var_56_30, nil, arg_56_19)
 
-		local var_56_35 = var_56_8 <= 0
+		local var_56_34 = var_56_8 <= 0
 
-		if var_56_34 then
+		if var_56_33 then
 			arg_56_22 = "invulnerable"
 			arg_56_20 = "invulnerable"
 
@@ -3039,104 +3024,104 @@ DamageUtils._projectile_hit_character = function (arg_56_0, arg_56_1, arg_56_2, 
 		end
 
 		if arg_56_11 and not arg_56_11.is_hero then
-			local var_56_36 = arg_56_11.name
+			local var_56_35 = arg_56_11.name
 
 			if arg_56_14 and arg_56_20 then
-				EffectHelper.play_skinned_surface_material_effects(arg_56_20, arg_56_21, arg_56_5, arg_56_7, arg_56_8, arg_56_9, arg_56_10, var_56_36, var_56_33, var_56_35, var_56_7, var_56_10, arg_56_11)
+				EffectHelper.play_skinned_surface_material_effects(arg_56_20, arg_56_21, arg_56_5, arg_56_7, arg_56_8, arg_56_9, arg_56_10, var_56_35, var_56_32, var_56_34, var_56_7, var_56_9, arg_56_11)
 			else
-				EffectHelper.play_skinned_surface_material_effects(arg_56_22, arg_56_21, arg_56_5, arg_56_7, arg_56_8, arg_56_9, arg_56_10, var_56_36, var_56_33, var_56_35, var_56_7, var_56_10, arg_56_11)
+				EffectHelper.play_skinned_surface_material_effects(arg_56_22, arg_56_21, arg_56_5, arg_56_7, arg_56_8, arg_56_9, arg_56_10, var_56_35, var_56_32, var_56_34, var_56_7, var_56_9, arg_56_11)
 			end
 
 			if Managers.state.network:game() then
 				if arg_56_14 and arg_56_20 then
-					EffectHelper.remote_play_skinned_surface_material_effects(arg_56_20, arg_56_21, arg_56_7, arg_56_8, arg_56_9, var_56_36, var_56_33, var_56_35, var_56_7, arg_56_12)
+					EffectHelper.remote_play_skinned_surface_material_effects(arg_56_20, arg_56_21, arg_56_7, arg_56_8, arg_56_9, var_56_35, var_56_32, var_56_34, var_56_7, arg_56_12)
 				else
-					EffectHelper.remote_play_skinned_surface_material_effects(arg_56_22, arg_56_21, arg_56_7, arg_56_8, arg_56_9, var_56_36, var_56_33, var_56_35, var_56_7, arg_56_12)
+					EffectHelper.remote_play_skinned_surface_material_effects(arg_56_22, arg_56_21, arg_56_7, arg_56_8, arg_56_9, var_56_35, var_56_32, var_56_34, var_56_7, arg_56_12)
 				end
 			end
-		elseif var_56_21 and arg_56_11.is_hero and arg_56_0.player_push_velocity then
-			local var_56_37 = ScriptUnit.has_extension(arg_56_5, "buff_system")
+		elseif var_56_19 and arg_56_11.is_hero and arg_56_0.player_push_velocity then
+			local var_56_36 = ScriptUnit.has_extension(arg_56_5, "buff_system")
 
-			if not (var_56_37 and var_56_37:has_buff_perk("no_ranged_knockback")) and not ScriptUnit.extension(arg_56_5, "status_system"):is_disabled() then
-				local var_56_38 = arg_56_0.max_impact_push_speed
+			if not (var_56_36 and var_56_36:has_buff_perk("no_ranged_knockback")) and not ScriptUnit.extension(arg_56_5, "status_system"):is_disabled() then
+				local var_56_37 = arg_56_0.max_impact_push_speed
 
-				ScriptUnit.extension(arg_56_5, "locomotion_system"):add_external_velocity(arg_56_0.player_push_velocity:unbox(), var_56_38)
+				ScriptUnit.extension(arg_56_5, "locomotion_system"):add_external_velocity(arg_56_0.player_push_velocity:unbox(), var_56_37)
 			end
 		end
 
-		local var_56_39 = true
-		local var_56_40 = var_0_6(arg_56_1)
+		local var_56_38 = true
+		local var_56_39 = var_0_6(arg_56_1)
 
-		if var_56_40 and var_56_21 then
-			local var_56_41 = arg_56_18.fatigue_damage_override or "blocked_ranged"
-			local var_56_42 = DamageUtils.check_ranged_block(arg_56_1, arg_56_5, var_56_41)
+		if var_56_39 and var_56_19 then
+			local var_56_40 = arg_56_18.fatigue_damage_override or "blocked_ranged"
+			local var_56_41 = DamageUtils.check_ranged_block(arg_56_1, arg_56_5, var_56_40)
 
-			var_56_39 = not var_56_42
-			var_56_10 = var_56_42
+			var_56_38 = not var_56_41
+			var_56_9 = var_56_41
 
-			if var_56_42 and Managers.state.side:versus_is_dark_pact(arg_56_1) then
+			if var_56_41 and Managers.state.side:versus_is_dark_pact(arg_56_1) then
 				WwiseUtils.trigger_unit_event(arg_56_21, "Play_versus_ui_damage_mitigated_indicator", arg_56_5)
 			end
 
-			local var_56_43 = Unit.get_data(arg_56_1, "breed")
+			local var_56_42 = Unit.get_data(arg_56_1, "breed")
 
-			if var_56_10 and var_56_43 and var_56_43.track_projectile_blocked_vo then
-				local var_56_44 = Managers.time:time("game")
-				local var_56_45 = Unit.get_data(arg_56_1, "blocked_projectile_hits") or {}
-				local var_56_46 = #var_56_45 + 1
+			if var_56_9 and var_56_42 and var_56_42.track_projectile_blocked_vo then
+				local var_56_43 = Managers.time:time("game")
+				local var_56_44 = Unit.get_data(arg_56_1, "blocked_projectile_hits") or {}
+				local var_56_45 = #var_56_44 + 1
 
-				var_56_45[var_56_46] = var_56_44
+				var_56_44[var_56_45] = var_56_43
 
-				for iter_56_0 = var_56_46, 1, -1 do
-					if var_56_44 > var_56_45[iter_56_0] + DialogueSettings.vs_track_projectiles_blocked_timer then
-						table.swap_delete(var_56_45, iter_56_0)
+				for iter_56_0 = var_56_45, 1, -1 do
+					if var_56_43 > var_56_44[iter_56_0] + DialogueSettings.vs_track_projectiles_blocked_timer then
+						table.swap_delete(var_56_44, iter_56_0)
 
-						var_56_46 = var_56_46 - 1
+						var_56_45 = var_56_45 - 1
 					end
 				end
 
-				if var_56_46 > DialogueSettings.vs_num_blocked_projectiles_to_track then
+				if var_56_45 > DialogueSettings.vs_num_blocked_projectiles_to_track then
 					ScriptUnit.extension_input(arg_56_1, "dialogue_system"):trigger_networked_dialogue_event("vs_ratling_hitting_shield")
-					table.clear(var_56_45)
+					table.clear(var_56_44)
 				end
 
-				Unit.set_data(arg_56_1, "blocked_projectile_hits", var_56_45)
+				Unit.set_data(arg_56_1, "blocked_projectile_hits", var_56_44)
 			end
 		end
 
-		if var_56_21 and arg_56_11.boss and Managers.state.side:versus_is_dark_pact(arg_56_1) then
-			var_56_39 = false
+		if var_56_19 and arg_56_11.boss and Managers.state.side:versus_is_dark_pact(arg_56_1) then
+			var_56_38 = false
 		end
 
-		if var_56_39 then
-			Managers.state.entity:system("weapon_system"):send_rpc_attack_hit(arg_56_24, var_56_3, var_56_5, var_56_24, arg_56_7, arg_56_23, arg_56_25, "power_level", arg_56_16, "hit_target_index", var_56_32, "blocking", var_56_10, "shield_break_procced", false, "boost_curve_multiplier", arg_56_17, "is_critical_strike", arg_56_14, "attacker_is_level_unit", var_56_4, "first_hit", var_56_11 == 0)
+		if var_56_38 then
+			Managers.state.entity:system("weapon_system"):send_rpc_attack_hit(arg_56_24, var_56_3, var_56_5, var_56_22, arg_56_7, arg_56_23, arg_56_25, "power_level", arg_56_16, "hit_target_index", var_56_30, "blocking", var_56_9, "shield_break_procced", false, "boost_curve_multiplier", arg_56_17, "is_critical_strike", arg_56_14, "attacker_is_level_unit", var_56_4, "first_hit", var_56_10 == 0)
 			EffectHelper.player_critical_hit(arg_56_21, arg_56_14, arg_56_1, arg_56_5, arg_56_7)
 			Managers.state.game_mode:game_mode():projectile_hit_character(arg_56_2, nil, arg_56_1, arg_56_5, arg_56_7, arg_56_11, arg_56_23, var_56_8)
 
-			if not arg_56_2 and var_56_40 and var_56_21 and var_56_21.bot_player then
+			if not arg_56_2 and var_56_39 and var_56_19 and var_56_19.bot_player then
 				ScriptUnit.extension(arg_56_5, "ai_system"):hit_by_projectile(arg_56_1)
 			end
 		end
 
-		local var_56_47 = var_0_5(arg_56_5, "armor")
-		local var_56_48, var_56_49, var_56_50, var_56_51 = ActionUtils.get_target_armor(var_56_7, arg_56_11, var_56_47)
+		local var_56_46 = var_0_5(arg_56_5, "armor")
+		local var_56_47, var_56_48, var_56_49, var_56_50 = ActionUtils.get_target_armor(var_56_7, arg_56_11, var_56_46)
 
-		if var_56_35 or var_56_10 or var_56_50 == 6 or var_56_48 == 2 then
-			arg_56_26 = var_56_11
+		if var_56_34 or var_56_9 or var_56_49 == 6 or var_56_47 == 2 then
+			arg_56_26 = var_56_10
 		else
-			var_56_11 = var_56_11 + 1
+			var_56_10 = var_56_10 + 1
 		end
 
-		if arg_56_26 <= var_56_12 then
+		if arg_56_26 <= var_56_11 then
 			var_56_1.stop = true
-			var_56_1.hits = var_56_11
+			var_56_1.hits = var_56_10
 		end
 	end
 
-	return var_56_12, var_56_11, var_56_8, var_56_10
+	return var_56_11, var_56_10, var_56_8, var_56_9
 end
 
-DamageUtils.process_projectile_hit = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5, arg_57_6, arg_57_7, arg_57_8, arg_57_9, arg_57_10, arg_57_11, arg_57_12, arg_57_13)
+function DamageUtils.process_projectile_hit(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5, arg_57_6, arg_57_7, arg_57_8, arg_57_9, arg_57_10, arg_57_11, arg_57_12, arg_57_13)
 	table.clear(var_0_43)
 	table.clear(var_0_44)
 
@@ -3290,7 +3275,7 @@ end
 
 local var_0_45 = {}
 
-DamageUtils.get_modified_boost_curve = function (arg_58_0, arg_58_1)
+function DamageUtils.get_modified_boost_curve(arg_58_0, arg_58_1)
 	table.clear(var_0_45)
 
 	for iter_58_0, iter_58_1 in ipairs(arg_58_0) do
@@ -3396,7 +3381,7 @@ local function var_0_48(arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4)
 	end
 end
 
-DamageUtils.stagger_ai = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4, arg_62_5, arg_62_6, arg_62_7, arg_62_8, arg_62_9, arg_62_10, arg_62_11, arg_62_12, arg_62_13)
+function DamageUtils.stagger_ai(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4, arg_62_5, arg_62_6, arg_62_7, arg_62_8, arg_62_9, arg_62_10, arg_62_11, arg_62_12, arg_62_13)
 	local var_62_0 = EnvironmentalHazards[arg_62_11]
 
 	if not arg_62_1.always_stagger_ai and not DamageUtils.is_enemy(arg_62_12 or arg_62_5, arg_62_4) and (not var_62_0 or not var_62_0.enemy.can_stagger) then
@@ -3454,7 +3439,7 @@ DamageUtils.stagger_ai = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_6
 		if var_62_10 then
 			DamageUtils.stagger_player(arg_62_4, var_62_2.breed, arg_62_7, var_62_7, var_62_5, var_62_6, var_62_4.stagger_animation_scale, arg_62_0, var_62_8, var_62_4.always_stagger, var_62_9)
 		else
-			AiUtils.stagger(arg_62_4, var_62_2, arg_62_5, arg_62_7, var_62_7, var_62_5, var_62_6, var_62_4.stagger_animation_scale, arg_62_0, var_62_8, var_62_4.always_stagger, var_62_9, nil, arg_62_13)
+			AiUtils.stagger(arg_62_4, var_62_2, arg_62_5, arg_62_7, var_62_7, var_62_5, var_62_6, var_62_4.stagger_animation_scale, arg_62_0, var_62_8, var_62_4.always_stagger, var_62_9, nil, arg_62_13, arg_62_11)
 		end
 
 		local var_62_14 = rawget(ItemMasterList, arg_62_11)
@@ -3481,7 +3466,7 @@ local var_0_49 = {
 	charge_ability_hit = "on_charge_ability_hit"
 }
 
-DamageUtils.server_apply_hit = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4, arg_63_5, arg_63_6, arg_63_7, arg_63_8, arg_63_9, arg_63_10, arg_63_11, arg_63_12, arg_63_13, arg_63_14, arg_63_15, arg_63_16, arg_63_17, arg_63_18, arg_63_19, arg_63_20, arg_63_21)
+function DamageUtils.server_apply_hit(arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4, arg_63_5, arg_63_6, arg_63_7, arg_63_8, arg_63_9, arg_63_10, arg_63_11, arg_63_12, arg_63_13, arg_63_14, arg_63_15, arg_63_16, arg_63_17, arg_63_18, arg_63_19, arg_63_20, arg_63_21)
 	arg_63_20 = arg_63_20 or arg_63_1
 
 	local var_63_0 = ScriptUnit.has_extension(arg_63_1, "buff_system")
@@ -3585,7 +3570,7 @@ local function var_0_50(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 	return var_64_0, var_64_1
 end
 
-DamageUtils.apply_dot = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8, arg_65_9, arg_65_10, arg_65_11)
+function DamageUtils.apply_dot(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8, arg_65_9, arg_65_10, arg_65_11)
 	if arg_65_0 then
 		local var_65_0 = arg_65_0.targets and arg_65_0.targets[arg_65_1] or arg_65_0.default_target
 
@@ -3646,7 +3631,7 @@ DamageUtils.apply_dot = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65
 	return var_65_18
 end
 
-DamageUtils.custom_calculate_damage = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4, arg_66_5, arg_66_6, arg_66_7, arg_66_8, arg_66_9, arg_66_10, arg_66_11, arg_66_12, arg_66_13)
+function DamageUtils.custom_calculate_damage(arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4, arg_66_5, arg_66_6, arg_66_7, arg_66_8, arg_66_9, arg_66_10, arg_66_11, arg_66_12, arg_66_13)
 	local var_66_0 = arg_66_3.targets and arg_66_3.targets[arg_66_4] or arg_66_3.default_target
 	local var_66_1 = BoostCurves[var_66_0.boost_curve_type]
 	local var_66_2 = 1
@@ -3666,7 +3651,7 @@ DamageUtils.custom_calculate_damage = function (arg_66_0, arg_66_1, arg_66_2, ar
 	return var_66_16 + var_66_17, var_66_16, var_66_17
 end
 
-DamageUtils.calculate_stagger_multiplier = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+function DamageUtils.calculate_stagger_multiplier(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 	if arg_67_2 then
 		local var_67_0 = arg_67_2.min_stagger_damage_coefficient
 		local var_67_1 = arg_67_2.stagger_damage_multiplier
@@ -3735,13 +3720,13 @@ local var_0_52 = {
 	}
 }
 
-DamageUtils.get_color_from_damage = function (arg_68_0)
+function DamageUtils.get_color_from_damage(arg_68_0)
 	local var_68_0 = math.clamp(math.floor(math.remap(0, 30, 1, 7, arg_68_0)), 1, 7)
 
 	return var_0_52[var_68_0]
 end
 
-DamageUtils.add_unit_floating_damage_numbers = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4, arg_69_5, arg_69_6, arg_69_7)
+function DamageUtils.add_unit_floating_damage_numbers(arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4, arg_69_5, arg_69_6, arg_69_7)
 	local var_69_0
 	local var_69_1 = var_0_51[arg_69_1]
 
@@ -3777,7 +3762,7 @@ DamageUtils.add_unit_floating_damage_numbers = function (arg_69_0, arg_69_1, arg
 	Managers.state.event:trigger("add_damage_number", arg_69_2, var_69_5, arg_69_0, var_69_6, var_69_0, arg_69_3, arg_69_5, arg_69_7)
 end
 
-DamageUtils.add_hit_reaction = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4)
+function DamageUtils.add_hit_reaction(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4)
 	if arg_70_2 or arg_70_4 or not arg_70_1 or arg_70_1.disable_local_hit_reactions or not var_0_13(arg_70_0) then
 		return
 	end
@@ -3806,7 +3791,7 @@ DamageUtils.add_hit_reaction = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3,
 	var_0_14(arg_70_0, var_70_0)
 end
 
-DamageUtils.attacker_is_fire_bomb = function (arg_71_0)
+function DamageUtils.attacker_is_fire_bomb(arg_71_0)
 	local var_71_0 = ScriptUnit.has_extension(arg_71_0, "area_damage_system")
 
 	if not var_71_0 then
@@ -3820,6 +3805,6 @@ DamageUtils.attacker_is_fire_bomb = function (arg_71_0)
 	return true
 end
 
-DamageUtils.get_attack_template = function (arg_72_0)
+function DamageUtils.get_attack_template(arg_72_0)
 	return MechanismOverrides.get(AttackTemplates[arg_72_0])
 end

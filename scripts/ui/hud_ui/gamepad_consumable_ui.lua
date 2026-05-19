@@ -33,7 +33,7 @@ local var_0_7 = 5
 hud_icon_texture_lit_lookup_table = {}
 GamepadConsumableUI = class(GamepadConsumableUI)
 
-GamepadConsumableUI.init = function (arg_1_0, arg_1_1)
+function GamepadConsumableUI.init(arg_1_0, arg_1_1)
 	arg_1_0.platform = PLATFORM
 	arg_1_0.ui_renderer = arg_1_1.ui_renderer
 	arg_1_0.ingame_ui = arg_1_1.ingame_ui
@@ -48,7 +48,7 @@ GamepadConsumableUI.init = function (arg_1_0, arg_1_1)
 	arg_1_0:_create_ui_elements()
 end
 
-GamepadConsumableUI._create_ui_elements = function (arg_2_0)
+function GamepadConsumableUI._create_ui_elements(arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_2_0.selection_widget = UIWidget.init(var_0_0.widget_definitions.selection)
 	arg_2_0.background_widget = UIWidget.init(var_0_0.widget_definitions.background)
@@ -75,13 +75,13 @@ GamepadConsumableUI._create_ui_elements = function (arg_2_0)
 	arg_2_0:_set_dirty()
 end
 
-GamepadConsumableUI.destroy = function (arg_3_0)
+function GamepadConsumableUI.destroy(arg_3_0)
 	arg_3_0.ui_animator = nil
 
 	arg_3_0:set_visible(false)
 end
 
-GamepadConsumableUI.set_visible = function (arg_4_0, arg_4_1)
+function GamepadConsumableUI.set_visible(arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0.input_manager:is_device_active("gamepad")
 
 	if arg_4_1 and not var_4_0 then
@@ -99,7 +99,7 @@ GamepadConsumableUI.set_visible = function (arg_4_0, arg_4_1)
 	UIRenderer.set_element_visible(var_4_1, arg_4_0.selection_widget.element, arg_4_1)
 end
 
-GamepadConsumableUI.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+function GamepadConsumableUI.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	if arg_5_0.input_manager:is_device_active("gamepad") then
 		if not arg_5_0.gamepad_active_last_frame then
 			arg_5_0.gamepad_active_last_frame = true
@@ -166,7 +166,7 @@ local function var_0_8(arg_6_0, arg_6_1, arg_6_2)
 	return var_6_2, var_6_3
 end
 
-GamepadConsumableUI._draw = function (arg_7_0, arg_7_1)
+function GamepadConsumableUI._draw(arg_7_0, arg_7_1)
 	if not arg_7_0._is_visible then
 		return
 	end
@@ -189,15 +189,15 @@ GamepadConsumableUI._draw = function (arg_7_0, arg_7_1)
 	UIRenderer.end_pass(var_7_0)
 end
 
-GamepadConsumableUI._set_dirty = function (arg_8_0)
+function GamepadConsumableUI._set_dirty(arg_8_0)
 	arg_8_0._dirty = true
 end
 
-GamepadConsumableUI._set_widget_dirty = function (arg_9_0, arg_9_1)
+function GamepadConsumableUI._set_widget_dirty(arg_9_0, arg_9_1)
 	arg_9_1.element.dirty = true
 end
 
-GamepadConsumableUI._update_extension_changes = function (arg_10_0, arg_10_1, arg_10_2)
+function GamepadConsumableUI._update_extension_changes(arg_10_0, arg_10_1, arg_10_2)
 	if not arg_10_2 then
 		return
 	end
@@ -262,7 +262,7 @@ GamepadConsumableUI._update_extension_changes = function (arg_10_0, arg_10_1, ar
 	end
 end
 
-GamepadConsumableUI._on_slot_selected = function (arg_11_0, arg_11_1)
+function GamepadConsumableUI._on_slot_selected(arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.ui_renderer
 	local var_11_1 = arg_11_1.offset
 	local var_11_2 = arg_11_0.selection_widget
@@ -278,7 +278,7 @@ GamepadConsumableUI._on_slot_selected = function (arg_11_0, arg_11_1)
 	UIRenderer.set_element_visible(var_11_0, var_11_2.element, true)
 end
 
-GamepadConsumableUI._clear_selection = function (arg_12_0)
+function GamepadConsumableUI._clear_selection(arg_12_0)
 	local var_12_0 = arg_12_0.ui_renderer
 	local var_12_1 = arg_12_0.selection_widget
 
@@ -288,7 +288,7 @@ GamepadConsumableUI._clear_selection = function (arg_12_0)
 	arg_12_0._draw_selection = nil
 end
 
-GamepadConsumableUI._update_slot_icon = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+function GamepadConsumableUI._update_slot_icon(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = false
 	local var_13_1 = arg_13_1.style
 	local var_13_2 = arg_13_1.content
@@ -319,7 +319,7 @@ GamepadConsumableUI._update_slot_icon = function (arg_13_0, arg_13_1, arg_13_2, 
 	return var_13_0
 end
 
-GamepadConsumableUI._update_slot_ammo = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+function GamepadConsumableUI._update_slot_ammo(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0 = false
 	local var_14_1 = arg_14_1.content
 	local var_14_2 = BackendUtils.get_item_template(arg_14_3)
@@ -343,7 +343,7 @@ GamepadConsumableUI._update_slot_ammo = function (arg_14_0, arg_14_1, arg_14_2, 
 	return var_14_0
 end
 
-GamepadConsumableUI._reset_slot_widget = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+function GamepadConsumableUI._reset_slot_widget(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = false
 	local var_15_1 = arg_15_1.content
 
@@ -352,7 +352,7 @@ GamepadConsumableUI._reset_slot_widget = function (arg_15_0, arg_15_1, arg_15_2,
 		var_15_0 = true
 
 		if arg_15_2 == "slot_healthkit" then
-			-- Nothing
+			-- block empty
 		end
 
 		if var_15_1.show_ammo then
@@ -383,7 +383,7 @@ GamepadConsumableUI._reset_slot_widget = function (arg_15_0, arg_15_1, arg_15_2,
 	return var_15_0
 end
 
-GamepadConsumableUI._change_heal_other_slot_state = function (arg_16_0, arg_16_1)
+function GamepadConsumableUI._change_heal_other_slot_state(arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0.slot_widgets
 
 	if arg_16_1 == "active" then
@@ -422,7 +422,7 @@ GamepadConsumableUI._change_heal_other_slot_state = function (arg_16_0, arg_16_1
 	end
 end
 
-GamepadConsumableUI._animate_slot_fill = function (arg_17_0, arg_17_1, arg_17_2)
+function GamepadConsumableUI._animate_slot_fill(arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = {}
 	local var_17_1 = {
 		arg_17_1
@@ -432,7 +432,7 @@ GamepadConsumableUI._animate_slot_fill = function (arg_17_0, arg_17_1, arg_17_2)
 	var_17_2[#var_17_2 + 1] = arg_17_0.ui_animator:start_animation("pickup", var_17_1, var_0_2, var_17_0)
 end
 
-GamepadConsumableUI._align_widgets = function (arg_18_0)
+function GamepadConsumableUI._align_widgets(arg_18_0)
 	local var_18_0 = arg_18_0.slot_widgets
 	local var_18_1 = 63
 	local var_18_2 = 0
@@ -446,7 +446,7 @@ GamepadConsumableUI._align_widgets = function (arg_18_0)
 	end
 end
 
-GamepadConsumableUI._update_slot_positions = function (arg_19_0)
+function GamepadConsumableUI._update_slot_positions(arg_19_0)
 	local var_19_0 = arg_19_0.ui_scenegraph
 	local var_19_1 = UISettings.inventory_hud.slot_spacing
 	local var_19_2 = 0.9
@@ -470,12 +470,12 @@ GamepadConsumableUI._update_slot_positions = function (arg_19_0)
 	arg_19_0:_set_dirty()
 end
 
-GamepadConsumableUI.on_gamepad_activated = function (arg_20_0)
+function GamepadConsumableUI.on_gamepad_activated(arg_20_0)
 	arg_20_0:set_visible(true)
 	arg_20_0:_set_dirty()
 end
 
-GamepadConsumableUI.on_gamepad_deactivated = function (arg_21_0)
+function GamepadConsumableUI.on_gamepad_deactivated(arg_21_0)
 	arg_21_0:set_visible(false)
 	arg_21_0:_set_dirty()
 end

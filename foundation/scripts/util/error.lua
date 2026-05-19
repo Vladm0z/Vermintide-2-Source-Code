@@ -10,11 +10,11 @@ local function var_0_0(arg_1_0, ...)
 	return string.format(arg_1_0, unpack(var_1_0))
 end
 
-Application.warning = function (...)
+function Application.warning(...)
 	print_warning(var_0_0(...))
 end
 
-Application.error = function (...)
+function Application.error(...)
 	if Crashify and script_data.testify then
 		Crashify.print_exception("Lua", var_0_0(...))
 	else

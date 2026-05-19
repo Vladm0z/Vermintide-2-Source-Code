@@ -5,7 +5,7 @@ require("scripts/game_state/server_join_state_machine")
 MatchmakingStateRequestJoinGame = class(MatchmakingStateRequestJoinGame)
 MatchmakingStateRequestJoinGame.NAME = "MatchmakingStateRequestJoinGame"
 
-MatchmakingStateRequestJoinGame.init = function (arg_1_0, arg_1_1)
+function MatchmakingStateRequestJoinGame.init(arg_1_0, arg_1_1)
 	arg_1_0._lobby = arg_1_1.lobby
 	arg_1_0._network_options = arg_1_1.network_options
 	arg_1_0._matchmaking_manager = arg_1_1.matchmaking_manager
@@ -14,7 +14,7 @@ MatchmakingStateRequestJoinGame.init = function (arg_1_0, arg_1_1)
 	arg_1_0._state = "waiting_to_join_lobby"
 end
 
-MatchmakingStateRequestJoinGame.destroy = function (arg_2_0)
+function MatchmakingStateRequestJoinGame.destroy(arg_2_0)
 	if arg_2_0._password_request ~= nil then
 		arg_2_0._password_request:destroy()
 
@@ -22,13 +22,13 @@ MatchmakingStateRequestJoinGame.destroy = function (arg_2_0)
 	end
 end
 
-MatchmakingStateRequestJoinGame.terminate = function (arg_3_0)
+function MatchmakingStateRequestJoinGame.terminate(arg_3_0)
 	if Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
 end
 
-MatchmakingStateRequestJoinGame.on_enter = function (arg_4_0, arg_4_1)
+function MatchmakingStateRequestJoinGame.on_enter(arg_4_0, arg_4_1)
 	arg_4_0.state_context = arg_4_1
 	arg_4_0._join_lobby_data = arg_4_1.join_lobby_data
 	arg_4_0._game_reply = nil
@@ -67,11 +67,11 @@ MatchmakingStateRequestJoinGame.on_enter = function (arg_4_0, arg_4_1)
 	end
 end
 
-MatchmakingStateRequestJoinGame.on_exit = function (arg_5_0)
+function MatchmakingStateRequestJoinGame.on_exit(arg_5_0)
 	return
 end
 
-MatchmakingStateRequestJoinGame._run_pre_connection_verification = function (arg_6_0, arg_6_1)
+function MatchmakingStateRequestJoinGame._run_pre_connection_verification(arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._lobby:id()
 
 	if (arg_6_1.id or arg_6_1.name) == var_6_0 then
@@ -81,7 +81,7 @@ MatchmakingStateRequestJoinGame._run_pre_connection_verification = function (arg
 	return true
 end
 
-MatchmakingStateRequestJoinGame._setup_lobby_connection = function (arg_7_0, arg_7_1, arg_7_2)
+function MatchmakingStateRequestJoinGame._setup_lobby_connection(arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._network_options
 
 	if arg_7_1.server_info then
@@ -99,7 +99,7 @@ MatchmakingStateRequestJoinGame._setup_lobby_connection = function (arg_7_0, arg
 	end
 end
 
-MatchmakingStateRequestJoinGame.update = function (arg_8_0, arg_8_1, arg_8_2)
+function MatchmakingStateRequestJoinGame.update(arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0
 	local var_8_1
 	local var_8_2
@@ -193,10 +193,13 @@ MatchmakingStateRequestJoinGame.update = function (arg_8_0, arg_8_1, arg_8_2)
 	elseif var_8_5 == "verify_not_blocked" then
 		if not DEDICATED_SERVER and IS_WINDOWS then
 			local var_8_13 = var_8_3:lobby_host()
-			local var_8_14 = Friends.relationship(var_8_13)
 
-			if var_8_14 == Friends.IGNORED or var_8_14 == Friends.IGNORED_FRIEND then
-				return arg_8_0:_join_game_failed("user_blocked", arg_8_2, false)
+			if rawget(_G, "Friends") then
+				local var_8_14 = Friends.relationship(var_8_13)
+
+				if var_8_14 == Friends.IGNORED or var_8_14 == Friends.IGNORED_FRIEND then
+					return arg_8_0:_join_game_failed("user_blocked", arg_8_2, false)
+				end
 			end
 		end
 
@@ -330,7 +333,7 @@ MatchmakingStateRequestJoinGame.update = function (arg_8_0, arg_8_1, arg_8_2)
 	return nil
 end
 
-MatchmakingStateRequestJoinGame._gather_dlc_ids = function (arg_9_0)
+function MatchmakingStateRequestJoinGame._gather_dlc_ids(arg_9_0)
 	local var_9_0 = {}
 	local var_9_1 = UnlockSettings[1].unlocks
 	local var_9_2 = Managers.unlock
@@ -346,7 +349,7 @@ MatchmakingStateRequestJoinGame._gather_dlc_ids = function (arg_9_0)
 	return var_9_0
 end
 
-MatchmakingStateRequestJoinGame._try_friend_join_custom_lobby = function (arg_10_0)
+function MatchmakingStateRequestJoinGame._try_friend_join_custom_lobby(arg_10_0)
 	local var_10_0 = MatchmakingStateIdle
 	local var_10_1, var_10_2 = Managers.mechanism:mechanism_try_call("can_join_custom_lobby")
 	local var_10_3
@@ -366,7 +369,7 @@ MatchmakingStateRequestJoinGame._try_friend_join_custom_lobby = function (arg_10
 	return var_10_0, arg_10_0.state_context
 end
 
-MatchmakingStateRequestJoinGame._join_game_success = function (arg_11_0, arg_11_1)
+function MatchmakingStateRequestJoinGame._join_game_success(arg_11_0, arg_11_1)
 	if (arg_11_0.state_context.search_config and arg_11_0.state_context.search_config.join_method) == "party" then
 		return MatchmakingStatePartyJoins, arg_11_0.state_context
 	else
@@ -374,7 +377,7 @@ MatchmakingStateRequestJoinGame._join_game_success = function (arg_11_0, arg_11_
 	end
 end
 
-MatchmakingStateRequestJoinGame._join_fail_popup = function (arg_12_0, arg_12_1)
+function MatchmakingStateRequestJoinGame._join_fail_popup(arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0.state_context.non_matchmaking_join
 	local var_12_1 = arg_12_0.state_context.join_by_lobby_browser and arg_12_0.lobby_browser_view_ui
 
@@ -383,7 +386,7 @@ MatchmakingStateRequestJoinGame._join_fail_popup = function (arg_12_0, arg_12_1)
 	end
 end
 
-MatchmakingStateRequestJoinGame._join_game_failed = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+function MatchmakingStateRequestJoinGame._join_game_failed(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	local var_13_0 = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
 	if var_13_0 then
@@ -421,11 +424,11 @@ MatchmakingStateRequestJoinGame._join_game_failed = function (arg_13_0, arg_13_1
 	end
 end
 
-MatchmakingStateRequestJoinGame.rpc_matchmaking_request_join_lobby_reply = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+function MatchmakingStateRequestJoinGame.rpc_matchmaking_request_join_lobby_reply(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	arg_14_0._game_reply = NetworkLookup.game_ping_reply[arg_14_2]
 	arg_14_0._game_reply_variable = arg_14_3
 end
 
-MatchmakingStateRequestJoinGame.rpc_notify_connected = function (arg_15_0, arg_15_1)
+function MatchmakingStateRequestJoinGame.rpc_notify_connected(arg_15_0, arg_15_1)
 	arg_15_0._connected_to_server = true
 end

@@ -11,7 +11,7 @@ local var_0_6 = false
 StartGameWindowWeaveBackgroundConsole = class(StartGameWindowWeaveBackgroundConsole)
 StartGameWindowWeaveBackgroundConsole.NAME = "StartGameWindowWeaveBackgroundConsole"
 
-StartGameWindowWeaveBackgroundConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
+function StartGameWindowWeaveBackgroundConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowWeaveBackgroundConsole")
 
 	arg_1_0._params = arg_1_1
@@ -39,7 +39,7 @@ StartGameWindowWeaveBackgroundConsole.on_enter = function (arg_1_0, arg_1_1, arg
 	arg_1_0:_play_sound("menu_wind_level_open")
 end
 
-StartGameWindowWeaveBackgroundConsole._create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
+function StartGameWindowWeaveBackgroundConsole._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_4)
 
 	local var_2_0 = {}
@@ -82,7 +82,7 @@ StartGameWindowWeaveBackgroundConsole._create_ui_elements = function (arg_2_0, a
 	arg_2_0:_set_background_wheel_visibility(true)
 end
 
-StartGameWindowWeaveBackgroundConsole.on_exit = function (arg_3_0, arg_3_1)
+function StartGameWindowWeaveBackgroundConsole.on_exit(arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowWeaveBackgroundConsole")
 
 	arg_3_0.ui_animator = nil
@@ -90,7 +90,7 @@ StartGameWindowWeaveBackgroundConsole.on_exit = function (arg_3_0, arg_3_1)
 	arg_3_0:_play_sound("menu_wind_level_close")
 end
 
-StartGameWindowWeaveBackgroundConsole.update = function (arg_4_0, arg_4_1, arg_4_2)
+function StartGameWindowWeaveBackgroundConsole.update(arg_4_0, arg_4_1, arg_4_2)
 	if var_0_6 then
 		var_0_6 = false
 
@@ -101,11 +101,11 @@ StartGameWindowWeaveBackgroundConsole.update = function (arg_4_0, arg_4_1, arg_4
 	arg_4_0:draw(arg_4_1)
 end
 
-StartGameWindowWeaveBackgroundConsole.post_update = function (arg_5_0, arg_5_1, arg_5_2)
+function StartGameWindowWeaveBackgroundConsole.post_update(arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-StartGameWindowWeaveBackgroundConsole._update_animations = function (arg_6_0, arg_6_1, arg_6_2)
+function StartGameWindowWeaveBackgroundConsole._update_animations(arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._ui_animations
 	local var_6_1 = arg_6_0._animations
 	local var_6_2 = arg_6_0.ui_animator
@@ -135,7 +135,7 @@ StartGameWindowWeaveBackgroundConsole._update_animations = function (arg_6_0, ar
 	end
 end
 
-StartGameWindowWeaveBackgroundConsole._set_background_wheel_visibility = function (arg_7_0, arg_7_1)
+function StartGameWindowWeaveBackgroundConsole._set_background_wheel_visibility(arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._widgets_by_name
 	local var_7_1 = var_7_0.background_wheel_1
 	local var_7_2 = var_7_0.hdr_background_wheel_1
@@ -162,7 +162,7 @@ StartGameWindowWeaveBackgroundConsole._set_background_wheel_visibility = functio
 	arg_7_0._draw_background_wheel = arg_7_1
 end
 
-StartGameWindowWeaveBackgroundConsole._update_background_animations = function (arg_8_0, arg_8_1)
+function StartGameWindowWeaveBackgroundConsole._update_background_animations(arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._widgets_by_name
 
 	for iter_8_0 = 1, 2 do
@@ -193,7 +193,7 @@ StartGameWindowWeaveBackgroundConsole._update_background_animations = function (
 	arg_8_0:_set_background_bloom_intensity(var_8_14, var_8_12)
 end
 
-StartGameWindowWeaveBackgroundConsole._set_background_bloom_intensity = function (arg_9_0, arg_9_1, arg_9_2)
+function StartGameWindowWeaveBackgroundConsole._set_background_bloom_intensity(arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = 1.39
 	local var_9_1 = arg_9_2 and 10 or 2
 	local var_9_2 = var_9_0 + math.clamp(arg_9_1, 0, 1) * var_9_1
@@ -221,16 +221,16 @@ StartGameWindowWeaveBackgroundConsole._set_background_bloom_intensity = function
 	end
 end
 
-StartGameWindowWeaveBackgroundConsole._play_sound = function (arg_10_0, arg_10_1)
+function StartGameWindowWeaveBackgroundConsole._play_sound(arg_10_0, arg_10_1)
 	arg_10_0._parent:play_sound(arg_10_1)
 end
 
-StartGameWindowWeaveBackgroundConsole._exit = function (arg_11_0, arg_11_1)
+function StartGameWindowWeaveBackgroundConsole._exit(arg_11_0, arg_11_1)
 	arg_11_0.exit = true
 	arg_11_0.exit_level_id = arg_11_1
 end
 
-StartGameWindowWeaveBackgroundConsole.draw = function (arg_12_0, arg_12_1)
+function StartGameWindowWeaveBackgroundConsole.draw(arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._parent:ui_renderer()
 	local var_12_1 = arg_12_0._ui_top_renderer
 	local var_12_2 = arg_12_0._ui_hdr_renderer
@@ -261,23 +261,23 @@ StartGameWindowWeaveBackgroundConsole.draw = function (arg_12_0, arg_12_1)
 	UIRenderer.end_pass(var_12_2)
 end
 
-StartGameWindowWeaveBackgroundConsole._play_sound = function (arg_13_0, arg_13_1)
+function StartGameWindowWeaveBackgroundConsole._play_sound(arg_13_0, arg_13_1)
 	arg_13_0._parent:play_sound(arg_13_1)
 end
 
-StartGameWindowWeaveBackgroundConsole._animate_pulse = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+function StartGameWindowWeaveBackgroundConsole._animate_pulse(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	return (UIAnimation.init(UIAnimation.pulse_animation, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5))
 end
 
-StartGameWindowWeaveBackgroundConsole._animate_element_by_time = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+function StartGameWindowWeaveBackgroundConsole._animate_element_by_time(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, math.ease_out_quad))
 end
 
-StartGameWindowWeaveBackgroundConsole._animate_element_by_catmullrom = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8)
+function StartGameWindowWeaveBackgroundConsole._animate_element_by_catmullrom(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8))
 end
 
-StartGameWindowWeaveBackgroundConsole._animate_wheel_position = function (arg_17_0, arg_17_1)
+function StartGameWindowWeaveBackgroundConsole._animate_wheel_position(arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._parent:get_selected_layout_name()
 
 	arg_17_0._current_offset = arg_17_0._current_offset or {
@@ -331,7 +331,7 @@ StartGameWindowWeaveBackgroundConsole._animate_wheel_position = function (arg_17
 	arg_17_0._wheel_position_progress = var_17_3
 end
 
-StartGameWindowWeaveBackgroundConsole._animate_background_color = function (arg_18_0, arg_18_1, arg_18_2)
+function StartGameWindowWeaveBackgroundConsole._animate_background_color(arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0._parent:get_selected_layout_name()
 
 	arg_18_0._current_alpha = arg_18_0._current_alpha or 0

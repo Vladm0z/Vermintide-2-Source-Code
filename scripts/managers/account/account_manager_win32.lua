@@ -11,7 +11,7 @@ local function var_0_1(...)
 	print("[AccountManager] ", ...)
 end
 
-AccountManager.init = function (arg_2_0)
+function AccountManager.init(arg_2_0)
 	if HAS_STEAM then
 		arg_2_0._initial_user_id = Steam.user_id()
 	end
@@ -23,39 +23,39 @@ AccountManager.init = function (arg_2_0)
 	end
 end
 
-AccountManager.user_id = function (arg_3_0)
+function AccountManager.user_id(arg_3_0)
 	return arg_3_0._initial_user_id
 end
 
-AccountManager.update = function (arg_4_0, arg_4_1)
+function AccountManager.update(arg_4_0, arg_4_1)
 	return
 end
 
-AccountManager.sign_in = function (arg_5_0, arg_5_1)
+function AccountManager.sign_in(arg_5_0, arg_5_1)
 	Managers.state.event:trigger("account_user_signed_in")
 end
 
-AccountManager.num_signed_in_users = function (arg_6_0)
+function AccountManager.num_signed_in_users(arg_6_0)
 	return 1
 end
 
-AccountManager.user_detached = function (arg_7_0)
+function AccountManager.user_detached(arg_7_0)
 	return false
 end
 
-AccountManager.acitve_controller = function (arg_8_0)
+function AccountManager.acitve_controller(arg_8_0)
 	return
 end
 
-AccountManager.leaving_game = function (arg_9_0)
+function AccountManager.leaving_game(arg_9_0)
 	return
 end
 
-AccountManager.reset = function (arg_10_0)
+function AccountManager.reset(arg_10_0)
 	return
 end
 
-AccountManager.update_presence = function (arg_11_0)
+function AccountManager.update_presence(arg_11_0)
 	if DEDICATED_SERVER or not rawget(_G, "Presence") then
 		return
 	end
@@ -118,15 +118,15 @@ AccountManager.update_presence = function (arg_11_0)
 	end
 end
 
-AccountManager.set_controller_disconnected = function (arg_12_0, arg_12_1)
+function AccountManager.set_controller_disconnected(arg_12_0, arg_12_1)
 	return
 end
 
-AccountManager.controller_disconnected = function (arg_13_0)
+function AccountManager.controller_disconnected(arg_13_0)
 	return
 end
 
-AccountManager.get_friends = function (arg_14_0, arg_14_1, arg_14_2)
+function AccountManager.get_friends(arg_14_0, arg_14_1, arg_14_2)
 	if var_0_0 then
 		arg_14_2(SteamHelper.debug_friends())
 	elseif rawget(_G, "Steam") and rawget(_G, "Friends") then
@@ -136,21 +136,21 @@ AccountManager.get_friends = function (arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-AccountManager.set_current_lobby = function (arg_15_0, arg_15_1)
+function AccountManager.set_current_lobby(arg_15_0, arg_15_1)
 	return
 end
 
-AccountManager.all_sessions_cleaned_up = function (arg_16_0)
+function AccountManager.all_sessions_cleaned_up(arg_16_0)
 	return
 end
 
-AccountManager.send_session_invitation = function (arg_17_0, arg_17_1, arg_17_2)
+function AccountManager.send_session_invitation(arg_17_0, arg_17_1, arg_17_2)
 	if rawget(_G, "Steam") and rawget(_G, "Friends") then
 		Friends.invite(arg_17_1, arg_17_2)
 	end
 end
 
-AccountManager.show_player_profile = function (arg_18_0, arg_18_1)
+function AccountManager.show_player_profile(arg_18_0, arg_18_1)
 	if rawget(_G, "Steam") then
 		local var_18_0 = Steam.id_hex_to_dec(arg_18_1)
 		local var_18_1 = "http://steamcommunity.com/profiles/" .. var_18_0
@@ -159,11 +159,11 @@ AccountManager.show_player_profile = function (arg_18_0, arg_18_1)
 	end
 end
 
-AccountManager.account_id = function (arg_19_0)
+function AccountManager.account_id(arg_19_0)
 	return Network.peer_id()
 end
 
-AccountManager.active_controller = function (arg_20_0)
+function AccountManager.active_controller(arg_20_0)
 	local var_20_0 = Managers.input
 
 	if var_20_0:is_device_active("gamepad") then
@@ -173,62 +173,62 @@ AccountManager.active_controller = function (arg_20_0)
 	return nil
 end
 
-AccountManager.region = function (arg_21_0)
+function AccountManager.region(arg_21_0)
 	return arg_21_0._country_code
 end
 
-AccountManager.set_should_teardown_xboxlive = function (arg_22_0)
+function AccountManager.set_should_teardown_xboxlive(arg_22_0)
 	return
 end
 
-AccountManager.friends_list_initiated = function (arg_23_0)
+function AccountManager.friends_list_initiated(arg_23_0)
 	return
 end
 
-AccountManager.check_popup_retrigger = function (arg_24_0)
+function AccountManager.check_popup_retrigger(arg_24_0)
 	return
 end
 
-AccountManager.set_offline_mode = function (arg_25_0, arg_25_1)
+function AccountManager.set_offline_mode(arg_25_0, arg_25_1)
 	return
 end
 
-AccountManager.is_online = function (arg_26_0)
+function AccountManager.is_online(arg_26_0)
 	return not GameSettingsDevelopment.use_offline_backend
 end
 
-AccountManager.offline_mode = function (arg_27_0)
+function AccountManager.offline_mode(arg_27_0)
 	return GameSettingsDevelopment.use_offline_backend == true
 end
 
-AccountManager.has_fatal_error = function (arg_28_0)
+function AccountManager.has_fatal_error(arg_28_0)
 	return false
 end
 
-AccountManager.has_popup = function (arg_29_0)
+function AccountManager.has_popup(arg_29_0)
 	return false
 end
 
-AccountManager.cancel_all_popups = function (arg_30_0)
+function AccountManager.cancel_all_popups(arg_30_0)
 	return
 end
 
-AccountManager.has_session = function (arg_31_0)
+function AccountManager.has_session(arg_31_0)
 	return true
 end
 
-AccountManager.has_access = function (arg_32_0)
+function AccountManager.has_access(arg_32_0)
 	return false
 end
 
-AccountManager.should_throttle = function (arg_33_0)
+function AccountManager.should_throttle(arg_33_0)
 	return false
 end
 
-AccountManager.console_type_setting = function (arg_34_0)
+function AccountManager.console_type_setting(arg_34_0)
 	return true
 end
 
-AccountManager.initiate_leave_game = function (arg_35_0)
+function AccountManager.initiate_leave_game(arg_35_0)
 	return
 end

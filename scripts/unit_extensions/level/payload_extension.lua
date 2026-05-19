@@ -10,7 +10,7 @@ local var_0_3 = 0.01
 
 PayloadExtension = class(PayloadExtension)
 
-PayloadExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function PayloadExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 	local var_1_1 = Managers.state.network
 
@@ -79,28 +79,28 @@ PayloadExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._enemy_broadphase_categories = arg_1_0._side.enemy_broadphase_categories
 end
 
-PayloadExtension.activate = function (arg_2_0)
+function PayloadExtension.activate(arg_2_0)
 	arg_2_0._activated = true
 end
 
-PayloadExtension.deactivate = function (arg_3_0, arg_3_1)
+function PayloadExtension.deactivate(arg_3_0, arg_3_1)
 	arg_3_0._activated = false
 	arg_3_0._stop_command_given = arg_3_1
 end
 
-PayloadExtension.destroy = function (arg_4_0)
+function PayloadExtension.destroy(arg_4_0)
 	Managers.state.event:unregister("on_killed", arg_4_0)
 end
 
-PayloadExtension.extensions_ready = function (arg_5_0)
+function PayloadExtension.extensions_ready(arg_5_0)
 	return
 end
 
-PayloadExtension.hot_join_sync = function (arg_6_0, arg_6_1)
+function PayloadExtension.hot_join_sync(arg_6_0, arg_6_1)
 	return
 end
 
-PayloadExtension.init_payload = function (arg_7_0, arg_7_1)
+function PayloadExtension.init_payload(arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._unit
 
 	arg_7_0._spline_curve = arg_7_0:_init_movement_spline(arg_7_0._world, var_7_0, arg_7_1)
@@ -142,11 +142,11 @@ PayloadExtension.init_payload = function (arg_7_0, arg_7_1)
 	end
 end
 
-PayloadExtension.movement = function (arg_8_0)
+function PayloadExtension.movement(arg_8_0)
 	return arg_8_0._spline_curve:movement()
 end
 
-PayloadExtension._push_player = function (arg_9_0, arg_9_1, arg_9_2)
+function PayloadExtension._push_player(arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._unit
 	local var_9_1 = POSITION_LOOKUP[var_9_0]
 	local var_9_2, var_9_3 = Unit.box(var_9_0, true)
@@ -165,7 +165,7 @@ end
 local var_0_4 = {}
 local var_0_5 = {}
 
-PayloadExtension._hit_enemies = function (arg_10_0, arg_10_1, arg_10_2)
+function PayloadExtension._hit_enemies(arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._unit
 	local var_10_1 = POSITION_LOOKUP[var_10_0]
 	local var_10_2 = Vector3.flat(var_10_1)
@@ -222,7 +222,7 @@ PayloadExtension._hit_enemies = function (arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-PayloadExtension.update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+function PayloadExtension.update(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0, var_11_1 = arg_11_0:_players_in_proximity()
 	local var_11_2 = var_11_0 > 0
 	local var_11_3 = arg_11_0._unit
@@ -361,7 +361,7 @@ PayloadExtension.update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_
 	end
 end
 
-PayloadExtension.payload_flow_event = function (arg_12_0, arg_12_1)
+function PayloadExtension.payload_flow_event(arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._spline_curve:splines()[arg_12_1].metadata.flow_event_data.flow_event
 
 	LevelHelper:flow_event(arg_12_0._world, var_12_0)
@@ -369,7 +369,7 @@ end
 
 local var_0_6 = {}
 
-PayloadExtension._players_in_proximity = function (arg_13_0)
+function PayloadExtension._players_in_proximity(arg_13_0)
 	local var_13_0 = arg_13_0._side.PLAYER_UNITS
 	local var_13_1 = #var_13_0
 	local var_13_2 = POSITION_LOOKUP
@@ -391,7 +391,7 @@ PayloadExtension._players_in_proximity = function (arg_13_0)
 	return var_13_4, var_0_6
 end
 
-PayloadExtension._error_speed_calculation = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+function PayloadExtension._error_speed_calculation(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	local var_14_0 = GameSession.game_object_field(arg_14_3, arg_14_4, "spline_index")
 	local var_14_1 = GameSession.game_object_field(arg_14_3, arg_14_4, "subdivision_index")
 	local var_14_2 = GameSession.game_object_field(arg_14_3, arg_14_4, "spline_t")
@@ -415,7 +415,7 @@ PayloadExtension._error_speed_calculation = function (arg_14_0, arg_14_1, arg_14
 	return var_14_3.error_compensation_speed
 end
 
-PayloadExtension.set_game_object_id = function (arg_15_0, arg_15_1)
+function PayloadExtension.set_game_object_id(arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._game
 	local var_15_1 = GameSession.game_object_field(var_15_0, arg_15_1, "spline_index")
 	local var_15_2 = GameSession.game_object_field(var_15_0, arg_15_1, "subdivision_index")
@@ -431,7 +431,7 @@ end
 
 local var_0_7 = {}
 
-PayloadExtension._init_movement_spline = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+function PayloadExtension._init_movement_spline(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = Unit.get_data(arg_16_2, "spline_name")
 	local var_16_1 = LevelHelper:current_level(arg_16_1)
 	local var_16_2 = Level.spline(var_16_1, var_16_0)
@@ -504,7 +504,7 @@ PayloadExtension._init_movement_spline = function (arg_16_0, arg_16_1, arg_16_2,
 	return var_16_3
 end
 
-PayloadExtension._create_game_object = function (arg_17_0)
+function PayloadExtension._create_game_object(arg_17_0)
 	local var_17_0 = arg_17_0._unit
 	local var_17_1 = arg_17_0._spline_curve:movement()
 	local var_17_2 = var_17_1:current_spline_index()
@@ -524,19 +524,19 @@ PayloadExtension._create_game_object = function (arg_17_0)
 	arg_17_0._id = arg_17_0._network_manager:create_game_object("payload", var_17_6, var_17_7)
 end
 
-PayloadExtension.cb_game_session_disconnect = function (arg_18_0)
+function PayloadExtension.cb_game_session_disconnect(arg_18_0)
 	arg_18_0._game = nil
 end
 
-PayloadExtension.started = function (arg_19_0)
+function PayloadExtension.started(arg_19_0)
 	return arg_19_0._started
 end
 
-PayloadExtension.finished = function (arg_20_0)
+function PayloadExtension.finished(arg_20_0)
 	return arg_20_0._previous_status == "end"
 end
 
-PayloadExtension.increment_kill_stat = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+function PayloadExtension.increment_kill_stat(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 	if arg_21_4 == arg_21_0._unit then
 		local var_21_0 = Managers.player:local_player()
 		local var_21_1 = Managers.player:statistics_db()

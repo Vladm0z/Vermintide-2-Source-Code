@@ -18,7 +18,7 @@ local var_0_1 = {}
 
 script_data.debug_mission_system = script_data.debug_mission_system or Development.parameter("debug_mission_system")
 
-MissionSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
+function MissionSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	MissionSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	arg_1_0.active_missions = {}
@@ -43,7 +43,7 @@ MissionSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._use_level_progress = Managers.state.game_mode:setting("use_level_progress")
 end
 
-MissionSystem.create_checkpoint_data = function (arg_2_0)
+function MissionSystem.create_checkpoint_data(arg_2_0)
 	local var_2_0 = arg_2_0.world
 	local var_2_1 = {}
 	local var_2_2 = {}
@@ -79,7 +79,7 @@ MissionSystem.create_checkpoint_data = function (arg_2_0)
 	return var_2_1
 end
 
-MissionSystem.load_checkpoint_data = function (arg_3_0, arg_3_1)
+function MissionSystem.load_checkpoint_data(arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0.world
 
 	for iter_3_0, iter_3_1 in pairs(arg_3_1.completed_missions) do
@@ -98,7 +98,7 @@ MissionSystem.load_checkpoint_data = function (arg_3_0, arg_3_1)
 	end
 end
 
-MissionSystem.destroy = function (arg_4_0)
+function MissionSystem.destroy(arg_4_0)
 	arg_4_0.network_event_delegate:unregister(arg_4_0)
 
 	arg_4_0.network_event_delegate = nil
@@ -106,7 +106,7 @@ MissionSystem.destroy = function (arg_4_0)
 	arg_4_0.network_manager = nil
 end
 
-MissionSystem.update = function (arg_5_0, arg_5_1, arg_5_2)
+function MissionSystem.update(arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_1.dt
 	local var_5_1 = arg_5_0.active_missions
 
@@ -125,7 +125,7 @@ MissionSystem.update = function (arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-MissionSystem.request_mission = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function MissionSystem.request_mission(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_3 = arg_6_3 or false
 
 	local var_6_0 = NetworkLookup.mission_names[arg_6_1]
@@ -170,7 +170,7 @@ MissionSystem.request_mission = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	end
 end
 
-MissionSystem.start_mission = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+function MissionSystem.start_mission(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = Missions[arg_7_1]
 	local var_7_1 = var_7_0.mission_template_name
 	local var_7_2 = MissionTemplates[var_7_1]
@@ -203,11 +203,11 @@ MissionSystem.start_mission = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_
 	end
 end
 
-MissionSystem.block_mission_ui = function (arg_8_0, arg_8_1)
+function MissionSystem.block_mission_ui(arg_8_0, arg_8_1)
 	Managers.state.event:trigger("ui_event_block_mission_ui", arg_8_1)
 end
 
-MissionSystem.trigger_active_mission_ui_events = function (arg_9_0)
+function MissionSystem.trigger_active_mission_ui_events(arg_9_0)
 	for iter_9_0, iter_9_1 in pairs(arg_9_0.active_missions) do
 		if not Missions[iter_9_0].hidden and not iter_9_1.mission_data.is_side_mission then
 			Managers.state.event:trigger("ui_event_add_mission_objective", iter_9_0, iter_9_1.center_text or iter_9_1.text)
@@ -215,7 +215,7 @@ MissionSystem.trigger_active_mission_ui_events = function (arg_9_0)
 	end
 end
 
-MissionSystem.end_mission = function (arg_10_0, arg_10_1, arg_10_2)
+function MissionSystem.end_mission(arg_10_0, arg_10_1, arg_10_2)
 	fassert(arg_10_0.active_missions[arg_10_1], "No active mission with passed mission_name %q", arg_10_1)
 
 	local var_10_0 = arg_10_0.active_missions[arg_10_1]
@@ -246,7 +246,7 @@ MissionSystem.end_mission = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0.completed_missions[arg_10_1] = var_10_0
 end
 
-MissionSystem.reset_mission = function (arg_11_0, arg_11_1, arg_11_2)
+function MissionSystem.reset_mission(arg_11_0, arg_11_1, arg_11_2)
 	fassert(arg_11_0.active_missions[arg_11_1], "No active mission with passed mission_name %q", arg_11_1)
 
 	local var_11_0 = arg_11_0.active_missions[arg_11_1]
@@ -269,7 +269,7 @@ MissionSystem.reset_mission = function (arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-MissionSystem.update_mission = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+function MissionSystem.update_mission(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	fassert(arg_12_0.active_missions[arg_12_1], "No active mission with passed mission_name %q", arg_12_1)
 
 	local var_12_0 = arg_12_0.active_missions[arg_12_1]
@@ -296,7 +296,7 @@ MissionSystem.update_mission = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3,
 	end
 end
 
-MissionSystem.evaluate_level_end_missions = function (arg_13_0)
+function MissionSystem.evaluate_level_end_missions(arg_13_0)
 	local var_13_0 = arg_13_0.level_end_missions
 
 	for iter_13_0, iter_13_1 in pairs(var_13_0) do
@@ -306,13 +306,13 @@ MissionSystem.evaluate_level_end_missions = function (arg_13_0)
 	end
 end
 
-MissionSystem.debug_draw = function (arg_14_0, arg_14_1)
+function MissionSystem.debug_draw(arg_14_0, arg_14_1)
 	for iter_14_0, iter_14_1 in pairs(arg_14_0.active_missions) do
 		Debug.text(iter_14_1.text)
 	end
 end
 
-MissionSystem.hot_join_sync = function (arg_15_0, arg_15_1)
+function MissionSystem.hot_join_sync(arg_15_0, arg_15_1)
 	for iter_15_0, iter_15_1 in pairs(arg_15_0.active_missions) do
 		local var_15_0 = NetworkLookup.mission_names[iter_15_0]
 		local var_15_1 = iter_15_1.mission_data.mission_template_name
@@ -330,7 +330,7 @@ MissionSystem.hot_join_sync = function (arg_15_0, arg_15_1)
 	end
 end
 
-MissionSystem.flow_callback_start_mission = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+function MissionSystem.flow_callback_start_mission(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	if not arg_16_3 and not arg_16_0.is_server then
 		return
 	end
@@ -338,7 +338,7 @@ MissionSystem.flow_callback_start_mission = function (arg_16_0, arg_16_1, arg_16
 	arg_16_0:request_mission(arg_16_1, arg_16_2, arg_16_4)
 end
 
-MissionSystem.flow_callback_reset_mission = function (arg_17_0, arg_17_1)
+function MissionSystem.flow_callback_reset_mission(arg_17_0, arg_17_1)
 	if not arg_17_0.is_server then
 		return
 	end
@@ -354,7 +354,7 @@ MissionSystem.flow_callback_reset_mission = function (arg_17_0, arg_17_1)
 	end
 end
 
-MissionSystem.flow_callback_update_mission = function (arg_18_0, arg_18_1)
+function MissionSystem.flow_callback_update_mission(arg_18_0, arg_18_1)
 	if not arg_18_0.is_server then
 		return
 	end
@@ -367,7 +367,7 @@ MissionSystem.flow_callback_update_mission = function (arg_18_0, arg_18_1)
 	arg_18_0:update_mission(arg_18_1, true, nil, true)
 end
 
-MissionSystem.flow_callback_end_mission = function (arg_19_0, arg_19_1)
+function MissionSystem.flow_callback_end_mission(arg_19_0, arg_19_1)
 	if not arg_19_0.is_server then
 		return
 	end
@@ -375,20 +375,20 @@ MissionSystem.flow_callback_end_mission = function (arg_19_0, arg_19_1)
 	arg_19_0:end_mission(arg_19_1, true)
 end
 
-MissionSystem.rpc_start_mission = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+function MissionSystem.rpc_start_mission(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = NetworkLookup.mission_names[arg_20_2]
 
 	arg_20_0:start_mission(var_20_0, nil, arg_20_3)
 end
 
-MissionSystem.rpc_start_mission_with_unit = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+function MissionSystem.rpc_start_mission_with_unit(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	local var_21_0 = NetworkLookup.mission_names[arg_21_2]
 	local var_21_1 = Level.unit_by_index(LevelHelper:current_level(arg_21_0.world), arg_21_3)
 
 	arg_21_0:start_mission(var_21_0, var_21_1, arg_21_4)
 end
 
-MissionSystem.rpc_request_mission = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+function MissionSystem.rpc_request_mission(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	fassert(arg_22_0.is_server, "[MissionSystem] Request mission ended up on a client")
 
 	local var_22_0 = NetworkLookup.mission_names[arg_22_2]
@@ -396,7 +396,7 @@ MissionSystem.rpc_request_mission = function (arg_22_0, arg_22_1, arg_22_2, arg_
 	arg_22_0:request_mission(var_22_0, nil, arg_22_3)
 end
 
-MissionSystem.rpc_request_mission_with_unit = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+function MissionSystem.rpc_request_mission_with_unit(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	fassert(arg_23_0.is_server, "[MissionSystem] Request mission ended up on a client")
 
 	local var_23_0 = NetworkLookup.mission_names[arg_23_2]
@@ -405,7 +405,7 @@ MissionSystem.rpc_request_mission_with_unit = function (arg_23_0, arg_23_1, arg_
 	arg_23_0:request_mission(var_23_0, var_23_1, arg_23_4)
 end
 
-MissionSystem.rpc_request_mission_update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+function MissionSystem.rpc_request_mission_update(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	fassert(arg_24_0.is_server, "[MissionSystem] Request mission update ended up on a client")
 
 	local var_24_0 = NetworkLookup.mission_names[arg_24_2]
@@ -418,13 +418,13 @@ MissionSystem.rpc_request_mission_update = function (arg_24_0, arg_24_1, arg_24_
 	end
 end
 
-MissionSystem.rpc_end_mission = function (arg_25_0, arg_25_1, arg_25_2)
+function MissionSystem.rpc_end_mission(arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = NetworkLookup.mission_names[arg_25_2]
 
 	arg_25_0:end_mission(var_25_0)
 end
 
-MissionSystem.rpc_update_mission = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+function MissionSystem.rpc_update_mission(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	local var_26_0 = NetworkLookup.mission_names[arg_26_2]
 	local var_26_1 = arg_26_0.active_missions[var_26_0]
 
@@ -441,23 +441,23 @@ MissionSystem.rpc_update_mission = function (arg_26_0, arg_26_1, arg_26_2, arg_2
 	end
 end
 
-MissionSystem.get_missions = function (arg_27_0)
+function MissionSystem.get_missions(arg_27_0)
 	return arg_27_0.active_missions, arg_27_0.completed_missions
 end
 
-MissionSystem.has_active_mission = function (arg_28_0, arg_28_1)
+function MissionSystem.has_active_mission(arg_28_0, arg_28_1)
 	return arg_28_0.active_missions[arg_28_1] ~= nil
 end
 
-MissionSystem.get_level_end_mission_data = function (arg_29_0, arg_29_1)
+function MissionSystem.get_level_end_mission_data(arg_29_0, arg_29_1)
 	return arg_29_0.level_end_missions[arg_29_1]
 end
 
-MissionSystem.set_percentage_completed = function (arg_30_0, arg_30_1)
+function MissionSystem.set_percentage_completed(arg_30_0, arg_30_1)
 	arg_30_0._percentage_completed = arg_30_1
 end
 
-MissionSystem._update_level_progress = function (arg_31_0, arg_31_1)
+function MissionSystem._update_level_progress(arg_31_0, arg_31_1)
 	if arg_31_0.is_server then
 		local var_31_0 = Managers.state.conflict
 		local var_31_1 = arg_31_0._percentage_completed
@@ -476,13 +476,13 @@ MissionSystem._update_level_progress = function (arg_31_0, arg_31_1)
 	end
 end
 
-MissionSystem.override_percentage_completed = function (arg_32_0, arg_32_1)
+function MissionSystem.override_percentage_completed(arg_32_0, arg_32_1)
 	if arg_32_0.is_server then
 		arg_32_0._percentage_completed_override = arg_32_1
 	end
 end
 
-MissionSystem.percentages_completed = function (arg_33_0)
+function MissionSystem.percentages_completed(arg_33_0)
 	for iter_33_0, iter_33_1 in pairs(arg_33_0._percentage_completed) do
 		local var_33_0 = arg_33_0._percentage_completed_override or iter_33_1
 

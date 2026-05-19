@@ -12,7 +12,7 @@ local var_0_2 = {
 	skaven_stormfiend = "lua_closed_stormfiend"
 }
 
-BossDoorExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function BossDoorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 
 	arg_1_0.unit = arg_1_2
@@ -26,11 +26,11 @@ BossDoorExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.animation_stop_time = 0
 end
 
-BossDoorExtension.extensions_ready = function (arg_2_0)
+function BossDoorExtension.extensions_ready(arg_2_0)
 	return
 end
 
-BossDoorExtension.update_nav_obstacles = function (arg_3_0)
+function BossDoorExtension.update_nav_obstacles(arg_3_0)
 	local var_3_0 = arg_3_0.current_state
 	local var_3_1 = arg_3_0.state_to_nav_obstacle_map
 
@@ -41,7 +41,7 @@ BossDoorExtension.update_nav_obstacles = function (arg_3_0)
 	end
 end
 
-BossDoorExtension.set_door_state = function (arg_4_0, arg_4_1, arg_4_2)
+function BossDoorExtension.set_door_state(arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0.current_state == arg_4_1 then
 		return
 	end
@@ -64,11 +64,11 @@ BossDoorExtension.set_door_state = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.breed_name = arg_4_2
 end
 
-BossDoorExtension.get_current_state = function (arg_5_0)
+function BossDoorExtension.get_current_state(arg_5_0)
 	return arg_5_0.current_state
 end
 
-BossDoorExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+function BossDoorExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0.animation_stop_time
 
 	if var_6_0 and var_6_0 <= arg_6_5 then
@@ -78,7 +78,7 @@ BossDoorExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4
 	end
 end
 
-BossDoorExtension.hot_join_sync = function (arg_7_0, arg_7_1)
+function BossDoorExtension.hot_join_sync(arg_7_0, arg_7_1)
 	local var_7_0 = LevelHelper:current_level(arg_7_0.world)
 	local var_7_1 = Level.unit_index(var_7_0, arg_7_0.unit)
 	local var_7_2 = arg_7_0.current_state
@@ -90,14 +90,14 @@ BossDoorExtension.hot_join_sync = function (arg_7_0, arg_7_1)
 	RPC.rpc_sync_boss_door_state(var_7_6, var_7_1, var_7_3, var_7_5)
 end
 
-BossDoorExtension.destroy = function (arg_8_0)
+function BossDoorExtension.destroy(arg_8_0)
 	arg_8_0:destroy_box_obstacles()
 
 	arg_8_0.unit = nil
 	arg_8_0.world = nil
 end
 
-BossDoorExtension.destroy_box_obstacles = function (arg_9_0)
+function BossDoorExtension.destroy_box_obstacles(arg_9_0)
 	if arg_9_0.state_to_nav_obstacle_map then
 		for iter_9_0, iter_9_1 in pairs(arg_9_0.state_to_nav_obstacle_map) do
 			GwNavBoxObstacle.destroy(iter_9_1)
@@ -107,12 +107,12 @@ BossDoorExtension.destroy_box_obstacles = function (arg_9_0)
 	end
 end
 
-BossDoorExtension.animation_played = function (arg_10_0, arg_10_1, arg_10_2)
+function BossDoorExtension.animation_played(arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_1 / var_0_0 / arg_10_2
 
 	arg_10_0.animation_stop_time = Managers.time:time("game") + var_10_0
 end
 
-BossDoorExtension.is_open = function (arg_11_0)
+function BossDoorExtension.is_open(arg_11_0)
 	return arg_11_0.current_state == "open"
 end

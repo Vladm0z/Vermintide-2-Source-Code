@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTSelector = class(BTSelector, BTNode)
 
-BTSelector.init = function (arg_1_0, ...)
+function BTSelector.init(arg_1_0, ...)
 	BTSelector.super.init(arg_1_0, ...)
 
 	arg_1_0._children = {}
@@ -12,11 +12,11 @@ end
 
 BTSelector.name = "BTSelector"
 
-BTSelector.leave = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+function BTSelector.leave(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	arg_2_0:set_running_child(arg_2_1, arg_2_2, arg_2_3, nil, arg_2_4)
 end
 
-BTSelector.run = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+function BTSelector.run(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0:current_running_child(arg_3_2)
 
 	for iter_3_0, iter_3_1 in ipairs(arg_3_0._children) do
@@ -46,6 +46,6 @@ BTSelector.run = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return "failed"
 end
 
-BTSelector.add_child = function (arg_4_0, arg_4_1)
+function BTSelector.add_child(arg_4_0, arg_4_1)
 	arg_4_0._children[#arg_4_0._children + 1] = arg_4_1
 end

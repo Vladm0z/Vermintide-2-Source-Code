@@ -13,7 +13,7 @@ local var_0_0 = {
 	slot_ranged = "deus"
 }
 
-BackendInterfaceDeusBase.init = function (arg_1_0)
+function BackendInterfaceDeusBase.init(arg_1_0)
 	arg_1_0._extra_deus_inventory = {}
 	arg_1_0._loadouts = {}
 	arg_1_0._talent_ids = {}
@@ -39,26 +39,26 @@ BackendInterfaceDeusBase.init = function (arg_1_0)
 	Managers.backend:add_talents_interface_override("map_deus", "deus")
 end
 
-BackendInterfaceDeusBase.set_deus_loadout = function (arg_2_0, arg_2_1)
+function BackendInterfaceDeusBase.set_deus_loadout(arg_2_0, arg_2_1)
 	arg_2_0._loadouts = arg_2_1
 end
 
-BackendInterfaceDeusBase.set_deus_bot_loadout = function (arg_3_0, arg_3_1)
+function BackendInterfaceDeusBase.set_deus_bot_loadout(arg_3_0, arg_3_1)
 	arg_3_0._bot_loadouts = arg_3_1
 end
 
-BackendInterfaceDeusBase.reset_deus_inventory = function (arg_4_0)
+function BackendInterfaceDeusBase.reset_deus_inventory(arg_4_0)
 	arg_4_0._loadouts = nil
 	arg_4_0._bot_loadouts = nil
 
 	table.clear(arg_4_0._extra_deus_inventory)
 end
 
-BackendInterfaceDeusBase.ready = function (arg_5_0)
+function BackendInterfaceDeusBase.ready(arg_5_0)
 	return true
 end
 
-BackendInterfaceDeusBase.has_loadout_item_id = function (arg_6_0, arg_6_1, arg_6_2)
+function BackendInterfaceDeusBase.has_loadout_item_id(arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._loadouts[arg_6_1]
 
 	for iter_6_0, iter_6_1 in pairs(var_6_0) do
@@ -70,42 +70,42 @@ end
 
 local var_0_1 = IS_PS4 and math.uuid or Application.guid
 
-BackendInterfaceDeusBase.refresh_deus_weapons_in_items_backend = function (arg_7_0)
+function BackendInterfaceDeusBase.refresh_deus_weapons_in_items_backend(arg_7_0)
 	Managers.backend:get_interface("items"):refresh_game_mode_specific_items()
 end
 
-BackendInterfaceDeusBase.get_talent_tree = function (arg_8_0, arg_8_1)
+function BackendInterfaceDeusBase.get_talent_tree(arg_8_0, arg_8_1)
 	return nil
 end
 
-BackendInterfaceDeusBase.get_talents = function (arg_9_0, arg_9_1)
+function BackendInterfaceDeusBase.get_talents(arg_9_0, arg_9_1)
 	return nil
 end
 
-BackendInterfaceDeusBase.get_talent_ids = function (arg_10_0, arg_10_1)
+function BackendInterfaceDeusBase.get_talent_ids(arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._talent_ids[arg_10_1]
 
 	return var_10_0 and table.clone(var_10_0) or {}
 end
 
-BackendInterfaceDeusBase.set_deus_talent_ids = function (arg_11_0, arg_11_1, arg_11_2)
+function BackendInterfaceDeusBase.set_deus_talent_ids(arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0._talent_ids[arg_11_1] = arg_11_2
 end
 
-BackendInterfaceDeusBase.grant_deus_weapon = function (arg_12_0, arg_12_1)
+function BackendInterfaceDeusBase.grant_deus_weapon(arg_12_0, arg_12_1)
 	arg_12_1.backend_id = arg_12_1.data.item_type .. var_0_1()
 	arg_12_0._extra_deus_inventory[arg_12_1.backend_id] = arg_12_1
 
 	return arg_12_1.backend_id
 end
 
-BackendInterfaceDeusBase.get_loadout_item_id = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+function BackendInterfaceDeusBase.get_loadout_item_id(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	fassert(arg_13_0._valid_loadout_slots[arg_13_2], "[BackendInterfaceDeusBase] Loadout in slot %q shouldn't be fetched from the deus interface", tostring(arg_13_2))
 
 	return (arg_13_3 and arg_13_0._bot_loadouts or arg_13_0._loadouts)[arg_13_1][arg_13_2]
 end
 
-BackendInterfaceDeusBase.set_loadout_item = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+function BackendInterfaceDeusBase.set_loadout_item(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	fassert(arg_14_0._valid_loadout_slots[arg_14_3], "[BackendInterfaceDeusBase] Loadout in slot %q shouldn't be set in the deus interface", tostring(arg_14_3))
 
 	if arg_14_1 then
@@ -119,11 +119,11 @@ BackendInterfaceDeusBase.set_loadout_item = function (arg_14_0, arg_14_1, arg_14
 	end
 end
 
-BackendInterfaceDeusBase.get_loadout_item = function (arg_15_0, arg_15_1)
+function BackendInterfaceDeusBase.get_loadout_item(arg_15_0, arg_15_1)
 	return arg_15_0._extra_deus_inventory[arg_15_1]
 end
 
-BackendInterfaceDeusBase.get_total_power_level = function (arg_16_0, arg_16_1, arg_16_2)
+function BackendInterfaceDeusBase.get_total_power_level(arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._loadouts[arg_16_2]
 	local var_16_1 = var_16_0 and var_16_0.slot_melee
 	local var_16_2 = var_16_0 and var_16_0.slot_ranged
@@ -143,31 +143,31 @@ BackendInterfaceDeusBase.get_total_power_level = function (arg_16_0, arg_16_1, a
 	return (var_16_4 > 0 and var_16_3 / var_16_4 or 0) + PowerLevelFromLevelSettings.starting_power_level
 end
 
-BackendInterfaceDeusBase.get_rolled_over_soft_currency = function (arg_17_0)
+function BackendInterfaceDeusBase.get_rolled_over_soft_currency(arg_17_0)
 	ferror("must be implemented by subclass")
 end
 
-BackendInterfaceDeusBase.deus_run_started = function (arg_18_0)
+function BackendInterfaceDeusBase.deus_run_started(arg_18_0)
 	ferror("must be implemented by subclass")
 end
 
-BackendInterfaceDeusBase.get_journey_cycle = function (arg_19_0)
+function BackendInterfaceDeusBase.get_journey_cycle(arg_19_0)
 	ferror("must be implemented by subclass")
 end
 
-BackendInterfaceDeusBase.refresh_belakor_cycle = function (arg_20_0)
+function BackendInterfaceDeusBase.refresh_belakor_cycle(arg_20_0)
 	ferror("must be implemented by subclass")
 end
 
-BackendInterfaceDeusBase.has_loaded_belakor_data = function (arg_21_0)
+function BackendInterfaceDeusBase.has_loaded_belakor_data(arg_21_0)
 	ferror("must be implemented by subclass")
 end
 
-BackendInterfaceDeusBase.set_has_loaded_belakor_data = function (arg_22_0, arg_22_1)
+function BackendInterfaceDeusBase.set_has_loaded_belakor_data(arg_22_0, arg_22_1)
 	ferror("must be implemented by subclass")
 end
 
-BackendInterfaceDeusBase._generate_journey_cycle = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+function BackendInterfaceDeusBase._generate_journey_cycle(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = arg_23_3 % #DeusJourneyCycleGods
 	local var_23_1 = {}
 
@@ -186,15 +186,15 @@ BackendInterfaceDeusBase._generate_journey_cycle = function (arg_23_0, arg_23_1,
 	}
 end
 
-BackendInterfaceDeusBase._generate_belakor_curse_cycle = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+function BackendInterfaceDeusBase._generate_belakor_curse_cycle(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	ferror("must be implemented by subclass")
 end
 
-BackendInterfaceDeusBase.debug_clear_meta_progression = function (arg_25_0)
+function BackendInterfaceDeusBase.debug_clear_meta_progression(arg_25_0)
 	arg_25_0:_debug_clear_meta_progression()
 	Managers.backend:commit()
 end
 
-BackendInterfaceDeusBase.write_player_event = function (arg_26_0, arg_26_1, arg_26_2)
+function BackendInterfaceDeusBase.write_player_event(arg_26_0, arg_26_1, arg_26_2)
 	ferror("must be implemented by subclass")
 end

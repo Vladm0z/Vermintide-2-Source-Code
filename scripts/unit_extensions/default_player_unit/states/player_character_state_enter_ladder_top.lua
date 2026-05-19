@@ -2,7 +2,7 @@
 
 PlayerCharacterStateEnterLadderTop = class(PlayerCharacterStateEnterLadderTop, PlayerCharacterState)
 
-PlayerCharacterStateEnterLadderTop.init = function (arg_1_0, arg_1_1)
+function PlayerCharacterStateEnterLadderTop.init(arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "enter_ladder_top")
 
 	local var_1_0 = arg_1_1
@@ -11,14 +11,14 @@ PlayerCharacterStateEnterLadderTop.init = function (arg_1_0, arg_1_1)
 	arg_1_0.wanted_forward_bonus_velocity = Vector3Box()
 end
 
-PlayerCharacterStateEnterLadderTop.on_enter_animation_event = function (arg_2_0, arg_2_1)
+function PlayerCharacterStateEnterLadderTop.on_enter_animation_event(arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_0.unit
 
 	CharacterStateHelper.play_animation_event_with_variable_float(var_2_0, "climb_top_enter_ladder", "climb_enter_exit_speed", arg_2_1)
 	arg_2_0.first_person_extension:play_animation_event("climb_enter_ladder")
 end
 
-PlayerCharacterStateEnterLadderTop.on_enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+function PlayerCharacterStateEnterLadderTop.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	local var_3_0 = arg_3_0.unit
 
 	CharacterStateHelper.stop_weapon_actions(arg_3_0.inventory_extension, "ladder")
@@ -50,7 +50,7 @@ PlayerCharacterStateEnterLadderTop.on_enter = function (arg_3_0, arg_3_1, arg_3_
 	var_3_5:set_mover_filter_property("ladder", true)
 end
 
-PlayerCharacterStateEnterLadderTop.on_exit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+function PlayerCharacterStateEnterLadderTop.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	local var_4_0 = arg_4_0.locomotion_extension
 
 	if arg_4_6 and arg_4_6 ~= "climbing_ladder" then
@@ -78,7 +78,7 @@ PlayerCharacterStateEnterLadderTop.on_exit = function (arg_4_0, arg_4_1, arg_4_2
 	var_4_0:set_mover_filter_property("ladder", false)
 end
 
-PlayerCharacterStateEnterLadderTop.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+function PlayerCharacterStateEnterLadderTop.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.unit
 	local var_5_2 = arg_5_0.input_extension

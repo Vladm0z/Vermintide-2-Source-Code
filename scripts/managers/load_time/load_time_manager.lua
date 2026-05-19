@@ -2,7 +2,7 @@
 
 LoadTimeManager = class(LoadTimeManager)
 
-LoadTimeManager.init = function (arg_1_0)
+function LoadTimeManager.init(arg_1_0)
 	arg_1_0._previous_level_key = "none"
 	arg_1_0._members_joined = {}
 	arg_1_0._members_left = {}
@@ -11,7 +11,7 @@ LoadTimeManager.init = function (arg_1_0)
 	arg_1_0._current_lobby = nil
 end
 
-LoadTimeManager.start_timer = function (arg_2_0, arg_2_1, arg_2_2)
+function LoadTimeManager.start_timer(arg_2_0, arg_2_1, arg_2_2)
 	if Managers.time:has_timer("loading_timer") then
 		Managers.time:unregister_timer("loading_timer")
 	end
@@ -28,7 +28,7 @@ LoadTimeManager.start_timer = function (arg_2_0, arg_2_1, arg_2_2)
 	table.clear(arg_2_0._members)
 end
 
-LoadTimeManager.set_lobby = function (arg_3_0, arg_3_1)
+function LoadTimeManager.set_lobby(arg_3_0, arg_3_1)
 	arg_3_0._current_lobby = arg_3_1
 
 	local var_3_0 = arg_3_0._current_lobby:members():get_members()
@@ -38,7 +38,7 @@ LoadTimeManager.set_lobby = function (arg_3_0, arg_3_1)
 	end
 end
 
-LoadTimeManager.has_lobby = function (arg_4_0)
+function LoadTimeManager.has_lobby(arg_4_0)
 	if arg_4_0._lobby_failed then
 		return false
 	end
@@ -46,7 +46,7 @@ LoadTimeManager.has_lobby = function (arg_4_0)
 	return arg_4_0._current_lobby ~= nil
 end
 
-LoadTimeManager.update = function (arg_5_0, arg_5_1)
+function LoadTimeManager.update(arg_5_0, arg_5_1)
 	if not arg_5_0._current_lobby then
 		return
 	end
@@ -98,7 +98,7 @@ end
 
 local var_0_0 = {}
 
-LoadTimeManager.end_timer = function (arg_6_0)
+function LoadTimeManager.end_timer(arg_6_0)
 	table.clear(var_0_0)
 
 	local var_6_0 = "unknown"
@@ -140,7 +140,7 @@ LoadTimeManager.end_timer = function (arg_6_0)
 	arg_6_0._lobby_failed = false
 end
 
-LoadTimeManager.destroy = function (arg_7_0)
+function LoadTimeManager.destroy(arg_7_0)
 	if Managers.time and Managers.time:has_timer("loading_timer") then
 		Managers.time:unregister_timer("loading_timer")
 	end

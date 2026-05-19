@@ -7,7 +7,7 @@ local var_0_2 = var_0_0.scenegraph_definition
 StartGameWindowAdventureMode = class(StartGameWindowAdventureMode)
 StartGameWindowAdventureMode.NAME = "StartGameWindowAdventureMode"
 
-StartGameWindowAdventureMode.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
+function StartGameWindowAdventureMode.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowAdventureMode")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -31,7 +31,7 @@ StartGameWindowAdventureMode.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.parent:set_play_button_enabled(true)
 end
 
-StartGameWindowAdventureMode.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
+function StartGameWindowAdventureMode.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -60,21 +60,21 @@ StartGameWindowAdventureMode.create_ui_elements = function (arg_2_0, arg_2_1, ar
 	end
 end
 
-StartGameWindowAdventureMode.on_exit = function (arg_3_0, arg_3_1)
+function StartGameWindowAdventureMode.on_exit(arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowAdventureMode")
 
 	arg_3_0.ui_animator = nil
 end
 
-StartGameWindowAdventureMode.update = function (arg_4_0, arg_4_1, arg_4_2)
+function StartGameWindowAdventureMode.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-StartGameWindowAdventureMode.post_update = function (arg_5_0, arg_5_1, arg_5_2)
+function StartGameWindowAdventureMode.post_update(arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-StartGameWindowAdventureMode.draw = function (arg_6_0, arg_6_1)
+function StartGameWindowAdventureMode.draw(arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.ui_renderer
 	local var_6_1 = arg_6_0.ui_scenegraph
 	local var_6_2 = arg_6_0.parent:window_input_service()

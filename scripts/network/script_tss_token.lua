@@ -2,13 +2,13 @@
 
 ScriptTssToken = class(ScriptTssToken)
 
-ScriptTssToken.init = function (arg_1_0, arg_1_1)
+function ScriptTssToken.init(arg_1_0, arg_1_1)
 	arg_1_0._token = arg_1_1
 	arg_1_0._done = false
 	arg_1_0._result = nil
 end
 
-ScriptTssToken.update = function (arg_2_0)
+function ScriptTssToken.update(arg_2_0)
 	local var_2_0 = arg_2_0._token
 	local var_2_1 = Tss.has_result(var_2_0)
 
@@ -20,16 +20,16 @@ ScriptTssToken.update = function (arg_2_0)
 	end
 end
 
-ScriptTssToken.info = function (arg_3_0)
+function ScriptTssToken.info(arg_3_0)
 	return {
 		result = arg_3_0._result
 	}
 end
 
-ScriptTssToken.done = function (arg_4_0)
+function ScriptTssToken.done(arg_4_0)
 	return arg_4_0._done
 end
 
-ScriptTssToken.close = function (arg_5_0)
+function ScriptTssToken.close(arg_5_0)
 	Tus.free(arg_5_0._token)
 end

@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTSpawningAction = class(BTSpawningAction, BTNode)
 
-BTSpawningAction.init = function (arg_1_0, ...)
+function BTSpawningAction.init(arg_1_0, ...)
 	BTSpawningAction.super.init(arg_1_0, ...)
 end
 
@@ -12,7 +12,7 @@ BTSpawningAction.name = "BTSpawningAction"
 
 local var_0_0 = Unit.alive
 
-BTSpawningAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function BTSpawningAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 
 	Unit.set_animation_root_mode(arg_2_1, "ignore")
@@ -65,7 +65,7 @@ BTSpawningAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0:_play_spawning_effect(arg_2_1)
 end
 
-BTSpawningAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+function BTSpawningAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.spawn = nil
 	arg_3_2.spawning_finished = nil
 	arg_3_2.spawn_last_pos = nil
@@ -115,7 +115,7 @@ BTSpawningAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, 
 	end
 end
 
-BTSpawningAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+function BTSpawningAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.breed
 
 	if var_4_0.interrupt_spawning_on_stagger and arg_4_2.stagger then
@@ -213,7 +213,7 @@ local var_0_1 = {
 	float = "rpc_anim_set_variable_float"
 }
 
-BTSpawningAction._apply_anim_varations = function (arg_5_0, arg_5_1)
+function BTSpawningAction._apply_anim_varations(arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._tree_node.action_data
 
 	if var_5_0 then
@@ -247,7 +247,7 @@ BTSpawningAction._apply_anim_varations = function (arg_5_0, arg_5_1)
 	end
 end
 
-BTSpawningAction._play_spawning_effect = function (arg_6_0, arg_6_1)
+function BTSpawningAction._play_spawning_effect(arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._tree_node.action_data
 	local var_6_1 = var_6_0 and var_6_0.spawning_effect
 

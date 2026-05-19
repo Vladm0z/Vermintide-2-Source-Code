@@ -17,7 +17,7 @@ local var_0_1 = {
 				uninterruptible = true,
 				anim_event = "attack_throw",
 				total_time = 0.7,
-				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {},
@@ -55,7 +55,7 @@ local var_0_1 = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.8,
-				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {
@@ -68,7 +68,7 @@ local var_0_1 = {
 					}
 				},
 				push_radius = var_0_0,
-				condition_func = function (arg_3_0, arg_3_1)
+				condition_func = function(arg_3_0, arg_3_1)
 					return not ScriptUnit.extension(arg_3_0, "status_system"):fatigued()
 				end
 			}
@@ -87,7 +87,7 @@ local var_0_1 = {
 				uninterruptible = true,
 				anim_event = "attack_throw",
 				total_time = 0.7,
-				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {},
@@ -231,6 +231,38 @@ var_0_8.actions.action_dropped.default.projectile_info = {
 	projectile_unit_name = "units/weapons/player/pup_whale_oil_barrel/pup_whale_oil_barrel_01"
 }
 
+local var_0_9 = table.clone(var_0_1)
+
+var_0_9.left_hand_unit = "units/weapons/player/wpn_dwarf_barrel_01/wpn_dwarf_barrel_01"
+var_0_9.actions.action_one.default.projectile_info = {
+	projectile_unit_template_name = "explosive_pickup_projectile_unit",
+	pickup_name = "dwarf_explosive_barrel",
+	drop_on_player_destroyed = true,
+	projectile_unit_name = "units/weapons/player/pup_dwarf_barrel_01/pup_dwarf_barrel_01"
+}
+var_0_9.actions.action_dropped.default.projectile_info = {
+	projectile_unit_template_name = "explosive_pickup_projectile_unit",
+	pickup_name = "dwarf_explosive_barrel",
+	drop_on_player_destroyed = true,
+	projectile_unit_name = "units/weapons/player/pup_dwarf_barrel_01/pup_dwarf_barrel_01"
+}
+
+local var_0_10 = table.clone(var_0_1)
+
+var_0_10.left_hand_unit = "units/weapons/player/wpn_dwarf_barrel_02/wpn_dwarf_barrel_02"
+var_0_10.actions.action_one.default.projectile_info = {
+	projectile_unit_template_name = "pickup_projectile_unit",
+	pickup_name = "dwarf_beer_barrel",
+	drop_on_player_destroyed = true,
+	projectile_unit_name = "units/weapons/player/pup_dwarf_barrel_02/pup_dwarf_barrel_02"
+}
+var_0_10.actions.action_dropped.default.projectile_info = {
+	projectile_unit_template_name = "pickup_projectile_unit",
+	pickup_name = "dwarf_beer_barrel",
+	drop_on_player_destroyed = true,
+	projectile_unit_name = "units/weapons/player/pup_dwarf_barrel_02/pup_dwarf_barrel_02"
+}
+
 return {
 	explosive_barrel = var_0_2,
 	explosive_barrel_objective = var_0_3,
@@ -238,5 +270,7 @@ return {
 	beer_barrel = var_0_7,
 	magic_barrel = var_0_4,
 	wizards_barrel = var_0_5,
-	whale_oil_barrel = var_0_8
+	whale_oil_barrel = var_0_8,
+	dwarf_explosive_barrel = var_0_9,
+	dwarf_beer_barrel = var_0_10
 }

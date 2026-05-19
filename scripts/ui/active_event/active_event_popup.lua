@@ -4,7 +4,7 @@ require("scripts/ui/dlc_upsell/common_popup")
 
 ActiveEventPopup = class(ActiveEventPopup, CommonPopup)
 
-ActiveEventPopup.create_ui_elements = function (arg_1_0)
+function ActiveEventPopup.create_ui_elements(arg_1_0)
 	ActiveEventPopup.super.create_ui_elements(arg_1_0)
 
 	local var_1_0 = arg_1_0._common_settings
@@ -69,7 +69,7 @@ ActiveEventPopup.create_ui_elements = function (arg_1_0)
 	arg_1_0._action_button_widgets[#arg_1_0._action_button_widgets].content.button_hotspot.is_selected = true
 end
 
-ActiveEventPopup.update = function (arg_2_0, arg_2_1)
+function ActiveEventPopup.update(arg_2_0, arg_2_1)
 	if arg_2_0:should_show() and not arg_2_0._has_widget_been_closed then
 		arg_2_0:show()
 	end
@@ -77,7 +77,7 @@ ActiveEventPopup.update = function (arg_2_0, arg_2_1)
 	ActiveEventPopup.super.update(arg_2_0, arg_2_1)
 end
 
-ActiveEventPopup.draw = function (arg_3_0, arg_3_1)
+function ActiveEventPopup.draw(arg_3_0, arg_3_1)
 	ActiveEventPopup.super.draw(arg_3_0, arg_3_1)
 
 	local var_3_0 = arg_3_0._ui_top_renderer
@@ -96,7 +96,7 @@ ActiveEventPopup.draw = function (arg_3_0, arg_3_1)
 	arg_3_0:_update_scrolling_background(arg_3_1)
 end
 
-ActiveEventPopup._handle_input = function (arg_4_0, arg_4_1)
+function ActiveEventPopup._handle_input(arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0:_get_input_service()
 	local var_4_1 = arg_4_0._widgets_by_name
 	local var_4_2 = Managers.input:is_device_active("gamepad")
@@ -132,7 +132,7 @@ ActiveEventPopup._handle_input = function (arg_4_0, arg_4_1)
 	end
 end
 
-ActiveEventPopup._handle_gamepad_selection = function (arg_5_0, arg_5_1, arg_5_2)
+function ActiveEventPopup._handle_gamepad_selection(arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0._action_button_widgets then
 		local var_5_0 = arg_5_0._action_button_widgets
 		local var_5_1 = arg_5_0._selected_button_idx
@@ -153,7 +153,7 @@ ActiveEventPopup._handle_gamepad_selection = function (arg_5_0, arg_5_1, arg_5_2
 	end
 end
 
-ActiveEventPopup._handle_mouse_selection = function (arg_6_0, arg_6_1, arg_6_2)
+function ActiveEventPopup._handle_mouse_selection(arg_6_0, arg_6_1, arg_6_2)
 	if arg_6_0._action_button_widgets then
 		local var_6_0 = arg_6_0._action_button_widgets
 
@@ -183,14 +183,14 @@ ActiveEventPopup._handle_mouse_selection = function (arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-ActiveEventPopup._on_close = function (arg_7_0, arg_7_1)
+function ActiveEventPopup._on_close(arg_7_0, arg_7_1)
 	arg_7_0._has_widget_been_closed = true
 
 	arg_7_0:release_input()
 	arg_7_0:hide(arg_7_1)
 end
 
-ActiveEventPopup.show = function (arg_8_0)
+function ActiveEventPopup.show(arg_8_0)
 	ActiveEventPopup.super.show(arg_8_0)
 	arg_8_0:_start_transition_animation("on_enter")
 	arg_8_0:play_sound("Play_gui_event_ui_open")
@@ -200,7 +200,7 @@ ActiveEventPopup.show = function (arg_8_0)
 	World.set_data(var_8_0, "fullscreen_blur", 0.5)
 end
 
-ActiveEventPopup.hide = function (arg_9_0, arg_9_1)
+function ActiveEventPopup.hide(arg_9_0, arg_9_1)
 	arg_9_0._exit_anim_id = arg_9_0:_start_transition_animation("on_exit", arg_9_1)
 
 	local var_9_0 = Managers.world:world("level_world")
@@ -208,7 +208,7 @@ ActiveEventPopup.hide = function (arg_9_0, arg_9_1)
 	World.set_data(var_9_0, "fullscreen_blur", nil)
 end
 
-ActiveEventPopup._start_transition_animation = function (arg_10_0, arg_10_1, arg_10_2)
+function ActiveEventPopup._start_transition_animation(arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = {
 		wwise_world = arg_10_0._wwise_world,
 		render_settings = arg_10_0._render_settings
@@ -223,7 +223,7 @@ ActiveEventPopup._start_transition_animation = function (arg_10_0, arg_10_1, arg
 	return arg_10_0._ui_animator:start_animation(arg_10_1, nil, arg_10_0._definitions.scenegraph_definition, var_10_0)
 end
 
-ActiveEventPopup._update_animations = function (arg_11_0, arg_11_1)
+function ActiveEventPopup._update_animations(arg_11_0, arg_11_1)
 	ActiveEventPopup.super._update_animations(arg_11_0, arg_11_1)
 
 	if arg_11_0._exit_anim_id and arg_11_0._ui_animator:is_animation_completed(arg_11_0._exit_anim_id) then
@@ -235,11 +235,11 @@ ActiveEventPopup._update_animations = function (arg_11_0, arg_11_1)
 	UIWidgetUtils.animate_default_button(var_11_0.close_button, arg_11_1)
 end
 
-ActiveEventPopup.should_show = function (arg_12_0)
+function ActiveEventPopup.should_show(arg_12_0)
 	return arg_12_0._ui_context.is_in_inn and Managers.popup:has_popup() == false and arg_12_0._ui_context.ingame_ui.current_view == nil and arg_12_0._ui_context.ingame_ui.has_left_menu and not arg_12_0._is_visible
 end
 
-ActiveEventPopup._update_scrolling_background = function (arg_13_0, arg_13_1)
+function ActiveEventPopup._update_scrolling_background(arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._widgets_by_name.window_background
 	local var_13_1 = 100 + 150 * math.sin(Managers.time:time("ui") * 0.1)
 

@@ -2,7 +2,7 @@
 
 ActionChargedProjectileUtility = {}
 
-ActionChargedProjectileUtility.prepare_charged_projectile = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+function ActionChargedProjectileUtility.prepare_charged_projectile(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	local var_1_0 = ScriptUnit.extension(arg_1_1, "overcharge_system")
 	local var_1_1 = ScriptUnit.extension(arg_1_1, "buff_system")
 	local var_1_2 = ScriptUnit.has_extension(arg_1_2, "ammo_system")
@@ -36,7 +36,7 @@ ActionChargedProjectileUtility.prepare_charged_projectile = function (arg_1_0, a
 	return var_1_4
 end
 
-ActionChargedProjectileUtility.fire_charged_projectile = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+function ActionChargedProjectileUtility.fire_charged_projectile(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	local var_2_0 = arg_2_0.action_data
 	local var_2_1 = var_2_0.overcharge_type
 	local var_2_2 = arg_2_0.buff_extension
@@ -213,7 +213,7 @@ end
 
 ActionChargedProjectile = class(ActionChargedProjectile, ActionBase)
 
-ActionChargedProjectile.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
+function ActionChargedProjectile.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
 	ActionChargedProjectile.super.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
 
 	if ScriptUnit.has_extension(arg_3_7, "spread_system") then
@@ -223,7 +223,7 @@ ActionChargedProjectile.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg
 	arg_3_0._weapon_unit = arg_3_7
 end
 
-ActionChargedProjectile.client_owner_start_action = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+function ActionChargedProjectile.client_owner_start_action(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	ActionChargedProjectile.super.client_owner_start_action(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
 	local var_4_0 = arg_4_0.owner_unit
@@ -266,7 +266,7 @@ ActionChargedProjectile.client_owner_start_action = function (arg_4_0, arg_4_1, 
 	arg_4_0._is_critical_strike = var_4_1
 end
 
-ActionChargedProjectile.client_owner_post_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+function ActionChargedProjectile.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_0.state == "waiting_to_shoot" and arg_5_2 >= arg_5_0.time_to_shoot then
 		arg_5_0.state = "shooting"
 	end
@@ -286,7 +286,7 @@ ActionChargedProjectile.client_owner_post_update = function (arg_5_0, arg_5_1, a
 	end
 end
 
-ActionChargedProjectile._update_extra_shots = function (arg_6_0, arg_6_1, arg_6_2)
+function ActionChargedProjectile._update_extra_shots(arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._projectile_context
 
 	if var_6_0.is_grenade then
@@ -302,7 +302,7 @@ ActionChargedProjectile._update_extra_shots = function (arg_6_0, arg_6_1, arg_6_
 	return ActionChargedProjectile.super._update_extra_shots(arg_6_0, arg_6_1, arg_6_2)
 end
 
-ActionChargedProjectile._shoot = function (arg_7_0, arg_7_1)
+function ActionChargedProjectile._shoot(arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._projectile_context
 	local var_7_1 = var_7_0.action_data
 	local var_7_2 = arg_7_0.owner_unit
@@ -355,7 +355,7 @@ ActionChargedProjectile._shoot = function (arg_7_0, arg_7_1)
 	end
 end
 
-ActionChargedProjectile.finish = function (arg_8_0, arg_8_1)
+function ActionChargedProjectile.finish(arg_8_0, arg_8_1)
 	if arg_8_0.state == "waiting_to_shoot" then
 		arg_8_0.state = "shot"
 

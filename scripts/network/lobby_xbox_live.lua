@@ -24,7 +24,7 @@ LobbyInternal.state_map = {
 	[MultiplayerSession.BROKEN] = LobbyState.FAILED
 }
 
-LobbyInternal.init_client = function (arg_1_0)
+function LobbyInternal.init_client(arg_1_0)
 	if not LobbyInternal.client then
 		if not Network.xboxlive_client_exists() then
 			Network.init_xboxlive_client(arg_1_0.config_file_name)
@@ -36,7 +36,7 @@ LobbyInternal.init_client = function (arg_1_0)
 	GameSettingsDevelopment.set_ignored_rpc_logs()
 end
 
-LobbyInternal.create_lobby = function (arg_2_0, arg_2_1, arg_2_2)
+function LobbyInternal.create_lobby(arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_1 or Application.guid()
 	local var_2_1 = arg_2_2 or LobbyInternal.SESSION_TEMPLATE_NAME
 	local var_2_2 = Network.create_multiplayer_session_host(Managers.account:user_id(), var_2_0, var_2_1, {
@@ -47,19 +47,19 @@ LobbyInternal.create_lobby = function (arg_2_0, arg_2_1, arg_2_2)
 	return XboxLiveLobby:new(var_2_2, var_2_0, var_2_1, var_2_3)
 end
 
-LobbyInternal.network_initialized = function ()
+function LobbyInternal.network_initialized()
 	return not not LobbyInternal.client
 end
 
-LobbyInternal.ping = function (arg_4_0)
+function LobbyInternal.ping(arg_4_0)
 	return Network.ping(arg_4_0)
 end
 
-LobbyInternal.leave_lobby = function (arg_5_0)
+function LobbyInternal.leave_lobby(arg_5_0)
 	arg_5_0:leave()
 end
 
-LobbyInternal.join_lobby = function (arg_6_0)
+function LobbyInternal.join_lobby(arg_6_0)
 	print("JOINING LOBBY")
 
 	for iter_6_0, iter_6_1 in pairs(arg_6_0) do
@@ -77,7 +77,7 @@ LobbyInternal.join_lobby = function (arg_6_0)
 	return XboxLiveLobby:new(var_6_3, var_6_1, var_6_2, var_6_4)
 end
 
-LobbyInternal.shutdown_client = function ()
+function LobbyInternal.shutdown_client()
 	if LobbyInternal.xbox_live_lobby_browser then
 		LobbyInternal.xbox_live_lobby_browser:destroy()
 
@@ -85,7 +85,7 @@ LobbyInternal.shutdown_client = function ()
 	end
 end
 
-LobbyInternal.open_channel = function (arg_8_0, arg_8_1)
+function LobbyInternal.open_channel(arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0:session_id()
 	local var_8_1 = MultiplayerSession.open_channel(var_8_0, arg_8_1)
 
@@ -94,18 +94,18 @@ LobbyInternal.open_channel = function (arg_8_0, arg_8_1)
 	return var_8_1
 end
 
-LobbyInternal.close_channel = function (arg_9_0, arg_9_1)
+function LobbyInternal.close_channel(arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0:session_id()
 
 	printf("LobbyInternal.close_channel session: %s, channel: %s", var_9_0, arg_9_1)
 	MultiplayerSession.close_channel(var_9_0, arg_9_1)
 end
 
-LobbyInternal.is_orphaned = function (arg_10_0)
+function LobbyInternal.is_orphaned(arg_10_0)
 	return false
 end
 
-LobbyInternal.shutdown_xboxlive_client = function ()
+function LobbyInternal.shutdown_xboxlive_client()
 	if Network.xboxlive_client_exists() then
 		Network.shutdown_xboxlive_client()
 	end
@@ -113,7 +113,7 @@ LobbyInternal.shutdown_xboxlive_client = function ()
 	LobbyInternal.client = nil
 end
 
-LobbyInternal.get_lobby = function (arg_12_0, arg_12_1)
+function LobbyInternal.get_lobby(arg_12_0, arg_12_1)
 	local var_12_0 = {}
 	local var_12_1 = table.clone(arg_12_0:lobby(arg_12_1))
 
@@ -129,41 +129,41 @@ LobbyInternal.get_lobby = function (arg_12_0, arg_12_1)
 	return var_12_0
 end
 
-LobbyInternal.lobby_browser = function ()
+function LobbyInternal.lobby_browser()
 	return LobbyInternal.xbox_live_lobby_browser
 end
 
-LobbyInternal.get_lobby_data_from_id = function (arg_14_0)
+function LobbyInternal.get_lobby_data_from_id(arg_14_0)
 	return nil
 end
 
-LobbyInternal.get_lobby_data_from_id_by_key = function (arg_15_0, arg_15_1)
+function LobbyInternal.get_lobby_data_from_id_by_key(arg_15_0, arg_15_1)
 	return nil
 end
 
-LobbyInternal.clear_filter_requirements = function ()
+function LobbyInternal.clear_filter_requirements()
 	return
 end
 
-LobbyInternal.add_filter_requirements = function (arg_17_0)
+function LobbyInternal.add_filter_requirements(arg_17_0)
 	return
 end
 
-LobbyInternal.lobby_id = function (arg_18_0)
+function LobbyInternal.lobby_id(arg_18_0)
 	return arg_18_0:id()
 end
 
-LobbyInternal.session_id = function (arg_19_0)
+function LobbyInternal.session_id(arg_19_0)
 	return arg_19_0:id()
 end
 
-LobbyInternal.is_friend = function (arg_20_0)
+function LobbyInternal.is_friend(arg_20_0)
 	print("LobbyInternal.is_friend() is not implemented on the xb1")
 
 	return false
 end
 
-LobbyInternal.set_max_members = function (arg_21_0, arg_21_1)
+function LobbyInternal.set_max_members(arg_21_0, arg_21_1)
 	ferror("set_max_members not supported on platform.")
 end
 
@@ -234,7 +234,7 @@ local var_0_4 = {
 
 XboxLiveLobby = class(XboxLiveLobby)
 
-XboxLiveLobby.init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+function XboxLiveLobby.init(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	arg_24_0._user_id = Managers.account:user_id()
 	arg_24_0._session_id = arg_24_1
 	arg_24_0._data = {}
@@ -265,11 +265,11 @@ XboxLiveLobby.init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	end
 end
 
-XboxLiveLobby.set_hosting = function (arg_25_0, arg_25_1)
+function XboxLiveLobby.set_hosting(arg_25_0, arg_25_1)
 	arg_25_0._is_hosting = arg_25_1
 end
 
-XboxLiveLobby.enable_smartmatch = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+function XboxLiveLobby.enable_smartmatch(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	fassert(arg_26_1 and arg_26_2 ~= nil or not arg_26_1, "You need to supply ticket_params if you want to enable matchmaking")
 
 	arg_26_0._hopper_name = arg_26_4 or LobbyInternal.HOPPER_NAME
@@ -281,7 +281,7 @@ XboxLiveLobby.enable_smartmatch = function (arg_26_0, arg_26_1, arg_26_2, arg_26
 	arg_26_0:_cancel_matchmaking()
 end
 
-XboxLiveLobby.reissue_smartmatch_ticket = function (arg_27_0, arg_27_1, arg_27_2)
+function XboxLiveLobby.reissue_smartmatch_ticket(arg_27_0, arg_27_1, arg_27_2)
 	fassert(arg_27_0._smartmatch_enabled, "[XboxLiveLobby] You need to be matchmaking to be able to reissue a ticket")
 
 	arg_27_0._smartmatch_ticket_params = arg_27_1
@@ -289,7 +289,7 @@ XboxLiveLobby.reissue_smartmatch_ticket = function (arg_27_0, arg_27_1, arg_27_2
 	arg_27_0._reissue_host_smartmatch_ticket = true
 end
 
-XboxLiveLobby._cancel_matchmaking = function (arg_28_0)
+function XboxLiveLobby._cancel_matchmaking(arg_28_0)
 	if arg_28_0._smartmatch_in_progress then
 		local var_28_0 = {
 			destroy_session = false,
@@ -315,7 +315,7 @@ XboxLiveLobby._cancel_matchmaking = function (arg_28_0)
 	arg_28_0._smartmatch_in_progress = false
 end
 
-XboxLiveLobby.state = function (arg_29_0)
+function XboxLiveLobby.state(arg_29_0)
 	local var_29_0 = MultiplayerSession.status(arg_29_0._session_id)
 
 	if arg_29_0._friends_to_invite and var_29_0 == MultiplayerSession.READY and not Managers.account:user_detached() then
@@ -333,7 +333,7 @@ XboxLiveLobby.state = function (arg_29_0)
 	return var_29_0
 end
 
-XboxLiveLobby.ready = function (arg_30_0)
+function XboxLiveLobby.ready(arg_30_0)
 	if not arg_30_0._smartmatch_enabled then
 		return true
 	end
@@ -341,15 +341,15 @@ XboxLiveLobby.ready = function (arg_30_0)
 	return arg_30_0._smartmatch_state == MultiplayerSession.READY
 end
 
-XboxLiveLobby.invite_friends_list = function (arg_31_0, arg_31_1)
+function XboxLiveLobby.invite_friends_list(arg_31_0, arg_31_1)
 	arg_31_0._friends_to_invite = arg_31_1
 end
 
-XboxLiveLobby.force_update_data = function (arg_32_0)
+function XboxLiveLobby.force_update_data(arg_32_0)
 	arg_32_0._client_update_lobby_data = true
 end
 
-XboxLiveLobby.update_data = function (arg_33_0, arg_33_1)
+function XboxLiveLobby.update_data(arg_33_0, arg_33_1)
 	if Managers.account:user_detached() then
 		return
 	end
@@ -414,11 +414,11 @@ XboxLiveLobby.update_data = function (arg_33_0, arg_33_1)
 	end
 end
 
-XboxLiveLobby.is_updating_lobby_data = function (arg_34_0)
+function XboxLiveLobby.is_updating_lobby_data(arg_34_0)
 	return arg_34_0._client_update_lobby_data or arg_34_0._data_update_status_id or arg_34_0._waiting_for_result or arg_34_0._data_needs_update
 end
 
-XboxLiveLobby.update_activity = function (arg_35_0, arg_35_1, arg_35_2)
+function XboxLiveLobby.update_activity(arg_35_0, arg_35_1, arg_35_2)
 	if Managers.account:user_detached() then
 		return
 	end
@@ -451,7 +451,7 @@ XboxLiveLobby.update_activity = function (arg_35_0, arg_35_1, arg_35_2)
 	end
 end
 
-XboxLiveLobby.update_host_matchmaking = function (arg_36_0, arg_36_1)
+function XboxLiveLobby.update_host_matchmaking(arg_36_0, arg_36_1)
 	if MultiplayerSession.status(arg_36_0._session_id) ~= MultiplayerSession.READY or not arg_36_0._smartmatch_enabled or Managers.account:user_detached() then
 		return
 	end
@@ -460,7 +460,7 @@ XboxLiveLobby.update_host_matchmaking = function (arg_36_0, arg_36_1)
 	arg_36_0:_handle_smartmatching_tickets(arg_36_1)
 end
 
-XboxLiveLobby._update_smartmatching = function (arg_37_0, arg_37_1)
+function XboxLiveLobby._update_smartmatching(arg_37_0, arg_37_1)
 	if not arg_37_0._smartmatch_in_progress then
 		return
 	end
@@ -526,7 +526,7 @@ XboxLiveLobby._update_smartmatching = function (arg_37_0, arg_37_1)
 	arg_37_0._smartmatch_state = var_37_1
 end
 
-XboxLiveLobby._handle_smartmatching_tickets = function (arg_38_0, arg_38_1)
+function XboxLiveLobby._handle_smartmatching_tickets(arg_38_0, arg_38_1)
 	if arg_38_0._smartmatch_in_progress then
 		return
 	end
@@ -559,7 +559,7 @@ XboxLiveLobby._handle_smartmatching_tickets = function (arg_38_0, arg_38_1)
 	var_0_0("######### Created smartmatch session broadcast for lobby host #########")
 end
 
-XboxLiveLobby._convert_to_json = function (arg_39_0, arg_39_1, arg_39_2)
+function XboxLiveLobby._convert_to_json(arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = var_0_3[arg_39_1]
 
 	fassert(var_39_0, "[SmartMatch::_convert_to_json] No such hopper_name:  %s", arg_39_1)
@@ -602,7 +602,7 @@ XboxLiveLobby._convert_to_json = function (arg_39_0, arg_39_1, arg_39_2)
 	end
 end
 
-XboxLiveLobby._create_smartmatch_broadcast = function (arg_40_0, arg_40_1)
+function XboxLiveLobby._create_smartmatch_broadcast(arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_1 or 600
 	local var_40_1 = PreserveSessionMode.ALWAYS
 
@@ -647,15 +647,15 @@ XboxLiveLobby._create_smartmatch_broadcast = function (arg_40_0, arg_40_1)
 	arg_40_0._smartmatch_user_id = Managers.account:user_id()
 end
 
-XboxLiveLobby.session_id = function (arg_41_0)
+function XboxLiveLobby.session_id(arg_41_0)
 	return arg_41_0._session_id
 end
 
-XboxLiveLobby.session_template_name = function (arg_42_0)
+function XboxLiveLobby.session_template_name(arg_42_0)
 	return arg_42_0._session_template_name
 end
 
-XboxLiveLobby.leave = function (arg_43_0)
+function XboxLiveLobby.leave(arg_43_0)
 	var_0_0("Destroying Lobby --> session_id: %s - session_name: %s", arg_43_0._session_id, arg_43_0._data.session_name)
 
 	arg_43_0._activity_set = false
@@ -682,16 +682,16 @@ XboxLiveLobby.leave = function (arg_43_0)
 	end
 end
 
-XboxLiveLobby.free = function (arg_44_0)
+function XboxLiveLobby.free(arg_44_0)
 	Network.free_multiplayer_session(arg_44_0._session_id)
 end
 
-XboxLiveLobby.set_data = function (arg_45_0, arg_45_1, arg_45_2)
+function XboxLiveLobby.set_data(arg_45_0, arg_45_1, arg_45_2)
 	arg_45_0._data[arg_45_1] = arg_45_2
 	arg_45_0._data_needs_update = true
 end
 
-XboxLiveLobby.set_data_table = function (arg_46_0, arg_46_1)
+function XboxLiveLobby.set_data_table(arg_46_0, arg_46_1)
 	for iter_46_0, iter_46_1 in pairs(arg_46_1) do
 		arg_46_0._data[iter_46_0] = iter_46_1
 	end
@@ -699,11 +699,11 @@ XboxLiveLobby.set_data_table = function (arg_46_0, arg_46_1)
 	arg_46_0._data_needs_update = true
 end
 
-XboxLiveLobby.data = function (arg_47_0, arg_47_1)
+function XboxLiveLobby.data(arg_47_0, arg_47_1)
 	return arg_47_0._data[arg_47_1]
 end
 
-XboxLiveLobby.members = function (arg_48_0)
+function XboxLiveLobby.members(arg_48_0)
 	local var_48_0 = {}
 	local var_48_1 = MultiplayerSession.members(arg_48_0._session_id)
 
@@ -714,7 +714,7 @@ XboxLiveLobby.members = function (arg_48_0)
 	return var_48_0
 end
 
-XboxLiveLobby.update_user_names = function (arg_49_0)
+function XboxLiveLobby.update_user_names(arg_49_0)
 	local var_49_0 = MultiplayerSession.members(arg_49_0._session_id)
 
 	for iter_49_0, iter_49_1 in pairs(var_49_0) do
@@ -722,7 +722,7 @@ XboxLiveLobby.update_user_names = function (arg_49_0)
 	end
 end
 
-XboxLiveLobby.user_name = function (arg_50_0, arg_50_1)
+function XboxLiveLobby.user_name(arg_50_0, arg_50_1)
 	local var_50_0 = MultiplayerSession.members(arg_50_0._session_id)
 
 	for iter_50_0, iter_50_1 in pairs(var_50_0) do
@@ -736,7 +736,7 @@ XboxLiveLobby.user_name = function (arg_50_0, arg_50_1)
 	return arg_50_0._gamertags[arg_50_1]
 end
 
-XboxLiveLobby.xuid = function (arg_51_0, arg_51_1)
+function XboxLiveLobby.xuid(arg_51_0, arg_51_1)
 	local var_51_0 = MultiplayerSession.members(arg_51_0._session_id)
 
 	for iter_51_0, iter_51_1 in pairs(var_51_0) do
@@ -746,21 +746,21 @@ XboxLiveLobby.xuid = function (arg_51_0, arg_51_1)
 	end
 end
 
-XboxLiveLobby.lobby_host = function (arg_52_0)
+function XboxLiveLobby.lobby_host(arg_52_0)
 	return MultiplayerSession.host_peer(arg_52_0._session_id)
 end
 
-XboxLiveLobby.try_claim_host = function (arg_53_0)
+function XboxLiveLobby.try_claim_host(arg_53_0)
 	MultiplayerSession.try_claim_session(arg_53_0._session_id)
 end
 
-XboxLiveLobby.id = function (arg_54_0)
+function XboxLiveLobby.id(arg_54_0)
 	return 1000
 end
 
 XboxLiveLobbyBrowser = class(XboxLiveLobbyBrowser)
 
-XboxLiveLobbyBrowser.init = function (arg_55_0, arg_55_1, arg_55_2)
+function XboxLiveLobbyBrowser.init(arg_55_0, arg_55_1, arg_55_2)
 	arg_55_0._network_hash = "network_hash:" .. LobbyAux.create_network_hash(arg_55_2.config_file_name, arg_55_2.project_hash)
 	arg_55_0._user_id = arg_55_1
 	arg_55_0._session_browsing_id = Network.start_session_browsing(arg_55_1, arg_55_0._network_hash, LobbyInternal.SESSION_TEMPLATE_NAME)
@@ -769,7 +769,7 @@ end
 
 LOBBIES = LOBBIES or {}
 
-XboxLiveLobbyBrowser.is_refreshing = function (arg_56_0)
+function XboxLiveLobbyBrowser.is_refreshing(arg_56_0)
 	if not arg_56_0._session_browsing_id then
 		return false
 	end
@@ -788,19 +788,19 @@ XboxLiveLobbyBrowser.is_refreshing = function (arg_56_0)
 	return false
 end
 
-XboxLiveLobbyBrowser.num_lobbies = function (arg_57_0)
+function XboxLiveLobbyBrowser.num_lobbies(arg_57_0)
 	return #arg_57_0._lobbies
 end
 
-XboxLiveLobbyBrowser.refresh = function (arg_58_0)
+function XboxLiveLobbyBrowser.refresh(arg_58_0)
 	arg_58_0._session_browsing_id = Network.start_session_browsing(arg_58_0._user_id, arg_58_0._network_hash, LobbyInternal.SESSION_TEMPLATE_NAME)
 end
 
-XboxLiveLobbyBrowser.lobby = function (arg_59_0, arg_59_1)
+function XboxLiveLobbyBrowser.lobby(arg_59_0, arg_59_1)
 	return arg_59_0._lobbies[arg_59_1 + 1]
 end
 
-XboxLiveLobbyBrowser.destroy = function (arg_60_0)
+function XboxLiveLobbyBrowser.destroy(arg_60_0)
 	if arg_60_0._session_browsing_id then
 		Network.free_session_browsing(arg_60_0._session_browsing_id)
 	end

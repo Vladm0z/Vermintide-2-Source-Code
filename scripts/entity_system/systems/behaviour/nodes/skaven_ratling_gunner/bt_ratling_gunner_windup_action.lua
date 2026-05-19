@@ -5,11 +5,11 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTRatlingGunnerWindUpAction = class(BTRatlingGunnerWindUpAction, BTNode)
 BTRatlingGunnerWindUpAction.name = "BTRatlingGunnerWindUpAction"
 
-BTRatlingGunnerWindUpAction.init = function (arg_1_0, ...)
+function BTRatlingGunnerWindUpAction.init(arg_1_0, ...)
 	BTRatlingGunnerWindUpAction.super.init(arg_1_0, ...)
 end
 
-BTRatlingGunnerWindUpAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function BTRatlingGunnerWindUpAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 	local var_2_1 = arg_2_2.attack_pattern_data or {}
 	local var_2_2, var_2_3, var_2_4 = PerceptionUtils.pick_ratling_gun_target(arg_2_1, arg_2_2)
@@ -60,7 +60,7 @@ BTRatlingGunnerWindUpAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3
 	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.walk_speed)
 end
 
-BTRatlingGunnerWindUpAction._update_target = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+function BTRatlingGunnerWindUpAction._update_target(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0, var_3_1, var_3_2 = PerceptionUtils.pick_ratling_gun_target(arg_3_1, arg_3_2)
 
 	if var_3_0 then
@@ -94,7 +94,7 @@ BTRatlingGunnerWindUpAction._update_target = function (arg_3_0, arg_3_1, arg_3_2
 	end
 end
 
-BTRatlingGunnerWindUpAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+function BTRatlingGunnerWindUpAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	AiUtils.clear_temp_anim_event(arg_4_1)
 
 	arg_4_2.anim_cb_attack_windup_start_finished = nil
@@ -110,7 +110,7 @@ BTRatlingGunnerWindUpAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3
 	AiUtils.clear_anim_event(var_4_2)
 end
 
-BTRatlingGunnerWindUpAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+function BTRatlingGunnerWindUpAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.attack_pattern_data
 
 	if var_5_0.abort_windup then

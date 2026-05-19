@@ -4,11 +4,11 @@ local var_0_0 = true
 
 ImguiVersusCharacterPickingDebug = class(ImguiVersusCharacterPickingDebug)
 
-ImguiVersusCharacterPickingDebug.init = function (arg_1_0)
+function ImguiVersusCharacterPickingDebug.init(arg_1_0)
 	arg_1_0._initialized = false
 end
 
-ImguiVersusCharacterPickingDebug._initialize = function (arg_2_0)
+function ImguiVersusCharacterPickingDebug._initialize(arg_2_0)
 	local var_2_0 = Managers.mechanism:game_mechanism()
 
 	if var_2_0.name ~= "Versus" then
@@ -39,7 +39,7 @@ ImguiVersusCharacterPickingDebug._initialize = function (arg_2_0)
 	arg_2_0._initialized = true
 end
 
-ImguiVersusCharacterPickingDebug.update = function (arg_3_0)
+function ImguiVersusCharacterPickingDebug.update(arg_3_0)
 	if var_0_0 then
 		arg_3_0:init()
 
@@ -56,17 +56,17 @@ ImguiVersusCharacterPickingDebug.update = function (arg_3_0)
 	arg_3_0._pick_data_per_party = arg_3_0._party_selection_logic._pick_data_per_party
 end
 
-ImguiVersusCharacterPickingDebug.is_persistent = function (arg_4_0)
+function ImguiVersusCharacterPickingDebug.is_persistent(arg_4_0)
 	return true
 end
 
-ImguiVersusCharacterPickingDebug._same_line_dummy = function (arg_5_0, arg_5_1, arg_5_2)
+function ImguiVersusCharacterPickingDebug._same_line_dummy(arg_5_0, arg_5_1, arg_5_2)
 	Imgui.same_line()
 	Imgui.dummy(arg_5_1, arg_5_2)
 	Imgui.same_line()
 end
 
-ImguiVersusCharacterPickingDebug.draw = function (arg_6_0, arg_6_1)
+function ImguiVersusCharacterPickingDebug.draw(arg_6_0, arg_6_1)
 	local var_6_0 = Imgui.begin_window("Versus Character Picking Debug", "always_auto_resize")
 
 	arg_6_0:_draw_settings()
@@ -85,7 +85,7 @@ ImguiVersusCharacterPickingDebug.draw = function (arg_6_0, arg_6_1)
 	return var_6_0
 end
 
-ImguiVersusCharacterPickingDebug._draw_settings = function (arg_7_0)
+function ImguiVersusCharacterPickingDebug._draw_settings(arg_7_0)
 	Imgui.text("Settings")
 	Imgui.indent()
 	arg_7_0:_draw_selection_settings()
@@ -94,7 +94,7 @@ ImguiVersusCharacterPickingDebug._draw_settings = function (arg_7_0)
 	Imgui.unindent()
 end
 
-ImguiVersusCharacterPickingDebug._draw_time_settings = function (arg_8_0)
+function ImguiVersusCharacterPickingDebug._draw_time_settings(arg_8_0)
 	local var_8_0 = Imgui.slider_float("Startup Time", arg_8_0._startup_time, 0, 60)
 
 	if arg_8_0._is_server and var_8_0 ~= arg_8_0._startup_time then
@@ -129,7 +129,7 @@ ImguiVersusCharacterPickingDebug._draw_time_settings = function (arg_8_0)
 	end
 end
 
-ImguiVersusCharacterPickingDebug._draw_timer = function (arg_9_0)
+function ImguiVersusCharacterPickingDebug._draw_timer(arg_9_0)
 	Imgui.text("Timer")
 	Imgui.indent()
 
@@ -152,7 +152,7 @@ ImguiVersusCharacterPickingDebug._draw_timer = function (arg_9_0)
 	Imgui.unindent()
 end
 
-ImguiVersusCharacterPickingDebug._draw_selection_settings = function (arg_10_0)
+function ImguiVersusCharacterPickingDebug._draw_selection_settings(arg_10_0)
 	local var_10_0 = Imgui.checkbox("Same Hero Allowed", arg_10_0._same_hero_allowed)
 
 	if arg_10_0._is_server and var_10_0 ~= arg_10_0._same_hero_allowed then
@@ -168,7 +168,7 @@ ImguiVersusCharacterPickingDebug._draw_selection_settings = function (arg_10_0)
 	end
 end
 
-ImguiVersusCharacterPickingDebug._draw_party_data = function (arg_11_0)
+function ImguiVersusCharacterPickingDebug._draw_party_data(arg_11_0)
 	local var_11_0 = arg_11_0._pick_data_per_party
 
 	Imgui.text("Party Data")
@@ -222,7 +222,7 @@ ImguiVersusCharacterPickingDebug._draw_party_data = function (arg_11_0)
 	end
 end
 
-ImguiVersusCharacterPickingDebug._draw_player_data = function (arg_12_0)
+function ImguiVersusCharacterPickingDebug._draw_player_data(arg_12_0)
 	local var_12_0 = arg_12_0._pick_data_per_party
 
 	Imgui.text("Player Data")
@@ -282,7 +282,7 @@ ImguiVersusCharacterPickingDebug._draw_player_data = function (arg_12_0)
 	end
 end
 
-ImguiVersusCharacterPickingDebug._draw_pick_data = function (arg_13_0)
+function ImguiVersusCharacterPickingDebug._draw_pick_data(arg_13_0)
 	local var_13_0 = arg_13_0._pick_data_per_party
 
 	Imgui.unindent()
@@ -320,7 +320,7 @@ ImguiVersusCharacterPickingDebug._draw_pick_data = function (arg_13_0)
 			end
 
 			for iter_13_6, iter_13_7 in ipairs(var_13_2) do
-				-- Nothing
+				-- block empty
 			end
 
 			Imgui.tree_pop()

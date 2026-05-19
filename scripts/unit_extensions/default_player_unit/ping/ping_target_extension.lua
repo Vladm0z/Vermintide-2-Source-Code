@@ -2,7 +2,7 @@
 
 PingTargetExtension = class(PingTargetExtension)
 
-PingTargetExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function PingTargetExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._unit = arg_1_2
 	arg_1_0._pinged = 0
@@ -15,13 +15,13 @@ PingTargetExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-PingTargetExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
+function PingTargetExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._outline_extension = ScriptUnit.has_extension(arg_2_2, "outline_system")
 	arg_2_0._buff_extension = ScriptUnit.has_extension(arg_2_2, "buff_system")
 	arg_2_0._locomotion_extension = ScriptUnit.has_extension(arg_2_2, "locomotion_system")
 end
 
-PingTargetExtension.set_pinged = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+function PingTargetExtension.set_pinged(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0._unit
 
 	arg_3_4 = arg_3_4 == nil and true or arg_3_4
@@ -75,19 +75,19 @@ PingTargetExtension.set_pinged = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	end
 end
 
-PingTargetExtension.pinged = function (arg_4_0)
+function PingTargetExtension.pinged(arg_4_0)
 	return arg_4_0._pinged > 0
 end
 
-PingTargetExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+function PingTargetExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	return
 end
 
-PingTargetExtension.destroy = function (arg_6_0)
+function PingTargetExtension.destroy(arg_6_0)
 	return
 end
 
-PingTargetExtension._add_witch_hunter_buff = function (arg_7_0, arg_7_1)
+function PingTargetExtension._add_witch_hunter_buff(arg_7_0, arg_7_1)
 	if not Managers.state.network.is_server then
 		return
 	end

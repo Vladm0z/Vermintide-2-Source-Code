@@ -4,7 +4,7 @@ require("scripts/helpers/cosmetic_utils")
 
 PlayerUnitCosmeticExtension = class(PlayerUnitCosmeticExtension)
 
-PlayerUnitCosmeticExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function PlayerUnitCosmeticExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._unit = arg_1_2
 	arg_1_0._profile = arg_1_3.profile
@@ -54,7 +54,7 @@ PlayerUnitCosmeticExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0:_init_mesh_attachment(arg_1_0._world, arg_1_2, var_1_0, var_1_2, var_1_7)
 end
 
-PlayerUnitCosmeticExtension.destroy = function (arg_2_0)
+function PlayerUnitCosmeticExtension.destroy(arg_2_0)
 	if arg_2_0._tp_unit_mesh then
 		AttachmentUtils.unlink(arg_2_0._world, arg_2_0._tp_unit_mesh)
 		Managers.state.unit_spawner:mark_for_deletion(arg_2_0._tp_unit_mesh)
@@ -63,7 +63,7 @@ PlayerUnitCosmeticExtension.destroy = function (arg_2_0)
 	end
 end
 
-PlayerUnitCosmeticExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
+function PlayerUnitCosmeticExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._status_extension = ScriptUnit.extension(arg_3_2, "status_system")
 	arg_3_0._attachment_extension = ScriptUnit.extension(arg_3_2, "attachment_system")
 
@@ -91,26 +91,26 @@ PlayerUnitCosmeticExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3
 	end
 end
 
-PlayerUnitCosmeticExtension.get_equipped_skin = function (arg_4_0)
+function PlayerUnitCosmeticExtension.get_equipped_skin(arg_4_0)
 	return arg_4_0._cosmetics.skin
 end
 
-PlayerUnitCosmeticExtension.get_equipped_frame = function (arg_5_0)
+function PlayerUnitCosmeticExtension.get_equipped_frame(arg_5_0)
 	return arg_5_0._cosmetics.frame
 end
 
-PlayerUnitCosmeticExtension.set_equipped_frame = function (arg_6_0, arg_6_1)
+function PlayerUnitCosmeticExtension.set_equipped_frame(arg_6_0, arg_6_1)
 	arg_6_0._cosmetics.frame = Cosmetics[arg_6_1]
 	arg_6_0._frame_name = arg_6_1
 
 	CosmeticUtils.update_cosmetic_slot(arg_6_0._player, "slot_frame", arg_6_1)
 end
 
-PlayerUnitCosmeticExtension.get_equipped_frame_name = function (arg_7_0)
+function PlayerUnitCosmeticExtension.get_equipped_frame_name(arg_7_0)
 	return arg_7_0._frame_name
 end
 
-PlayerUnitCosmeticExtension.change_skin_materials = function (arg_8_0, arg_8_1)
+function PlayerUnitCosmeticExtension.change_skin_materials(arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._unit
 	local var_8_1 = arg_8_0._tp_unit_mesh
 	local var_8_2 = arg_8_1.third_person
@@ -134,7 +134,7 @@ PlayerUnitCosmeticExtension.change_skin_materials = function (arg_8_0, arg_8_1)
 	end
 end
 
-PlayerUnitCosmeticExtension.change_skin_material_settings = function (arg_9_0, arg_9_1)
+function PlayerUnitCosmeticExtension.change_skin_material_settings(arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._unit
 	local var_9_1 = arg_9_0._tp_unit_mesh
 
@@ -149,7 +149,7 @@ PlayerUnitCosmeticExtension.change_skin_material_settings = function (arg_9_0, a
 	end
 end
 
-PlayerUnitCosmeticExtension.always_hide_attachment_slot = function (arg_10_0, arg_10_1)
+function PlayerUnitCosmeticExtension.always_hide_attachment_slot(arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._cosmetics.skin
 
 	if not var_10_0 then
@@ -169,7 +169,7 @@ PlayerUnitCosmeticExtension.always_hide_attachment_slot = function (arg_10_0, ar
 	return true
 end
 
-PlayerUnitCosmeticExtension.trigger_equip_events = function (arg_11_0, arg_11_1, arg_11_2)
+function PlayerUnitCosmeticExtension.trigger_equip_events(arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_1 == "slot_hat" then
 		local var_11_0 = arg_11_0._cosmetics.skin.equip_hat_event or "using_skin_default"
 
@@ -179,11 +179,11 @@ PlayerUnitCosmeticExtension.trigger_equip_events = function (arg_11_0, arg_11_1,
 	end
 end
 
-PlayerUnitCosmeticExtension.hot_join_sync = function (arg_12_0, arg_12_1)
+function PlayerUnitCosmeticExtension.hot_join_sync(arg_12_0, arg_12_1)
 	return
 end
 
-PlayerUnitCosmeticExtension._init_mesh_attachment = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+function PlayerUnitCosmeticExtension._init_mesh_attachment(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	local var_13_0 = Cosmetics[arg_13_3].third_person_attachment or arg_13_4.third_person_attachment
 	local var_13_1 = var_13_0.unit
 	local var_13_2 = var_13_0.attachment_node_linking
@@ -217,7 +217,7 @@ PlayerUnitCosmeticExtension._init_mesh_attachment = function (arg_13_0, arg_13_1
 	end
 end
 
-PlayerUnitCosmeticExtension.update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+function PlayerUnitCosmeticExtension.update(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	arg_14_0._queue_3p_event_name = nil
 
 	if ALIVE[arg_14_1] then
@@ -225,11 +225,11 @@ PlayerUnitCosmeticExtension.update = function (arg_14_0, arg_14_1, arg_14_2, arg
 	end
 end
 
-PlayerUnitCosmeticExtension.get_third_person_mesh_unit = function (arg_15_0)
+function PlayerUnitCosmeticExtension.get_third_person_mesh_unit(arg_15_0)
 	return arg_15_0._tp_unit_mesh
 end
 
-PlayerUnitCosmeticExtension.show_third_person_mesh = function (arg_16_0, arg_16_1)
+function PlayerUnitCosmeticExtension.show_third_person_mesh(arg_16_0, arg_16_1)
 	if arg_16_0._tp_mesh_visible ~= arg_16_1 then
 		arg_16_0._tp_mesh_visible = arg_16_1
 
@@ -247,20 +247,20 @@ PlayerUnitCosmeticExtension.show_third_person_mesh = function (arg_16_0, arg_16_
 	end
 end
 
-PlayerUnitCosmeticExtension.queue_3p_emote = function (arg_17_0, arg_17_1, arg_17_2)
+function PlayerUnitCosmeticExtension.queue_3p_emote(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0._queue_3p_event_name = arg_17_1
 	arg_17_0._queue_3p_hide_weapons = arg_17_2
 end
 
-PlayerUnitCosmeticExtension.get_queued_3p_emote = function (arg_18_0)
+function PlayerUnitCosmeticExtension.get_queued_3p_emote(arg_18_0)
 	return arg_18_0._queue_3p_event_name, arg_18_0._queue_3p_hide_weapons
 end
 
-PlayerUnitCosmeticExtension.consume_queued_3p_emote = function (arg_19_0)
+function PlayerUnitCosmeticExtension.consume_queued_3p_emote(arg_19_0)
 	arg_19_0._queue_3p_event_name = nil
 end
 
-PlayerUnitCosmeticExtension.trigger_ability_activated_events = function (arg_20_0)
+function PlayerUnitCosmeticExtension.trigger_ability_activated_events(arg_20_0)
 	local var_20_0 = arg_20_0._attachment_extension:get_slot_data("slot_hat")
 
 	if var_20_0 then
@@ -268,7 +268,7 @@ PlayerUnitCosmeticExtension.trigger_ability_activated_events = function (arg_20_
 	end
 end
 
-PlayerUnitCosmeticExtension._update_player_standing_still_events = function (arg_21_0, arg_21_1)
+function PlayerUnitCosmeticExtension._update_player_standing_still_events(arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._unit
 	local var_21_1 = arg_21_0._player_afk_data
 

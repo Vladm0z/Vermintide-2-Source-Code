@@ -7,7 +7,7 @@ local var_0_2 = var_0_0.scenegraph_definition
 StartGameWindowMutatorSummary = class(StartGameWindowMutatorSummary)
 StartGameWindowMutatorSummary.NAME = "StartGameWindowMutatorSummary"
 
-StartGameWindowMutatorSummary.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
+function StartGameWindowMutatorSummary.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowMutatorSummary")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -32,7 +32,7 @@ StartGameWindowMutatorSummary.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.previous_selected_backend_id = arg_1_0.parent:get_selected_heroic_deed_backend_id()
 end
 
-StartGameWindowMutatorSummary.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
+function StartGameWindowMutatorSummary.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_2_0 = {}
@@ -64,7 +64,7 @@ StartGameWindowMutatorSummary.create_ui_elements = function (arg_2_0, arg_2_1, a
 	var_2_1.game_option_placeholder.content.visible = true
 end
 
-StartGameWindowMutatorSummary.on_exit = function (arg_3_0, arg_3_1)
+function StartGameWindowMutatorSummary.on_exit(arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowMutatorSummary")
 
 	if not arg_3_0.confirm_button_pressed then
@@ -72,17 +72,17 @@ StartGameWindowMutatorSummary.on_exit = function (arg_3_0, arg_3_1)
 	end
 end
 
-StartGameWindowMutatorSummary.update = function (arg_4_0, arg_4_1, arg_4_2)
+function StartGameWindowMutatorSummary.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_handle_input(arg_4_1, arg_4_2)
 	arg_4_0:_update_selected_item_backend_id()
 	arg_4_0:draw(arg_4_1)
 end
 
-StartGameWindowMutatorSummary.post_update = function (arg_5_0, arg_5_1, arg_5_2)
+function StartGameWindowMutatorSummary.post_update(arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-StartGameWindowMutatorSummary._is_button_pressed = function (arg_6_0, arg_6_1)
+function StartGameWindowMutatorSummary._is_button_pressed(arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_1.content.button_hotspot
 
 	if var_6_0.on_release then
@@ -92,11 +92,11 @@ StartGameWindowMutatorSummary._is_button_pressed = function (arg_6_0, arg_6_1)
 	end
 end
 
-StartGameWindowMutatorSummary._is_button_hover_enter = function (arg_7_0, arg_7_1)
+function StartGameWindowMutatorSummary._is_button_hover_enter(arg_7_0, arg_7_1)
 	return arg_7_1.content.button_hotspot.on_hover_enter
 end
 
-StartGameWindowMutatorSummary._handle_input = function (arg_8_0, arg_8_1, arg_8_2)
+function StartGameWindowMutatorSummary._handle_input(arg_8_0, arg_8_1, arg_8_2)
 	if not arg_8_0._selected_backend_id then
 		return
 	end
@@ -116,7 +116,7 @@ StartGameWindowMutatorSummary._handle_input = function (arg_8_0, arg_8_1, arg_8_
 	end
 end
 
-StartGameWindowMutatorSummary._update_selected_item_backend_id = function (arg_9_0)
+function StartGameWindowMutatorSummary._update_selected_item_backend_id(arg_9_0)
 	local var_9_0 = arg_9_0.parent:get_selected_heroic_deed_backend_id()
 
 	if var_9_0 ~= arg_9_0._selected_backend_id then
@@ -126,7 +126,7 @@ StartGameWindowMutatorSummary._update_selected_item_backend_id = function (arg_9
 	end
 end
 
-StartGameWindowMutatorSummary._present_item_by_backend_id = function (arg_10_0, arg_10_1)
+function StartGameWindowMutatorSummary._present_item_by_backend_id(arg_10_0, arg_10_1)
 	if not arg_10_1 then
 		return
 	end
@@ -143,7 +143,7 @@ StartGameWindowMutatorSummary._present_item_by_backend_id = function (arg_10_0, 
 	var_10_0.confirm_button.content.button_hotspot.disable_button = false
 end
 
-StartGameWindowMutatorSummary.draw = function (arg_11_0, arg_11_1)
+function StartGameWindowMutatorSummary.draw(arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.ui_renderer
 	local var_11_1 = arg_11_0.ui_scenegraph
 	local var_11_2 = arg_11_0.parent:window_input_service()
@@ -161,6 +161,6 @@ StartGameWindowMutatorSummary.draw = function (arg_11_0, arg_11_1)
 	UIRenderer.end_pass(var_11_0)
 end
 
-StartGameWindowMutatorSummary._play_sound = function (arg_12_0, arg_12_1)
+function StartGameWindowMutatorSummary._play_sound(arg_12_0, arg_12_1)
 	arg_12_0.parent:play_sound(arg_12_1)
 end

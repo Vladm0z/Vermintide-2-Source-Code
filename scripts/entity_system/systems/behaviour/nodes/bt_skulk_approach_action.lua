@@ -5,11 +5,11 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTSkulkApproachAction = class(BTSkulkApproachAction, BTNode)
 BTSkulkApproachAction.name = "BTSkulkApproachAction"
 
-BTSkulkApproachAction.init = function (arg_1_0, ...)
+function BTSkulkApproachAction.init(arg_1_0, ...)
 	BTSkulkApproachAction.super.init(arg_1_0, ...)
 end
 
-BTSkulkApproachAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function BTSkulkApproachAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 	local var_2_1 = arg_2_2.target_dist
 	local var_2_2 = var_2_1 and math.min(var_2_0.skulk_init_distance, var_2_1) or var_2_0.skulk_init_distance
@@ -46,7 +46,7 @@ BTSkulkApproachAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-BTSkulkApproachAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+function BTSkulkApproachAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.skulk_data.animation_state = nil
 	arg_3_2.action = nil
 
@@ -66,7 +66,7 @@ end
 
 local var_0_0 = 0.5
 
-BTSkulkApproachAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+function BTSkulkApproachAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	arg_4_0:update_skulk_data(arg_4_1, arg_4_2, arg_4_4)
 
 	local var_4_0 = arg_4_2.navigation_extension
@@ -113,7 +113,7 @@ BTSkulkApproachAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 	return "running"
 end
 
-BTSkulkApproachAction.update_skulk_data = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+function BTSkulkApproachAction.update_skulk_data(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_2.action
 	local var_5_1 = var_5_0.skulk_init_distance
 	local var_5_2 = arg_5_2.skulk_data
@@ -133,14 +133,14 @@ end
 
 local var_0_1 = 5
 
-BTSkulkApproachAction.commit_to_target = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function BTSkulkApproachAction.commit_to_target(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_2.action
 	local var_6_1 = arg_6_2.previous_attacker
 
 	return arg_6_2.target_dist < var_6_0.commit_distance or var_6_1 or arg_6_2.skulk_data.radius <= var_0_1
 end
 
-BTSkulkApproachAction.at_goal = function (arg_7_0, arg_7_1, arg_7_2)
+function BTSkulkApproachAction.at_goal(arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_2.skulk_data
 	local var_7_1 = arg_7_2.move_pos
 
@@ -155,7 +155,7 @@ BTSkulkApproachAction.at_goal = function (arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-BTSkulkApproachAction.move_to = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+function BTSkulkApproachAction.move_to(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_3.skulk_data
 
 	arg_8_3.navigation_extension:move_to(arg_8_1)
@@ -163,19 +163,19 @@ BTSkulkApproachAction.move_to = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	arg_8_3.move_pos = Vector3Box(arg_8_1)
 end
 
-BTSkulkApproachAction.idle = function (arg_9_0, arg_9_1, arg_9_2)
+function BTSkulkApproachAction.idle(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:anim_event(arg_9_1, arg_9_2, "idle")
 
 	arg_9_2.move_state = "idle"
 end
 
-BTSkulkApproachAction.start_move_animation = function (arg_10_0, arg_10_1, arg_10_2)
+function BTSkulkApproachAction.start_move_animation(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0:anim_event(arg_10_1, arg_10_2, "move_fwd_run")
 
 	arg_10_2.move_state = "moving"
 end
 
-BTSkulkApproachAction.anim_event = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+function BTSkulkApproachAction.anim_event(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_2.skulk_data
 
 	if var_11_0.animation_state ~= arg_11_3 then
@@ -187,7 +187,7 @@ end
 
 local var_0_2 = 15
 
-BTSkulkApproachAction.get_random_goal_on_circle = function (arg_12_0, arg_12_1, arg_12_2)
+function BTSkulkApproachAction.get_random_goal_on_circle(arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_2.skulk_data
 	local var_12_1 = var_12_0.radius
 	local var_12_2 = arg_12_2.target_unit
@@ -234,7 +234,7 @@ BTSkulkApproachAction.get_random_goal_on_circle = function (arg_12_0, arg_12_1, 
 	return false
 end
 
-BTSkulkApproachAction.debug_show_skulk_circle = function (arg_13_0, arg_13_1, arg_13_2)
+function BTSkulkApproachAction.debug_show_skulk_circle(arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_2.action.skulk_init_distance
 	local var_13_1 = arg_13_2.skulk_data.radius
 	local var_13_2 = arg_13_2.target_unit

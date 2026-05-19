@@ -2,7 +2,7 @@
 
 CommonPopup = class(CommonPopup)
 
-CommonPopup.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function CommonPopup.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._ui_context = arg_1_1
 	arg_1_0._ui_renderer = arg_1_1.ui_renderer
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
@@ -24,7 +24,7 @@ CommonPopup.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._has_widget_been_closed = false
 end
 
-CommonPopup.destroy = function (arg_2_0)
+function CommonPopup.destroy(arg_2_0)
 	if arg_2_0._is_visible then
 		arg_2_0:hide()
 	end
@@ -34,7 +34,7 @@ CommonPopup.destroy = function (arg_2_0)
 	end
 end
 
-CommonPopup.create_ui_elements = function (arg_3_0)
+function CommonPopup.create_ui_elements(arg_3_0)
 	local var_3_0 = arg_3_0._common_settings
 	local var_3_1 = var_3_0.definitions
 
@@ -69,7 +69,7 @@ CommonPopup.create_ui_elements = function (arg_3_0)
 	end
 end
 
-CommonPopup.update = function (arg_4_0, arg_4_1)
+function CommonPopup.update(arg_4_0, arg_4_1)
 	if not arg_4_0._is_visible then
 		return
 	end
@@ -79,11 +79,11 @@ CommonPopup.update = function (arg_4_0, arg_4_1)
 	arg_4_0:draw(arg_4_1)
 end
 
-CommonPopup._handle_input = function (arg_5_0, arg_5_1)
+function CommonPopup._handle_input(arg_5_0, arg_5_1)
 	return
 end
 
-CommonPopup.draw = function (arg_6_0, arg_6_1)
+function CommonPopup.draw(arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._ui_top_renderer
 	local var_6_1 = arg_6_0._ui_scenegraph
 	local var_6_2 = arg_6_0:_get_input_service()
@@ -104,7 +104,7 @@ CommonPopup.draw = function (arg_6_0, arg_6_1)
 	end
 end
 
-CommonPopup.show = function (arg_7_0)
+function CommonPopup.show(arg_7_0)
 	assert(not arg_7_0._is_visible)
 
 	arg_7_0._is_visible = true
@@ -112,7 +112,7 @@ CommonPopup.show = function (arg_7_0)
 	arg_7_0:acquire_input()
 end
 
-CommonPopup.hide = function (arg_8_0)
+function CommonPopup.hide(arg_8_0)
 	assert(arg_8_0._is_visible)
 
 	arg_8_0._is_visible = false
@@ -120,19 +120,19 @@ CommonPopup.hide = function (arg_8_0)
 	arg_8_0:release_input()
 end
 
-CommonPopup.exit_done = function (arg_9_0)
+function CommonPopup.exit_done(arg_9_0)
 	return not arg_9_0._is_visible and arg_9_0._has_widget_been_closed
 end
 
-CommonPopup._start_transition_animation = function (arg_10_0, arg_10_1)
+function CommonPopup._start_transition_animation(arg_10_0, arg_10_1)
 	return
 end
 
-CommonPopup._update_animations = function (arg_11_0, arg_11_1)
+function CommonPopup._update_animations(arg_11_0, arg_11_1)
 	arg_11_0._ui_animator:update(arg_11_1)
 end
 
-CommonPopup.acquire_input = function (arg_12_0)
+function CommonPopup.acquire_input(arg_12_0)
 	local var_12_0 = arg_12_0._input_manager
 
 	if var_12_0 then
@@ -141,7 +141,7 @@ CommonPopup.acquire_input = function (arg_12_0)
 	end
 end
 
-CommonPopup.release_input = function (arg_13_0)
+function CommonPopup.release_input(arg_13_0)
 	local var_13_0 = arg_13_0._input_manager
 
 	if var_13_0 then
@@ -150,7 +150,7 @@ CommonPopup.release_input = function (arg_13_0)
 	end
 end
 
-CommonPopup.setup_input = function (arg_14_0)
+function CommonPopup.setup_input(arg_14_0)
 	local var_14_0 = arg_14_0._input_manager
 	local var_14_1 = arg_14_0._input_service_name
 
@@ -162,23 +162,23 @@ CommonPopup.setup_input = function (arg_14_0)
 	end
 end
 
-CommonPopup._get_input_service = function (arg_15_0)
+function CommonPopup._get_input_service(arg_15_0)
 	return Managers.input:get_service(arg_15_0._input_service_name)
 end
 
-CommonPopup.should_show = function (arg_16_0)
+function CommonPopup.should_show(arg_16_0)
 	return not arg_16_0._is_visible
 end
 
-CommonPopup.is_popup_showing = function (arg_17_0)
+function CommonPopup.is_popup_showing(arg_17_0)
 	return arg_17_0._is_visible
 end
 
-CommonPopup.play_sound = function (arg_18_0, arg_18_1)
+function CommonPopup.play_sound(arg_18_0, arg_18_1)
 	WwiseWorld.trigger_event(arg_18_0._wwise_world, arg_18_1)
 end
 
-CommonPopup.set_fullscreen_effect_enable_state = function (arg_19_0, arg_19_1)
+function CommonPopup.set_fullscreen_effect_enable_state(arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._ui_renderer.world
 	local var_19_1 = World.get_data(var_19_0, "shading_environment")
 

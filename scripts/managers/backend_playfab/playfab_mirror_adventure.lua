@@ -6,14 +6,14 @@ local var_0_0 = require("PlayFab.PlayFabClientApi")
 
 PlayFabMirrorAdventure = class(PlayFabMirrorAdventure, PlayFabMirrorBase)
 
-PlayFabMirrorAdventure.init = function (arg_1_0, arg_1_1)
+function PlayFabMirrorAdventure.init(arg_1_0, arg_1_1)
 	local var_1_0 = Managers.mechanism:current_mechanism_name()
 
 	arg_1_0:set_mechanism(var_1_0)
 	PlayFabMirrorBase.init(arg_1_0, arg_1_1)
 end
 
-PlayFabMirrorAdventure.set_mechanism = function (arg_2_0, arg_2_1)
+function PlayFabMirrorAdventure.set_mechanism(arg_2_0, arg_2_1)
 	printf("[PlayFabMirrorAdventure] Setting mechanism %s", arg_2_1)
 	rawset(_G, "debug_characters_data_unsafe_write", arg_2_0._mechanism_key and arg_2_0._mechanism_key ~= arg_2_1 or nil)
 
@@ -35,7 +35,7 @@ PlayFabMirrorAdventure.set_mechanism = function (arg_2_0, arg_2_1)
 	arg_2_0._verify_slot_keys_per_affiliation = var_2_0
 end
 
-PlayFabMirrorAdventure.request_characters = function (arg_3_0, arg_3_1)
+function PlayFabMirrorAdventure.request_characters(arg_3_0, arg_3_1)
 	arg_3_1 = arg_3_1 or arg_3_0._mechanism_key
 
 	if arg_3_1 == "versus" then
@@ -88,7 +88,7 @@ PlayFabMirrorAdventure.request_characters = function (arg_3_0, arg_3_1)
 	end
 end
 
-PlayFabMirrorAdventure._verify_career_loadouts = function (arg_4_0)
+function PlayFabMirrorAdventure._verify_career_loadouts(arg_4_0)
 	arg_4_0._num_items_to_load = arg_4_0._num_items_to_load + 1
 
 	local var_4_0 = {
@@ -100,7 +100,7 @@ PlayFabMirrorAdventure._verify_career_loadouts = function (arg_4_0)
 	arg_4_0._request_queue:enqueue(var_4_0, var_4_1)
 end
 
-PlayFabMirrorAdventure.verify_career_loadouts_cb = function (arg_5_0, arg_5_1)
+function PlayFabMirrorAdventure.verify_career_loadouts_cb(arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_1.FunctionResult
 	local var_5_1 = var_5_0.characters_data
 	local var_5_2 = var_5_0.vs_characters_data
@@ -118,7 +118,7 @@ PlayFabMirrorAdventure.verify_career_loadouts_cb = function (arg_5_0, arg_5_1)
 	arg_5_0:_verify_dlc_careers()
 end
 
-PlayFabMirrorAdventure.versus_player_setup_cb = function (arg_6_0, arg_6_1)
+function PlayFabMirrorAdventure.versus_player_setup_cb(arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_1.FunctionResult
 	local var_6_1 = var_6_0.vs_characters_data
 	local var_6_2 = var_6_0.vs_profile_data
@@ -144,7 +144,7 @@ PlayFabMirrorAdventure.versus_player_setup_cb = function (arg_6_0, arg_6_1)
 	end
 end
 
-PlayFabMirrorAdventure._set_inital_career_data_weaves = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+function PlayFabMirrorAdventure._set_inital_career_data_weaves(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = {}
 
 	for iter_7_0 = 1, #arg_7_3 do
@@ -164,7 +164,7 @@ PlayFabMirrorAdventure._set_inital_career_data_weaves = function (arg_7_0, arg_7
 	end
 end
 
-PlayFabMirrorAdventure._check_weaves_loadout = function (arg_8_0)
+function PlayFabMirrorAdventure._check_weaves_loadout(arg_8_0)
 	local var_8_0 = arg_8_0:get_read_only_data(arg_8_0._characters_data_key)
 	local var_8_1 = cjson.decode(var_8_0)
 	local var_8_2 = {}
@@ -195,7 +195,7 @@ PlayFabMirrorAdventure._check_weaves_loadout = function (arg_8_0)
 	end
 end
 
-PlayFabMirrorAdventure.fix_weaves_career_data_request_cb = function (arg_9_0, arg_9_1)
+function PlayFabMirrorAdventure.fix_weaves_career_data_request_cb(arg_9_0, arg_9_1)
 	arg_9_0.broken_slots_data = nil
 	arg_9_0._num_items_to_load = arg_9_0._num_items_to_load - 1
 

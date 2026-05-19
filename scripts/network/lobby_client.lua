@@ -4,7 +4,7 @@ require("scripts/network/lobby_aux")
 
 LobbyClient = class(LobbyClient)
 
-LobbyClient.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function LobbyClient.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.lobby = arg_1_3 or LobbyInternal.join_lobby(arg_1_2)
 	arg_1_0.stored_lobby_data = arg_1_2
 
@@ -24,7 +24,7 @@ LobbyClient.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	mm_printf("LobbyClient Created")
 end
 
-LobbyClient.destroy = function (arg_2_0)
+function LobbyClient.destroy(arg_2_0)
 	local var_2_0 = arg_2_0._host_peer_id
 	local var_2_1 = arg_2_0._host_channel_id
 
@@ -50,7 +50,7 @@ LobbyClient.destroy = function (arg_2_0)
 	GarbageLeakDetector.register_object(arg_2_0, "Lobby Client")
 end
 
-LobbyClient.update = function (arg_3_0, arg_3_1)
+function LobbyClient.update(arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0.lobby
 	local var_3_1 = var_3_0:lobby_host()
 	local var_3_2 = var_3_0.state(var_3_0)
@@ -159,47 +159,47 @@ LobbyClient.update = function (arg_3_0, arg_3_1)
 	end
 end
 
-LobbyClient.set_steam_lobby_reconnectable = function (arg_4_0, arg_4_1)
+function LobbyClient.set_steam_lobby_reconnectable(arg_4_0, arg_4_1)
 	print(arg_4_1 and "Enabled" or "Disabled", "live steam lobby reconnecting")
 
 	arg_4_0._lobby_reconnectable_on_disconnect = arg_4_1
 end
 
-LobbyClient.get_stored_lobby_data = function (arg_5_0)
+function LobbyClient.get_stored_lobby_data(arg_5_0)
 	return arg_5_0.stored_lobby_data
 end
 
-LobbyClient.update_user_names = function (arg_6_0)
+function LobbyClient.update_user_names(arg_6_0)
 	if IS_PS4 then
 		arg_6_0.lobby:update_user_names()
 	end
 end
 
-LobbyClient.members = function (arg_7_0)
+function LobbyClient.members(arg_7_0)
 	return arg_7_0.lobby_members
 end
 
-LobbyClient.invite_target = function (arg_8_0)
+function LobbyClient.invite_target(arg_8_0)
 	return arg_8_0.lobby
 end
 
-LobbyClient.is_dedicated_server = function (arg_9_0)
+function LobbyClient.is_dedicated_server(arg_9_0)
 	return false
 end
 
-LobbyClient.lobby_host = function (arg_10_0)
+function LobbyClient.lobby_host(arg_10_0)
 	return arg_10_0._host_peer_id
 end
 
-LobbyClient.lobby_data = function (arg_11_0, arg_11_1)
+function LobbyClient.lobby_data(arg_11_0, arg_11_1)
 	return arg_11_0.lobby:data(arg_11_1)
 end
 
-LobbyClient.has_user_name = function (arg_12_0, arg_12_1)
+function LobbyClient.has_user_name(arg_12_0, arg_12_1)
 	return arg_12_0.lobby:user_name(arg_12_1) ~= nil
 end
 
-LobbyClient.user_name = function (arg_13_0, arg_13_1)
+function LobbyClient.user_name(arg_13_0, arg_13_1)
 	if HAS_STEAM then
 		return string.gsub(Steam.user_name(), "%c", "")
 	elseif IS_PS4 then
@@ -209,23 +209,23 @@ LobbyClient.user_name = function (arg_13_0, arg_13_1)
 	end
 end
 
-LobbyClient.is_joined = function (arg_14_0)
+function LobbyClient.is_joined(arg_14_0)
 	return arg_14_0.state == LobbyState.JOINED
 end
 
-LobbyClient.failed = function (arg_15_0)
+function LobbyClient.failed(arg_15_0)
 	return arg_15_0.state == LobbyState.FAILED
 end
 
-LobbyClient.id = function (arg_16_0)
+function LobbyClient.id(arg_16_0)
 	return LobbyInternal.lobby_id and LobbyInternal.lobby_id(arg_16_0.lobby) or "no_id"
 end
 
-LobbyClient.attempting_reconnect = function (arg_17_0)
+function LobbyClient.attempting_reconnect(arg_17_0)
 	return arg_17_0._reconnecting_to_lobby or arg_17_0._try_reconnecting
 end
 
-LobbyClient._free_lobby = function (arg_18_0)
+function LobbyClient._free_lobby(arg_18_0)
 	if arg_18_0.lobby ~= nil then
 		LobbyInternal.leave_lobby(arg_18_0.lobby)
 
@@ -233,10 +233,10 @@ LobbyClient._free_lobby = function (arg_18_0)
 	end
 end
 
-LobbyClient.lost_connection_to_lobby = function (arg_19_0)
+function LobbyClient.lost_connection_to_lobby(arg_19_0)
 	return LobbyInternal.is_orphaned(arg_19_0.lobby) or arg_19_0._lost_connection_to_lobby
 end
 
-LobbyClient.game_session_host = function (arg_20_0)
+function LobbyClient.game_session_host(arg_20_0)
 	return LobbyInternal.game_session_host(arg_20_0.lobby)
 end

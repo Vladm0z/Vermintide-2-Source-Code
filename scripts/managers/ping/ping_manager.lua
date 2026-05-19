@@ -2,7 +2,7 @@
 
 PingManager = class(PingManager)
 
-PingManager.init = function (arg_1_0)
+function PingManager.init(arg_1_0)
 	arg_1_0._target_to_region = {}
 	arg_1_0._targets = {}
 	arg_1_0._latency_results = {}
@@ -12,7 +12,7 @@ PingManager.init = function (arg_1_0)
 	arg_1_0._cb = nil
 end
 
-PingManager.update = function (arg_2_0, arg_2_1, arg_2_2)
+function PingManager.update(arg_2_0, arg_2_1, arg_2_2)
 	if not arg_2_0._is_fetching_data then
 		return
 	end
@@ -58,7 +58,7 @@ PingManager.update = function (arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-PingManager._stats = function (arg_3_0)
+function PingManager._stats(arg_3_0)
 	local var_3_0 = {}
 
 	for iter_3_0 = 1, #arg_3_0._latency_results do
@@ -91,7 +91,7 @@ PingManager._stats = function (arg_3_0)
 	return var_3_2
 end
 
-PingManager._target_to_regions = function (arg_4_0, arg_4_1)
+function PingManager._target_to_regions(arg_4_0, arg_4_1)
 	if not arg_4_1 then
 		print("Received empty region data, nothing to ping")
 
@@ -115,7 +115,7 @@ PingManager._target_to_regions = function (arg_4_0, arg_4_1)
 	return true
 end
 
-PingManager.ping_multiple_times = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+function PingManager.ping_multiple_times(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_0._is_fetching_data then
 		print("Already pinging")
 
@@ -135,7 +135,7 @@ PingManager.ping_multiple_times = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, 
 	arg_5_0:_ping()
 end
 
-PingManager.ping = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function PingManager.ping(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if arg_6_0._is_fetching_data then
 		print("Already pinging")
 
@@ -155,7 +155,7 @@ PingManager.ping = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_0:_ping()
 end
 
-PingManager._ping = function (arg_7_0)
+function PingManager._ping(arg_7_0)
 	arg_7_0._timeout = Managers.time:time("main") + arg_7_0._timeout_duration
 	arg_7_0._is_fetching_data = true
 

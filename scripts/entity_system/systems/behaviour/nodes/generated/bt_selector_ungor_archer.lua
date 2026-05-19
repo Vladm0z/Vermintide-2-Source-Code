@@ -12,17 +12,17 @@ end
 BTSelector_ungor_archer = class(BTSelector_ungor_archer, BTNode)
 BTSelector_ungor_archer.name = "BTSelector_ungor_archer"
 
-BTSelector_ungor_archer.init = function (arg_2_0, ...)
+function BTSelector_ungor_archer.init(arg_2_0, ...)
 	BTSelector_ungor_archer.super.init(arg_2_0, ...)
 
 	arg_2_0._children = {}
 end
 
-BTSelector_ungor_archer.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+function BTSelector_ungor_archer.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, arg_3_4)
 end
 
-BTSelector_ungor_archer.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+function BTSelector_ungor_archer.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = var_0_1.start
 	local var_4_1 = var_0_1.stop
 	local var_4_2 = arg_4_0:current_running_child(arg_4_2)
@@ -289,6 +289,6 @@ BTSelector_ungor_archer.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_
 	end
 end
 
-BTSelector_ungor_archer.add_child = function (arg_5_0, arg_5_1)
+function BTSelector_ungor_archer.add_child(arg_5_0, arg_5_1)
 	arg_5_0._children[#arg_5_0._children + 1] = arg_5_1
 end

@@ -257,7 +257,7 @@ end
 
 DefaultUserSettings = {}
 
-DefaultUserSettings.set_default_user_settings = function ()
+function DefaultUserSettings.set_default_user_settings()
 	if LEVEL_EDITOR_TEST then
 		return
 	end
@@ -313,11 +313,11 @@ DefaultUserSettings.set_default_user_settings = function ()
 	end
 end
 
-DefaultUserSettings.clone_default_settings = function ()
+function DefaultUserSettings.clone_default_settings()
 	return table.clone(var_0_3)
 end
 
-DefaultUserSettings.get = function (arg_3_0, arg_3_1)
+function DefaultUserSettings.get(arg_3_0, arg_3_1)
 	local var_3_0
 
 	if arg_3_0 == "user_settings" then
@@ -335,7 +335,7 @@ DefaultUserSettings.get = function (arg_3_0, arg_3_1)
 	return var_3_0
 end
 
-DefaultUserSettings.setup_resolution = function ()
+function DefaultUserSettings.setup_resolution()
 	local var_4_0 = Application.user_setting
 	local var_4_1 = Application.set_user_setting
 	local var_4_2 = Application.save_user_settings

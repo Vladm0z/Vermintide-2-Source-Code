@@ -15,7 +15,7 @@ end
 StateTitleScreen = class(StateTitleScreen)
 StateTitleScreen.NAME = "StateTitleScreen"
 
-StateTitleScreen.on_enter = function (arg_1_0, arg_1_1)
+function StateTitleScreen.on_enter(arg_1_0, arg_1_1)
 	print("[Gamestate] Enter StateTitleScreen")
 
 	if IS_XB1 then
@@ -127,16 +127,16 @@ StateTitleScreen.on_enter = function (arg_1_0, arg_1_1)
 	ShowCursorStack.show("StateTitleScreen")
 end
 
-StateTitleScreen._load_global_resources = function (arg_2_0)
+function StateTitleScreen._load_global_resources(arg_2_0)
 	GlobalResources.update_loading()
 end
 
-StateTitleScreen._demo_hack_state_managers = function (arg_3_0)
+function StateTitleScreen._demo_hack_state_managers(arg_3_0)
 	local var_3_0 = {}
 	local var_3_1 = {}
 	local var_3_2 = {}
 	local var_3_3 = {
-		__index = function ()
+		__index = function()
 			return var_3_2
 		end
 	}
@@ -144,7 +144,7 @@ StateTitleScreen._demo_hack_state_managers = function (arg_3_0)
 	setmetatable(var_3_0, var_3_3)
 
 	local var_3_4 = {
-		__index = function ()
+		__index = function()
 			return var_3_1
 		end
 	}
@@ -152,10 +152,10 @@ StateTitleScreen._demo_hack_state_managers = function (arg_3_0)
 	setmetatable(var_3_2, var_3_4)
 
 	local var_3_5 = {
-		__index = function ()
+		__index = function()
 			return var_3_1
 		end,
-		__call = function ()
+		__call = function()
 			return nil
 		end
 	}
@@ -166,7 +166,7 @@ StateTitleScreen._demo_hack_state_managers = function (arg_3_0)
 	Managers.state = var_3_0
 end
 
-StateTitleScreen._fade_out = function (arg_8_0)
+function StateTitleScreen._fade_out(arg_8_0)
 	if IS_XB1 then
 		if Managers.account:should_teardown_xboxlive() then
 			Managers.account:teardown_xboxlive()
@@ -182,7 +182,7 @@ StateTitleScreen._fade_out = function (arg_8_0)
 	end
 end
 
-StateTitleScreen._setup_leak_prevention = function (arg_9_0)
+function StateTitleScreen._setup_leak_prevention(arg_9_0)
 	local var_9_0 = true
 
 	GarbageLeakDetector.run_leak_detection(var_9_0)
@@ -190,7 +190,7 @@ StateTitleScreen._setup_leak_prevention = function (arg_9_0)
 	VisualAssertLog.setup(arg_9_0._world)
 end
 
-StateTitleScreen._setup_world = function (arg_10_0)
+function StateTitleScreen._setup_world(arg_10_0)
 	if not Managers.package:has_loaded("resource_packages/start_menu_splash", "StateSplashScreen") and not GameSettingsDevelopment.skip_start_screen and not Development.parameter("skip_start_screen") then
 		Managers.package:load("resource_packages/start_menu_splash", "StateSplashScreen")
 	end
@@ -220,7 +220,7 @@ StateTitleScreen._setup_world = function (arg_10_0)
 	Camera.set_far_range(var_10_2, 5000)
 end
 
-StateTitleScreen._init_input = function (arg_11_0)
+function StateTitleScreen._init_input(arg_11_0)
 	arg_11_0._input_manager = InputManager:new()
 
 	local var_11_0 = arg_11_0._input_manager
@@ -237,7 +237,7 @@ end
 
 local var_0_0 = true
 
-StateTitleScreen._init_ui = function (arg_12_0)
+function StateTitleScreen._init_ui(arg_12_0)
 	if not GameSettingsDevelopment.skip_start_screen and not Development.parameter("skip_start_screen") then
 		if script_data.honduras_demo then
 			arg_12_0._title_start_ui = DemoTitleUI:new(arg_12_0._world, arg_12_0._viewport, arg_12_0)
@@ -247,7 +247,7 @@ StateTitleScreen._init_ui = function (arg_12_0)
 	end
 end
 
-StateTitleScreen._setup_state_machine = function (arg_13_0)
+function StateTitleScreen._setup_state_machine(arg_13_0)
 	local var_13_0 = arg_13_0.parent.loading_context
 
 	if var_13_0.skip_signin then
@@ -271,7 +271,7 @@ StateTitleScreen._setup_state_machine = function (arg_13_0)
 	end
 end
 
-StateTitleScreen._init_popup_manager = function (arg_14_0)
+function StateTitleScreen._init_popup_manager(arg_14_0)
 	Managers.popup = Managers.popup or PopupManager:new()
 
 	Managers.popup:set_input_manager(arg_14_0._input_manager)
@@ -279,17 +279,17 @@ StateTitleScreen._init_popup_manager = function (arg_14_0)
 	Managers.simple_popup = Managers.simple_popup or SimplePopup:new()
 end
 
-StateTitleScreen._init_chat_manager = function (arg_15_0)
+function StateTitleScreen._init_chat_manager(arg_15_0)
 	Managers.chat = Managers.chat or ChatManager:new()
 end
 
-StateTitleScreen._init_beta_overlay = function (arg_16_0)
+function StateTitleScreen._init_beta_overlay(arg_16_0)
 	if not Managers.beta_overlay then
 		Managers.beta_overlay = BetaOverlay:new(Managers.world:world("top_ingame_view"))
 	end
 end
 
-StateTitleScreen.update = function (arg_17_0, arg_17_1, arg_17_2)
+function StateTitleScreen.update(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0:_handle_delayed_fade_in()
 	Managers.input:update(arg_17_1, arg_17_2)
 	arg_17_0._machine:update(arg_17_1, arg_17_2)
@@ -323,11 +323,11 @@ StateTitleScreen.update = function (arg_17_0, arg_17_1, arg_17_2)
 	return arg_17_0:_next_state()
 end
 
-StateTitleScreen.post_update = function (arg_18_0, arg_18_1, arg_18_2)
+function StateTitleScreen.post_update(arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0._machine:post_update(arg_18_1, arg_18_2)
 end
 
-StateTitleScreen._next_state = function (arg_19_0)
+function StateTitleScreen._next_state(arg_19_0)
 	if Managers.popup:has_popup() or Managers.account:user_detached() then
 		if Managers.account:leaving_game() then
 			print("Reloading StateTitleScreen due to user detatched")
@@ -355,7 +355,7 @@ StateTitleScreen._next_state = function (arg_19_0)
 	return arg_19_0.state
 end
 
-StateTitleScreen._handle_delayed_fade_in = function (arg_20_0)
+function StateTitleScreen._handle_delayed_fade_in(arg_20_0)
 	if IS_XB1 and arg_20_0._wait_for_xboxlive_teardown and not Managers.account:should_teardown_xboxlive() and not arg_20_0._auto_start then
 		Managers.transition:fade_out(1)
 
@@ -365,7 +365,7 @@ StateTitleScreen._handle_delayed_fade_in = function (arg_20_0)
 	end
 end
 
-StateTitleScreen._update_play_go_progress = function (arg_21_0, arg_21_1, arg_21_2)
+function StateTitleScreen._update_play_go_progress(arg_21_0, arg_21_1, arg_21_2)
 	if arg_21_0._is_installed then
 		return
 	end
@@ -383,19 +383,19 @@ StateTitleScreen._update_play_go_progress = function (arg_21_0, arg_21_1, arg_21
 	end
 end
 
-StateTitleScreen.enter_attract_mode = function (arg_22_0, arg_22_1)
+function StateTitleScreen.enter_attract_mode(arg_22_0, arg_22_1)
 	arg_22_0._attract_mode_active = arg_22_1
 end
 
-StateTitleScreen._render = function (arg_23_0, arg_23_1, arg_23_2)
+function StateTitleScreen._render(arg_23_0, arg_23_1, arg_23_2)
 	return
 end
 
-StateTitleScreen.show_menu = function (arg_24_0, arg_24_1, arg_24_2)
+function StateTitleScreen.show_menu(arg_24_0, arg_24_1, arg_24_2)
 	arg_24_0._title_start_ui:show_menu(arg_24_1, arg_24_2)
 end
 
-StateTitleScreen.on_exit = function (arg_25_0, arg_25_1)
+function StateTitleScreen.on_exit(arg_25_0, arg_25_1)
 	Framerate.set_playing()
 	arg_25_0._machine:destroy()
 	VisualAssertLog.cleanup()

@@ -4,14 +4,14 @@ require("scripts/settings/profiles/room_profiles")
 
 RoomHandler = class(RoomHandler)
 
-RoomHandler.init = function (arg_1_0, arg_1_1)
+function RoomHandler.init(arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0._rooms = {}
 	arg_1_0._level_anchor_points = {}
 	arg_1_0._num_active_rooms = 0
 end
 
-RoomHandler.setup_level_anchor_points = function (arg_2_0, arg_2_1)
+function RoomHandler.setup_level_anchor_points(arg_2_0, arg_2_1)
 	local var_2_0 = Level.units(arg_2_1)
 
 	for iter_2_0, iter_2_1 in ipairs(var_2_0) do
@@ -36,7 +36,7 @@ RoomHandler.setup_level_anchor_points = function (arg_2_0, arg_2_1)
 	end
 end
 
-RoomHandler.create_room = function (arg_3_0, arg_3_1, arg_3_2)
+function RoomHandler.create_room(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_2 = arg_3_2 or arg_3_0:_available_room_id()
 
 	fassert(arg_3_0._rooms[arg_3_2].available, "[RoomHandler]: room_id %q is not available", arg_3_2)
@@ -64,7 +64,7 @@ RoomHandler.create_room = function (arg_3_0, arg_3_1, arg_3_2)
 	return arg_3_2
 end
 
-RoomHandler.destroy_room = function (arg_4_0, arg_4_1)
+function RoomHandler.destroy_room(arg_4_0, arg_4_1)
 	printf("[RoomHandler]: Destroying room with room_id: %s", tostring(arg_4_1))
 
 	local var_4_0 = arg_4_0._world
@@ -81,7 +81,7 @@ RoomHandler.destroy_room = function (arg_4_0, arg_4_1)
 	}
 end
 
-RoomHandler._available_room_id = function (arg_5_0)
+function RoomHandler._available_room_id(arg_5_0)
 	local var_5_0 = #arg_5_0._rooms
 
 	for iter_5_0 = 1, var_5_0 do
@@ -93,7 +93,7 @@ RoomHandler._available_room_id = function (arg_5_0)
 	error("[RoomHandler]: There's no rooms available. Lobby size to big? Not enough anchor points?")
 end
 
-RoomHandler._debug_print = function (arg_6_0)
+function RoomHandler._debug_print(arg_6_0)
 	local var_6_0 = ""
 	local var_6_1 = ""
 	local var_6_2 = #arg_6_0._rooms
@@ -109,11 +109,11 @@ RoomHandler._debug_print = function (arg_6_0)
 	Managers.state.debug_text:output_screen_text("Occupied: " .. var_6_0 .. "\n" .. "Available: " .. var_6_1, 22, 5)
 end
 
-RoomHandler.room_from_id = function (arg_7_0, arg_7_1)
+function RoomHandler.room_from_id(arg_7_0, arg_7_1)
 	return arg_7_0._rooms[arg_7_1]
 end
 
-RoomHandler.destroy = function (arg_8_0)
+function RoomHandler.destroy(arg_8_0)
 	local var_8_0 = arg_8_0._num_active_rooms
 
 	for iter_8_0 = 1, var_8_0 do

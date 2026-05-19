@@ -119,7 +119,7 @@ local function var_0_10(arg_5_0, arg_5_1)
 	return arg_5_0
 end
 
-var_0_9.setup = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function var_0_9.setup(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = var_0_9
 
 	var_6_0.world = arg_6_0
@@ -220,7 +220,7 @@ var_0_9.setup = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		var_6_0.console_settings[#var_6_0.console_settings + 1] = var_6_2
 	end
 
-	var_6_0.settings_hash = HashUtils.fnv32_hash(table.concat(table.select_array(arg_6_1, function (arg_7_0, arg_7_1)
+	var_6_0.settings_hash = HashUtils.fnv32_hash(table.concat(table.select_array(arg_6_1, function(arg_7_0, arg_7_1)
 		return arg_7_1.setting_name or arg_7_0
 	end), ","))
 
@@ -306,24 +306,24 @@ var_0_9.setup = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	var_6_0.allow_to_open = true
 end
 
-var_0_9.destroy = function ()
+function var_0_9.destroy()
 	World.destroy_gui(var_0_9.world, var_0_9.gui)
 
 	var_0_9.world = nil
 	var_0_9.gui = nil
 end
 
-var_0_9.set_blocked = function (arg_9_0)
+function var_0_9.set_blocked(arg_9_0)
 	var_0_9.is_blocked = arg_9_0
 end
 
-var_0_9.reset_setting_size = function (arg_10_0, arg_10_1, arg_10_2)
+function var_0_9.reset_setting_size(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0.setting_height = 0
 	arg_10_0.setting_pos = math.abs(arg_10_1 - arg_10_2)
 	arg_10_0.option_pos = nil
 end
 
-var_0_9.push_setting_size = function (arg_11_0, arg_11_1, arg_11_2)
+function var_0_9.push_setting_size(arg_11_0, arg_11_1, arg_11_2)
 	arg_11_1 = arg_11_1 - arg_11_2
 	arg_11_0.setting_height = arg_11_0.setting_height + arg_11_2
 
@@ -332,7 +332,7 @@ end
 
 var_0_9.accelerate_factor = var_0_9.accelerate_factor or 1
 
-var_0_9.update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+function var_0_9.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = var_0_9
 
 	if var_12_0.is_blocked or not script_data.debug_enabled or not arg_12_2 or IS_LINUX then
@@ -1068,7 +1068,7 @@ var_0_9.update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	end
 end
 
-var_0_9.reset_settings = function ()
+function var_0_9.reset_settings()
 	local var_13_0 = true
 
 	for iter_13_0 = 1, #var_0_9.console_settings do
@@ -1094,7 +1094,7 @@ var_0_9.reset_settings = function ()
 	Application.save_user_settings()
 end
 
-var_0_9.set_texture_quality = function (arg_14_0)
+function var_0_9.set_texture_quality(arg_14_0)
 	Application.set_user_setting("texture_settings", "texture_categories/character_df", arg_14_0)
 	Application.set_user_setting("texture_settings", "texture_categories/character_gsm", arg_14_0)
 	Application.set_user_setting("texture_settings", "texture_categories/character_ma", arg_14_0)
@@ -1121,7 +1121,7 @@ var_0_9.set_texture_quality = function (arg_14_0)
 	Application.save_user_settings()
 end
 
-var_0_9.update_search = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+function var_0_9.update_search(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	local var_15_0 = arg_15_5 and var_0_9.search_string ~= ""
 	local var_15_1 = arg_15_1:get("console_search_key") and (var_0_9.search_string == "" or not var_0_9.search_active)
 	local var_15_2 = not var_0_9.active and var_0_9.search_active
@@ -1236,22 +1236,22 @@ var_0_9.update_search = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15
 	Gui.rect(arg_15_2, var_15_12 + Vector3(var_15_27 + 1, -2, 0), Vector2(10, 20), Colors.get_color_with_alpha("white", -50 + math.cos(var_15_6) * 250))
 end
 
-var_0_9.hash_options = function ()
+function var_0_9.hash_options()
 	return var_0_9.settings_hash or 0
 end
 
-var_0_9._propagate_option = function (arg_17_0, arg_17_1, arg_17_2)
+function var_0_9._propagate_option(arg_17_0, arg_17_1, arg_17_2)
 	Managers.state.network.network_transmit:send_rpc_server("rpc_propagate_debug_option", var_0_9.hash_options(), arg_17_0, arg_17_1, arg_17_2)
 end
 
-var_0_9.handle_propagated_option = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+function var_0_9.handle_propagated_option(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = var_0_9.hash_options()
 
 	if var_18_0 ~= arg_18_0 then
 		return string.format("Debug option mismatch (%s ~= %s)", var_18_0, arg_18_0)
 	end
 
-	local var_18_1, var_18_2 = table.find_func(var_0_9.console_settings, function (arg_19_0, arg_19_1)
+	local var_18_1, var_18_2 = table.find_func(var_0_9.console_settings, function(arg_19_0, arg_19_1)
 		return arg_19_1.setting_id == arg_18_1
 	end)
 

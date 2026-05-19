@@ -1,6 +1,8 @@
 -- chunkname: @scripts/boot_init.lua
 
-jit.off()
+if rawget(_G, "jit") then
+	jit.off()
+end
 
 MODE = {}
 
@@ -21,7 +23,7 @@ end
 GLOBAL_MUSIC_WORLD = true
 
 local var_0_1 = {
-	stop_all = function ()
+	stop_all = function()
 		return
 	end
 }
@@ -65,11 +67,11 @@ for iter_0_0, iter_0_1 in pairs(var_0_2) do
 	end
 end
 
-Application.build = function ()
+function Application.build()
 	error("Trying to use Application.build, use global variable BUILD instead.")
 end
 
-Application.platform = function ()
+function Application.platform()
 	error("Trying to use Application.platform(), use global variable PLATFORM instead.")
 end
 
@@ -167,7 +169,7 @@ end
 
 GlobalResources.unload = {}
 GlobalResources.handle_and_remove_on_load = {
-	["resource_packages/dialogues/auto_load_files"] = function (arg_5_0, arg_5_1)
+	["resource_packages/dialogues/auto_load_files"] = function(arg_5_0, arg_5_1)
 		DialogueSettings.cached_auto_load_files = {}
 
 		local var_5_0 = DialogueSettings.auto_load_files
@@ -184,7 +186,7 @@ GlobalResources.handle_and_remove_on_load = {
 	end
 }
 
-GlobalResources.update_loading = function ()
+function GlobalResources.update_loading()
 	if not GlobalResources.loaded then
 		local var_6_0 = true
 		local var_6_1 = Managers.package
@@ -228,6 +230,12 @@ if BUILD ~= "dev" and BUILD ~= "debug" and LAUNCH_MODE ~= "attract_benchmark" th
 
 	var_0_3("ffi")
 	var_0_3("io")
+
+	if rawget(_G, "jit") then
+		jit.on = nil
+		jit.off = nil
+		jit.flush = nil
+	end
 
 	os = {
 		clock = os.clock,

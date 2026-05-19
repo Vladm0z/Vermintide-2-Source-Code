@@ -2,8 +2,8 @@
 
 DeusGenUtils = DeusGenUtils or {}
 
-DeusGenUtils.create_random_generator = function (arg_1_0)
-	return function (arg_2_0, arg_2_1)
+function DeusGenUtils.create_random_generator(arg_1_0)
+	return function(arg_2_0, arg_2_1)
 		local var_2_0
 
 		if arg_2_0 then

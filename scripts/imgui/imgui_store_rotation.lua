@@ -14,7 +14,7 @@ ImguiStoreRotation = class(ImguiStoreRotation)
 local var_0_5 = Imgui
 local var_0_6 = true
 
-ImguiStoreRotation.init = function (arg_1_0)
+function ImguiStoreRotation.init(arg_1_0)
 	arg_1_0._fp = nil
 	arg_1_0._save_file = nil
 	arg_1_0._first_launch = true
@@ -77,7 +77,7 @@ ImguiStoreRotation.init = function (arg_1_0)
 	arg_1_0:_collect_cosmetic_items_data()
 end
 
-ImguiStoreRotation._cleanup_slideshow = function (arg_2_0)
+function ImguiStoreRotation._cleanup_slideshow(arg_2_0)
 	local var_2_0 = {}
 	local var_2_1 = {}
 
@@ -87,7 +87,7 @@ ImguiStoreRotation._cleanup_slideshow = function (arg_2_0)
 		local var_2_4 = var_2_3 and StoreDlcSettingsByName[var_2_2] or rawget(ItemMasterList, var_2_2)
 
 		if not var_2_4 or var_2_4.item_type ~= "bundle" and not var_2_3 and not var_2_4.store_bundle_big_image then
-			-- Nothing
+			-- block empty
 		elseif var_2_4.item_type == "bundle" or var_2_3 then
 			var_2_0[#var_2_0 + 1] = var_2_2
 		end
@@ -96,10 +96,12 @@ ImguiStoreRotation._cleanup_slideshow = function (arg_2_0)
 	arg_2_0._slideshow_item_keys = var_2_0
 end
 
-ImguiStoreRotation._filter_item_keys_list = function (arg_3_0)
+function ImguiStoreRotation._filter_item_keys_list(arg_3_0)
 	local var_3_0 = {}
 	local var_3_1 = {}
 	local var_3_2 = {}
+
+	arg_3_0._name_to_key = {}
 
 	for iter_3_0 = 1, #arg_3_0._item_keys_list do
 		local var_3_3 = arg_3_0._item_keys_list[iter_3_0]
@@ -107,17 +109,22 @@ ImguiStoreRotation._filter_item_keys_list = function (arg_3_0)
 		local var_3_5 = var_3_4 and StoreDlcSettingsByName[var_3_3] or rawget(ItemMasterList, var_3_3)
 
 		if not var_3_5 or var_3_5.item_type == "deed" then
-			-- Nothing
+			-- block empty
 		else
+			local var_3_6 = string.gsub(Localize(var_3_5.display_name or var_3_5.name), LocalizationDebug.TAG, "")
+
 			if var_3_5.item_type == "bundle" or var_3_4 then
 				var_3_0[#var_3_0 + 1] = var_3_3
-				var_3_1[#var_3_1 + 1] = var_3_3
-			else
-				var_3_1[#var_3_1 + 1] = var_3_3
+				var_3_0[#var_3_0 + 1] = var_3_6
 			end
+
+			var_3_1[#var_3_1 + 1] = var_3_3
+			var_3_1[#var_3_1 + 1] = var_3_6
+			arg_3_0._name_to_key[var_3_6] = var_3_3
 
 			if var_3_5.steam_itemdefid or var_3_5.current_prices then
 				var_3_2[#var_3_2 + 1] = var_3_3
+				var_3_2[#var_3_2 + 1] = var_3_6
 			end
 		end
 	end
@@ -127,7 +134,7 @@ ImguiStoreRotation._filter_item_keys_list = function (arg_3_0)
 	arg_3_0._searcheable_item_keys.discount = var_3_2
 end
 
-ImguiStoreRotation._load_saved_data = function (arg_4_0)
+function ImguiStoreRotation._load_saved_data(arg_4_0)
 	arg_4_0._save_data = {}
 
 	if script_data.source_dir then
@@ -151,7 +158,7 @@ ImguiStoreRotation._load_saved_data = function (arg_4_0)
 	end
 end
 
-ImguiStoreRotation._save_settings = function (arg_5_0)
+function ImguiStoreRotation._save_settings(arg_5_0)
 	arg_5_0._save_data.featured.end_year = arg_5_0._timestamp_year
 	arg_5_0._save_data.featured.end_month = arg_5_0._timestamp_month
 	arg_5_0._save_data.featured.end_day = arg_5_0._timestamp_day
@@ -173,7 +180,7 @@ ImguiStoreRotation._save_settings = function (arg_5_0)
 	end
 end
 
-ImguiStoreRotation._setup_timpestamp_fields = function (arg_6_0)
+function ImguiStoreRotation._setup_timpestamp_fields(arg_6_0)
 	arg_6_0._timestamp_year = arg_6_0._save_data.featured.end_year and arg_6_0._save_data.featured.end_year or os.date("%Y")
 	arg_6_0._timestamp_month = arg_6_0._save_data.featured.end_month and arg_6_0._save_data.featured.end_month or os.date("%m")
 	arg_6_0._timestamp_day = arg_6_0._save_data.featured.end_day and arg_6_0._save_data.featured.end_day or os.date("%d")
@@ -185,7 +192,7 @@ ImguiStoreRotation._setup_timpestamp_fields = function (arg_6_0)
 	arg_6_0._new_discount_file_name = string.format("rotation_%s_%s_%s", os.date("%Y"), os.date("%m"), os.date("%d"))
 end
 
-ImguiStoreRotation._setup_discount_begin_end_date = function (arg_7_0)
+function ImguiStoreRotation._setup_discount_begin_end_date(arg_7_0)
 	arg_7_0._begin_discount_year = os.date("%Y")
 	arg_7_0._begin_discount_month = os.date("%m")
 	arg_7_0._begin_discount_day = os.date("%d")
@@ -194,7 +201,7 @@ ImguiStoreRotation._setup_discount_begin_end_date = function (arg_7_0)
 	arg_7_0._end_discount_day = arg_7_0._save_data.discounts.end_day and arg_7_0._save_data.discounts.end_day or "00"
 end
 
-ImguiStoreRotation._setup_layout_template = function (arg_8_0)
+function ImguiStoreRotation._setup_layout_template(arg_8_0)
 	local var_8_0 = cjson.decode(var_0_0)
 
 	if var_8_0 then
@@ -202,7 +209,7 @@ ImguiStoreRotation._setup_layout_template = function (arg_8_0)
 	end
 end
 
-ImguiStoreRotation._setup_item_keys_list = function (arg_9_0)
+function ImguiStoreRotation._setup_item_keys_list(arg_9_0)
 	table.clear(arg_9_0._item_keys_list)
 
 	arg_9_0._item_keys_list = table.keys(ItemMasterList)
@@ -210,7 +217,7 @@ ImguiStoreRotation._setup_item_keys_list = function (arg_9_0)
 	table.sort(arg_9_0._item_keys_list)
 end
 
-ImguiStoreRotation._setup_dlc_list = function (arg_10_0)
+function ImguiStoreRotation._setup_dlc_list(arg_10_0)
 	local var_10_0 = 0
 
 	table.clear(arg_10_0._dlc_list)
@@ -226,11 +233,11 @@ ImguiStoreRotation._setup_dlc_list = function (arg_10_0)
 	table.append(arg_10_0._item_keys_list, arg_10_0._dlc_list)
 end
 
-ImguiStoreRotation.is_persistent = function (arg_11_0)
+function ImguiStoreRotation.is_persistent(arg_11_0)
 	return false
 end
 
-ImguiStoreRotation.update = function (arg_12_0)
+function ImguiStoreRotation.update(arg_12_0)
 	if var_0_6 then
 		arg_12_0:init()
 
@@ -238,7 +245,7 @@ ImguiStoreRotation.update = function (arg_12_0)
 	end
 end
 
-ImguiStoreRotation.draw = function (arg_13_0, arg_13_1)
+function ImguiStoreRotation.draw(arg_13_0, arg_13_1)
 	if arg_13_0._first_launch then
 		local var_13_0, var_13_1 = Application.resolution()
 
@@ -280,7 +287,7 @@ ImguiStoreRotation.draw = function (arg_13_0, arg_13_1)
 	return var_13_2
 end
 
-ImguiStoreRotation._featured_page_tab = function (arg_14_0)
+function ImguiStoreRotation._featured_page_tab(arg_14_0)
 	arg_14_0:_do_new_file_name()
 	arg_14_0:_do_timestamp_settings()
 	var_0_5.text("Timestamp: ")
@@ -304,7 +311,7 @@ ImguiStoreRotation._featured_page_tab = function (arg_14_0)
 	arg_14_0:_handle_error_messages()
 end
 
-ImguiStoreRotation._do_edit_buttons = function (arg_15_0)
+function ImguiStoreRotation._do_edit_buttons(arg_15_0)
 	var_0_5.text("Edit Feature Page Layout and Slideshow Composition")
 	var_0_5.dummy(2, 10)
 
@@ -369,7 +376,7 @@ ImguiStoreRotation._do_edit_buttons = function (arg_15_0)
 	end
 end
 
-ImguiStoreRotation._do_item_selection = function (arg_16_0)
+function ImguiStoreRotation._do_item_selection(arg_16_0)
 	if arg_16_0._is_selecting_item or arg_16_0._is_selecting_slideshow_item then
 		arg_16_0:_draw_item_selection()
 
@@ -392,7 +399,7 @@ ImguiStoreRotation._do_item_selection = function (arg_16_0)
 	end
 end
 
-ImguiStoreRotation._do_save_file_button = function (arg_17_0)
+function ImguiStoreRotation._do_save_file_button(arg_17_0)
 	var_0_5.dummy(2, 10)
 	var_0_5.text("Preview the featured page rotation, before saving your changes and uploading them.")
 
@@ -410,7 +417,7 @@ ImguiStoreRotation._do_save_file_button = function (arg_17_0)
 	var_0_5.text("All the edits will be copied to the clipboard as text.")
 end
 
-ImguiStoreRotation._preview_changes = function (arg_18_0)
+function ImguiStoreRotation._preview_changes(arg_18_0)
 	local var_18_0 = Managers.backend:get_interface("peddler")
 
 	if var_18_0:has_force_override() then
@@ -439,7 +446,7 @@ ImguiStoreRotation._preview_changes = function (arg_18_0)
 	end
 end
 
-ImguiStoreRotation._draw_layout_slideshow_preview = function (arg_19_0)
+function ImguiStoreRotation._draw_layout_slideshow_preview(arg_19_0)
 	var_0_5.dummy(2, 10)
 	var_0_5.text_colored("LAYOUT ITEMS: " .. tostring(#arg_19_0._layout_items), 0, 179, 255, 255)
 	var_0_5.dummy(2, 10)
@@ -456,7 +463,7 @@ ImguiStoreRotation._draw_layout_slideshow_preview = function (arg_19_0)
 	end
 end
 
-ImguiStoreRotation._do_new_file_name = function (arg_20_0)
+function ImguiStoreRotation._do_new_file_name(arg_20_0)
 	arg_20_0._new_rotation_file_name = var_0_5.input_text("New Rotation File Name ", arg_20_0._new_rotation_file_name)
 
 	var_0_5.dummy(2, 10)
@@ -466,11 +473,13 @@ local function var_0_7(arg_21_0)
 	return arg_21_0.steam_itemdefid and true or false
 end
 
-ImguiStoreRotation._is_a_dlc = function (arg_22_0, arg_22_1)
+function ImguiStoreRotation._is_a_dlc(arg_22_0, arg_22_1)
 	return (table.find(arg_22_0._dlc_list, arg_22_1))
 end
 
-ImguiStoreRotation._get_layout_item = function (arg_23_0, arg_23_1)
+function ImguiStoreRotation._get_layout_item(arg_23_0, arg_23_1)
+	arg_23_1 = arg_23_0._name_to_key[arg_23_1] or arg_23_1
+
 	local var_23_0 = {}
 
 	if arg_23_0:_is_a_dlc(arg_23_1) then
@@ -493,7 +502,9 @@ ImguiStoreRotation._get_layout_item = function (arg_23_0, arg_23_1)
 	return var_23_0
 end
 
-ImguiStoreRotation._get_slideshow_item = function (arg_24_0, arg_24_1)
+function ImguiStoreRotation._get_slideshow_item(arg_24_0, arg_24_1)
+	arg_24_1 = arg_24_0._name_to_key[arg_24_1] or arg_24_1
+
 	local var_24_0 = {}
 	local var_24_1
 	local var_24_2
@@ -564,7 +575,7 @@ ImguiStoreRotation._get_slideshow_item = function (arg_24_0, arg_24_1)
 	return var_24_0
 end
 
-ImguiStoreRotation._draw_item_selection = function (arg_25_0)
+function ImguiStoreRotation._draw_item_selection(arg_25_0)
 	var_0_5.text("Select Item")
 
 	local var_25_0, var_25_1, var_25_2 = ImguiX.combo_search(arg_25_0._selected_item_index, arg_25_0._item_search_results, arg_25_0._item_search_text, arg_25_0._searcheable_item_keys[arg_25_0._search_type])
@@ -574,14 +585,14 @@ ImguiStoreRotation._draw_item_selection = function (arg_25_0)
 	arg_25_0._item_search_text = var_25_2
 end
 
-ImguiStoreRotation._draw_selcted_layout_items = function (arg_26_0, arg_26_1)
+function ImguiStoreRotation._draw_selcted_layout_items(arg_26_0, arg_26_1)
 	for iter_26_0 = 1, #arg_26_1 do
 		local var_26_0 = arg_26_1[iter_26_0]
 		local var_26_1 = var_26_0.key or var_26_0.id
 
 		if arg_26_0._localize then
 			local var_26_2 = rawget(ItemMasterList, var_26_1)
-			local var_26_3 = Localize(var_26_2.display_name)
+			local var_26_3 = string.gsub(Localize(var_26_2.display_name), LocalizationDebug.TAG, "")
 
 			var_0_5.text_colored("Featured Item: " .. var_26_3, 245, 245, 207, 255)
 		else
@@ -601,7 +612,7 @@ ImguiStoreRotation._draw_selcted_layout_items = function (arg_26_0, arg_26_1)
 	end
 end
 
-ImguiStoreRotation._draw_selcted_slideshow_items = function (arg_27_0, arg_27_1)
+function ImguiStoreRotation._draw_selcted_slideshow_items(arg_27_0, arg_27_1)
 	for iter_27_0 = 1, #arg_27_1 do
 		local var_27_0 = arg_27_1[iter_27_0]
 
@@ -617,9 +628,11 @@ ImguiStoreRotation._draw_selcted_slideshow_items = function (arg_27_0, arg_27_1)
 			if var_27_0.error_text then
 				var_0_5.text_colored(iter_27_1 .. " : " .. iter_27_2, 255, 0, 0, 255)
 			elseif arg_27_0._localize and (iter_27_1 == "header" or iter_27_1 == "description") then
+				local var_27_2 = string.gsub(Localize(iter_27_2), LocalizationDebug.TAG, "")
+
 				var_0_5.text_colored(iter_27_1 .. " : ", 0, 186, 112, 255)
 				var_0_5.same_line()
-				var_0_5.text_colored(Localize(iter_27_2), 0, 193, 212, 255)
+				var_0_5.text_colored(var_27_2, 0, 193, 212, 255)
 			else
 				var_0_5.text_colored(iter_27_1 .. " : ", 0, 186, 112, 255)
 				var_0_5.same_line()
@@ -627,14 +640,14 @@ ImguiStoreRotation._draw_selcted_slideshow_items = function (arg_27_0, arg_27_1)
 			end
 		end
 
-		local var_27_2 = var_27_0.product_id or var_27_0.dlc_name
+		local var_27_3 = var_27_0.product_id or var_27_0.dlc_name
 
-		arg_27_0:_draw_selected_item_image(var_27_2)
+		arg_27_0:_draw_selected_item_image(var_27_3)
 		var_0_5.dummy(2, 5)
 	end
 end
 
-ImguiStoreRotation._draw_selected_item_image = function (arg_28_0, arg_28_1)
+function ImguiStoreRotation._draw_selected_item_image(arg_28_0, arg_28_1)
 	local var_28_0 = rawget(ItemMasterList, arg_28_1)
 
 	if var_28_0 then
@@ -698,7 +711,7 @@ ImguiStoreRotation._draw_selected_item_image = function (arg_28_0, arg_28_1)
 	end
 end
 
-ImguiStoreRotation._do_timestamp_settings = function (arg_31_0)
+function ImguiStoreRotation._do_timestamp_settings(arg_31_0)
 	var_0_5.text("Set End Date, This will be used for the countdown displayed at the top of the Store Feature Page ")
 	var_0_5.dummy(2, 10)
 	var_0_5.columns(6, false)
@@ -750,7 +763,7 @@ local function var_0_8(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_
 	return true
 end
 
-ImguiStoreRotation._calculate_timestamp = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6)
+function ImguiStoreRotation._calculate_timestamp(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6)
 	if not var_0_8(arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6) then
 		return 0, false
 	end
@@ -771,7 +784,7 @@ ImguiStoreRotation._calculate_timestamp = function (arg_33_0, arg_33_1, arg_33_2
 	return var_33_1, true
 end
 
-ImguiStoreRotation._save_layout_items = function (arg_34_0, arg_34_1)
+function ImguiStoreRotation._save_layout_items(arg_34_0, arg_34_1)
 	if table.is_empty(arg_34_1) then
 		return
 	end
@@ -789,7 +802,7 @@ ImguiStoreRotation._save_layout_items = function (arg_34_0, arg_34_1)
 	table.dump(arg_34_0._lua_layout.pages.featured, "FEATURED", 5)
 end
 
-ImguiStoreRotation._save_slideshow_items = function (arg_35_0, arg_35_1)
+function ImguiStoreRotation._save_slideshow_items(arg_35_0, arg_35_1)
 	if table.is_empty(arg_35_1) then
 		return
 	end
@@ -800,7 +813,7 @@ ImguiStoreRotation._save_slideshow_items = function (arg_35_0, arg_35_1)
 
 	for iter_35_0, iter_35_1 in pairs(arg_35_1) do
 		if iter_35_1.error_text then
-			-- Nothing
+			-- block empty
 		else
 			var_35_0[#var_35_0 + 1] = iter_35_1
 		end
@@ -811,11 +824,11 @@ ImguiStoreRotation._save_slideshow_items = function (arg_35_0, arg_35_1)
 	table.dump(arg_35_0._lua_layout.pages.featured, "FEATURED", 5)
 end
 
-ImguiStoreRotation._remove_last_added_item = function (arg_36_0, arg_36_1)
+function ImguiStoreRotation._remove_last_added_item(arg_36_0, arg_36_1)
 	arg_36_1[#arg_36_1] = nil
 end
 
-ImguiStoreRotation._do_clear_edit_buttons = function (arg_37_0)
+function ImguiStoreRotation._do_clear_edit_buttons(arg_37_0)
 	var_0_5.dummy(2, 10)
 	var_0_5.text("Clear Edits")
 	var_0_5.text_colored("Clear the edits made, the uses can delete a whole section or the entire edits. ", 245, 245, 207, 255)
@@ -836,7 +849,7 @@ ImguiStoreRotation._do_clear_edit_buttons = function (arg_37_0)
 	end
 end
 
-ImguiStoreRotation._save_to_file = function (arg_38_0)
+function ImguiStoreRotation._save_to_file(arg_38_0)
 	local var_38_0 = false
 
 	if arg_38_0._new_rotation_file_name == "" then
@@ -874,7 +887,7 @@ ImguiStoreRotation._save_to_file = function (arg_38_0)
 	end
 end
 
-ImguiStoreRotation._calculate_discount = function (arg_39_0, arg_39_1, arg_39_2)
+function ImguiStoreRotation._calculate_discount(arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = arg_39_1:gsub("%s+", "")
 	local var_39_1 = arg_39_2 / 100
 	local var_39_2 = string.format("%s%s%sT110000Z", arg_39_0._begin_discount_year, arg_39_0._begin_discount_month, arg_39_0._begin_discount_day)
@@ -886,9 +899,11 @@ ImguiStoreRotation._calculate_discount = function (arg_39_0, arg_39_1, arg_39_2)
 	return var_39_4
 end
 
-ImguiStoreRotation._make_item_def = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+function ImguiStoreRotation._make_item_def(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 	local var_40_0 = arg_40_2.steam_itemdefid
 	local var_40_1 = SteamInventory.get_item_definition_property(var_40_0, "price")
+	local var_40_2 = string.gsub(Localize(arg_40_2.display_name), LocalizationDebug.TAG, "")
+	local var_40_3 = string.gsub(Localize(arg_40_2.description), LocalizationDebug.TAG, "")
 
 	return {
 		item_quality = 2,
@@ -900,18 +915,20 @@ ImguiStoreRotation._make_item_def = function (arg_40_0, arg_40_1, arg_40_2, arg_
 		hidden = false,
 		itemdefid = arg_40_2.steam_itemdefid,
 		display_type = SteamInventory.get_item_definition_property(var_40_0, "display_type"),
-		name = Localize(arg_40_2.display_name),
+		name = var_40_2,
 		price = arg_40_0:_calculate_discount(var_40_1, arg_40_3),
-		description = Localize(arg_40_2.description),
+		description = var_40_3,
 		name_color = SteamInventory.get_item_definition_property(var_40_0, "name_color"),
 		background_color = SteamInventory.get_item_definition_property(var_40_0, "background_color"),
 		icon_url = SteamInventory.get_item_definition_property(var_40_0, "icon_url")
 	}
 end
 
-ImguiStoreRotation._make_bundle_def = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+function ImguiStoreRotation._make_bundle_def(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 	local var_41_0 = arg_41_2.steam_itemdefid
 	local var_41_1 = SteamInventory.get_item_definition_property(var_41_0, "price")
+	local var_41_2 = string.gsub(Localize(arg_41_2 and arg_41_2.display_name or "not_assigned"), LocalizationDebug.TAG, "")
+	local var_41_3 = string.gsub(Localize(arg_41_2 and arg_41_2.description or "not_assigned"), LocalizationDebug.TAG, "")
 
 	return {
 		item_quality = 2,
@@ -924,16 +941,16 @@ ImguiStoreRotation._make_bundle_def = function (arg_41_0, arg_41_1, arg_41_2, ar
 		itemdefid = arg_41_2.steam_itemdefid,
 		display_type = SteamInventory.get_item_definition_property(var_41_0, "display_type"),
 		bundle = SteamInventory.get_item_definition_property(var_41_0, "bundle"),
-		name = Localize(arg_41_2 and arg_41_2.display_name or "not_assigned"),
+		name = var_41_2,
 		price = arg_41_0:_calculate_discount(var_41_1, arg_41_3),
-		description = Localize(arg_41_2 and arg_41_2.description or "not_assigned"),
+		description = var_41_3,
 		name_color = SteamInventory.get_item_definition_property(var_41_0, "name_color"),
 		background_color = SteamInventory.get_item_definition_property(var_41_0, "background_color"),
 		icon_url = SteamInventory.get_item_definition_property(var_41_0, "icon_url")
 	}
 end
 
-ImguiStoreRotation._generate_discounted_item = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+function ImguiStoreRotation._generate_discounted_item(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	if arg_42_2.item_type ~= "bundle" and arg_42_2.item_type ~= "cosmetic_bundle" then
 		return arg_42_0:_make_item_def(arg_42_1, arg_42_2, arg_42_3)
 	else
@@ -941,7 +958,7 @@ ImguiStoreRotation._generate_discounted_item = function (arg_42_0, arg_42_1, arg
 	end
 end
 
-ImguiStoreRotation._draw_dicount_begin_and_end_fields = function (arg_43_0)
+function ImguiStoreRotation._draw_dicount_begin_and_end_fields(arg_43_0)
 	var_0_5.text("Setup Discount Begin and End Date")
 	var_0_5.text_colored("Set the start date from when the an item should be on sale", 245, 245, 207, 255)
 	var_0_5.text("Begin Date")
@@ -980,7 +997,7 @@ ImguiStoreRotation._draw_dicount_begin_and_end_fields = function (arg_43_0)
 	var_0_5.next_column()
 end
 
-ImguiStoreRotation._store_rotation_discounts_tab = function (arg_44_0)
+function ImguiStoreRotation._store_rotation_discounts_tab(arg_44_0)
 	var_0_5.text("Store Rotation Discounts")
 	var_0_5.text_colored("This tab only supports discounting STEAM ITEMS.\nSupport to discount PLAYFAB items will be added in the near future.", 255, 0, 0, 255)
 	var_0_5.dummy(2, 5)
@@ -1012,7 +1029,7 @@ ImguiStoreRotation._store_rotation_discounts_tab = function (arg_44_0)
 	var_0_5.columns(0, false)
 end
 
-ImguiStoreRotation._do_discount_rotation_file_name = function (arg_45_0)
+function ImguiStoreRotation._do_discount_rotation_file_name(arg_45_0)
 	var_0_5.dummy(2, 3)
 
 	arg_45_0._new_discount_file_name = var_0_5.input_text("Steam Discount File Name", arg_45_0._new_discount_file_name)
@@ -1028,7 +1045,7 @@ ImguiStoreRotation._do_discount_rotation_file_name = function (arg_45_0)
 	var_0_5.separator()
 end
 
-ImguiStoreRotation._do_edit_discounts_button = function (arg_46_0)
+function ImguiStoreRotation._do_edit_discounts_button(arg_46_0)
 	var_0_5.dummy(2, 10)
 	var_0_5.text("Edit Discounts")
 	var_0_5.text_colored("Select an item and set the anount of which it should be discounted by", 245, 245, 207, 255)
@@ -1044,12 +1061,12 @@ ImguiStoreRotation._do_edit_discounts_button = function (arg_46_0)
 	end
 end
 
-ImguiStoreRotation._on_search_type_changed = function (arg_47_0, arg_47_1)
+function ImguiStoreRotation._on_search_type_changed(arg_47_0, arg_47_1)
 	arg_47_0._search_type = arg_47_1
 	arg_47_0._item_search_results = table.clone(arg_47_0._searcheable_item_keys[arg_47_1])
 end
 
-ImguiStoreRotation._do_discount_item_selection = function (arg_48_0, arg_48_1)
+function ImguiStoreRotation._do_discount_item_selection(arg_48_0, arg_48_1)
 	if arg_48_0._is_selecting_discount_item then
 		var_0_5.dummy(2, 5)
 		var_0_5.text_colored("OBS! PRESS ENTER", 255, 0, 0, 255)
@@ -1063,6 +1080,9 @@ ImguiStoreRotation._do_discount_item_selection = function (arg_48_0, arg_48_1)
 		if arg_48_0._selected_item_index ~= -1 then
 			if arg_48_0._discount_amount > 0 and arg_48_0._discount_amount <= 100 and arg_48_1 then
 				local var_48_0 = arg_48_0._item_search_results[arg_48_0._selected_item_index]
+
+				var_48_0 = arg_48_0._name_to_key[var_48_0] or var_48_0
+
 				local var_48_1 = rawget(ItemMasterList, var_48_0)
 
 				fassert(var_48_1, "Item %s is not in the ItemMasterList", var_48_0)
@@ -1096,7 +1116,7 @@ ImguiStoreRotation._do_discount_item_selection = function (arg_48_0, arg_48_1)
 	end
 end
 
-ImguiStoreRotation._handle_discount_page_errors = function (arg_49_0, arg_49_1)
+function ImguiStoreRotation._handle_discount_page_errors(arg_49_0, arg_49_1)
 	if arg_49_0._has_error_discount then
 		local var_49_0 = ""
 
@@ -1120,7 +1140,7 @@ ImguiStoreRotation._handle_discount_page_errors = function (arg_49_0, arg_49_1)
 	end
 end
 
-ImguiStoreRotation._do_clear_discount_edit_buttons = function (arg_50_0)
+function ImguiStoreRotation._do_clear_discount_edit_buttons(arg_50_0)
 	var_0_5.dummy(2, 10)
 	var_0_5.text("Clear All Discounted Items")
 	var_0_5.text_colored("Delete all the edited discounted items.", 245, 245, 207, 255)
@@ -1130,7 +1150,7 @@ ImguiStoreRotation._do_clear_discount_edit_buttons = function (arg_50_0)
 	end
 end
 
-ImguiStoreRotation._do_save_discounted_items_button = function (arg_51_0)
+function ImguiStoreRotation._do_save_discounted_items_button(arg_51_0)
 	var_0_5.dummy(2, 10)
 	var_0_5.text("Save Discounts")
 	var_0_5.text_colored("Save the discounted items to a JSON file, that can be easily uploaded to Steam.", 245, 245, 207, 255)
@@ -1140,7 +1160,7 @@ ImguiStoreRotation._do_save_discounted_items_button = function (arg_51_0)
 	end
 end
 
-ImguiStoreRotation._do_preview_discounted_items = function (arg_52_0)
+function ImguiStoreRotation._do_preview_discounted_items(arg_52_0)
 	var_0_5.dummy(2, 10)
 	var_0_5.text("DISCOUNTED ITEMS: " .. #arg_52_0._discounted_items)
 
@@ -1149,7 +1169,7 @@ ImguiStoreRotation._do_preview_discounted_items = function (arg_52_0)
 	end
 end
 
-ImguiStoreRotation._get_from_to_discount_price = function (arg_53_0, arg_53_1)
+function ImguiStoreRotation._get_from_to_discount_price(arg_53_0, arg_53_1)
 	local var_53_0 = arg_53_0._backend_store
 	local var_53_1 = "Discounted by %d percent from %.2f %s to %.2f %s"
 	local var_53_2, var_53_3 = var_53_0:get_steam_item_price(arg_53_1)
@@ -1158,7 +1178,7 @@ ImguiStoreRotation._get_from_to_discount_price = function (arg_53_0, arg_53_1)
 	return (string.format(var_53_1, arg_53_0._discount_amount, var_53_2 * 0.01, var_53_3, var_53_4 * 0.01, var_53_3))
 end
 
-ImguiStoreRotation._draw_discounted_items = function (arg_54_0, arg_54_1)
+function ImguiStoreRotation._draw_discounted_items(arg_54_0, arg_54_1)
 	for iter_54_0 = 1, #arg_54_1 do
 		local var_54_0 = arg_54_1[iter_54_0]
 		local var_54_1 = var_54_0.item
@@ -1185,7 +1205,7 @@ ImguiStoreRotation._draw_discounted_items = function (arg_54_0, arg_54_1)
 	end
 end
 
-ImguiStoreRotation._get_rotation_items = function (arg_55_0)
+function ImguiStoreRotation._get_rotation_items(arg_55_0)
 	local var_55_0 = {}
 
 	for iter_55_0 = 1, #arg_55_0._discounted_items do
@@ -1197,7 +1217,7 @@ ImguiStoreRotation._get_rotation_items = function (arg_55_0)
 	return var_55_0
 end
 
-ImguiStoreRotation._save_discounts_to_file = function (arg_56_0)
+function ImguiStoreRotation._save_discounts_to_file(arg_56_0)
 	if not arg_56_0._has_error_discount then
 		local var_56_0 = arg_56_0:_get_rotation_items()
 		local var_56_1 = cjson.encode({
@@ -1217,7 +1237,7 @@ ImguiStoreRotation._save_discounts_to_file = function (arg_56_0)
 	end
 end
 
-ImguiStoreRotation._store_item_utility_tab = function (arg_57_0)
+function ImguiStoreRotation._store_item_utility_tab(arg_57_0)
 	var_0_5.text("Store Items Utility")
 	var_0_5.dummy(2, 5)
 	var_0_5.text_colored("Create a .CSV file containing all the items present in the game", 64, 255, 255, 255)
@@ -1235,7 +1255,7 @@ ImguiStoreRotation._store_item_utility_tab = function (arg_57_0)
 	end
 end
 
-ImguiStoreRotation._create_rotation_items_json_file = function (arg_58_0)
+function ImguiStoreRotation._create_rotation_items_json_file(arg_58_0)
 	local var_58_0 = arg_58_0:_collect_all_feature_items()
 	local var_58_1 = arg_58_0:_collect_all_slideshow_items()
 	local var_58_2 = cjson.encode({
@@ -1250,7 +1270,7 @@ ImguiStoreRotation._create_rotation_items_json_file = function (arg_58_0)
 	arg_58_0._fp:close()
 end
 
-ImguiStoreRotation._collect_all_feature_items = function (arg_59_0)
+function ImguiStoreRotation._collect_all_feature_items(arg_59_0)
 	local var_59_0 = {}
 
 	for iter_59_0, iter_59_1 in ipairs(arg_59_0._item_keys_list) do
@@ -1262,7 +1282,7 @@ ImguiStoreRotation._collect_all_feature_items = function (arg_59_0)
 	return var_59_0
 end
 
-ImguiStoreRotation._collect_all_slideshow_items = function (arg_60_0)
+function ImguiStoreRotation._collect_all_slideshow_items(arg_60_0)
 	local var_60_0 = {}
 
 	for iter_60_0, iter_60_1 in pairs(arg_60_0._item_keys_list) do
@@ -1278,17 +1298,19 @@ ImguiStoreRotation._collect_all_slideshow_items = function (arg_60_0)
 	return var_60_0
 end
 
-ImguiStoreRotation._create_cosmetics_item_list_file = function (arg_61_0)
+function ImguiStoreRotation._create_cosmetics_item_list_file(arg_61_0)
 	local var_61_0 = "Hero, Comsetic Type, Localized Name, Item Key, Can Wield Careers \n"
 
 	local function var_61_1(arg_62_0)
 		local var_62_0 = ""
 
 		for iter_62_0 = 1, #arg_62_0 do
+			local var_62_1 = string.gsub(Localize(arg_62_0[iter_62_0]), LocalizationDebug.TAG, "")
+
 			if iter_62_0 == #arg_62_0 then
-				var_62_0 = var_62_0 .. Localize(arg_62_0[iter_62_0])
+				var_62_0 = var_62_0 .. var_62_1
 			else
-				var_62_0 = var_62_0 .. Localize(arg_62_0[iter_62_0]) .. " , "
+				var_62_0 = var_62_0 .. var_62_1 .. " , "
 			end
 		end
 
@@ -1296,34 +1318,39 @@ ImguiStoreRotation._create_cosmetics_item_list_file = function (arg_61_0)
 	end
 
 	for iter_61_0, iter_61_1 in pairs(arg_61_0._cosmetic_items) do
+		local var_61_2 = string.gsub(Localize(iter_61_0), LocalizationDebug.TAG, "")
+
 		if iter_61_0 == "frame" then
 			for iter_61_2, iter_61_3 in pairs(iter_61_1) do
-				local var_61_2 = iter_61_3.item_key
+				local var_61_3 = string.gsub(Localize(iter_61_2), LocalizationDebug.TAG, "")
+				local var_61_4 = iter_61_3.item_key
 
-				var_61_0 = var_61_0 .. "\" \"" .. "," .. Localize(iter_61_0) .. "," .. "\"" .. Localize(iter_61_2) .. "\"" .. ", " .. var_61_2 .. ", All" .. "\n"
+				var_61_0 = var_61_0 .. "\" \"" .. "," .. var_61_2 .. "," .. "\"" .. var_61_3 .. "\"" .. ", " .. var_61_4 .. ", All" .. "\n"
 			end
 		else
 			for iter_61_4, iter_61_5 in pairs(iter_61_1) do
-				for iter_61_6, iter_61_7 in pairs(iter_61_5) do
-					var_61_0 = var_61_0 .. Localize(iter_61_0) .. "," .. Localize(iter_61_4) .. ","
+				local var_61_5 = string.gsub(Localize(iter_61_4), LocalizationDebug.TAG, "")
 
-					local var_61_3 = ""
+				for iter_61_6, iter_61_7 in pairs(iter_61_5) do
+					local var_61_6 = string.gsub(Localize(iter_61_6), LocalizationDebug.TAG, "")
+
+					var_61_0 = var_61_0 .. var_61_2 .. "," .. var_61_5 .. ","
+
+					local var_61_7 = ""
 
 					if iter_61_7.can_wield then
-						var_61_3 = var_61_1(iter_61_7.can_wield)
+						var_61_7 = var_61_1(iter_61_7.can_wield)
 					end
 
-					local var_61_4 = iter_61_7.item_key
-
-					var_61_0 = var_61_0 .. "\"" .. Localize(iter_61_6) .. "\"" .. ", " .. iter_61_7.item_key .. ", " .. var_61_3 .. "\n"
+					var_61_0 = var_61_0 .. "\"" .. var_61_6 .. "\"" .. ", " .. iter_61_7.item_key .. ", " .. var_61_7 .. "\n"
 				end
 			end
 		end
 	end
 
-	local var_61_5 = script_data.source_dir
+	local var_61_8 = script_data.source_dir
 
-	arg_61_0._fp = assert(io.open(var_61_5 .. "/.shop/cosmetic_items_list.csv", "w"))
+	arg_61_0._fp = assert(io.open(var_61_8 .. "/.shop/cosmetic_items_list.csv", "w"))
 
 	arg_61_0._fp:write(var_61_0)
 	arg_61_0._fp:close()
@@ -1336,7 +1363,7 @@ local var_0_9 = {
 	cosmetic_bundles = true
 }
 
-ImguiStoreRotation._collect_cosmetic_items_data = function (arg_63_0)
+function ImguiStoreRotation._collect_cosmetic_items_data(arg_63_0)
 	local var_63_0 = {}
 
 	for iter_63_0, iter_63_1 in pairs(ItemMasterList) do
@@ -1383,7 +1410,7 @@ ImguiStoreRotation._collect_cosmetic_items_data = function (arg_63_0)
 	arg_63_0._cosmetic_items = var_63_0
 end
 
-ImguiStoreRotation._handle_error_messages = function (arg_64_0)
+function ImguiStoreRotation._handle_error_messages(arg_64_0)
 	if arg_64_0._timestamp_error then
 		var_0_5.text_colored("Achtung!!: ", 255, 0, 0, 255)
 		var_0_5.same_line()

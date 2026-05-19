@@ -1724,7 +1724,8 @@ ItemMasterList.frame_skulls = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"skulls"
+		"skulls",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_geheimnisnacht_01 = {
@@ -1740,7 +1741,8 @@ ItemMasterList.frame_geheimnisnacht_01 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_geheimnisnacht_02 = {
@@ -1769,7 +1771,8 @@ ItemMasterList.frame_geheimnisnacht_03 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_summer = {
@@ -1797,7 +1800,8 @@ ItemMasterList.frame_mondstille_01 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_mondstille_02 = {
@@ -1813,7 +1817,8 @@ ItemMasterList.frame_mondstille_02 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_mondstille_03 = {
@@ -3101,7 +3106,8 @@ ItemMasterList.frame_0094 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"anniversary"
+		"anniversary",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_0095 = {
@@ -3117,7 +3123,8 @@ ItemMasterList.frame_0095 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"skulls"
+		"skulls",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_0096 = {
@@ -3253,7 +3260,8 @@ ItemMasterList.frame_skulls_2021 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"skulls"
+		"skulls",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_skulls_2022 = {
@@ -3269,7 +3277,8 @@ ItemMasterList.frame_skulls_2022 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"skulls"
+		"skulls",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.crafting_material_scrap = {
@@ -13776,6 +13785,6 @@ ItemMasterList.frame_dwarf_fest = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"dwarf_fest_2025"
+		"dwarf_fest"
 	}
 }

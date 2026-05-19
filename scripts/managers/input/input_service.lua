@@ -2,7 +2,7 @@
 
 InputService = class(InputService)
 
-InputService.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+function InputService.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0.platform = PLATFORM
 	arg_1_0.mapped_devices = {
 		gamepad = {},
@@ -22,7 +22,7 @@ InputService.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0.blocked_input = {}
 end
 
-InputService.map_device = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function InputService.map_device(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0.mapped_devices[arg_2_1]
 
 	var_2_0[#var_2_0 + 1] = arg_2_2
@@ -30,7 +30,7 @@ InputService.map_device = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0.input_devices_data[arg_2_2] = arg_2_3
 end
 
-InputService.unmap_device = function (arg_3_0, arg_3_1, arg_3_2)
+function InputService.unmap_device(arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0.mapped_devices[arg_3_1]
 	local var_3_1 = table.find(var_3_0, arg_3_2)
 
@@ -47,7 +47,7 @@ end
 
 local var_0_0 = math.max
 
-InputService.get = function (arg_4_0, arg_4_1, arg_4_2)
+function InputService.get(arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0, var_4_1 = arg_4_0:get_active_keymaps(nil, arg_4_1)
 	local var_4_2 = var_4_0[arg_4_1]
 	local var_4_3 = arg_4_0:get_active_filters(nil, arg_4_1)
@@ -133,15 +133,15 @@ InputService.get = function (arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-InputService.get_controller_cursor_position = function (arg_5_0)
+function InputService.get_controller_cursor_position(arg_5_0)
 	return arg_5_0.controller_select:unbox()
 end
 
-InputService.set_controller_cursor_position = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function InputService.set_controller_cursor_position(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_0.controller_select:store(arg_6_1, arg_6_2, arg_6_3)
 end
 
-InputService.get_active_keymaps = function (arg_7_0, arg_7_1, arg_7_2)
+function InputService.get_active_keymaps(arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_1 or arg_7_0.platform
 
 	if not arg_7_1 and IS_WINDOWS and arg_7_0.input_manager:is_device_active("gamepad") then
@@ -168,7 +168,7 @@ InputService.get_active_keymaps = function (arg_7_0, arg_7_1, arg_7_2)
 	return var_7_6.keymaps, var_7_6.default_data_types
 end
 
-InputService.get_active_filters = function (arg_8_0, arg_8_1, arg_8_2)
+function InputService.get_active_filters(arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.filters_name
 
 	if not var_8_0 then
@@ -196,11 +196,11 @@ InputService.get_active_filters = function (arg_8_0, arg_8_1, arg_8_2)
 	return arg_8_0.input_manager:filters_data(var_8_0)[var_8_1]
 end
 
-InputService.get_keymapping = function (arg_9_0, arg_9_1, arg_9_2)
+function InputService.get_keymapping(arg_9_0, arg_9_1, arg_9_2)
 	return arg_9_0:get_active_keymaps(arg_9_2, arg_9_1)[arg_9_1]
 end
 
-InputService.add_keymap = function (arg_10_0, arg_10_1)
+function InputService.add_keymap(arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0:get_active_keymaps()
 	local var_10_1 = not var_10_0[arg_10_1]
 
@@ -213,7 +213,7 @@ InputService.add_keymap = function (arg_10_0, arg_10_1)
 	}
 end
 
-InputService.remove_keymap = function (arg_11_0, arg_11_1)
+function InputService.remove_keymap(arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0:get_active_keymaps()
 	local var_11_1 = var_11_0[arg_11_1]
 
@@ -222,7 +222,7 @@ InputService.remove_keymap = function (arg_11_0, arg_11_1)
 	var_11_0[arg_11_1] = nil
 end
 
-InputService.generate_keybinding_setting = function (arg_12_0)
+function InputService.generate_keybinding_setting(arg_12_0)
 	local var_12_0 = {}
 	local var_12_1 = arg_12_0:get_active_keymaps()
 
@@ -266,7 +266,7 @@ InputService.generate_keybinding_setting = function (arg_12_0)
 	return var_12_0
 end
 
-InputService.generate_filters_setting = function (arg_13_0)
+function InputService.generate_filters_setting(arg_13_0)
 	local var_13_0 = {}
 	local var_13_1 = arg_13_0:get_active_filters()
 
@@ -282,26 +282,26 @@ InputService.generate_filters_setting = function (arg_13_0)
 	return var_13_0
 end
 
-InputService.has = function (arg_14_0, arg_14_1)
+function InputService.has(arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0:get_active_keymaps(nil, arg_14_1)
 	local var_14_1 = arg_14_0:get_active_filters(nil, arg_14_1)
 
 	return var_14_0[arg_14_1] or var_14_1 and var_14_1[arg_14_1] and true or false
 end
 
-InputService.is_blocked = function (arg_15_0)
+function InputService.is_blocked(arg_15_0)
 	return arg_15_0.service_is_blocked or arg_15_0.disabled_input_group
 end
 
-InputService.set_blocked = function (arg_16_0, arg_16_1, arg_16_2)
+function InputService.set_blocked(arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0.service_is_blocked = arg_16_1
 end
 
-InputService.set_disabled_input_group = function (arg_17_0, arg_17_1)
+function InputService.set_disabled_input_group(arg_17_0, arg_17_1)
 	arg_17_0.disabled_input_group = arg_17_1
 end
 
-InputService.set_input_blocked = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+function InputService.set_input_blocked(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	local var_18_0 = arg_18_0.blocked_input
 	local var_18_1 = var_18_0[arg_18_1]
 
@@ -322,10 +322,10 @@ InputService.set_input_blocked = function (arg_18_0, arg_18_1, arg_18_2, arg_18_
 	end
 end
 
-InputService.set_hover = function (arg_19_0, arg_19_1)
+function InputService.set_hover(arg_19_0, arg_19_1)
 	arg_19_0.hovering = arg_19_0.hovering or arg_19_1
 end
 
-InputService.is_hovering = function (arg_20_0)
+function InputService.is_hovering(arg_20_0)
 	return arg_20_0.hovering
 end

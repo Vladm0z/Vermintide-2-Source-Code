@@ -9,7 +9,7 @@ ActPresentationUI = class(ActPresentationUI)
 
 local var_0_4 = false
 
-ActPresentationUI.init = function (arg_1_0, arg_1_1)
+function ActPresentationUI.init(arg_1_0, arg_1_1)
 	arg_1_0.ui_renderer = arg_1_1.ui_renderer
 	arg_1_0.ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0.ingame_ui = arg_1_1.ingame_ui
@@ -34,7 +34,7 @@ ActPresentationUI.init = function (arg_1_0, arg_1_1)
 	var_1_0:map_device_to_service("act_presentation", "gamepad")
 end
 
-ActPresentationUI.create_ui_elements = function (arg_2_0)
+function ActPresentationUI.create_ui_elements(arg_2_0)
 	local var_2_0 = {}
 	local var_2_1 = {}
 
@@ -55,7 +55,7 @@ ActPresentationUI.create_ui_elements = function (arg_2_0)
 	var_0_4 = false
 end
 
-ActPresentationUI.start = function (arg_3_0, arg_3_1, arg_3_2)
+function ActPresentationUI.start(arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = LevelUnlockUtils.get_act_key_by_level(arg_3_1)
 
 	if not var_3_0 then
@@ -89,7 +89,7 @@ ActPresentationUI.start = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.active = true
 end
 
-ActPresentationUI._set_presentation_info = function (arg_4_0, arg_4_1, arg_4_2)
+function ActPresentationUI._set_presentation_info(arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = LevelSettings[arg_4_2]
 	local var_4_1 = var_4_0.display_name
 	local var_4_2 = var_4_0.level_image
@@ -102,7 +102,7 @@ ActPresentationUI._set_presentation_info = function (arg_4_0, arg_4_1, arg_4_2)
 	var_4_5.level_title.content.text = Localize(var_4_1)
 end
 
-ActPresentationUI._setup_level = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+function ActPresentationUI._setup_level(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_0._widgets_by_name
 	local var_5_1 = arg_5_0.statistics_db
 	local var_5_2 = arg_5_0.stats_id
@@ -118,11 +118,11 @@ ActPresentationUI._setup_level = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	return var_5_5, var_5_4
 end
 
-ActPresentationUI.destroy = function (arg_6_0)
+function ActPresentationUI.destroy(arg_6_0)
 	arg_6_0._ui_animator = nil
 end
 
-ActPresentationUI._update_animations = function (arg_7_0, arg_7_1)
+function ActPresentationUI._update_animations(arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._animations
 	local var_7_1 = arg_7_0._ui_animator
 
@@ -144,13 +144,13 @@ ActPresentationUI._update_animations = function (arg_7_0, arg_7_1)
 	end
 end
 
-ActPresentationUI.presentation_completed = function (arg_8_0)
+function ActPresentationUI.presentation_completed(arg_8_0)
 	local var_8_0 = arg_8_0.animation_params
 
 	return var_8_0 and var_8_0.presentation_completed or arg_8_0._presentation_aborted
 end
 
-ActPresentationUI.update = function (arg_9_0, arg_9_1, arg_9_2)
+function ActPresentationUI.update(arg_9_0, arg_9_1, arg_9_2)
 	if var_0_4 then
 		arg_9_0:create_ui_elements()
 	end
@@ -159,7 +159,7 @@ ActPresentationUI.update = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:draw(arg_9_1)
 end
 
-ActPresentationUI.draw = function (arg_10_0, arg_10_1)
+function ActPresentationUI.draw(arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.ui_top_renderer
 	local var_10_1 = arg_10_0.render_settings
 	local var_10_2 = arg_10_0._ui_scenegraph
@@ -183,7 +183,7 @@ ActPresentationUI.draw = function (arg_10_0, arg_10_1)
 	UIRenderer.end_pass(var_10_0)
 end
 
-ActPresentationUI.start_presentation_animation = function (arg_11_0, arg_11_1, arg_11_2)
+function ActPresentationUI.start_presentation_animation(arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_2 or {
 		wwise_world = arg_11_0.wwise_world
 	}

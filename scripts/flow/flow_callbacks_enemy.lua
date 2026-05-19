@@ -304,62 +304,69 @@ end
 
 local function var_0_12(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
 	local var_13_0 = Unit.node(arg_13_1, arg_13_3.gib_parent_align_node)
-	local var_13_1 = Matrix4x4.from_quaternion_position(Unit.world_rotation(arg_13_1, var_13_0), Unit.world_position(arg_13_1, var_13_0))
+	local var_13_1 = Unit.world_rotation(arg_13_1, var_13_0)
+	local var_13_2 = Unit.world_position(arg_13_1, var_13_0)
 
-	if arg_13_3.gib_disable_auto_scale ~= true then
-		local var_13_2 = Unit.local_scale(arg_13_1, 1)
-
-		if arg_13_6 ~= nil then
-			local var_13_3 = arg_13_6._size_variation or 1
-
-			var_13_2 = Vector3(var_13_3, var_13_3, var_13_3)
-		end
-
-		Matrix4x4.set_scale(var_13_1, var_13_2)
+	if not Vector3.is_valid(var_13_2) then
+		return
 	end
 
-	local var_13_4
+	local var_13_3 = Matrix4x4.from_quaternion_position(var_13_1, var_13_2)
+
+	if arg_13_3.gib_disable_auto_scale ~= true then
+		local var_13_4 = Unit.local_scale(arg_13_1, 1)
+
+		if arg_13_6 ~= nil then
+			local var_13_5 = arg_13_6._size_variation or 1
+
+			var_13_4 = Vector3(var_13_5, var_13_5, var_13_5)
+		end
+
+		Matrix4x4.set_scale(var_13_3, var_13_4)
+	end
+
+	local var_13_6
 
 	if arg_13_0 ~= nil then
 		if arg_13_3.gib_unit_template ~= nil then
-			var_13_4 = arg_13_0:spawn_local_unit_with_extensions(arg_13_3.gib_unit, arg_13_3.gib_unit_template, nil, var_13_1)
+			var_13_6 = arg_13_0:spawn_local_unit_with_extensions(arg_13_3.gib_unit, arg_13_3.gib_unit_template, nil, var_13_3)
 		else
-			var_13_4 = arg_13_0:spawn_local_unit(arg_13_3.gib_unit, var_13_1)
+			var_13_6 = arg_13_0:spawn_local_unit(arg_13_3.gib_unit, var_13_3)
 		end
 	else
-		var_13_4 = World.spawn_unit(arg_13_2, arg_13_3.gib_unit, var_13_1)
+		var_13_6 = World.spawn_unit(arg_13_2, arg_13_3.gib_unit, var_13_3)
 	end
 
 	if arg_13_3.gib_helmet_link_node ~= nil then
-		local var_13_5 = var_0_10(arg_13_1, arg_13_5)
+		local var_13_7 = var_0_10(arg_13_1, arg_13_5)
 
-		for iter_13_0 = 1, #var_13_5 do
-			World.unlink_unit(arg_13_2, var_13_5[iter_13_0])
-			World.link_unit(Unit.world(var_13_4), var_13_5[iter_13_0], var_13_4, Unit.node(var_13_4, arg_13_3.gib_helmet_link_node))
-			Unit.set_shader_pass_flag_for_meshes_in_unit_and_childs(var_13_5[iter_13_0], "outline_unit", false)
+		for iter_13_0 = 1, #var_13_7 do
+			World.unlink_unit(arg_13_2, var_13_7[iter_13_0])
+			World.link_unit(Unit.world(var_13_6), var_13_7[iter_13_0], var_13_6, Unit.node(var_13_6, arg_13_3.gib_helmet_link_node))
+			Unit.set_shader_pass_flag_for_meshes_in_unit_and_childs(var_13_7[iter_13_0], "outline_unit", false)
 		end
 	end
 
-	local var_13_6 = Unit.actor(var_13_4, arg_13_3.gib_push_actor)
+	local var_13_8 = Unit.actor(var_13_6, arg_13_3.gib_push_actor)
 
-	if not var_13_6 then
-		-- Nothing
+	if not var_13_8 then
+		-- block empty
 	else
-		if Unit.has_node(var_13_4, "a_push") then
-			var_13_0 = Unit.node(var_13_4, "a_push")
+		if Unit.has_node(var_13_6, "a_push") then
+			var_13_0 = Unit.node(var_13_6, "a_push")
 		else
 			var_13_0 = Script.index_offset()
 		end
 
 		if arg_13_4 ~= 1 then
-			Actor.add_velocity(var_13_6, Quaternion.rotate(Unit.world_rotation(var_13_4, var_13_0), Vector3(2 + math.random(-0.5, 0.5), math.random(-1, 1), math.random(-1, 1))) * (arg_13_3.gib_push_force * 0.75) * arg_13_4)
-			Actor.add_angular_velocity(var_13_6, Vector3(math.random(0, 2), math.random(0, 2), math.random(0, 2)) * arg_13_4)
+			Actor.add_velocity(var_13_8, Quaternion.rotate(Unit.world_rotation(var_13_6, var_13_0), Vector3(2 + math.random(-0.5, 0.5), math.random(-1, 1), math.random(-1, 1))) * (arg_13_3.gib_push_force * 0.75) * arg_13_4)
+			Actor.add_angular_velocity(var_13_8, Vector3(math.random(0, 2), math.random(0, 2), math.random(0, 2)) * arg_13_4)
 		else
-			Actor.add_velocity(var_13_6, Quaternion.rotate(Unit.world_rotation(var_13_4, var_13_0), Vector3(2 + 0.5 * math.random(), math.random() - 0.5, math.random() - 0.5)) * arg_13_3.gib_push_force)
+			Actor.add_velocity(var_13_8, Quaternion.rotate(Unit.world_rotation(var_13_6, var_13_0), Vector3(2 + 0.5 * math.random(), math.random() - 0.5, math.random() - 0.5)) * arg_13_3.gib_push_force)
 		end
 	end
 
-	return var_13_4
+	return var_13_6
 end
 
 local function var_0_13(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
@@ -773,7 +780,7 @@ function enemy_explode(arg_21_0)
 
 	for iter_21_0 = 1, #var_21_8 do
 		if UnitGibSettings[var_21_1].parts[var_21_8[iter_21_0]] == nil then
-			-- Nothing
+			-- block empty
 		else
 			local var_21_11 = UnitGibSettings[var_21_1].parts[var_21_8[iter_21_0]]
 			local var_21_12 = var_0_12(var_21_6, var_21_0, var_21_4, var_21_11, var_21_10, var_21_5)

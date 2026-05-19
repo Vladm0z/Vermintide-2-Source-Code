@@ -8,7 +8,7 @@ local var_0_3 = var_0_0.animation_definitions
 StartGameWindowAdventureModeSettings = class(StartGameWindowAdventureModeSettings)
 StartGameWindowAdventureModeSettings.NAME = "StartGameWindowAdventureModeSettings"
 
-StartGameWindowAdventureModeSettings.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
+function StartGameWindowAdventureModeSettings.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowAdventureModeSettings")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -36,7 +36,7 @@ StartGameWindowAdventureModeSettings.on_enter = function (arg_1_0, arg_1_1, arg_
 	arg_1_0:_update_next_level_option()
 end
 
-StartGameWindowAdventureModeSettings.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
+function StartGameWindowAdventureModeSettings.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -75,24 +75,24 @@ StartGameWindowAdventureModeSettings.create_ui_elements = function (arg_2_0, arg
 	UIWidget.animate(var_2_5, var_2_6)
 end
 
-StartGameWindowAdventureModeSettings.on_exit = function (arg_3_0, arg_3_1)
+function StartGameWindowAdventureModeSettings.on_exit(arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowAdventureModeSettings")
 
 	arg_3_0.ui_animator = nil
 end
 
-StartGameWindowAdventureModeSettings.update = function (arg_4_0, arg_4_1, arg_4_2)
+function StartGameWindowAdventureModeSettings.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_update_difficulty_option()
 	arg_4_0:_update_animations(arg_4_1)
 	arg_4_0:_handle_input(arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-StartGameWindowAdventureModeSettings.post_update = function (arg_5_0, arg_5_1, arg_5_2)
+function StartGameWindowAdventureModeSettings.post_update(arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-StartGameWindowAdventureModeSettings._update_animations = function (arg_6_0, arg_6_1)
+function StartGameWindowAdventureModeSettings._update_animations(arg_6_0, arg_6_1)
 	arg_6_0:_update_game_options_hover_effect()
 
 	local var_6_0 = arg_6_0._ui_animations
@@ -120,7 +120,7 @@ StartGameWindowAdventureModeSettings._update_animations = function (arg_6_0, arg
 	end
 end
 
-StartGameWindowAdventureModeSettings._is_button_released = function (arg_7_0, arg_7_1)
+function StartGameWindowAdventureModeSettings._is_button_released(arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content.button_hotspot
 
 	if var_7_0.on_release then
@@ -130,15 +130,15 @@ StartGameWindowAdventureModeSettings._is_button_released = function (arg_7_0, ar
 	end
 end
 
-StartGameWindowAdventureModeSettings._is_button_hover_enter = function (arg_8_0, arg_8_1)
+function StartGameWindowAdventureModeSettings._is_button_hover_enter(arg_8_0, arg_8_1)
 	return arg_8_1.content.button_hotspot.on_hover_enter
 end
 
-StartGameWindowAdventureModeSettings._is_button_hover_exit = function (arg_9_0, arg_9_1)
+function StartGameWindowAdventureModeSettings._is_button_hover_exit(arg_9_0, arg_9_1)
 	return arg_9_1.content.button_hotspot.on_hover_exit
 end
 
-StartGameWindowAdventureModeSettings._handle_input = function (arg_10_0, arg_10_1, arg_10_2)
+function StartGameWindowAdventureModeSettings._handle_input(arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._widgets_by_name
 
 	if arg_10_0:_is_button_hover_enter(var_10_0.game_option_difficulty) or arg_10_0:_is_button_hover_enter(var_10_0.play_button) then
@@ -160,11 +160,11 @@ StartGameWindowAdventureModeSettings._handle_input = function (arg_10_0, arg_10_
 	end
 end
 
-StartGameWindowAdventureModeSettings._play_sound = function (arg_11_0, arg_11_1)
+function StartGameWindowAdventureModeSettings._play_sound(arg_11_0, arg_11_1)
 	arg_11_0.parent:play_sound(arg_11_1)
 end
 
-StartGameWindowAdventureModeSettings._update_difficulty_option = function (arg_12_0)
+function StartGameWindowAdventureModeSettings._update_difficulty_option(arg_12_0)
 	local var_12_0 = arg_12_0.parent
 	local var_12_1 = var_12_0:get_difficulty_option()
 
@@ -187,14 +187,14 @@ StartGameWindowAdventureModeSettings._update_difficulty_option = function (arg_1
 	end
 end
 
-StartGameWindowAdventureModeSettings._update_next_level_option = function (arg_13_0)
+function StartGameWindowAdventureModeSettings._update_next_level_option(arg_13_0)
 	local var_13_0 = LevelUnlockUtils.get_next_adventure_level(arg_13_0.statistics_db, arg_13_0._stats_id)
 
 	arg_13_0.parent:set_selected_level_id(var_13_0)
 	arg_13_0:_set_selected_level(var_13_0)
 end
 
-StartGameWindowAdventureModeSettings._set_selected_level = function (arg_14_0, arg_14_1)
+function StartGameWindowAdventureModeSettings._set_selected_level(arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._widgets_by_name.game_option_next_mission
 	local var_14_1 = "n/a"
 
@@ -221,7 +221,7 @@ StartGameWindowAdventureModeSettings._set_selected_level = function (arg_14_0, a
 	var_14_0.content.option_text = var_14_1
 end
 
-StartGameWindowAdventureModeSettings._set_difficulty_option = function (arg_15_0, arg_15_1)
+function StartGameWindowAdventureModeSettings._set_difficulty_option(arg_15_0, arg_15_1)
 	local var_15_0 = DifficultySettings[arg_15_1]
 	local var_15_1 = var_15_0 and var_15_0.display_name
 	local var_15_2 = var_15_0 and var_15_0.display_image
@@ -233,7 +233,7 @@ StartGameWindowAdventureModeSettings._set_difficulty_option = function (arg_15_0
 	var_15_4.game_option_difficulty.content.icon_frame = var_15_3
 end
 
-StartGameWindowAdventureModeSettings.draw = function (arg_16_0, arg_16_1)
+function StartGameWindowAdventureModeSettings.draw(arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0.ui_renderer
 	local var_16_1 = arg_16_0.ui_scenegraph
 	local var_16_2 = arg_16_0.parent:window_input_service()
@@ -251,11 +251,11 @@ StartGameWindowAdventureModeSettings.draw = function (arg_16_0, arg_16_1)
 	UIRenderer.end_pass(var_16_0)
 end
 
-StartGameWindowAdventureModeSettings._play_sound = function (arg_17_0, arg_17_1)
+function StartGameWindowAdventureModeSettings._play_sound(arg_17_0, arg_17_1)
 	arg_17_0.parent:play_sound(arg_17_1)
 end
 
-StartGameWindowAdventureModeSettings._update_game_options_hover_effect = function (arg_18_0)
+function StartGameWindowAdventureModeSettings._update_game_options_hover_effect(arg_18_0)
 	local var_18_0 = arg_18_0._widgets_by_name.game_option_difficulty
 
 	if arg_18_0:_is_button_hover_enter(var_18_0) then
@@ -265,19 +265,19 @@ StartGameWindowAdventureModeSettings._update_game_options_hover_effect = functio
 	end
 end
 
-StartGameWindowAdventureModeSettings._on_option_button_hover_enter = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+function StartGameWindowAdventureModeSettings._on_option_button_hover_enter(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	arg_19_0:_create_style_animation_enter(arg_19_1, 255, "glow", arg_19_2, arg_19_3)
 	arg_19_0:_create_style_animation_enter(arg_19_1, 255, "icon_glow", arg_19_2, arg_19_3)
 	arg_19_0:_create_style_animation_exit(arg_19_1, 0, "button_hover_rect", arg_19_2, arg_19_3)
 end
 
-StartGameWindowAdventureModeSettings._on_option_button_hover_exit = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+function StartGameWindowAdventureModeSettings._on_option_button_hover_exit(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	arg_20_0:_create_style_animation_exit(arg_20_1, 0, "glow", arg_20_2, arg_20_3)
 	arg_20_0:_create_style_animation_exit(arg_20_1, 0, "icon_glow", arg_20_2, arg_20_3)
 	arg_20_0:_create_style_animation_enter(arg_20_1, 30, "button_hover_rect", arg_20_2, arg_20_3)
 end
 
-StartGameWindowAdventureModeSettings._create_style_animation_enter = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+function StartGameWindowAdventureModeSettings._create_style_animation_enter(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 	local var_21_0 = arg_21_1.style[arg_21_3]
 
 	if not var_21_0 then
@@ -296,7 +296,7 @@ StartGameWindowAdventureModeSettings._create_style_animation_enter = function (a
 	end
 end
 
-StartGameWindowAdventureModeSettings._create_style_animation_exit = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+function StartGameWindowAdventureModeSettings._create_style_animation_exit(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
 	local var_22_0 = arg_22_1.style[arg_22_3]
 
 	if not var_22_0 then
@@ -315,10 +315,10 @@ StartGameWindowAdventureModeSettings._create_style_animation_exit = function (ar
 	end
 end
 
-StartGameWindowAdventureModeSettings._animate_pulse = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+function StartGameWindowAdventureModeSettings._animate_pulse(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 	return (UIAnimation.init(UIAnimation.pulse_animation, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5))
 end
 
-StartGameWindowAdventureModeSettings._animate_element_by_time = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+function StartGameWindowAdventureModeSettings._animate_element_by_time(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, math.ease_out_quad))
 end

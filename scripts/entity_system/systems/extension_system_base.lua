@@ -2,7 +2,7 @@
 
 ExtensionSystemBase = class(ExtensionSystemBase)
 
-ExtensionSystemBase.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function ExtensionSystemBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.is_server = arg_1_1.is_server
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.name = arg_1_2
@@ -44,7 +44,7 @@ ExtensionSystemBase.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-ExtensionSystemBase.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+function ExtensionSystemBase.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	local var_2_0 = arg_2_0.NAME
 	local var_2_1
 	local var_2_2 = ScriptUnit.add_extension(arg_2_0.extension_init_context, arg_2_2, arg_2_3, var_2_0, arg_2_4, var_2_1)
@@ -66,7 +66,7 @@ ExtensionSystemBase.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_
 	return var_2_2
 end
 
-ExtensionSystemBase.on_remove_extension = function (arg_3_0, arg_3_1, arg_3_2)
+function ExtensionSystemBase.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = ScriptUnit.has_extension(arg_3_1, arg_3_0.NAME)
 
 	assert(var_3_0, "Trying to remove non-existing extension %q from unit %s", arg_3_2, arg_3_1)
@@ -78,13 +78,13 @@ ExtensionSystemBase.on_remove_extension = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.update_list[arg_3_2].post_update[arg_3_1] = nil
 end
 
-ExtensionSystemBase.on_freeze_extension = function (arg_4_0, arg_4_1, arg_4_2)
+function ExtensionSystemBase.on_freeze_extension(arg_4_0, arg_4_1, arg_4_2)
 	return
 end
 
 local var_0_0 = {}
 
-ExtensionSystemBase.pre_update = function (arg_5_0, arg_5_1, arg_5_2)
+function ExtensionSystemBase.pre_update(arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_1.dt
 	local var_5_1 = arg_5_0.update_list
 	local var_5_2 = var_0_0
@@ -98,15 +98,15 @@ ExtensionSystemBase.pre_update = function (arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-ExtensionSystemBase.enable_update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+function ExtensionSystemBase.enable_update_function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	arg_6_0.update_list[arg_6_1][arg_6_2][arg_6_3] = arg_6_4
 end
 
-ExtensionSystemBase.disable_update_function = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+function ExtensionSystemBase.disable_update_function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	arg_7_0.update_list[arg_7_1][arg_7_2][arg_7_3] = nil
 end
 
-ExtensionSystemBase.update = function (arg_8_0, arg_8_1, arg_8_2)
+function ExtensionSystemBase.update(arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_1.dt
 	local var_8_1 = arg_8_0.update_list
 	local var_8_2 = var_0_0
@@ -120,7 +120,7 @@ ExtensionSystemBase.update = function (arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-ExtensionSystemBase.post_update = function (arg_9_0, arg_9_1, arg_9_2)
+function ExtensionSystemBase.post_update(arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_1.dt
 	local var_9_1 = arg_9_0.update_list
 	local var_9_2 = var_0_0
@@ -134,7 +134,7 @@ ExtensionSystemBase.post_update = function (arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-ExtensionSystemBase.pre_update_extension = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+function ExtensionSystemBase.pre_update_extension(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = var_0_0
 
 	for iter_10_0, iter_10_1 in pairs(arg_10_0.update_list[arg_10_1].pre_update) do
@@ -142,7 +142,7 @@ ExtensionSystemBase.pre_update_extension = function (arg_10_0, arg_10_1, arg_10_
 	end
 end
 
-ExtensionSystemBase.update_extension = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+function ExtensionSystemBase.update_extension(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = var_0_0
 
 	for iter_11_0, iter_11_1 in pairs(arg_11_0.update_list[arg_11_1].update) do
@@ -150,7 +150,7 @@ ExtensionSystemBase.update_extension = function (arg_11_0, arg_11_1, arg_11_2, a
 	end
 end
 
-ExtensionSystemBase.post_update_extension = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+function ExtensionSystemBase.post_update_extension(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = var_0_0
 
 	for iter_12_0, iter_12_1 in pairs(arg_12_0.update_list[arg_12_1].post_update) do
@@ -158,13 +158,13 @@ ExtensionSystemBase.post_update_extension = function (arg_12_0, arg_12_1, arg_12
 	end
 end
 
-ExtensionSystemBase.hot_join_sync = function (arg_13_0, arg_13_1)
+function ExtensionSystemBase.hot_join_sync(arg_13_0, arg_13_1)
 	for iter_13_0, iter_13_1 in pairs(arg_13_0.extensions) do
 		arg_13_0:_hot_join_sync_extension(iter_13_0, arg_13_1)
 	end
 end
 
-ExtensionSystemBase._hot_join_sync_extension = function (arg_14_0, arg_14_1, arg_14_2)
+function ExtensionSystemBase._hot_join_sync_extension(arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0.entity_manager:get_entities(arg_14_1)
 
 	for iter_14_0, iter_14_1 in pairs(var_14_0) do
@@ -174,13 +174,13 @@ ExtensionSystemBase._hot_join_sync_extension = function (arg_14_0, arg_14_1, arg
 	end
 end
 
-ExtensionSystemBase.destroy = function (arg_15_0)
+function ExtensionSystemBase.destroy(arg_15_0)
 	return
 end
 
 local var_0_1 = {}
 
-ExtensionSystemBase.get_extensions_from_extension_name = function (arg_16_0, arg_16_1)
+function ExtensionSystemBase.get_extensions_from_extension_name(arg_16_0, arg_16_1)
 	fassert(arg_16_0.update_list[arg_16_1], "[ExtensionSystemBase:get_extensions_from_type] There is no extension called %q", arg_16_1)
 	table.clear(var_0_1)
 

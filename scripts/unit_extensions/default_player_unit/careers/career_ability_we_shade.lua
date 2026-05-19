@@ -2,7 +2,7 @@
 
 CareerAbilityWEShade = class(CareerAbilityWEShade)
 
-CareerAbilityWEShade.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function CareerAbilityWEShade.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._owner_unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
@@ -17,7 +17,7 @@ CareerAbilityWEShade.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._input_manager = Managers.input
 end
 
-CareerAbilityWEShade.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
+function CareerAbilityWEShade.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
 	arg_2_0._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
 	arg_2_0._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
@@ -26,11 +26,11 @@ CareerAbilityWEShade.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
 end
 
-CareerAbilityWEShade.destroy = function (arg_3_0)
+function CareerAbilityWEShade.destroy(arg_3_0)
 	return
 end
 
-CareerAbilityWEShade.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+function CareerAbilityWEShade.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if not arg_4_0:_ability_available() then
 		return
 	end
@@ -42,13 +42,13 @@ CareerAbilityWEShade.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_
 	end
 end
 
-CareerAbilityWEShade.stop = function (arg_5_0, arg_5_1)
+function CareerAbilityWEShade.stop(arg_5_0, arg_5_1)
 	if arg_5_0._is_priming then
 		arg_5_0:_stop_priming()
 	end
 end
 
-CareerAbilityWEShade._ability_available = function (arg_6_0)
+function CareerAbilityWEShade._ability_available(arg_6_0)
 	local var_6_0 = arg_6_0._career_extension
 	local var_6_1 = arg_6_0._status_extension
 	local var_6_2 = true
@@ -56,7 +56,7 @@ CareerAbilityWEShade._ability_available = function (arg_6_0)
 	return var_6_2 and var_6_0:can_use_activated_ability() and not var_6_1:is_disabled()
 end
 
-CareerAbilityWEShade._run_ability = function (arg_7_0)
+function CareerAbilityWEShade._run_ability(arg_7_0)
 	local var_7_0 = arg_7_0._owner_unit
 	local var_7_1 = arg_7_0._bot_player
 	local var_7_2 = arg_7_0._network_manager
@@ -99,7 +99,7 @@ CareerAbilityWEShade._run_ability = function (arg_7_0)
 	arg_7_0:_play_vo()
 end
 
-CareerAbilityWEShade._play_vo = function (arg_8_0)
+function CareerAbilityWEShade._play_vo(arg_8_0)
 	local var_8_0 = arg_8_0._owner_unit
 	local var_8_1 = ScriptUnit.extension_input(var_8_0, "dialogue_system")
 	local var_8_2 = FrameTable.alloc_table()

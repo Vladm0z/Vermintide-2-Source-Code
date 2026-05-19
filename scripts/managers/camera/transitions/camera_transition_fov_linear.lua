@@ -4,11 +4,11 @@ require("scripts/managers/camera/transitions/camera_transition_base")
 
 CameraTransitionFOVLinear = class(CameraTransitionFOVLinear, CameraTransitionBase)
 
-CameraTransitionFOVLinear.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+function CameraTransitionFOVLinear.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	CameraTransitionBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 end
 
-CameraTransitionFOVLinear.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function CameraTransitionFOVLinear.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	CameraTransitionBase.update(arg_2_0, arg_2_1, arg_2_3)
 
 	local var_2_0 = arg_2_2

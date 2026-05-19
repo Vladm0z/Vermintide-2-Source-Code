@@ -13,17 +13,18 @@ WorldInteractionSettings = {
 		}
 	},
 	water = {
-		default_ripple_timer = 2,
+		water_speed_limit = 2,
+		duplicate_edge_cases = true,
 		random_ripple_size_diff = 0.5,
 		default_ripple_multiplier = 6,
-		default_ripple_material = "default_water_ripple",
-		duplicate_edge_cases = true,
-		water_speed_limit = 2,
+		default_ripple_timer = 2,
 		ripple_sound_event_delay = 0.3,
-		max_contributing_units = 50,
 		ripple_time_step = 0.1,
-		shading_env_variable = "world_interaction_water_window_size",
 		debug_water = false,
+		max_contributing_units = 50,
+		default_ripple_material = "default_water_ripple",
+		use_simple_effects = true,
+		shading_env_variable = "world_interaction_water_window_size",
 		window_size = 30,
 		ripple_sound_event = "Play_environment_water_trigger",
 		default_ripple_start_size = {
@@ -34,7 +35,7 @@ WorldInteractionSettings = {
 			1,
 			2
 		},
-		splash = {
+		default_water = {
 			timer_ref = 4,
 			multiplier = 40,
 			default_material = "default_water_ripple_circle",
@@ -42,6 +43,20 @@ WorldInteractionSettings = {
 			start_size = {
 				0.2,
 				0.2
+			},
+			stretch_multiplier = {
+				1,
+				1
+			}
+		},
+		default_unit_water = {
+			timer_ref = 8,
+			multiplier = 30,
+			default_material = "default_step_water_generated_ripple",
+			random_size_diff = 0.5,
+			start_size = {
+				0.5,
+				0.5
 			},
 			stretch_multiplier = {
 				1,

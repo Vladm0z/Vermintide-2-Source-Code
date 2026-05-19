@@ -13,7 +13,7 @@ local function var_0_0()
 	return var_1_0
 end
 
-LobbyAux.create_network_hash = function (arg_2_0, arg_2_1, arg_2_2)
+function LobbyAux.create_network_hash(arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = Network.config_hash(arg_2_0)
 	local var_2_1 = Application.settings()
 	local var_2_2 = var_2_1 and var_2_1.content_revision
@@ -108,7 +108,7 @@ end
 
 LobbyAux.next_distance_filter = var_0_2
 
-LobbyAux.get_next_lobby_distance_filter = function (arg_3_0, arg_3_1)
+function LobbyAux.get_next_lobby_distance_filter(arg_3_0, arg_3_1)
 	if arg_3_0 == arg_3_1 then
 		return
 	end
@@ -116,7 +116,7 @@ LobbyAux.get_next_lobby_distance_filter = function (arg_3_0, arg_3_1)
 	return LobbyAux.next_distance_filter[arg_3_0]
 end
 
-LobbyAux.get_unique_server_name = function ()
+function LobbyAux.get_unique_server_name()
 	local var_4_0 = Development.parameter("unique_server_name")
 
 	if not var_4_0 or var_4_0 == "" then
@@ -173,7 +173,7 @@ local function var_0_6(arg_8_0)
 	return true
 end
 
-LobbyAux.verify_lobby_data = function (arg_9_0)
+function LobbyAux.verify_lobby_data(arg_9_0)
 	if not var_0_3(arg_9_0) then
 		return false
 	end
@@ -199,7 +199,7 @@ local var_0_9 = "="
 local var_0_10 = 1
 local var_0_11 = 2
 
-LobbyAux.serialize_lobby_reservation_data = function (arg_10_0)
+function LobbyAux.serialize_lobby_reservation_data(arg_10_0)
 	local var_10_0 = {}
 
 	for iter_10_0 = 1, #arg_10_0 do
@@ -225,7 +225,7 @@ LobbyAux.serialize_lobby_reservation_data = function (arg_10_0)
 	return var_10_5
 end
 
-LobbyAux.deserialize_lobby_reservation_data = function (arg_11_0, arg_11_1)
+function LobbyAux.deserialize_lobby_reservation_data(arg_11_0, arg_11_1)
 	local var_11_0 = {}
 	local var_11_1 = arg_11_0.reserved_profiles
 

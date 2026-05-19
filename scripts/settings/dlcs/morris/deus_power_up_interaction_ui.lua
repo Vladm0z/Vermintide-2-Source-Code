@@ -5,17 +5,17 @@ require("scripts/settings/dlcs/morris/deus_swap_weapon_interaction_ui")
 DeusPowerUpInteractionUI = class(DeusPowerUpInteractionUI, DeusSwapWeaponInteractionUI)
 DeusPowerUpInteractionUI.TYPE = "power_up"
 
-DeusPowerUpInteractionUI.init = function (arg_1_0, arg_1_1, arg_1_2)
+function DeusPowerUpInteractionUI.init(arg_1_0, arg_1_1, arg_1_2)
 	DeusPowerUpInteractionUI.super.init(arg_1_0, arg_1_1, arg_1_2)
 end
 
-DeusPowerUpInteractionUI.chest_unlock_failed = function (arg_2_0, arg_2_1)
+function DeusPowerUpInteractionUI.chest_unlock_failed(arg_2_0, arg_2_1)
 	if arg_2_1 == DeusPowerUpInteractionUI.TYPE then
 		arg_2_0:_start_animation("chest_unlock_failed")
 	end
 end
 
-DeusPowerUpInteractionUI._populate_widget = function (arg_3_0, arg_3_1)
+function DeusPowerUpInteractionUI._populate_widget(arg_3_0, arg_3_1)
 	local var_3_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
 	if not var_3_0 then

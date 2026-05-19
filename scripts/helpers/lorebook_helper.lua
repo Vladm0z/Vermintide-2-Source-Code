@@ -4,7 +4,7 @@ LoreBookHelper = LoreBookHelper or {}
 
 local var_0_0 = {}
 
-LoreBookHelper.save_new_pages = function ()
+function LoreBookHelper.save_new_pages()
 	local var_1_0 = SaveData
 	local var_1_1 = var_1_0.new_lorebook_ids or {}
 
@@ -17,11 +17,11 @@ LoreBookHelper.save_new_pages = function ()
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-LoreBookHelper.mark_page_id_as_new = function (arg_2_0)
+function LoreBookHelper.mark_page_id_as_new(arg_2_0)
 	var_0_0[arg_2_0] = true
 end
 
-LoreBookHelper.unmark_page_id_as_new = function (arg_3_0)
+function LoreBookHelper.unmark_page_id_as_new(arg_3_0)
 	local var_3_0 = SaveData.new_lorebook_ids
 
 	assert(var_3_0, "Requested to unmark lorebook page id %d without any save data.", arg_3_0)
@@ -31,6 +31,6 @@ LoreBookHelper.unmark_page_id_as_new = function (arg_3_0)
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-LoreBookHelper.get_new_page_ids = function ()
+function LoreBookHelper.get_new_page_ids()
 	return SaveData.new_lorebook_ids
 end

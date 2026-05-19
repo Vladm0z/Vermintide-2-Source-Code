@@ -10,11 +10,11 @@ BackendInterfaceLoot = class(BackendInterfaceLoot)
 
 local var_0_1 = "item"
 
-BackendInterfaceLoot.init = function (arg_2_0)
+function BackendInterfaceLoot.init(arg_2_0)
 	return
 end
 
-BackendInterfaceLoot.setup = function (arg_3_0, arg_3_1)
+function BackendInterfaceLoot.setup(arg_3_0, arg_3_1)
 	arg_3_0:_register_executors(arg_3_1)
 
 	arg_3_0._queue = arg_3_1
@@ -22,13 +22,13 @@ BackendInterfaceLoot.setup = function (arg_3_0, arg_3_1)
 	arg_3_0._attributes = {}
 end
 
-BackendInterfaceLoot._register_executors = function (arg_4_0, arg_4_1)
+function BackendInterfaceLoot._register_executors(arg_4_0, arg_4_1)
 	arg_4_1:register_executor("loot_chest_generated", callback(arg_4_0, "_command_loot_chest_generated"))
 	arg_4_1:register_executor("loot_chest_consumed", callback(arg_4_0, "_command_loot_chest_consumed"))
 	arg_4_1:register_executor("weapon_with_properties_generated", callback(arg_4_0, "_command_weapon_with_properties_generated"))
 end
 
-BackendInterfaceLoot._command_loot_chest_generated = function (arg_5_0, arg_5_1)
+function BackendInterfaceLoot._command_loot_chest_generated(arg_5_0, arg_5_1)
 	var_0_0("_command_loot_chest_generated ")
 
 	arg_5_0.dirty = false
@@ -38,7 +38,7 @@ BackendInterfaceLoot._command_loot_chest_generated = function (arg_5_0, arg_5_1)
 	arg_5_0:_refresh_attributes()
 end
 
-BackendInterfaceLoot._command_loot_chest_consumed = function (arg_6_0, arg_6_1)
+function BackendInterfaceLoot._command_loot_chest_consumed(arg_6_0, arg_6_1)
 	var_0_0("_command_loot_chest_consumed " .. arg_6_1)
 
 	arg_6_0.dirty = false
@@ -46,7 +46,7 @@ BackendInterfaceLoot._command_loot_chest_consumed = function (arg_6_0, arg_6_1)
 	Backend.load_entities()
 end
 
-BackendInterfaceLoot._command_weapon_with_properties_generated = function (arg_7_0, arg_7_1)
+function BackendInterfaceLoot._command_weapon_with_properties_generated(arg_7_0, arg_7_1)
 	var_0_0("_command_weapon_with_properties_generated " .. arg_7_1)
 
 	arg_7_0.dirty = false
@@ -55,13 +55,13 @@ BackendInterfaceLoot._command_weapon_with_properties_generated = function (arg_7
 	arg_7_0:_refresh_attributes()
 end
 
-BackendInterfaceLoot.generate_loot_chest = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+function BackendInterfaceLoot.generate_loot_chest(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
 	arg_8_0._queue:add_item("generate_loot_chest_1", "hero_name", cjson.encode(arg_8_1), "difficulty", cjson.encode(arg_8_2), "tomes", cjson.encode(arg_8_3), "grimoires", cjson.encode(arg_8_4), "loot_dice", cjson.encode(arg_8_5), "level", cjson.encode(arg_8_6))
 
 	arg_8_0.dirty = true
 end
 
-BackendInterfaceLoot.consume_loot_chest = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+function BackendInterfaceLoot.consume_loot_chest(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = ""
 
 	fassert(arg_9_2, "Got nil item key to reward player")
@@ -76,13 +76,13 @@ BackendInterfaceLoot.consume_loot_chest = function (arg_9_0, arg_9_1, arg_9_2, a
 	arg_9_0.dirty = true
 end
 
-BackendInterfaceLoot.generate_weapon_with_properties = function (arg_10_0, arg_10_1, arg_10_2)
+function BackendInterfaceLoot.generate_weapon_with_properties(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._queue:add_item("generate_property_weapon", "item_key", cjson.encode(arg_10_1), "properties", cjson.encode(arg_10_2))
 
 	arg_10_0.dirty = true
 end
 
-BackendInterfaceLoot._refresh_attributes = function (arg_11_0)
+function BackendInterfaceLoot._refresh_attributes(arg_11_0)
 	local var_11_0 = Backend.get_entities_with_attributes(var_0_1)
 	local var_11_1 = {}
 
@@ -97,11 +97,11 @@ BackendInterfaceLoot._refresh_attributes = function (arg_11_0)
 	arg_11_0._attributes = var_11_1
 end
 
-BackendInterfaceLoot.on_authenticated = function (arg_12_0)
+function BackendInterfaceLoot.on_authenticated(arg_12_0)
 	arg_12_0:_refresh_attributes()
 end
 
-BackendInterfaceLoot.get_loot = function (arg_13_0, arg_13_1)
+function BackendInterfaceLoot.get_loot(arg_13_0, arg_13_1)
 	arg_13_0:_refresh_attributes()
 
 	local var_13_0 = arg_13_0._attributes[arg_13_1]
@@ -134,10 +134,10 @@ BackendInterfaceLoot.get_loot = function (arg_13_0, arg_13_1)
 	return var_13_1
 end
 
-BackendInterfaceLoot.is_dirty = function (arg_14_0)
+function BackendInterfaceLoot.is_dirty(arg_14_0)
 	return arg_14_0.dirty
 end
 
-BackendInterfaceLoot.get_last_generated_loot_chest = function (arg_15_0)
+function BackendInterfaceLoot.get_last_generated_loot_chest(arg_15_0)
 	return arg_15_0.last_generated_loot_chest
 end

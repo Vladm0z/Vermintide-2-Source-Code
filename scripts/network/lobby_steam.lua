@@ -10,28 +10,28 @@ LobbyInternal = LobbyInternal or {}
 LobbyInternal.TYPE = "steam"
 LobbyInternal.lobby_data_version = 2
 
-LobbyInternal.network_initialized = function ()
+function LobbyInternal.network_initialized()
 	return not not LobbyInternal.client
 end
 
-LobbyInternal.create_lobby = function (arg_2_0)
+function LobbyInternal.create_lobby(arg_2_0)
 	local var_2_0 = arg_2_0.privacy or "public"
 	local var_2_1 = true
 
 	return Network.create_steam_lobby(var_2_0, arg_2_0.max_members, var_2_1)
 end
 
-LobbyInternal.join_lobby = function (arg_3_0)
+function LobbyInternal.join_lobby(arg_3_0)
 	local var_3_0 = true
 
 	return Network.join_steam_lobby(arg_3_0.id, var_3_0)
 end
 
-LobbyInternal.leave_lobby = function (arg_4_0)
+function LobbyInternal.leave_lobby(arg_4_0)
 	Network.leave_steam_lobby(arg_4_0)
 end
 
-LobbyInternal.open_channel = function (arg_5_0, arg_5_1)
+function LobbyInternal.open_channel(arg_5_0, arg_5_1)
 	local var_5_0 = SteamLobby.open_channel(arg_5_0, arg_5_1)
 
 	printf("LobbyInternal.open_channel lobby: %s, to peer: %s channel: %s", arg_5_0, arg_5_1, var_5_0)
@@ -39,16 +39,16 @@ LobbyInternal.open_channel = function (arg_5_0, arg_5_1)
 	return var_5_0
 end
 
-LobbyInternal.close_channel = function (arg_6_0, arg_6_1)
+function LobbyInternal.close_channel(arg_6_0, arg_6_1)
 	printf("LobbyInternal.close_channel lobby: %s, channel: %s", arg_6_0, arg_6_1)
 	SteamLobby.close_channel(arg_6_0, arg_6_1)
 end
 
-LobbyInternal.is_orphaned = function (arg_7_0)
+function LobbyInternal.is_orphaned(arg_7_0)
 	return arg_7_0.is_orphaned(arg_7_0)
 end
 
-LobbyInternal.init_client = function (arg_8_0)
+function LobbyInternal.init_client(arg_8_0)
 	LobbyInternal.client = Network.init_steam_client(arg_8_0.config_file_name)
 
 	if not LobbyInternal._peer_id_property_set then
@@ -60,30 +60,30 @@ LobbyInternal.init_client = function (arg_8_0)
 	GameSettingsDevelopment.set_ignored_rpc_logs()
 end
 
-LobbyInternal.shutdown_client = function ()
+function LobbyInternal.shutdown_client()
 	Network.shutdown_steam_client(LobbyInternal.client)
 	GameServerInternal.forget_server_browser()
 
 	LobbyInternal.client = nil
 end
 
-LobbyInternal.get_lobby_data_from_id = function (arg_10_0)
+function LobbyInternal.get_lobby_data_from_id(arg_10_0)
 	SteamLobby.request_lobby_data(arg_10_0)
 
 	return (SteamMisc.get_lobby_data(arg_10_0))
 end
 
-LobbyInternal.get_lobby_data_from_id_by_key = function (arg_11_0, arg_11_1)
+function LobbyInternal.get_lobby_data_from_id_by_key(arg_11_0, arg_11_1)
 	local var_11_0 = SteamMisc.get_lobby_data_by_key(arg_11_0, arg_11_1)
 
 	return var_11_0 ~= "" and var_11_0 or nil
 end
 
-LobbyInternal.ping = function (arg_12_0)
+function LobbyInternal.ping(arg_12_0)
 	return Network.ping(arg_12_0)
 end
 
-LobbyInternal.get_lobby = function (arg_13_0, arg_13_1)
+function LobbyInternal.get_lobby(arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0:lobby(arg_13_1)
 	local var_13_1 = arg_13_0:data_all(arg_13_1)
 
@@ -98,11 +98,11 @@ LobbyInternal.get_lobby = function (arg_13_0, arg_13_1)
 	return var_13_2
 end
 
-LobbyInternal.clear_filter_requirements = function (arg_14_0)
+function LobbyInternal.clear_filter_requirements(arg_14_0)
 	SteamLobbyBrowser.clear_filters(arg_14_0)
 end
 
-LobbyInternal.add_filter_requirements = function (arg_15_0, arg_15_1)
+function LobbyInternal.add_filter_requirements(arg_15_0, arg_15_1)
 	SteamLobbyBrowser.clear_filters(arg_15_1)
 	SteamLobbyBrowser.add_slots_filter(arg_15_1, arg_15_0.free_slots)
 
@@ -130,18 +130,18 @@ LobbyInternal.add_filter_requirements = function (arg_15_0, arg_15_1)
 	end
 end
 
-LobbyInternal.user_name = function (arg_16_0)
+function LobbyInternal.user_name(arg_16_0)
 	return Steam.user_name(arg_16_0)
 end
 
-LobbyInternal.lobby_id = function (arg_17_0)
+function LobbyInternal.lobby_id(arg_17_0)
 	return arg_17_0:id()
 end
 
-LobbyInternal.is_friend = function (arg_18_0)
+function LobbyInternal.is_friend(arg_18_0)
 	return Friends.in_category(arg_18_0, Friends.FRIEND_FLAG)
 end
 
-LobbyInternal.set_max_members = function (arg_19_0, arg_19_1)
+function LobbyInternal.set_max_members(arg_19_0, arg_19_1)
 	SteamLobby.set_max_members(arg_19_0, arg_19_1)
 end

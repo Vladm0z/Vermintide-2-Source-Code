@@ -6,7 +6,7 @@ Utility = Utility or {}
 
 local var_0_0 = Utility
 
-var_0_0.GetUtilityValueFromSpline = function (arg_1_0, arg_1_1)
+function var_0_0.GetUtilityValueFromSpline(arg_1_0, arg_1_1)
 	for iter_1_0 = 3, #arg_1_0, 2 do
 		if arg_1_1 <= arg_1_0[iter_1_0] then
 			local var_1_0 = arg_1_0[iter_1_0]
@@ -20,7 +20,7 @@ var_0_0.GetUtilityValueFromSpline = function (arg_1_0, arg_1_1)
 	return arg_1_0[#arg_1_0]
 end
 
-var_0_0.get_action_utility = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function var_0_0.get_action_utility(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = 1
 	local var_2_1 = arg_2_2.utility_actions[arg_2_1]
 	local var_2_2 = var_0_0.GetUtilityValueFromSpline

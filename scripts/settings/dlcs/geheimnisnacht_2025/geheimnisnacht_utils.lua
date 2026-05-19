@@ -1,5 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_utils.lua
 
+require("scripts/utils/hash_utils")
+
 local var_0_0 = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_map_settings")
 local var_0_1 = {}
 local var_0_2 = {
@@ -37,6 +39,13 @@ local var_0_2 = {
 		"mines",
 		"warcamp",
 		"dlc_portals"
+	},
+	[2026] = {
+		"farmlands",
+		"dlc_wizards_tower",
+		"catacombs",
+		"bell",
+		"ussingen"
 	}
 }
 
@@ -46,17 +55,17 @@ for iter_0_0, iter_0_1 in pairs(var_0_2) do
 	var_0_1._cached_maps_by_event["geheimnisnacht_" .. iter_0_0] = iter_0_1
 end
 
-var_0_1.event_by_year = function (arg_1_0)
+function var_0_1.event_by_year(arg_1_0)
 	return "geheimnisnacht_" .. arg_1_0
 end
 
-var_0_1.maps_by_year = function (arg_2_0, arg_2_1)
+function var_0_1.maps_by_year(arg_2_0, arg_2_1)
 	local var_2_0 = var_0_1.event_by_year(arg_2_0)
 
 	return var_0_1.maps_by_event(var_2_0, arg_2_1)
 end
 
-var_0_1.maps_by_event = function (arg_3_0, arg_3_1)
+function var_0_1.maps_by_event(arg_3_0, arg_3_1)
 	if var_0_1._cached_maps_by_event[arg_3_0] then
 		return var_0_1._cached_maps_by_event[arg_3_0]
 	end
@@ -84,7 +93,7 @@ var_0_1.maps_by_event = function (arg_3_0, arg_3_1)
 	return var_3_2
 end
 
-var_0_1.maps_by_live_event = function (arg_4_0)
+function var_0_1.maps_by_live_event(arg_4_0)
 	local var_4_0 = Managers.backend:get_interface("live_events")
 	local var_4_1 = var_4_0 and var_4_0:get_active_events()
 

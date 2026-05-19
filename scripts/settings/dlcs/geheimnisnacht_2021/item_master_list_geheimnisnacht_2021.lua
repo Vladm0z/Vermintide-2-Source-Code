@@ -14,7 +14,8 @@ ItemMasterList.wpn_geheimnisnacht_2021_side_objective = {
 	item_type = "potion",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.es_2h_sword_skin_02_runed_03 = {
@@ -36,7 +37,8 @@ ItemMasterList.es_2h_sword_skin_02_runed_03 = {
 		"es_mercenary"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.dw_2h_axe_skin_05_runed_03 = {
@@ -58,7 +60,8 @@ ItemMasterList.dw_2h_axe_skin_05_runed_03 = {
 		"dr_ranger"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.bw_dagger_skin_04_runed_03 = {
@@ -80,7 +83,8 @@ ItemMasterList.bw_dagger_skin_04_runed_03 = {
 		"bw_unchained"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.we_2h_axe_skin_07_runed_03 = {
@@ -102,7 +106,8 @@ ItemMasterList.we_2h_axe_skin_07_runed_03 = {
 		"we_waywatcher"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.es_1h_flail_skin_02_runed_03 = {
@@ -124,7 +129,8 @@ ItemMasterList.es_1h_flail_skin_02_runed_03 = {
 		"wh_bountyhunter"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.dw_1h_axe_shield_skin_05_runed_03 = {
@@ -147,7 +153,8 @@ ItemMasterList.dw_1h_axe_shield_skin_05_runed_03 = {
 		"dr_ranger"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	},
 	left_hand_unit_override = {
 		dr_engineer = "units/weapons/player/wpn_dw_shield_05_t1/wpn_dw_e_shield_05_runed_01"
@@ -173,7 +180,8 @@ ItemMasterList.bw_1h_flaming_sword_skin_01_runed_03 = {
 		"bw_unchained"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.we_dual_sword_dagger_skin_02_runed_03 = {
@@ -197,7 +205,8 @@ ItemMasterList.we_dual_sword_dagger_skin_02_runed_03 = {
 		"we_waywatcher"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.wh_fencing_sword_skin_01_runed_03 = {
@@ -221,7 +230,8 @@ ItemMasterList.wh_fencing_sword_skin_01_runed_03 = {
 		"wh_zealot"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.es_1h_sword_shield_skin_03_runed_03 = {
@@ -245,7 +255,8 @@ ItemMasterList.es_1h_sword_shield_skin_03_runed_03 = {
 		"es_mercenary"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.we_longbow_skin_06_runed_03 = {
@@ -267,7 +278,8 @@ ItemMasterList.we_longbow_skin_06_runed_03 = {
 		"we_waywatcher"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.wh_crossbow_skin_04_runed_03 = {
@@ -289,7 +301,8 @@ ItemMasterList.wh_crossbow_skin_04_runed_03 = {
 		"wh_captain"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.bw_spear_staff_skin_04_runed_03 = {
@@ -312,7 +325,8 @@ ItemMasterList.bw_spear_staff_skin_04_runed_03 = {
 		"bw_unchained"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.dw_handgun_skin_02_runed_03 = {
@@ -333,7 +347,8 @@ ItemMasterList.dw_handgun_skin_02_runed_03 = {
 		"dr_ranger"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.es_repeating_handgun_skin_02_runed_03 = {
@@ -355,7 +370,8 @@ ItemMasterList.es_repeating_handgun_skin_02_runed_03 = {
 		"es_mercenary"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.dw_grudge_raker_skin_01_runed_03 = {
@@ -376,7 +392,8 @@ ItemMasterList.dw_grudge_raker_skin_01_runed_03 = {
 		"dr_ranger"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.es_handgun_skin_02_runed_03 = {
@@ -398,7 +415,8 @@ ItemMasterList.es_handgun_skin_02_runed_03 = {
 		"es_mercenary"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.wh_repeating_pistol_skin_02_runed_03 = {
@@ -420,7 +438,8 @@ ItemMasterList.wh_repeating_pistol_skin_02_runed_03 = {
 		"wh_captain"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.bw_fireball_staff_skin_01_runed_03 = {
@@ -443,7 +462,8 @@ ItemMasterList.bw_fireball_staff_skin_01_runed_03 = {
 		"bw_unchained"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.we_crossbow_skin_02_runed_03 = {
@@ -463,7 +483,8 @@ ItemMasterList.we_crossbow_skin_02_runed_03 = {
 		"we_shade"
 	},
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_0105 = {
@@ -479,7 +500,8 @@ ItemMasterList.frame_0105 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_0106 = {
@@ -495,7 +517,8 @@ ItemMasterList.frame_0106 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_0110 = {
@@ -511,7 +534,8 @@ ItemMasterList.frame_0110 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_0111 = {
@@ -527,7 +551,8 @@ ItemMasterList.frame_0111 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_geheimnisnacht_04 = {
@@ -543,7 +568,8 @@ ItemMasterList.frame_geheimnisnacht_04 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_geheimnisnacht_05 = {
@@ -559,7 +585,8 @@ ItemMasterList.frame_geheimnisnacht_05 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_geheimnisnacht_2024 = {
@@ -575,6 +602,7 @@ ItemMasterList.frame_geheimnisnacht_2024 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"geheimnisnacht"
+		"geheimnisnacht",
+		"dwarf_fest"
 	}
 }

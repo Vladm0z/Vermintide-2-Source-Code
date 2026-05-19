@@ -6,22 +6,22 @@ local function var_0_0(...)
 	print("[SystemDialogManager]", ...)
 end
 
-SystemDialogManager.init = function (arg_2_0)
+function SystemDialogManager.init(arg_2_0)
 	arg_2_0._dialogs = {}
 	arg_2_0._virtual_keyboards = {}
 	arg_2_0._virtual_keyboard_results = {}
 	arg_2_0._virtual_keyboard_index = 0
 end
 
-SystemDialogManager.destroy = function (arg_3_0)
+function SystemDialogManager.destroy(arg_3_0)
 	return
 end
 
-SystemDialogManager.update = function (arg_4_0, arg_4_1)
+function SystemDialogManager.update(arg_4_0, arg_4_1)
 	arg_4_0:_handle_dialogs()
 end
 
-SystemDialogManager.check_status = function (arg_5_0, arg_5_1)
+function SystemDialogManager.check_status(arg_5_0, arg_5_1)
 	local var_5_0
 
 	if #arg_5_0._dialogs > 0 then
@@ -37,11 +37,11 @@ SystemDialogManager.check_status = function (arg_5_0, arg_5_1)
 	return var_5_1
 end
 
-SystemDialogManager._get_status = function (arg_6_0, arg_6_1)
+function SystemDialogManager._get_status(arg_6_0, arg_6_1)
 	return (arg_6_1.update())
 end
 
-SystemDialogManager._initialize = function (arg_7_0, arg_7_1)
+function SystemDialogManager._initialize(arg_7_0, arg_7_1)
 	if arg_7_1.initialize() ~= PS4.SCE_OK then
 		var_0_0("Failed to initialize " .. arg_7_1._name)
 
@@ -51,7 +51,7 @@ SystemDialogManager._initialize = function (arg_7_0, arg_7_1)
 	return true
 end
 
-SystemDialogManager._terminate = function (arg_8_0, arg_8_1)
+function SystemDialogManager._terminate(arg_8_0, arg_8_1)
 	if arg_8_1.terminate() ~= PS4.SCE_OK then
 		var_0_0("Failed to terminate " .. arg_8_1._name)
 
@@ -61,7 +61,7 @@ SystemDialogManager._terminate = function (arg_8_0, arg_8_1)
 	return true
 end
 
-SystemDialogManager._handle_dialogs = function (arg_9_0)
+function SystemDialogManager._handle_dialogs(arg_9_0)
 	local var_9_0
 
 	if #arg_9_0._dialogs > 0 then
@@ -87,7 +87,7 @@ SystemDialogManager._handle_dialogs = function (arg_9_0)
 				end
 			end
 		elseif var_9_2 == var_9_1.RUNNING then
-			-- Nothing
+			-- block empty
 		elseif var_9_2 == var_9_1.FINISHED then
 			if var_9_0.callback then
 				var_9_0.callback(var_9_2)
@@ -102,7 +102,7 @@ SystemDialogManager._handle_dialogs = function (arg_9_0)
 	arg_9_0:_handle_virtual_keyboards()
 end
 
-SystemDialogManager._handle_virtual_keyboards = function (arg_10_0)
+function SystemDialogManager._handle_virtual_keyboards(arg_10_0)
 	local var_10_0 = arg_10_0._virtual_keyboards[1]
 
 	if var_10_0 then
@@ -135,7 +135,7 @@ SystemDialogManager._handle_virtual_keyboards = function (arg_10_0)
 	end
 end
 
-SystemDialogManager._abort_virtual_keyboard = function (arg_11_0)
+function SystemDialogManager._abort_virtual_keyboard(arg_11_0)
 	local var_11_0 = arg_11_0._virtual_keyboards[1]
 
 	if var_11_0 and var_11_0.activated then
@@ -147,7 +147,7 @@ SystemDialogManager._abort_virtual_keyboard = function (arg_11_0)
 	end
 end
 
-SystemDialogManager.open_system_dialog = function (arg_12_0, arg_12_1, arg_12_2)
+function SystemDialogManager.open_system_dialog(arg_12_0, arg_12_1, arg_12_2)
 	local function var_12_0(arg_13_0)
 		local var_13_0 = arg_13_0.dialog_instance
 
@@ -168,7 +168,7 @@ SystemDialogManager.open_system_dialog = function (arg_12_0, arg_12_1, arg_12_2)
 	}
 end
 
-SystemDialogManager.open_save_dialog = function (arg_14_0, arg_14_1)
+function SystemDialogManager.open_save_dialog(arg_14_0, arg_14_1)
 	local function var_14_0(arg_15_0)
 		local var_15_0 = arg_15_0.dialog_instance
 
@@ -184,7 +184,7 @@ SystemDialogManager.open_save_dialog = function (arg_14_0, arg_14_1)
 	}
 end
 
-SystemDialogManager.open_commerce_dialog = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+function SystemDialogManager.open_commerce_dialog(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local function var_16_0(arg_17_0)
 		local var_17_0 = arg_17_0.dialog_instance
 		local var_17_1 = arg_17_0.targets
@@ -203,7 +203,7 @@ SystemDialogManager.open_commerce_dialog = function (arg_16_0, arg_16_1, arg_16_
 	}
 end
 
-SystemDialogManager.open_error_dialog = function (arg_18_0, arg_18_1, arg_18_2)
+function SystemDialogManager.open_error_dialog(arg_18_0, arg_18_1, arg_18_2)
 	local function var_18_0(arg_19_0)
 		local var_19_0 = arg_19_0.dialog_instance
 
@@ -220,7 +220,7 @@ SystemDialogManager.open_error_dialog = function (arg_18_0, arg_18_1, arg_18_2)
 	}
 end
 
-SystemDialogManager.open_virtual_keyboard = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+function SystemDialogManager.open_virtual_keyboard(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	fassert(arg_20_1, "[SystemDialogManager] You need to provide a user_id")
 
 	arg_20_0._virtual_keyboard_index = arg_20_0._virtual_keyboard_index + 1
@@ -243,7 +243,7 @@ SystemDialogManager.open_virtual_keyboard = function (arg_20_0, arg_20_1, arg_20
 	return arg_20_0._virtual_keyboard_index
 end
 
-SystemDialogManager.poll_virtual_keyboard = function (arg_21_0, arg_21_1)
+function SystemDialogManager.poll_virtual_keyboard(arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._virtual_keyboard_results[arg_21_1]
 
 	if var_21_0 and var_21_0.done then
@@ -255,6 +255,6 @@ SystemDialogManager.poll_virtual_keyboard = function (arg_21_0, arg_21_1)
 	return false
 end
 
-SystemDialogManager.has_open_dialogs = function (arg_22_0)
+function SystemDialogManager.has_open_dialogs(arg_22_0)
 	return #arg_22_0._dialogs > 0
 end

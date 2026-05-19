@@ -2,12 +2,12 @@
 
 ScriptXboxUserPrivilegeToken = class(ScriptXboxUserPrivilegeToken)
 
-ScriptXboxUserPrivilegeToken.init = function (arg_1_0, arg_1_1)
+function ScriptXboxUserPrivilegeToken.init(arg_1_0, arg_1_1)
 	arg_1_0._token = arg_1_1
 	arg_1_0._result = {}
 end
 
-ScriptXboxUserPrivilegeToken.update = function (arg_2_0)
+function ScriptXboxUserPrivilegeToken.update(arg_2_0)
 	local var_2_0, var_2_1, var_2_2, var_2_3 = UserPrivilege.status(arg_2_0._token)
 
 	arg_2_0._result.in_progress = var_2_0
@@ -16,7 +16,7 @@ ScriptXboxUserPrivilegeToken.update = function (arg_2_0)
 	arg_2_0._result.status_code = var_2_3
 end
 
-ScriptXboxUserPrivilegeToken.info = function (arg_3_0)
+function ScriptXboxUserPrivilegeToken.info(arg_3_0)
 	local var_3_0 = {}
 
 	if arg_3_0._result.error then
@@ -29,10 +29,10 @@ ScriptXboxUserPrivilegeToken.info = function (arg_3_0)
 	return var_3_0
 end
 
-ScriptXboxUserPrivilegeToken.done = function (arg_4_0)
+function ScriptXboxUserPrivilegeToken.done(arg_4_0)
 	return arg_4_0._result.done
 end
 
-ScriptXboxUserPrivilegeToken.close = function (arg_5_0)
+function ScriptXboxUserPrivilegeToken.close(arg_5_0)
 	UserPrivilege.release(arg_5_0._token)
 end

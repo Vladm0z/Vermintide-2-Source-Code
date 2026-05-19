@@ -13,7 +13,7 @@ local var_0_1 = {
 	max_members = MatchmakingSettingsOverrides.versus.MAX_NUMBER_OF_PLAYERS
 }
 
-StartGameWindowVersusLobbyBrowser.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
+function StartGameWindowVersusLobbyBrowser.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindowVersusLobbyBrowser] Enter Substate StartGameWindowVersusLobbyBrowser")
 
 	arg_1_0._max_num_members = MatchmakingSettingsOverrides.versus.MAX_NUMBER_OF_PLAYERS
@@ -45,7 +45,7 @@ StartGameWindowVersusLobbyBrowser.on_enter = function (arg_1_0, arg_1_1, arg_1_2
 	Managers.account:get_friends(2000, callback(arg_1_0, "cb_friends_collected"))
 end
 
-StartGameWindowVersusLobbyBrowser._join = function (arg_2_0, arg_2_1, arg_2_2)
+function StartGameWindowVersusLobbyBrowser._join(arg_2_0, arg_2_1, arg_2_2)
 	Managers.matchmaking:request_join_lobby(arg_2_1, arg_2_2)
 
 	arg_2_0.join_lobby_data_id = arg_2_1.id
@@ -53,7 +53,7 @@ StartGameWindowVersusLobbyBrowser._join = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._parent:set_layout_by_name("versus_player_hosted_lobby")
 end
 
-StartGameWindowVersusLobbyBrowser.is_lobby_joinable = function (arg_3_0, arg_3_1)
+function StartGameWindowVersusLobbyBrowser.is_lobby_joinable(arg_3_0, arg_3_1)
 	if not Managers.player.is_server then
 		return false, "matchmaking_promotion_popup_no_wom_title"
 	end
@@ -61,7 +61,7 @@ StartGameWindowVersusLobbyBrowser.is_lobby_joinable = function (arg_3_0, arg_3_1
 	return StartGameWindowVersusLobbyBrowser.super.is_lobby_joinable(arg_3_0, arg_3_1)
 end
 
-StartGameWindowVersusLobbyBrowser.update = function (arg_4_0, arg_4_1, arg_4_2)
+function StartGameWindowVersusLobbyBrowser.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._lobby_finder:update(arg_4_1)
 
 	if not arg_4_0:_is_refreshing() then

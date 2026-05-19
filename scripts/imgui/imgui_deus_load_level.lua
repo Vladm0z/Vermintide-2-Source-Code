@@ -19,7 +19,7 @@ end
 
 table.sort(var_0_1)
 
-ImguiDeusLoadLevel.init = function (arg_1_0)
+function ImguiDeusLoadLevel.init(arg_1_0)
 	arg_1_0._base_level_index = 1
 	arg_1_0._path_index = 1
 	arg_1_0._theme_index = 1
@@ -28,15 +28,15 @@ ImguiDeusLoadLevel.init = function (arg_1_0)
 	arg_1_0._level_seed = 0
 end
 
-ImguiDeusLoadLevel.update = function (arg_2_0)
+function ImguiDeusLoadLevel.update(arg_2_0)
 	return
 end
 
-ImguiDeusLoadLevel.is_persistent = function (arg_3_0)
+function ImguiDeusLoadLevel.is_persistent(arg_3_0)
 	return false
 end
 
-ImguiDeusLoadLevel.draw = function (arg_4_0, arg_4_1)
+function ImguiDeusLoadLevel.draw(arg_4_0, arg_4_1)
 	local var_4_0 = Managers.mechanism:current_mechanism_name()
 	local var_4_1 = Imgui.begin_window("DeusLoadLevel", "always_auto_resize")
 

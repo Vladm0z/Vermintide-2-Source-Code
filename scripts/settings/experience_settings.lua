@@ -54,7 +54,7 @@ end
 
 ExperienceSettings = ExperienceSettings or {}
 
-ExperienceSettings.get_player_level = function (arg_1_0)
+function ExperienceSettings.get_player_level(arg_1_0)
 	local var_1_0 = Managers.state.network:game()
 
 	if not var_1_0 then
@@ -72,7 +72,7 @@ ExperienceSettings.get_player_level = function (arg_1_0)
 	return (GameSession.game_object_field(var_1_0, var_1_3, "level"))
 end
 
-ExperienceSettings.get_highest_hero_level = function ()
+function ExperienceSettings.get_highest_hero_level()
 	local var_2_0
 	local var_2_1 = 0
 
@@ -89,7 +89,7 @@ ExperienceSettings.get_highest_hero_level = function ()
 	return ExperienceSettings.get_level(var_2_1), var_2_1, var_2_0
 end
 
-ExperienceSettings.get_reward_level = function ()
+function ExperienceSettings.get_reward_level()
 	local var_3_0 = 0
 	local var_3_1 = 0
 
@@ -110,15 +110,15 @@ ExperienceSettings.get_reward_level = function ()
 	return var_3_4 + var_3_7
 end
 
-ExperienceSettings.get_experience = function (arg_4_0)
+function ExperienceSettings.get_experience(arg_4_0)
 	return Managers.backend:get_interface("hero_attributes"):get(arg_4_0, "experience") or 0
 end
 
-ExperienceSettings.get_experience_pool = function (arg_5_0)
+function ExperienceSettings.get_experience_pool(arg_5_0)
 	return Managers.backend:get_interface("hero_attributes"):get(arg_5_0, "experience_pool") or 0
 end
 
-ExperienceSettings.get_level = function (arg_6_0)
+function ExperienceSettings.get_level(arg_6_0)
 	arg_6_0 = arg_6_0 or 0
 
 	assert(arg_6_0 >= 0, "Negative XP!??")
@@ -155,14 +155,14 @@ ExperienceSettings.get_level = function (arg_6_0)
 	return var_6_1, var_6_3, var_6_4, var_6_2
 end
 
-ExperienceSettings.get_extra_level = function (arg_7_0)
+function ExperienceSettings.get_extra_level(arg_7_0)
 	local var_7_0 = math.floor(arg_7_0 / var_0_3)
 	local var_7_1 = arg_7_0 % var_0_3 / var_0_3
 
 	return var_7_0, var_7_1
 end
 
-ExperienceSettings.get_total_experience_required_for_level = function (arg_8_0)
+function ExperienceSettings.get_total_experience_required_for_level(arg_8_0)
 	local var_8_0 = 0
 
 	for iter_8_0 = 1, arg_8_0 do
@@ -172,11 +172,11 @@ ExperienceSettings.get_total_experience_required_for_level = function (arg_8_0)
 	return var_8_0
 end
 
-ExperienceSettings.get_experience_required_for_level = function (arg_9_0)
+function ExperienceSettings.get_experience_required_for_level(arg_9_0)
 	return var_0_0[arg_9_0] or var_0_3
 end
 
-ExperienceSettings.get_highest_character_level = function ()
+function ExperienceSettings.get_highest_character_level()
 	local var_10_0 = 0
 
 	for iter_10_0, iter_10_1 in ipairs(ProfilePriority) do
@@ -192,7 +192,7 @@ ExperienceSettings.get_highest_character_level = function ()
 	return var_10_0
 end
 
-ExperienceSettings.get_character_level = function (arg_11_0)
+function ExperienceSettings.get_character_level(arg_11_0)
 	local var_11_0 = Managers.backend:get_interface("hero_attributes"):get(arg_11_0, "experience") or 0
 
 	return ExperienceSettings.get_level(var_11_0)
@@ -203,7 +203,7 @@ local var_0_6 = {
 	[10] = 0.05
 }
 
-ExperienceSettings.hero_commendation_experience_multiplier = function ()
+function ExperienceSettings.hero_commendation_experience_multiplier()
 	local var_12_0 = 1
 
 	for iter_12_0 = 1, 5 do

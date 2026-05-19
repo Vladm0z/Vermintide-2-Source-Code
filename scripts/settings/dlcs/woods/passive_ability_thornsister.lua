@@ -2,7 +2,7 @@
 
 PassiveAbilityThornsister = class(PassiveAbilityThornsister)
 
-PassiveAbilityThornsister.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+function PassiveAbilityThornsister.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._owner_unit = arg_1_2
 	arg_1_0._ability_init_data = arg_1_4
 	arg_1_0._cooldown_buff = nil
@@ -10,7 +10,7 @@ PassiveAbilityThornsister.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, a
 	arg_1_0._num_stack_buffs = 0
 end
 
-PassiveAbilityThornsister.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
+function PassiveAbilityThornsister.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._career_extension = ScriptUnit.has_extension(arg_2_2, "career_system")
 	arg_2_0._buff_extension = ScriptUnit.has_extension(arg_2_2, "buff_system")
 
@@ -24,21 +24,21 @@ PassiveAbilityThornsister.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2
 	arg_2_0:_register_events()
 end
 
-PassiveAbilityThornsister.destroy = function (arg_3_0)
+function PassiveAbilityThornsister.destroy(arg_3_0)
 	arg_3_0:_unregister_events()
 end
 
-PassiveAbilityThornsister._register_events = function (arg_4_0)
+function PassiveAbilityThornsister._register_events(arg_4_0)
 	Managers.state.event:register(arg_4_0, "on_talents_changed", "on_talents_changed")
 end
 
-PassiveAbilityThornsister._unregister_events = function (arg_5_0)
+function PassiveAbilityThornsister._unregister_events(arg_5_0)
 	if Managers.state.event then
 		Managers.state.event:unregister("on_talents_changed", arg_5_0)
 	end
 end
 
-PassiveAbilityThornsister.update = function (arg_6_0, arg_6_1, arg_6_2)
+function PassiveAbilityThornsister.update(arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._career_extension
 
 	if not var_6_0 then
@@ -95,7 +95,7 @@ PassiveAbilityThornsister.update = function (arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-PassiveAbilityThornsister.on_talents_changed = function (arg_7_0, arg_7_1, arg_7_2)
+function PassiveAbilityThornsister.on_talents_changed(arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_1 ~= arg_7_0._owner_unit then
 		return
 	end
@@ -128,7 +128,7 @@ PassiveAbilityThornsister.on_talents_changed = function (arg_7_0, arg_7_1, arg_7
 	arg_7_0:_update_extra_abilities_info(arg_7_2)
 end
 
-PassiveAbilityThornsister._update_extra_abilities_info = function (arg_8_0, arg_8_1)
+function PassiveAbilityThornsister._update_extra_abilities_info(arg_8_0, arg_8_1)
 	if not arg_8_1 then
 		return
 	end

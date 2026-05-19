@@ -21,7 +21,7 @@ local var_0_0 = {
 	"rpc_requirement_failed"
 }
 
-VoteManager.init = function (arg_1_0, arg_1_1)
+function VoteManager.init(arg_1_0, arg_1_1)
 	arg_1_0.is_server = arg_1_1.is_server
 	arg_1_0.network_event_delegate = arg_1_1.network_event_delegate
 	arg_1_0.input_manager = arg_1_1.input_manager
@@ -35,7 +35,7 @@ end
 
 local var_0_1 = {}
 
-VoteManager._gather_dlc_dependencies = function (arg_2_0, arg_2_1)
+function VoteManager._gather_dlc_dependencies(arg_2_0, arg_2_1)
 	table.clear(var_0_1)
 
 	local var_2_0
@@ -60,7 +60,7 @@ VoteManager._gather_dlc_dependencies = function (arg_2_0, arg_2_1)
 	end
 end
 
-VoteManager.request_vote = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+function VoteManager.request_vote(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = VoteTemplates[arg_3_1]
 
 	fassert(var_3_0, "Could not find voting template by name: %q", arg_3_1)
@@ -143,7 +143,7 @@ VoteManager.request_vote = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4
 	end
 end
 
-VoteManager._server_abort_active_vote = function (arg_4_0)
+function VoteManager._server_abort_active_vote(arg_4_0)
 	local var_4_0 = arg_4_0.active_voting
 
 	if var_4_0 then
@@ -156,14 +156,14 @@ VoteManager._server_abort_active_vote = function (arg_4_0)
 	end
 end
 
-VoteManager._trigger_can_vote_fail_reply = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+function VoteManager._trigger_can_vote_fail_reply(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = NetworkLookup.voting_types[arg_5_1]
 	local var_5_1 = arg_5_2.voter_peer_id
 
 	Managers.state.network.network_transmit:send_rpc("rpc_requirement_failed", var_5_1, var_5_0, arg_5_3)
 end
 
-VoteManager.can_start_vote = function (arg_6_0, arg_6_1, arg_6_2)
+function VoteManager.can_start_vote(arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = VoteTemplates[arg_6_1]
 
 	if var_6_0.can_start_vote then
@@ -197,7 +197,7 @@ end
 
 local var_0_2 = "LOCAL_CALL"
 
-VoteManager.vote = function (arg_7_0, arg_7_1)
+function VoteManager.vote(arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1 ~= nil
 
 	fassert(var_7_0, "Incorrect vote: %s. Casteted by: %s", arg_7_1, Network.peer_id())
@@ -214,7 +214,7 @@ VoteManager.vote = function (arg_7_0, arg_7_1)
 	end
 end
 
-VoteManager._number_of_votes = function (arg_8_0)
+function VoteManager._number_of_votes(arg_8_0)
 	local var_8_0 = arg_8_0.active_voting
 
 	if var_8_0 then
@@ -238,13 +238,13 @@ VoteManager._number_of_votes = function (arg_8_0)
 	return 0, nil
 end
 
-VoteManager.has_voted = function (arg_9_0, arg_9_1)
+function VoteManager.has_voted(arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0.active_voting
 
 	return var_9_0 and var_9_0.votes[arg_9_1] ~= nil
 end
 
-VoteManager.vote_in_progress = function (arg_10_0)
+function VoteManager.vote_in_progress(arg_10_0)
 	local var_10_0 = arg_10_0.active_voting
 
 	if var_10_0 then
@@ -254,35 +254,35 @@ VoteManager.vote_in_progress = function (arg_10_0)
 	return nil
 end
 
-VoteManager.active_vote_template = function (arg_11_0)
+function VoteManager.active_vote_template(arg_11_0)
 	return arg_11_0.active_voting.template
 end
 
-VoteManager.active_vote_data = function (arg_12_0)
+function VoteManager.active_vote_data(arg_12_0)
 	return arg_12_0.active_voting.data
 end
 
-VoteManager.previous_vote_info = function (arg_13_0)
+function VoteManager.previous_vote_info(arg_13_0)
 	return arg_13_0.previous_voting_info
 end
 
-VoteManager.is_ingame_vote = function (arg_14_0)
+function VoteManager.is_ingame_vote(arg_14_0)
 	return arg_14_0.active_voting.template.ingame_vote
 end
 
-VoteManager.is_mission_vote = function (arg_15_0)
+function VoteManager.is_mission_vote(arg_15_0)
 	return arg_15_0.active_voting.template.mission_vote
 end
 
-VoteManager.cancel_disabled = function (arg_16_0)
+function VoteManager.cancel_disabled(arg_16_0)
 	return arg_16_0.active_voting and arg_16_0.active_voting.template.cancel_disabled
 end
 
-VoteManager.allow_vote_input = function (arg_17_0, arg_17_1)
+function VoteManager.allow_vote_input(arg_17_0, arg_17_1)
 	arg_17_0._allow_vote_input = arg_17_1
 end
 
-VoteManager.vote_time_left = function (arg_18_0)
+function VoteManager.vote_time_left(arg_18_0)
 	local var_18_0 = Managers.state.network:network_time()
 	local var_18_1 = arg_18_0.active_voting
 
@@ -293,11 +293,11 @@ VoteManager.vote_time_left = function (arg_18_0)
 	return nil
 end
 
-VoteManager._handle_popup_result = function (arg_19_0, arg_19_1)
+function VoteManager._handle_popup_result(arg_19_0, arg_19_1)
 	arg_19_0._popup_id = nil
 end
 
-VoteManager.update = function (arg_20_0, arg_20_1)
+function VoteManager.update(arg_20_0, arg_20_1)
 	local var_20_0 = Managers.state.network:network_time()
 
 	if arg_20_0.is_server then
@@ -360,7 +360,7 @@ VoteManager.update = function (arg_20_0, arg_20_1)
 	end
 end
 
-VoteManager._time_ended = function (arg_21_0, arg_21_1)
+function VoteManager._time_ended(arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0.active_voting
 
 	if var_21_0.end_time and arg_21_1 >= var_21_0.end_time then
@@ -370,7 +370,7 @@ VoteManager._time_ended = function (arg_21_0, arg_21_1)
 	return false
 end
 
-VoteManager._vote_result = function (arg_22_0, arg_22_1)
+function VoteManager._vote_result(arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0.active_voting
 	local var_22_1 = var_22_0.template
 	local var_22_2, var_22_3 = arg_22_0:_number_of_votes()
@@ -397,7 +397,7 @@ VoteManager._vote_result = function (arg_22_0, arg_22_1)
 	return nil
 end
 
-VoteManager.hot_join_sync = function (arg_23_0, arg_23_1)
+function VoteManager.hot_join_sync(arg_23_0, arg_23_1)
 	local var_23_0 = PEER_ID_TO_CHANNEL[arg_23_1]
 
 	if arg_23_0.active_voting then
@@ -420,7 +420,7 @@ VoteManager.hot_join_sync = function (arg_23_0, arg_23_1)
 	RPC.rpc_client_vote_kick_enabled(var_23_0, arg_23_0._vote_kick_enabled)
 end
 
-VoteManager.destroy = function (arg_24_0)
+function VoteManager.destroy(arg_24_0)
 	arg_24_0.network_event_delegate:unregister(arg_24_0)
 
 	arg_24_0.network_event_delegate = nil
@@ -432,7 +432,7 @@ VoteManager.destroy = function (arg_24_0)
 	end
 end
 
-VoteManager._server_start_vote = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+function VoteManager._server_start_vote(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	local var_25_0 = VoteTemplates[arg_25_1]
 	local var_25_1 = Managers.state.network:network_time()
 
@@ -456,7 +456,7 @@ VoteManager._server_start_vote = function (arg_25_0, arg_25_1, arg_25_2, arg_25_
 	end
 end
 
-VoteManager._get_voter_start_list = function (arg_26_0, arg_26_1)
+function VoteManager._get_voter_start_list(arg_26_0, arg_26_1)
 	local var_26_0 = {}
 
 	if arg_26_1 then
@@ -481,7 +481,7 @@ end
 
 local var_0_3 = {}
 
-VoteManager._update_voter_list_by_active_peers = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+function VoteManager._update_voter_list_by_active_peers(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	table.clear(var_0_3)
 
 	local var_27_0 = Managers.player:human_players()
@@ -514,7 +514,7 @@ VoteManager._update_voter_list_by_active_peers = function (arg_27_0, arg_27_1, a
 	return var_27_1
 end
 
-VoteManager.rpc_vote = function (arg_28_0, arg_28_1, arg_28_2)
+function VoteManager.rpc_vote(arg_28_0, arg_28_1, arg_28_2)
 	if arg_28_0.active_voting then
 		local var_28_0
 
@@ -533,11 +533,11 @@ VoteManager.rpc_vote = function (arg_28_0, arg_28_1, arg_28_2)
 	end
 end
 
-VoteManager._server_add_vote = function (arg_29_0, arg_29_1, arg_29_2)
+function VoteManager._server_add_vote(arg_29_0, arg_29_1, arg_29_2)
 	arg_29_0.active_voting.votes[arg_29_1] = arg_29_2
 end
 
-VoteManager._handle_requirement_results = function (arg_30_0, arg_30_1)
+function VoteManager._handle_requirement_results(arg_30_0, arg_30_1)
 	local var_30_0 = true
 	local var_30_1 = true
 	local var_30_2 = arg_30_1.votes_require_type
@@ -555,7 +555,7 @@ VoteManager._handle_requirement_results = function (arg_30_0, arg_30_1)
 	return var_30_0, var_30_1
 end
 
-VoteManager._server_handle_requirement_check = function (arg_31_0, arg_31_1, arg_31_2)
+function VoteManager._server_handle_requirement_check(arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = arg_31_0._requirement_check_data
 	local var_31_1 = arg_31_0:_active_peers()
 
@@ -585,7 +585,7 @@ VoteManager._server_handle_requirement_check = function (arg_31_0, arg_31_1, arg
 	end
 end
 
-VoteManager._server_update = function (arg_32_0, arg_32_1, arg_32_2)
+function VoteManager._server_update(arg_32_0, arg_32_1, arg_32_2)
 	if arg_32_0._requirement_check_data then
 		arg_32_0:_server_handle_requirement_check(arg_32_1, arg_32_2)
 
@@ -627,7 +627,7 @@ VoteManager._server_update = function (arg_32_0, arg_32_1, arg_32_2)
 	end
 end
 
-VoteManager._handle_undecided_votes = function (arg_33_0, arg_33_1)
+function VoteManager._handle_undecided_votes(arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_1.template.timeout_vote_option
 
 	if not var_33_0 then
@@ -648,7 +648,7 @@ VoteManager._handle_undecided_votes = function (arg_33_0, arg_33_1)
 	end
 end
 
-VoteManager.rpc_server_request_start_vote_base = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+function VoteManager.rpc_server_request_start_vote_base(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 	local var_34_0 = NetworkLookup.voting_types[arg_34_2]
 	local var_34_1 = VoteTemplates[var_34_0].extract_sync_data(arg_34_3)
 	local var_34_2 = CHANNEL_TO_PEER_ID[arg_34_1]
@@ -656,19 +656,19 @@ VoteManager.rpc_server_request_start_vote_base = function (arg_34_0, arg_34_1, a
 	arg_34_0:request_vote(var_34_0, var_34_1, var_34_2)
 end
 
-VoteManager.rpc_server_request_start_vote_peer_id = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+function VoteManager.rpc_server_request_start_vote_peer_id(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 	arg_35_0:rpc_server_request_start_vote_base(arg_35_1, arg_35_2, arg_35_3)
 end
 
-VoteManager.rpc_server_request_start_vote_lookup = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+function VoteManager.rpc_server_request_start_vote_lookup(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 	arg_36_0:rpc_server_request_start_vote_base(arg_36_1, arg_36_2, arg_36_3)
 end
 
-VoteManager.rpc_server_request_start_vote_deed = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+function VoteManager.rpc_server_request_start_vote_deed(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	arg_37_0:rpc_server_request_start_vote_base(arg_37_1, arg_37_2, arg_37_3)
 end
 
-VoteManager._start_vote_base = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+function VoteManager._start_vote_base(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 	local var_38_0 = NetworkLookup.voting_types[arg_38_2]
 	local var_38_1 = VoteTemplates[var_38_0]
 
@@ -687,19 +687,19 @@ VoteManager._start_vote_base = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3,
 	}
 end
 
-VoteManager.rpc_client_start_vote_peer_id = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+function VoteManager.rpc_client_start_vote_peer_id(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 	arg_39_0:_start_vote_base(arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 end
 
-VoteManager.rpc_client_start_vote_lookup = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+function VoteManager.rpc_client_start_vote_lookup(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 	arg_40_0:_start_vote_base(arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 end
 
-VoteManager.rpc_client_start_vote_deed = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+function VoteManager.rpc_client_start_vote_deed(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 	arg_41_0:_start_vote_base(arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 end
 
-VoteManager.rpc_client_add_vote = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+function VoteManager.rpc_client_add_vote(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	local var_42_0 = arg_42_0.active_voting
 
 	if var_42_0 then
@@ -707,7 +707,7 @@ VoteManager.rpc_client_add_vote = function (arg_42_0, arg_42_1, arg_42_2, arg_42
 	end
 end
 
-VoteManager.rpc_client_complete_vote = function (arg_43_0, arg_43_1, arg_43_2)
+function VoteManager.rpc_client_complete_vote(arg_43_0, arg_43_1, arg_43_2)
 	if arg_43_0.active_voting then
 		local var_43_0, var_43_1 = arg_43_0:_number_of_votes()
 
@@ -731,11 +731,11 @@ VoteManager.rpc_client_complete_vote = function (arg_43_0, arg_43_1, arg_43_2)
 	arg_43_0.active_voting = nil
 end
 
-VoteManager.rpc_client_vote_kick_enabled = function (arg_44_0, arg_44_1, arg_44_2)
+function VoteManager.rpc_client_vote_kick_enabled(arg_44_0, arg_44_1, arg_44_2)
 	arg_44_0._vote_kick_enabled = arg_44_2
 end
 
-VoteManager.rpc_update_voters_list = function (arg_45_0, arg_45_1, arg_45_2)
+function VoteManager.rpc_update_voters_list(arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = arg_45_0.active_voting
 
 	if var_45_0 then
@@ -756,7 +756,7 @@ VoteManager.rpc_update_voters_list = function (arg_45_0, arg_45_1, arg_45_2)
 	end
 end
 
-VoteManager.rpc_client_check_dlc = function (arg_46_0, arg_46_1, arg_46_2)
+function VoteManager.rpc_client_check_dlc(arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = true
 
 	for iter_46_0, iter_46_1 in ipairs(arg_46_2) do
@@ -772,25 +772,25 @@ VoteManager.rpc_client_check_dlc = function (arg_46_0, arg_46_1, arg_46_2)
 	Managers.state.network.network_transmit:send_rpc_server("rpc_server_check_dlc_reply", var_46_0)
 end
 
-VoteManager.rpc_server_check_dlc_reply = function (arg_47_0, arg_47_1, arg_47_2)
+function VoteManager.rpc_server_check_dlc_reply(arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_0._requirement_check_data
 	local var_47_1 = CHANNEL_TO_PEER_ID[arg_47_1]
 
 	var_47_0.results[var_47_1] = arg_47_2
 end
 
-VoteManager.rpc_requirement_failed = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+function VoteManager.rpc_requirement_failed(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	local var_48_0 = Localize("required_power_level_not_met_in_party")
 	local var_48_1 = NetworkLookup.voting_types[arg_48_2]
 
 	arg_48_0._popup_id = Managers.popup:queue_popup(arg_48_3, var_48_0, "ok", Localize("button_ok"))
 end
 
-VoteManager._client_update = function (arg_49_0, arg_49_1, arg_49_2)
+function VoteManager._client_update(arg_49_0, arg_49_1, arg_49_2)
 	return
 end
 
-VoteManager.set_vote_kick_enabled = function (arg_50_0, arg_50_1)
+function VoteManager.set_vote_kick_enabled(arg_50_0, arg_50_1)
 	if arg_50_0.is_server then
 		arg_50_0._vote_kick_enabled = arg_50_1
 
@@ -798,7 +798,7 @@ VoteManager.set_vote_kick_enabled = function (arg_50_0, arg_50_1)
 	end
 end
 
-VoteManager.vote_kick_enabled = function (arg_51_0)
+function VoteManager.vote_kick_enabled(arg_51_0)
 	if arg_51_0._vote_kick_enabled then
 		return Managers.player:num_human_players() > 2
 	end
@@ -806,13 +806,13 @@ VoteManager.vote_kick_enabled = function (arg_51_0)
 	return false
 end
 
-VoteManager.play_sound = function (arg_52_0, arg_52_1)
+function VoteManager.play_sound(arg_52_0, arg_52_1)
 	WwiseWorld.trigger_event(arg_52_0.wwise_world, arg_52_1)
 end
 
 local var_0_4 = {}
 
-VoteManager.get_current_voters = function (arg_53_0)
+function VoteManager.get_current_voters(arg_53_0)
 	table.clear(var_0_4)
 
 	if arg_53_0.active_voting then
@@ -837,7 +837,7 @@ end
 
 local var_0_5 = {}
 
-VoteManager._active_peers = function (arg_54_0)
+function VoteManager._active_peers(arg_54_0)
 	table.clear(var_0_5)
 
 	local var_54_0 = Managers.player:human_players()

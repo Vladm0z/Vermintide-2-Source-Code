@@ -24,7 +24,7 @@ local var_0_1 = {
 
 DLCUtils.append("prop_extension", var_0_1)
 
-PropsSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
+function PropsSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	PropsSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	for iter_1_0, iter_1_1 in pairs(PerlinLightConfigurations) do
@@ -38,7 +38,7 @@ PropsSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._network_event_delegate:register(arg_1_0, unpack(var_0_0))
 end
 
-PropsSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+function PropsSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	local var_2_0
 
 	if arg_2_3 == "PerlinLightExtension" then
@@ -73,11 +73,11 @@ PropsSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg
 	return var_2_0
 end
 
-PropsSystem.destroy = function (arg_3_0)
+function PropsSystem.destroy(arg_3_0)
 	arg_3_0._network_event_delegate:unregister(arg_3_0)
 end
 
-PropsSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
+function PropsSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_2 ~= "PerlinLightExtension" then
 		if arg_4_2 == "ThornSisterWallExtension" and arg_4_0.is_server then
 			Managers.level_transition_handler.transient_package_loader:remove_unit(arg_4_1)
@@ -87,11 +87,11 @@ PropsSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-PropsSystem.update = function (arg_5_0, arg_5_1, arg_5_2)
+function PropsSystem.update(arg_5_0, arg_5_1, arg_5_2)
 	PropsSystem.super.update(arg_5_0, arg_5_1, arg_5_2)
 end
 
-PropsSystem.rpc_thorn_bush_trigger_area_damage = function (arg_6_0, arg_6_1, arg_6_2)
+function PropsSystem.rpc_thorn_bush_trigger_area_damage(arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.state.unit_storage:unit(arg_6_2)
 	local var_6_1 = ScriptUnit.extension(var_6_0, "props_system")
 
@@ -100,7 +100,7 @@ PropsSystem.rpc_thorn_bush_trigger_area_damage = function (arg_6_0, arg_6_1, arg
 	end
 end
 
-PropsSystem.rpc_thorn_bush_trigger_despawn = function (arg_7_0, arg_7_1, arg_7_2)
+function PropsSystem.rpc_thorn_bush_trigger_despawn(arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = Managers.state.unit_storage:unit(arg_7_2)
 	local var_7_1 = ScriptUnit.extension(var_7_0, "props_system")
 	local var_7_2 = Managers.world:world("level_world")
@@ -112,7 +112,7 @@ PropsSystem.rpc_thorn_bush_trigger_despawn = function (arg_7_0, arg_7_1, arg_7_2
 	end
 end
 
-PropsSystem.rpc_sync_rotating_hazard = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+function PropsSystem.rpc_sync_rotating_hazard(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
 	local var_8_0 = Managers.state.network:game_object_or_level_unit(arg_8_2, arg_8_3)
 
 	arg_8_0._extensions[var_8_0]:network_sync(arg_8_4, arg_8_5, arg_8_6, arg_8_7)

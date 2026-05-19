@@ -2,7 +2,7 @@
 
 CareerAbilityWEMaidenGuard = class(CareerAbilityWEMaidenGuard)
 
-CareerAbilityWEMaidenGuard.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function CareerAbilityWEMaidenGuard.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._owner_unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
@@ -19,7 +19,7 @@ CareerAbilityWEMaidenGuard.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._decal_unit_name = "units/decals/decal_arrow_kerillian"
 end
 
-CareerAbilityWEMaidenGuard.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
+function CareerAbilityWEMaidenGuard.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
 	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
 	arg_2_0._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
@@ -31,11 +31,11 @@ CareerAbilityWEMaidenGuard.extensions_ready = function (arg_2_0, arg_2_1, arg_2_
 	end
 end
 
-CareerAbilityWEMaidenGuard.destroy = function (arg_3_0)
+function CareerAbilityWEMaidenGuard.destroy(arg_3_0)
 	return
 end
 
-CareerAbilityWEMaidenGuard.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+function CareerAbilityWEMaidenGuard.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if not arg_4_0:_ability_available() then
 		return
 	end
@@ -71,20 +71,20 @@ CareerAbilityWEMaidenGuard.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3
 	end
 end
 
-CareerAbilityWEMaidenGuard.stop = function (arg_5_0, arg_5_1)
+function CareerAbilityWEMaidenGuard.stop(arg_5_0, arg_5_1)
 	if arg_5_1 ~= "pushed" and arg_5_1 ~= "stunned" and arg_5_0._is_priming then
 		arg_5_0:_stop_priming()
 	end
 end
 
-CareerAbilityWEMaidenGuard._ability_available = function (arg_6_0)
+function CareerAbilityWEMaidenGuard._ability_available(arg_6_0)
 	local var_6_0 = arg_6_0._career_extension
 	local var_6_1 = arg_6_0._status_extension
 
 	return var_6_0:can_use_activated_ability() and not var_6_1:is_disabled()
 end
 
-CareerAbilityWEMaidenGuard._start_priming = function (arg_7_0)
+function CareerAbilityWEMaidenGuard._start_priming(arg_7_0)
 	if arg_7_0._local_player then
 		local var_7_0 = arg_7_0._decal_unit_name
 
@@ -94,7 +94,7 @@ CareerAbilityWEMaidenGuard._start_priming = function (arg_7_0)
 	arg_7_0._is_priming = true
 end
 
-CareerAbilityWEMaidenGuard._update_priming = function (arg_8_0)
+function CareerAbilityWEMaidenGuard._update_priming(arg_8_0)
 	if arg_8_0._decal_unit then
 		local var_8_0 = arg_8_0._first_person_extension
 		local var_8_1 = Unit.local_position(arg_8_0._owner_unit, 0)
@@ -107,7 +107,7 @@ CareerAbilityWEMaidenGuard._update_priming = function (arg_8_0)
 	end
 end
 
-CareerAbilityWEMaidenGuard._stop_priming = function (arg_9_0)
+function CareerAbilityWEMaidenGuard._stop_priming(arg_9_0)
 	if arg_9_0._decal_unit then
 		Managers.state.unit_spawner:mark_for_deletion(arg_9_0._decal_unit)
 	end
@@ -115,7 +115,7 @@ CareerAbilityWEMaidenGuard._stop_priming = function (arg_9_0)
 	arg_9_0._is_priming = false
 end
 
-CareerAbilityWEMaidenGuard._run_ability = function (arg_10_0)
+function CareerAbilityWEMaidenGuard._run_ability(arg_10_0)
 	arg_10_0:_stop_priming()
 
 	local var_10_0 = arg_10_0._owner_unit
@@ -197,7 +197,7 @@ CareerAbilityWEMaidenGuard._run_ability = function (arg_10_0)
 	arg_10_0:_play_vo()
 end
 
-CareerAbilityWEMaidenGuard._play_vo = function (arg_11_0)
+function CareerAbilityWEMaidenGuard._play_vo(arg_11_0)
 	local var_11_0 = arg_11_0._owner_unit
 	local var_11_1 = ScriptUnit.extension_input(var_11_0, "dialogue_system")
 	local var_11_2 = FrameTable.alloc_table()

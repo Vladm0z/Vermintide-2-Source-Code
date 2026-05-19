@@ -5,7 +5,7 @@ local var_0_1 = true
 
 LevelCountdownUI = class(LevelCountdownUI)
 
-LevelCountdownUI.init = function (arg_1_0, arg_1_1, arg_1_2)
+function LevelCountdownUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.network_event_delegate = arg_1_2.network_event_delegate
 	arg_1_0.camera_manager = arg_1_2.camera_manager
@@ -29,7 +29,7 @@ LevelCountdownUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	}
 end
 
-LevelCountdownUI.create_ui_elements = function (arg_2_0)
+function LevelCountdownUI.create_ui_elements(arg_2_0)
 	var_0_1 = false
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_2_0.countdown_widget = UIWidget.init(var_0_0.widgets.fullscreen_countdown)
@@ -37,7 +37,7 @@ LevelCountdownUI.create_ui_elements = function (arg_2_0)
 	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
 end
 
-LevelCountdownUI.update = function (arg_3_0, arg_3_1)
+function LevelCountdownUI.update(arg_3_0, arg_3_1)
 	if var_0_1 then
 		arg_3_0:create_ui_elements()
 
@@ -71,11 +71,11 @@ LevelCountdownUI.update = function (arg_3_0, arg_3_1)
 	arg_3_0._countdown_active = var_3_0
 end
 
-LevelCountdownUI.is_enter_game = function (arg_4_0)
+function LevelCountdownUI.is_enter_game(arg_4_0)
 	return arg_4_0._countdown_active
 end
 
-LevelCountdownUI.draw = function (arg_5_0, arg_5_1)
+function LevelCountdownUI.draw(arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0.input_manager:get_service("ingame_menu")
 	local var_5_1 = arg_5_0.ui_renderer
 
@@ -84,7 +84,7 @@ LevelCountdownUI.draw = function (arg_5_0, arg_5_1)
 	UIRenderer.end_pass(var_5_1)
 end
 
-LevelCountdownUI.update_enter_game_counter = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function LevelCountdownUI.update_enter_game_counter(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0.countdown_widget
 	local var_6_1 = var_6_0.content
 	local var_6_2 = var_6_0.style
@@ -131,11 +131,11 @@ LevelCountdownUI.update_enter_game_counter = function (arg_6_0, arg_6_1, arg_6_2
 	return var_6_5
 end
 
-LevelCountdownUI.play_sound = function (arg_7_0, arg_7_1)
+function LevelCountdownUI.play_sound(arg_7_0, arg_7_1)
 	WwiseWorld.trigger_event(arg_7_0.wwise_world, arg_7_1)
 end
 
-LevelCountdownUI._get_start_time = function (arg_8_0)
+function LevelCountdownUI._get_start_time(arg_8_0)
 	local var_8_0 = arg_8_0:_get_active_waystone_extension()
 
 	if var_8_0 then
@@ -145,7 +145,7 @@ LevelCountdownUI._get_start_time = function (arg_8_0)
 	end
 end
 
-LevelCountdownUI._get_active_waystone_extension = function (arg_9_0)
+function LevelCountdownUI._get_active_waystone_extension(arg_9_0)
 	if not Managers.state.entity then
 		return
 	end

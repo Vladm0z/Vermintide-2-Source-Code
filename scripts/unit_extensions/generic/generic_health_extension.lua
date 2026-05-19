@@ -1,5 +1,7 @@
 -- chunkname: @scripts/unit_extensions/generic/generic_health_extension.lua
 
+DamageDataIndex = {}
+
 local var_0_0 = {
 	"DAMAGE_AMOUNT",
 	"DAMAGE_TYPE",
@@ -19,22 +21,18 @@ local var_0_0 = {
 	"TARGET_INDEX"
 }
 
-DamageDataIndex = {}
-
-local var_0_1 = DamageDataIndex
-
 for iter_0_0, iter_0_1 in ipairs(var_0_0) do
-	var_0_1[iter_0_1] = iter_0_0
+	DamageDataIndex[iter_0_1] = iter_0_0
 end
 
-var_0_1.STRIDE = #var_0_0
+DamageDataIndex.STRIDE = #var_0_0
 
-local var_0_2
-local var_0_3 = 5
+local var_0_1 = DamageDataIndex
+local var_0_2 = 5
 
 GenericHealthExtension = class(GenericHealthExtension)
 
-GenericHealthExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function GenericHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.is_server = Managers.player.is_server
 	arg_1_0.system_data = arg_1_1.system_data
@@ -75,7 +73,7 @@ GenericHealthExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._damage_cap_per_hit = arg_1_0._damage_cap or var_1_1
 end
 
-GenericHealthExtension.destroy = function (arg_2_0)
+function GenericHealthExtension.destroy(arg_2_0)
 	if arg_2_0._recent_attackers then
 		for iter_2_0, iter_2_1 in pairs(arg_2_0._recent_attackers) do
 			arg_2_0._health_system:return_recent_attacker(iter_2_1)
@@ -85,15 +83,15 @@ GenericHealthExtension.destroy = function (arg_2_0)
 	end
 end
 
-GenericHealthExtension.freeze = function (arg_3_0)
+function GenericHealthExtension.freeze(arg_3_0)
 	arg_3_0:set_dead()
 end
 
-GenericHealthExtension.unfreeze = function (arg_4_0)
+function GenericHealthExtension.unfreeze(arg_4_0)
 	arg_4_0:reset()
 end
 
-GenericHealthExtension.reset = function (arg_5_0)
+function GenericHealthExtension.reset(arg_5_0)
 	arg_5_0.state = "alive"
 	arg_5_0.dead = false
 	arg_5_0.predicted_dead = false
@@ -118,7 +116,7 @@ GenericHealthExtension.reset = function (arg_5_0)
 	end
 end
 
-GenericHealthExtension.hot_join_sync = function (arg_6_0, arg_6_1)
+function GenericHealthExtension.hot_join_sync(arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.unit
 	local var_6_1, var_6_2 = Managers.state.network:game_object_or_level_id(var_6_0)
 
@@ -154,7 +152,7 @@ GenericHealthExtension.hot_join_sync = function (arg_6_0, arg_6_1)
 	end
 end
 
-GenericHealthExtension.set_server_damage_taken = function (arg_7_0, arg_7_1)
+function GenericHealthExtension.set_server_damage_taken(arg_7_0, arg_7_1)
 	fassert(arg_7_0.is_server, "[GenericHealthExtension] Only server is allowed to call this function")
 
 	local var_7_0 = arg_7_0.unit
@@ -169,47 +167,47 @@ GenericHealthExtension.set_server_damage_taken = function (arg_7_0, arg_7_1)
 	arg_7_0.damage = arg_7_1
 end
 
-GenericHealthExtension.is_alive = function (arg_8_0)
+function GenericHealthExtension.is_alive(arg_8_0)
 	return not arg_8_0.dead
 end
 
-GenericHealthExtension.client_predicted_is_alive = function (arg_9_0)
+function GenericHealthExtension.client_predicted_is_alive(arg_9_0)
 	return not arg_9_0.dead and not arg_9_0.predicted_dead
 end
 
-GenericHealthExtension.current_health_percent = function (arg_10_0)
+function GenericHealthExtension.current_health_percent(arg_10_0)
 	return 1 - arg_10_0.damage / arg_10_0.health
 end
 
-GenericHealthExtension.current_health = function (arg_11_0)
+function GenericHealthExtension.current_health(arg_11_0)
 	return arg_11_0.health - arg_11_0.damage
 end
 
-GenericHealthExtension.get_damage_taken = function (arg_12_0)
+function GenericHealthExtension.get_damage_taken(arg_12_0)
 	return arg_12_0.damage
 end
 
-GenericHealthExtension.set_current_damage = function (arg_13_0, arg_13_1)
+function GenericHealthExtension.set_current_damage(arg_13_0, arg_13_1)
 	arg_13_0.damage = arg_13_1
 end
 
-GenericHealthExtension.set_min_health_percentage = function (arg_14_0, arg_14_1)
+function GenericHealthExtension.set_min_health_percentage(arg_14_0, arg_14_1)
 	arg_14_0._min_health_percentage = arg_14_1
 end
 
-GenericHealthExtension.get_max_health = function (arg_15_0)
+function GenericHealthExtension.get_max_health(arg_15_0)
 	return arg_15_0.health
 end
 
-GenericHealthExtension.is_dead = function (arg_16_0)
+function GenericHealthExtension.is_dead(arg_16_0)
 	return arg_16_0.dead
 end
 
-GenericHealthExtension.current_max_health_percent = function (arg_17_0)
+function GenericHealthExtension.current_max_health_percent(arg_17_0)
 	return 1
 end
 
-GenericHealthExtension.set_max_health = function (arg_18_0, arg_18_1)
+function GenericHealthExtension.set_max_health(arg_18_0, arg_18_1)
 	local var_18_0 = NetworkConstants.health
 	local var_18_1 = math.clamp(arg_18_1, var_18_0.min, var_18_0.max)
 	local var_18_2 = var_18_1 % 1
@@ -231,7 +229,7 @@ GenericHealthExtension.set_max_health = function (arg_18_0, arg_18_1)
 	return var_18_4
 end
 
-GenericHealthExtension._add_to_damage_history_buffer = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14, arg_19_15, arg_19_16, arg_19_17)
+function GenericHealthExtension._add_to_damage_history_buffer(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14, arg_19_15, arg_19_16, arg_19_17)
 	local var_19_0 = arg_19_6 and {
 		arg_19_6.x,
 		arg_19_6.y,
@@ -267,11 +265,11 @@ GenericHealthExtension._add_to_damage_history_buffer = function (arg_19_0, arg_1
 	return var_19_3
 end
 
-GenericHealthExtension._should_die = function (arg_20_0)
+function GenericHealthExtension._should_die(arg_20_0)
 	return arg_20_0.damage >= arg_20_0.health
 end
 
-GenericHealthExtension.apply_client_predicted_damage = function (arg_21_0, arg_21_1)
+function GenericHealthExtension.apply_client_predicted_damage(arg_21_0, arg_21_1)
 	fassert(not arg_21_0.is_server, "This should only be used for the clients!")
 
 	if not arg_21_0:get_is_invincible() then
@@ -284,7 +282,7 @@ GenericHealthExtension.apply_client_predicted_damage = function (arg_21_0, arg_2
 	end
 end
 
-GenericHealthExtension.add_damage = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11, arg_22_12, arg_22_13, arg_22_14, arg_22_15, arg_22_16, arg_22_17)
+function GenericHealthExtension.add_damage(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11, arg_22_12, arg_22_13, arg_22_14, arg_22_15, arg_22_16, arg_22_17)
 	local var_22_0 = arg_22_0.unit
 	local var_22_1, var_22_2 = Managers.state.network:game_object_or_level_id(var_22_0)
 
@@ -383,7 +381,7 @@ GenericHealthExtension.add_damage = function (arg_22_0, arg_22_1, arg_22_2, arg_
 	arg_22_0:_sync_out_damage(arg_22_1, var_22_1, var_22_2, arg_22_9, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_10, arg_22_11, arg_22_12, arg_22_13, arg_22_14, arg_22_15, arg_22_16, arg_22_17)
 end
 
-GenericHealthExtension._sync_out_damage = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9, arg_23_10, arg_23_11, arg_23_12, arg_23_13, arg_23_14, arg_23_15, arg_23_16, arg_23_17, arg_23_18, arg_23_19)
+function GenericHealthExtension._sync_out_damage(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9, arg_23_10, arg_23_11, arg_23_12, arg_23_13, arg_23_14, arg_23_15, arg_23_16, arg_23_17, arg_23_18, arg_23_19)
 	if arg_23_0.is_server and arg_23_2 then
 		local var_23_0 = Managers.state.network
 		local var_23_1, var_23_2 = var_23_0:game_object_or_level_id(arg_23_1)
@@ -408,7 +406,7 @@ GenericHealthExtension._sync_out_damage = function (arg_23_0, arg_23_1, arg_23_2
 	end
 end
 
-GenericHealthExtension.add_heal = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+function GenericHealthExtension.add_heal(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	local var_24_0 = arg_24_0.unit
 	local var_24_1 = ScriptUnit.has_extension(var_24_0, "buff_system")
 
@@ -432,7 +430,7 @@ GenericHealthExtension.add_heal = function (arg_24_0, arg_24_1, arg_24_2, arg_24
 	end
 end
 
-GenericHealthExtension.die = function (arg_25_0, arg_25_1)
+function GenericHealthExtension.die(arg_25_0, arg_25_1)
 	if arg_25_0.is_server then
 		local var_25_0 = arg_25_0.unit
 
@@ -444,40 +442,40 @@ GenericHealthExtension.die = function (arg_25_0, arg_25_1)
 	end
 end
 
-GenericHealthExtension.entered_kill_volume = function (arg_26_0, arg_26_1)
+function GenericHealthExtension.entered_kill_volume(arg_26_0, arg_26_1)
 	arg_26_0:die("volume_insta_kill")
 end
 
-GenericHealthExtension.set_dead = function (arg_27_0)
+function GenericHealthExtension.set_dead(arg_27_0)
 	arg_27_0.damage = arg_27_0.health
 	arg_27_0.dead = true
 	HEALTH_ALIVE[arg_27_0.unit] = nil
 end
 
-GenericHealthExtension.has_assist_shield = function (arg_28_0)
+function GenericHealthExtension.has_assist_shield(arg_28_0)
 	return false
 end
 
-GenericHealthExtension.recent_damages = function (arg_29_0)
+function GenericHealthExtension.recent_damages(arg_29_0)
 	local var_29_0 = 3 - arg_29_0.system_data.active_damage_buffer_index
 	local var_29_1 = arg_29_0.damage_buffers[var_29_0]
 
 	return pdArray.data(var_29_1)
 end
 
-GenericHealthExtension.recent_damage_source = function (arg_30_0)
+function GenericHealthExtension.recent_damage_source(arg_30_0)
 	return arg_30_0._recent_damage_source_name
 end
 
-GenericHealthExtension.recently_damaged = function (arg_31_0)
+function GenericHealthExtension.recently_damaged(arg_31_0)
 	return arg_31_0._recent_damage_type, arg_31_0._recent_hit_react_type
 end
 
-GenericHealthExtension.last_damage_t = function (arg_32_0)
+function GenericHealthExtension.last_damage_t(arg_32_0)
 	return arg_32_0._last_damage_t
 end
 
-GenericHealthExtension.get_is_invincible = function (arg_33_0)
+function GenericHealthExtension.get_is_invincible(arg_33_0)
 	local var_33_0 = arg_33_0.unit
 	local var_33_1 = false
 	local var_33_2 = ScriptUnit.has_extension(var_33_0, "buff_system")
@@ -496,29 +494,29 @@ GenericHealthExtension.get_is_invincible = function (arg_33_0)
 	return arg_33_0.is_invincible or var_33_1 or var_33_3
 end
 
-GenericHealthExtension.save_kill_feed_data = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6)
+function GenericHealthExtension.save_kill_feed_data(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6)
 	local var_34_0 = arg_34_0.unit
 	local var_34_1 = arg_34_0.last_damage_data
 	local var_34_2 = false
 	local var_34_3 = arg_34_0:current_health()
 
 	if arg_34_4 ~= "temporary_health_degen" and arg_34_4 ~= "knockdown_bleed" and var_34_3 > 0 then
-		local var_34_4 = arg_34_6 or AiUtils.get_actual_attacker_unit(arg_34_1)
+		arg_34_1 = arg_34_6 or AiUtils.get_actual_attacker_unit(arg_34_1)
 
-		if HEALTH_ALIVE[var_34_4] then
-			local var_34_5 = Unit.get_data(var_34_4, "breed")
+		if HEALTH_ALIVE[arg_34_1] then
+			local var_34_4 = Unit.get_data(arg_34_1, "breed")
 
-			if not (var_34_4 == var_34_0 and var_34_5 and not var_34_5.is_player) and (var_34_4 ~= var_34_0 or arg_34_4 ~= "cutting") and var_34_5 then
-				var_34_1.breed = var_34_5
+			if not (arg_34_1 == var_34_0 and var_34_4 and not var_34_4.is_player) and (arg_34_1 ~= var_34_0 or arg_34_4 ~= "cutting") and var_34_4 then
+				var_34_1.breed = var_34_4
 				var_34_1.damage_type = arg_34_4
-				var_34_1.attacker_unit_id = Managers.state.network:unit_game_object_id(var_34_4)
+				var_34_1.attacker_unit_id = Managers.state.network:unit_game_object_id(arg_34_1)
 				var_34_2 = true
 
-				local var_34_6 = Managers.player:owner(var_34_4)
+				local var_34_5 = Managers.player:owner(arg_34_1)
 
-				if var_34_6 then
-					var_34_1.attacker_unique_id = var_34_6:unique_id()
-					var_34_1.attacker_side = Managers.state.side.side_by_unit[var_34_4]
+				if var_34_5 then
+					var_34_1.attacker_unique_id = var_34_5:unique_id()
+					var_34_1.attacker_side = Managers.state.side.side_by_unit[arg_34_1]
 				else
 					var_34_1.attacker_unique_id = nil
 					var_34_1.attacker_side = nil
@@ -528,20 +526,20 @@ GenericHealthExtension.save_kill_feed_data = function (arg_34_0, arg_34_1, arg_3
 	end
 
 	if not var_34_2 then
-		local var_34_7 = Managers.state.entity:system("area_damage_system"):has_source_attacker_unit_data(arg_34_1)
+		local var_34_6 = Managers.state.entity:system("area_damage_system"):has_source_attacker_unit_data(arg_34_1)
 
-		if var_34_7 then
-			var_34_1.breed = var_34_7.breed
-			var_34_1.attacker_unique_id = var_34_7.attacker_unique_id
-			var_34_1.attacker_side = var_34_7.attacker_side
+		if var_34_6 then
+			var_34_1.breed = var_34_6.breed
+			var_34_1.attacker_unique_id = var_34_6.attacker_unique_id
+			var_34_1.attacker_side = var_34_6.attacker_side
 		end
 	end
 end
 
-GenericHealthExtension._register_attacker = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+function GenericHealthExtension._register_attacker(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 	local var_35_0 = arg_35_0._recent_attackers
 	local var_35_1 = var_35_0[arg_35_1]
-	local var_35_2 = arg_35_3 + var_0_3
+	local var_35_2 = arg_35_3 + var_0_2
 
 	if var_35_1 then
 		arg_35_0._health_system:refresh_recent_attacker(var_35_1, arg_35_2, var_35_2)
@@ -550,7 +548,7 @@ GenericHealthExtension._register_attacker = function (arg_35_0, arg_35_1, arg_35
 	end
 end
 
-GenericHealthExtension.was_attacked_by = function (arg_36_0, arg_36_1)
+function GenericHealthExtension.was_attacked_by(arg_36_0, arg_36_1)
 	local var_36_0 = Managers.time:time("game")
 	local var_36_1 = arg_36_0._recent_attackers[arg_36_1]
 
@@ -565,6 +563,6 @@ GenericHealthExtension.was_attacked_by = function (arg_36_0, arg_36_1)
 	return var_36_1
 end
 
-GenericHealthExtension.recent_attackers = function (arg_37_0)
+function GenericHealthExtension.recent_attackers(arg_37_0)
 	return arg_37_0._recent_attackers
 end

@@ -18,7 +18,8 @@ ItemMasterList.dw_dual_axe_skin_06_runed_04 = {
 		"dr_slayer"
 	},
 	events = {
-		"skulls"
+		"skulls",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.we_spear_skin_03_runed_04 = {
@@ -40,7 +41,8 @@ ItemMasterList.we_spear_skin_03_runed_04 = {
 		"we_waywatcher"
 	},
 	events = {
-		"skulls"
+		"skulls",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.es_halberd_skin_04_runed_04 = {
@@ -62,7 +64,8 @@ ItemMasterList.es_halberd_skin_04_runed_04 = {
 		"es_mercenary"
 	},
 	events = {
-		"skulls"
+		"skulls",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.bw_flamethrower_staff_skin_02_runed_04 = {
@@ -85,7 +88,8 @@ ItemMasterList.bw_flamethrower_staff_skin_02_runed_04 = {
 		"bw_unchained"
 	},
 	events = {
-		"skulls"
+		"skulls",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.wh_repeating_crossbow_skin_03_runed_04 = {
@@ -107,7 +111,8 @@ ItemMasterList.wh_repeating_crossbow_skin_03_runed_04 = {
 		"wh_captain"
 	},
 	events = {
-		"skulls"
+		"skulls",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.frame_skulls_2025 = {
@@ -123,6 +128,7 @@ ItemMasterList.frame_skulls_2025 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"skulls"
+		"skulls",
+		"dwarf_fest"
 	}
 }

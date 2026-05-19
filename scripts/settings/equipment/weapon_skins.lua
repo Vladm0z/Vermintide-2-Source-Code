@@ -36,12 +36,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "wh_1h_axe_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_axe_02_t2/wpn_axe_02_t2_runed_01",
 			hud_icon = "weapon_generic_icon_axe1h",
-			display_unit = "units/weapons/weapon_display/display_1h_axes",
 			inventory_icon = "icon_wpn_axe_02_t2",
 			display_name = "wh_1h_axe_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_axe_02_t2/wpn_axe_02_t2_runed_01",
-			template = "one_hand_axe_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_hand_axe_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_axes"
 		}
 	},
 	{
@@ -75,12 +76,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "wh_1h_axe_skin_04_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_axe_03_t2/wpn_axe_03_t2_runed_01",
 			hud_icon = "weapon_generic_icon_axe1h",
-			display_unit = "units/weapons/weapon_display/display_1h_axes",
 			inventory_icon = "icon_wpn_axe_03_t2",
 			display_name = "wh_1h_axe_skin_04_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_axe_03_t2/wpn_axe_03_t2_runed_01",
-			template = "one_hand_axe_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_hand_axe_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_axes"
 		}
 	},
 	{
@@ -160,6 +162,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_emp_crossbow_02_t2",
 			left_hand_unit = "units/weapons/player/wpn_emp_crossbow_02_t2/wpn_emp_crossbow_02_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "crossbow_template_1",
 			hud_icon = "weapon_generic_icon_crossbow",
 			display_unit = "units/weapons/weapon_display/display_1h_crossbow"
@@ -202,6 +205,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_emp_crossbow_03_t2",
 			left_hand_unit = "units/weapons/player/wpn_emp_crossbow_03_t2/wpn_emp_crossbow_03_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "crossbow_template_1",
 			hud_icon = "weapon_generic_icon_crossbow",
 			display_unit = "units/weapons/weapon_display/display_1h_crossbow"
@@ -295,12 +299,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_1h_flail_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_emp_flail_02_t1/wpn_emp_flail_02_t1_runed_01",
 			hud_icon = "weapon_generic_icon_mace",
-			display_unit = "units/weapons/weapon_display/display_1h_flail",
 			inventory_icon = "icon_wpn_emp_flail_02_t1",
 			display_name = "es_1h_flail_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_flail_02_t1/wpn_emp_flail_02_t1_runed_01",
-			template = "one_handed_flail_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_handed_flail_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_flail"
 		}
 	},
 	{
@@ -347,12 +352,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_1h_flail_skin_05_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_emp_flail_05_t1/wpn_emp_flail_05_t1_runed_01",
 			hud_icon = "weapon_generic_icon_mace",
-			display_unit = "units/weapons/weapon_display/display_1h_flail",
 			inventory_icon = "icon_wpn_emp_flail_05_t1",
 			display_name = "es_1h_flail_skin_05_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_flail_05_t1/wpn_emp_flail_05_t1_runed_01",
-			template = "one_handed_flail_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_handed_flail_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_flail"
 		}
 	},
 	{
@@ -420,6 +426,7 @@ WeaponSkins.skins = {
 			display_name = "wh_brace_of_pistols_skin_03_runed_01_name",
 			inventory_icon = "icon_wpn_emp_pistol_02_t2",
 			left_hand_unit = "units/weapons/player/wpn_emp_pistol_02_t2/wpn_emp_pistol_02_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "brace_of_pistols_template_1",
 			hud_icon = "weapon_generic_icon_brace_of_pistol",
 			display_unit = "units/weapons/weapon_display/display_pistols"
@@ -477,6 +484,7 @@ WeaponSkins.skins = {
 			display_name = "wh_brace_of_pistols_skin_05_runed_01_name",
 			inventory_icon = "icon_wpn_emp_pistol_03_t2",
 			left_hand_unit = "units/weapons/player/wpn_emp_pistol_03_t2/wpn_emp_pistol_03_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "brace_of_pistols_template_1",
 			hud_icon = "weapon_generic_icon_brace_of_pistol",
 			display_unit = "units/weapons/weapon_display/display_pistols"
@@ -500,12 +508,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "wh_1h_falchion_skin_01_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_emp_sword_04_t1/wpn_emp_sword_04_t1_runed_01",
 			hud_icon = "weapon_generic_icon_falken",
-			display_unit = "units/weapons/weapon_display/display_1h_falchions",
 			inventory_icon = "icon_wpn_emp_sword_04_t1",
 			display_name = "wh_1h_falchion_skin_01_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_sword_04_t1/wpn_emp_sword_04_t1_runed_01",
-			template = "one_hand_falchion_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_hand_falchion_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_falchions"
 		}
 	},
 	{
@@ -526,12 +535,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "wh_1h_falchion_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_emp_sword_04_t2/wpn_emp_sword_04_t2_runed_01",
 			hud_icon = "weapon_generic_icon_falken",
-			display_unit = "units/weapons/weapon_display/display_1h_falchions",
 			inventory_icon = "icon_wpn_emp_sword_04_t2",
 			display_name = "wh_1h_falchion_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_sword_04_t2/wpn_emp_sword_04_t2_runed_01",
-			template = "one_hand_falchion_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_hand_falchion_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_falchions"
 		}
 	},
 	{
@@ -605,12 +615,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "wh_2h_sword_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_empire_2h_sword_02_t2/wpn_2h_sword_02_t2_runed_01",
 			hud_icon = "weapon_generic_icon_sword",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
 			inventory_icon = "icon_wpn_empire_2h_sword_02_t2",
 			display_name = "wh_2h_sword_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_empire_2h_sword_02_t2/wpn_2h_sword_02_t2_runed_01",
-			template = "two_handed_swords_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_swords_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_swords"
 		}
 	},
 	{
@@ -657,12 +668,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "wh_2h_sword_skin_05_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_empire_2h_sword_05_t1/wpn_2h_sword_05_t1_runed_01",
 			hud_icon = "weapon_generic_icon_sword",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
 			inventory_icon = "icon_wpn_empire_2h_sword_05_t1",
 			display_name = "wh_2h_sword_skin_05_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_empire_2h_sword_05_t1/wpn_2h_sword_05_t1_runed_01",
-			template = "two_handed_swords_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_swords_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_swords"
 		}
 	},
 	{
@@ -719,6 +731,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_empire_pistol_repeater/wpn_empire_pistol_repeater_t2_runed_01",
 			hud_icon = "weapon_generic_icon_repeating_pistol",
 			inventory_icon = "icon_wpn_empire_pistol_repeater_t2",
+			material_settings_name = "blue_glow",
 			display_name = "wh_repeating_pistol_skin_02_runed_01_name",
 			template = "repeating_pistol_template_1",
 			display_unit = "units/weapons/weapon_display/display_repeating_handguns",
@@ -784,6 +797,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_empire_pistol_repeater_02/wpn_empire_pistol_repeater_02_t1_runed_01",
 			hud_icon = "weapon_generic_icon_repeating_pistol",
 			inventory_icon = "icon_wpn_empire_pistol_repeater_02_t1",
+			material_settings_name = "blue_glow",
 			display_name = "wh_repeating_pistol_skin_04_runed_01_name",
 			template = "repeating_pistol_template_1",
 			display_unit = "units/weapons/weapon_display/display_repeating_handguns",
@@ -831,6 +845,7 @@ WeaponSkins.skins = {
 			display_name = "wh_fencing_sword_skin_01_runed_01_name",
 			inventory_icon = "icon_wpn_fencingsword_01_t1",
 			left_hand_unit = "units/weapons/player/wpn_emp_pistol_02_t2/wpn_emp_pistol_02_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "fencing_sword_template_1",
 			hud_icon = "weapon_generic_icon_fencing_sword",
 			display_unit = "units/weapons/weapon_display/display_fencing_swords"
@@ -1003,6 +1018,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_wh_repeater_crossbow_t3",
 			left_hand_unit = "units/weapons/player/wpn_wh_repeater_crossbow_t3/wpn_wh_repeater_crossbow_t3_runed_01",
+			material_settings_name = "blue_glow",
 			template = "repeating_crossbow_template_1",
 			ammo_unit_3p = "units/weapons/player/wpn_crossbow_quiver/wpn_crossbow_bolt_3p",
 			hud_icon = "weapon_generic_icon_fencing_sword",
@@ -1069,12 +1085,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "bw_dagger_skin_03_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_brw_dagger_03/wpn_brw_dagger_03_runed_01",
 			hud_icon = "weapon_generic_icon_daggers",
-			display_unit = "units/weapons/weapon_display/display_1h_dagger_wizard",
 			inventory_icon = "icon_wpn_brw_dagger_03",
 			display_name = "bw_dagger_skin_03_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_brw_dagger_03/wpn_brw_dagger_03_runed_01",
-			template = "one_handed_daggers_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_handed_daggers_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_dagger_wizard"
 		}
 	},
 	{
@@ -1095,12 +1112,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "bw_dagger_skin_04_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_brw_dagger_04/wpn_brw_dagger_04_runed_01",
 			hud_icon = "weapon_generic_icon_daggers",
-			display_unit = "units/weapons/weapon_display/display_1h_dagger_wizard",
 			inventory_icon = "icon_wpn_brw_dagger_04",
 			display_name = "bw_dagger_skin_04_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_brw_dagger_04/wpn_brw_dagger_04_runed_01",
-			template = "one_handed_daggers_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_handed_daggers_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_dagger_wizard"
 		}
 	},
 	{
@@ -1121,12 +1139,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "bw_dagger_skin_05_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_brw_dagger_05/wpn_brw_dagger_05_runed_01",
 			hud_icon = "weapon_generic_icon_daggers",
-			display_unit = "units/weapons/weapon_display/display_1h_dagger_wizard",
 			inventory_icon = "icon_wpn_brw_dagger_05",
 			display_name = "bw_dagger_skin_05_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_brw_dagger_05/wpn_brw_dagger_05_runed_01",
-			template = "one_handed_daggers_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_handed_daggers_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_dagger_wizard"
 		}
 	},
 	{
@@ -1180,6 +1199,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_brw_flame_staff_02/wpn_brw_flame_staff_02_runed_01",
 			inventory_icon = "icon_wpn_brw_flame_staff_02",
 			left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball",
+			material_settings_name = "blue_glow",
 			template = "staff_flamethrower_template",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_staff"
@@ -1236,6 +1256,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_brw_flame_staff_05/wpn_brw_flame_staff_05_runed_01",
 			inventory_icon = "icon_wpn_brw_flame_staff_05",
 			left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball",
+			material_settings_name = "blue_glow",
 			template = "staff_flamethrower_template",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_staff"
@@ -1274,12 +1295,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "bw_1h_mace_skin_01_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_brw_mace_01/wpn_brw_mace_01_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_hammer_wizard",
 			inventory_icon = "icon_wpn_brw_mace_01",
 			display_name = "bw_1h_mace_skin_01_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_brw_mace_01/wpn_brw_mace_01_runed_01",
-			template = "one_handed_hammer_wizard_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_handed_hammer_wizard_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_hammer_wizard"
 		}
 	},
 	{
@@ -1339,12 +1361,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "bw_1h_mace_skin_05_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_brw_mace_05/wpn_brw_mace_05_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_hammer_wizard",
 			inventory_icon = "icon_wpn_brw_mace_05",
 			display_name = "bw_1h_mace_skin_05_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_brw_mace_05/wpn_brw_mace_05_runed_01",
-			template = "one_handed_hammer_wizard_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_handed_hammer_wizard_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_hammer_wizard"
 		}
 	},
 	{
@@ -1398,6 +1421,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_brw_spear_staff_02/wpn_brw_spear_staff_02_runed_01",
 			inventory_icon = "icon_wpn_brw_spear_staff_02",
 			left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball",
+			material_settings_name = "blue_glow",
 			template = "staff_spark_spear_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_staff"
@@ -1440,6 +1464,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_brw_spear_staff_04/wpn_brw_spear_staff_04_runed_01",
 			inventory_icon = "icon_wpn_brw_spear_staff_04",
 			left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball",
+			material_settings_name = "blue_glow",
 			template = "staff_spark_spear_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_staff"
@@ -1539,6 +1564,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_brw_beam_staff_04/wpn_brw_beam_staff_04_runed_01",
 			inventory_icon = "icon_wpn_brw_beam_staff_04",
 			left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball",
+			material_settings_name = "blue_glow",
 			template = "staff_blast_beam_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_staff"
@@ -1567,6 +1593,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_brw_beam_staff_05/wpn_brw_beam_staff_05_runed_01",
 			inventory_icon = "icon_wpn_brw_beam_staff_05",
 			left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball",
+			material_settings_name = "blue_glow",
 			template = "staff_blast_beam_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_staff"
@@ -1610,6 +1637,7 @@ WeaponSkins.skins = {
 			display_name = "bw_fireball_staff_skin_01_runed_01_name",
 			inventory_icon = "icon_wpn_brw_staff_02",
 			left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball",
+			material_settings_name = "blue_glow",
 			template = "staff_fireball_fireball_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_staff"
@@ -1681,6 +1709,7 @@ WeaponSkins.skins = {
 			display_name = "bw_conflagration_staff_skin_02_runed_01_name",
 			inventory_icon = "icon_wpn_brw_staff_04",
 			left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball",
+			material_settings_name = "blue_glow",
 			template = "staff_fireball_geiser_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_staff"
@@ -1719,12 +1748,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "bw_1h_sword_skin_01_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_brw_sword_01_t1/wpn_brw_sword_01_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_swords_wizard",
 			inventory_icon = "icon_wpn_brw_sword_01_t1",
 			display_name = "bw_1h_sword_skin_01_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_brw_sword_01_t1/wpn_brw_sword_01_t1_runed_01",
-			template = "one_handed_swords_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_handed_swords_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_swords_wizard"
 		}
 	},
 	{
@@ -1745,12 +1775,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "bw_1h_sword_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_brw_sword_01_t2/wpn_brw_sword_01_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_swords_wizard",
 			inventory_icon = "icon_wpn_brw_sword_01_t2",
 			display_name = "bw_1h_sword_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_brw_sword_01_t2/wpn_brw_sword_01_t2_runed_01",
-			template = "one_handed_swords_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_handed_swords_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_swords_wizard"
 		}
 	},
 	{
@@ -1863,12 +1894,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "bw_1h_flaming_sword_skin_01_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_brw_sword_01_t1/wpn_brw_flaming_sword_01_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_swords_wizard",
 			inventory_icon = "icon_wpn_brw_flaming_sword_01_t1",
 			display_name = "bw_1h_flaming_sword_skin_01_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_brw_sword_01_t1/wpn_brw_flaming_sword_01_t1_runed_01",
-			template = "flaming_sword_template_1"
+			material_settings_name = "blue_glow",
+			template = "flaming_sword_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_swords_wizard"
 		}
 	},
 	{
@@ -1889,12 +1921,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "bw_1h_flaming_sword_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_brw_sword_01_t2/wpn_brw_flaming_sword_01_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_swords_wizard",
 			inventory_icon = "icon_wpn_brw_flaming_sword_01_t2",
 			display_name = "bw_1h_flaming_sword_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_brw_sword_01_t2/wpn_brw_flaming_sword_01_t2_runed_01",
-			template = "flaming_sword_template_1"
+			material_settings_name = "blue_glow",
+			template = "flaming_sword_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_swords_wizard"
 		}
 	},
 	{
@@ -2059,12 +2092,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_2h_axe_skin_05_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_2h_axe_03_t1/wpn_dw_2h_axe_03_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_axes",
 			inventory_icon = "icon_wpn_dw_2h_axe_03_t1_runed_01",
 			display_name = "dw_2h_axe_skin_05_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_2h_axe_03_t1/wpn_dw_2h_axe_03_t1_runed_01",
-			template = "two_handed_axes_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_axes_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_axes"
 		}
 	},
 	{
@@ -2085,12 +2119,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_2h_axe_skin_06_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_2h_axe_03_t2/wpn_dw_2h_axe_03_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_axes",
 			inventory_icon = "icon_wpn_dw_2h_axe_03_t2",
 			display_name = "dw_2h_axe_skin_06_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_2h_axe_03_t2/wpn_dw_2h_axe_03_t2_runed_01",
-			template = "two_handed_axes_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_axes_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_axes"
 		}
 	},
 	{
@@ -2125,12 +2160,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_2h_hammer_skin_01_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_2h_hammer_01_t1/wpn_dw_2h_hammer_01_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_hammers",
 			inventory_icon = "icon_wpn_dw_2h_hammer_01_t1",
 			display_name = "dw_2h_hammer_skin_01_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_2h_hammer_01_t1/wpn_dw_2h_hammer_01_t1_runed_01",
-			template = "two_handed_hammers_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_hammers_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_hammers"
 		}
 	},
 	{
@@ -2177,12 +2213,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_2h_hammer_skin_04_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_2h_hammer_02_t2/wpn_dw_2h_hammer_02_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_hammers",
 			inventory_icon = "icon_wpn_dw_2h_hammer_02_t2",
 			display_name = "dw_2h_hammer_skin_04_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_2h_hammer_02_t2/wpn_dw_2h_hammer_02_t2_runed_01",
-			template = "two_handed_hammers_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_hammers_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_hammers"
 		}
 	},
 	{
@@ -2308,12 +2345,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_1h_axe_skin_06_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_axe_03_t2/wpn_dw_axe_03_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_axes",
 			inventory_icon = "icon_wpn_dw_axe_03_t2",
 			display_name = "dw_1h_axe_skin_06_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_axe_03_t2/wpn_dw_axe_03_t2_runed_01",
-			template = "one_hand_axe_shield_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_hand_axe_shield_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_axes"
 		}
 	},
 	{
@@ -2348,12 +2386,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_1h_axe_skin_07_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_axe_04_t1/wpn_dw_axe_04_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_axes",
 			inventory_icon = "icon_wpn_dw_axe_04_t1",
 			display_name = "dw_1h_axe_skin_07_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_axe_04_t1/wpn_dw_axe_04_t1_runed_01",
-			template = "one_hand_axe_shield_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_hand_axe_shield_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_axes"
 		}
 	},
 	{
@@ -2449,6 +2488,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_dw_axe_03_t2/wpn_dw_axe_03_t2_runed_01",
 			inventory_icon = "icon_wpn_dw_axe_03_t2_dual",
 			left_hand_unit = "units/weapons/player/wpn_dw_axe_03_t2/wpn_dw_axe_03_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_axes_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_dual_axes"
@@ -2492,6 +2532,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_dw_axe_04_t1/wpn_dw_axe_04_t1_runed_01",
 			inventory_icon = "icon_wpn_dw_axe_04_t1_dual",
 			left_hand_unit = "units/weapons/player/wpn_dw_axe_04_t1/wpn_dw_axe_04_t1_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_axes_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_dual_axes"
@@ -2546,6 +2587,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_dw_axe_03_t2/wpn_dw_axe_03_t2_runed_01",
 			inventory_icon = "icon_wpn_dw_shield_02_axe",
 			left_hand_unit = "units/weapons/player/wpn_dw_shield_02_t1/wpn_dw_shield_02_runed_01",
+			material_settings_name = "blue_glow",
 			template = "one_hand_axe_shield_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_shield",
@@ -2626,6 +2668,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_dw_axe_03_t2/wpn_dw_axe_03_t2_runed_01",
 			inventory_icon = "icon_wpn_dw_shield_05_axe",
 			left_hand_unit = "units/weapons/player/wpn_dw_shield_05_t1/wpn_dw_shield_05_runed_01",
+			material_settings_name = "blue_glow",
 			template = "one_hand_axe_shield_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_shield",
@@ -2709,6 +2752,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_dw_drake_pistol_02_t1/wpn_dw_drake_pistol_02_t1_runed_01",
 			inventory_icon = "icon_wpn_dw_drake_pistol_02_t1",
 			left_hand_unit = "units/weapons/player/wpn_dw_drake_pistol_02_t1/wpn_dw_drake_pistol_02_t1_runed_01",
+			material_settings_name = "blue_glow",
 			template = "brace_of_drakefirepistols_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_drakefire_pistols"
@@ -2737,6 +2781,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_dw_drake_pistol_02_t2/wpn_dw_drake_pistol_02_t2_runed_01",
 			inventory_icon = "icon_wpn_dw_drake_pistol_02_t2",
 			left_hand_unit = "units/weapons/player/wpn_dw_drake_pistol_02_t2/wpn_dw_drake_pistol_02_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "brace_of_drakefirepistols_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_drakefire_pistols"
@@ -2788,12 +2833,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_1h_hammer_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_hammer_01_t2/wpn_dw_hammer_01_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_hammer",
 			inventory_icon = "icon_wpn_dw_hammer_01_t2",
 			display_name = "dw_1h_hammer_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_hammer_01_t2/wpn_dw_hammer_01_t2_runed_01",
-			template = "one_handed_hammer_template_2"
+			material_settings_name = "blue_glow",
+			template = "one_handed_hammer_template_2",
+			display_unit = "units/weapons/weapon_display/display_1h_hammer"
 		}
 	},
 	{
@@ -2827,12 +2873,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_1h_hammer_skin_04_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_hammer_02_t2/wpn_dw_hammer_02_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_hammer",
 			inventory_icon = "icon_wpn_dw_hammer_02_t2",
 			display_name = "dw_1h_hammer_skin_04_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_hammer_02_t2/wpn_dw_hammer_02_t2_runed_01",
-			template = "one_handed_hammer_template_2"
+			material_settings_name = "blue_glow",
+			template = "one_handed_hammer_template_2",
+			display_unit = "units/weapons/weapon_display/display_1h_hammer"
 		}
 	},
 	{
@@ -2924,6 +2971,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_dw_hammer_01_t2/wpn_dw_hammer_01_t2_runed_01",
 			inventory_icon = "icon_wpn_dw_shield_02_hammer",
 			left_hand_unit = "units/weapons/player/wpn_dw_shield_02_t1/wpn_dw_shield_02_runed_01",
+			material_settings_name = "blue_glow",
 			template = "one_handed_hammer_shield_template_2",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_shield_hammer",
@@ -2984,6 +3032,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_dw_hammer_02_t2/wpn_dw_hammer_02_t2_runed_01",
 			inventory_icon = "icon_wpn_dw_shield_06_hammer",
 			left_hand_unit = "units/weapons/player/wpn_dw_shield_05_t1/wpn_dw_shield_05_runed_01",
+			material_settings_name = "blue_glow",
 			template = "one_handed_hammer_shield_template_2",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_shield_hammer",
@@ -3067,12 +3116,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_handgun_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_handgun_01_t2/wpn_dw_handgun_01_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_handguns",
 			inventory_icon = "icon_wpn_dw_handgun_01_t2",
 			display_name = "dw_handgun_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_handgun_01_t2/wpn_dw_handgun_01_t2_runed_01",
-			template = "handgun_template_1"
+			material_settings_name = "blue_glow",
+			template = "handgun_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_handguns"
 		}
 	},
 	{
@@ -3119,12 +3169,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_handgun_skin_05_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_handgun_02_t3/wpn_dw_handgun_02_t3_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_handguns",
 			inventory_icon = "icon_wpn_dw_handgun_02_t3",
 			display_name = "dw_handgun_skin_05_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_handgun_02_t3/wpn_dw_handgun_02_t3_runed_01",
-			template = "handgun_template_1"
+			material_settings_name = "blue_glow",
+			template = "handgun_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_handguns"
 		}
 	},
 	{
@@ -3159,12 +3210,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_drakegun_skin_01_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_iron_drake_01/wpn_dw_iron_drake_01_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_drakegun",
 			inventory_icon = "icon_wpn_dw_iron_drake_01_t1",
 			display_name = "dw_drakegun_skin_01_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_iron_drake_01/wpn_dw_iron_drake_01_t1_runed_01",
-			template = "drakegun_template_1"
+			material_settings_name = "blue_glow",
+			template = "drakegun_template_1",
+			display_unit = "units/weapons/weapon_display/display_drakegun"
 		}
 	},
 	{
@@ -3198,12 +3250,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_drakegun_skin_03_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_iron_drake_03/wpn_dw_iron_drake_03_runed_01",
 			hud_icon = "wrareeric_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_drakegun",
 			inventory_icon = "icon_wpn_dw_iron_drake_03",
 			display_name = "dw_drakegun_skin_03_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_iron_drake_03/wpn_dw_iron_drake_03_runed_01",
-			template = "drakegun_template_1"
+			material_settings_name = "blue_glow",
+			template = "drakegun_template_1",
+			display_unit = "units/weapons/weapon_display/display_drakegun"
 		}
 	},
 	{
@@ -3264,12 +3317,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_2h_pick_skin_03_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_pick_01_t3/wpn_dw_pick_01_t3_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_picks",
 			inventory_icon = "icon_wpn_dw_pick_01_t3",
 			display_name = "dw_2h_pick_skin_03_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_pick_01_t3/wpn_dw_pick_01_t3_runed_01",
-			template = "two_handed_picks_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_picks_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_picks"
 		}
 	},
 	{
@@ -3290,12 +3344,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_2h_pick_skin_04_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_pick_01_t4/wpn_dw_pick_01_t4_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_picks",
 			inventory_icon = "icon_wpn_dw_pick_01_t4",
 			display_name = "dw_2h_pick_skin_04_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_pick_01_t4/wpn_dw_pick_01_t4_runed_01",
-			template = "two_handed_picks_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_picks_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_picks"
 		}
 	},
 	{
@@ -3330,12 +3385,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_grudge_raker_skin_01_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_rakegun_t1/wpn_dw_rakegun_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_grudge_raker",
 			inventory_icon = "icon_wpn_dw_rakegun_t1",
 			display_name = "dw_grudge_raker_skin_01_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_rakegun_t1/wpn_dw_rakegun_t1_runed_01",
-			template = "grudge_raker_template_1"
+			material_settings_name = "blue_glow",
+			template = "grudge_raker_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_grudge_raker"
 		}
 	},
 	{
@@ -3356,12 +3412,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "dw_grudge_raker_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_dw_rakegun_t2/wpn_dw_rakegun_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_grudge_raker",
 			inventory_icon = "icon_wpn_dw_rakegun_t2",
 			display_name = "dw_grudge_raker_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_dw_rakegun_t2/wpn_dw_rakegun_t2_runed_01",
-			template = "grudge_raker_template_1"
+			material_settings_name = "blue_glow",
+			template = "grudge_raker_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_grudge_raker"
 		}
 	},
 	{
@@ -3428,6 +3485,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_dw_xbox_01_t2",
 			left_hand_unit = "units/weapons/player/wpn_dw_xbow_01_t2/wpn_dw_xbow_01_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "crossbow_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_1h_crossbow"
@@ -3470,6 +3528,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_dw_xbox_02_t2",
 			left_hand_unit = "units/weapons/player/wpn_dw_xbow_02_t2/wpn_dw_xbow_02_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "crossbow_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_1h_crossbow"
@@ -3535,12 +3594,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_repeating_handgun_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_emp_handgun_repeater_t2/wpn_emp_handgun_repeater_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_repeating_handguns",
 			inventory_icon = "icon_wpn_emp_handgun_repeater_t2",
 			display_name = "es_repeating_handgun_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_handgun_repeater_t2/wpn_emp_handgun_repeater_t2_runed_01",
-			template = "repeating_handgun_template_1"
+			material_settings_name = "blue_glow",
+			template = "repeating_handgun_template_1",
+			display_unit = "units/weapons/weapon_display/display_repeating_handguns"
 		}
 	},
 	{
@@ -3561,12 +3621,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_repeating_handgun_skin_03_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_emp_handgun_repeater_t3/wpn_emp_handgun_repeater_t3_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_repeating_handguns",
 			inventory_icon = "icon_wpn_emp_handgun_repeater_t3",
 			display_name = "es_repeating_handgun_skin_03_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_handgun_repeater_t3/wpn_emp_handgun_repeater_t3_runed_01",
-			template = "repeating_handgun_template_1"
+			material_settings_name = "blue_glow",
+			template = "repeating_handgun_template_1",
+			display_unit = "units/weapons/weapon_display/display_repeating_handguns"
 		}
 	},
 	{
@@ -3614,12 +3675,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_1h_mace_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_emp_mace_02_t2/wpn_emp_mace_02_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_hammer",
 			inventory_icon = "icon_wpn_emp_mace_02_t2",
 			display_name = "es_1h_mace_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_mace_02_t2/wpn_emp_mace_02_t2_runed_01",
-			template = "one_handed_hammer_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_handed_hammer_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_hammer"
 		}
 	},
 	{
@@ -3712,6 +3774,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_emp_mace_02_t2/wpn_emp_mace_02_t2_runed_01",
 			inventory_icon = "icon_wpn_empire_shield_02_mace",
 			left_hand_unit = "units/weapons/player/wpn_empire_shield_02/wpn_emp_shield_02_runed_01",
+			material_settings_name = "blue_glow",
 			template = "one_handed_hammer_shield_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_shield_hammer"
@@ -3740,6 +3803,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_emp_mace_02_t2/wpn_emp_mace_02_t2_runed_01",
 			inventory_icon = "icon_wpn_empire_shield_03_mace",
 			left_hand_unit = "units/weapons/player/wpn_empire_shield_03/wpn_emp_shield_03_runed_01",
+			material_settings_name = "blue_glow",
 			template = "one_handed_hammer_shield_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_shield_hammer"
@@ -3814,12 +3878,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_1h_sword_skin_01_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_emp_sword_02_t1/wpn_emp_sword_02_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_swords",
 			inventory_icon = "icon_wpn_emp_sword_02_t1",
 			display_name = "es_1h_sword_skin_01_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_sword_02_t1/wpn_emp_sword_02_t1_runed_01",
-			template = "one_handed_swords_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_handed_swords_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_swords"
 		}
 	},
 	{
@@ -3854,12 +3919,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_1h_sword_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_emp_sword_02_t2/wpn_emp_sword_02_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_swords",
 			inventory_icon = "icon_wpn_emp_sword_02_t2",
 			display_name = "es_1h_sword_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_sword_02_t2/wpn_emp_sword_02_t2_runed_01",
-			template = "one_handed_swords_template_1"
+			material_settings_name = "blue_glow",
+			template = "one_handed_swords_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_swords"
 		}
 	},
 	{
@@ -3925,6 +3991,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_emp_sword_02_t2/wpn_emp_sword_02_t2_runed_01",
 			inventory_icon = "icon_wpn_empire_shield_02_sword",
 			left_hand_unit = "units/weapons/player/wpn_empire_shield_02/wpn_emp_shield_02_runed_01",
+			material_settings_name = "blue_glow",
 			template = "one_handed_sword_shield_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_shield_sword"
@@ -3953,6 +4020,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_emp_sword_02_t2/wpn_emp_sword_02_t2_runed_01",
 			inventory_icon = "icon_wpn_empire_shield_03_sword",
 			left_hand_unit = "units/weapons/player/wpn_empire_shield_03/wpn_emp_shield_03_runed_01",
+			material_settings_name = "blue_glow",
 			template = "one_handed_sword_shield_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_shield_sword"
@@ -4066,12 +4134,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_2h_sword_exe_skin_04_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_emp_sword_exe_04_t1/wpn_emp_sword_exe_04_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_swords_executioner",
 			inventory_icon = "icon_wpn_emp_sword_exe_04_t1",
 			display_name = "es_2h_sword_exe_skin_04_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_sword_exe_04_t1/wpn_emp_sword_exe_04_t1_runed_01",
-			template = "two_handed_swords_executioner_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_swords_executioner_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_swords_executioner"
 		}
 	},
 	{
@@ -4092,12 +4161,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_2h_sword_exe_skin_05_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_emp_sword_exe_05_t1/wpn_emp_sword_exe_05_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_swords_executioner",
 			inventory_icon = "icon_wpn_emp_sword_exe_05_t1",
 			display_name = "es_2h_sword_exe_skin_05_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_emp_sword_exe_05_t1/wpn_emp_sword_exe_05_t1_runed_01",
-			template = "two_handed_swords_executioner_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_swords_executioner_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_swords_executioner"
 		}
 	},
 	{
@@ -4171,12 +4241,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_2h_hammer_skin_04_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_empire_2h_hammer_02_t2/wpn_2h_hammer_02_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_hammers",
 			inventory_icon = "icon_wpn_empire_2h_hammer_02_t2",
 			display_name = "es_2h_hammer_skin_04_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_empire_2h_hammer_02_t2/wpn_2h_hammer_02_t2_runed_01",
-			template = "two_handed_hammers_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_hammers_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_hammers"
 		}
 	},
 	{
@@ -4224,12 +4295,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_2h_hammer_skin_06_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_empire_2h_hammer_03_t2/wpn_2h_hammer_03_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_hammers",
 			inventory_icon = "icon_wpn_empire_2h_hammer_03_t2",
 			display_name = "es_2h_hammer_skin_06_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_empire_2h_hammer_03_t2/wpn_2h_hammer_03_t2_runed_01",
-			template = "two_handed_hammers_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_hammers_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_hammers"
 		}
 	},
 	{
@@ -4263,12 +4335,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_2h_sword_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_empire_2h_sword_01_t2/wpn_2h_sword_01_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
 			inventory_icon = "icon_wpn_empire_2h_sword_01_t2",
 			display_name = "es_2h_sword_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_empire_2h_sword_01_t2/wpn_2h_sword_01_t2_runed_01",
-			template = "two_handed_swords_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_swords_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_swords"
 		}
 	},
 	{
@@ -4302,12 +4375,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_2h_sword_skin_04_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_empire_2h_sword_03_t2/wpn_2h_sword_03_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
 			inventory_icon = "icon_wpn_empire_2h_sword_03_t2",
 			display_name = "es_2h_sword_skin_04_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_empire_2h_sword_03_t2/wpn_2h_sword_03_t2_runed_01",
-			template = "two_handed_swords_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_swords_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_swords"
 		}
 	},
 	{
@@ -4390,6 +4464,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_empire_blunderbuss_02_t2/wpn_empire_blunderbuss_02_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
 			inventory_icon = "icon_wpn_empire_blunderbuss_02_t2",
+			material_settings_name = "blue_glow",
 			display_name = "es_blunderbuss_skin_02_runed_01_name",
 			template = "blunderbuss_template_1",
 			display_unit = "units/weapons/weapon_display/display_blunderbusses",
@@ -4455,6 +4530,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_empire_blunderbuss_t2/wpn_empire_blunderbuss_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
 			inventory_icon = "icon_wpn_empire_blunderbuss_t2",
+			material_settings_name = "blue_glow",
 			display_name = "es_blunderbuss_skin_04_runed_01_name",
 			template = "blunderbuss_template_1",
 			display_unit = "units/weapons/weapon_display/display_blunderbusses",
@@ -4544,6 +4620,7 @@ WeaponSkins.skins = {
 			rarity = "exotic",
 			inventory_icon = "icon_wpn_emp_bow_04",
 			left_hand_unit = "units/weapons/player/wpn_emp_bow_04/wpn_emp_bow_04_runed_01",
+			material_settings_name = "blue_glow",
 			template = "longbow_empire_template",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_longbow"
@@ -4572,6 +4649,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_emp_bow_05",
 			left_hand_unit = "units/weapons/player/wpn_emp_bow_05/wpn_emp_bow_05_runed_01",
+			material_settings_name = "blue_glow",
 			template = "longbow_empire_template",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_longbow"
@@ -4616,6 +4694,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_empire_handgun_02_t1/wpn_empire_handgun_02_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
 			inventory_icon = "icon_wpn_empire_handgun_02_t1",
+			material_settings_name = "blue_glow",
 			display_name = "es_handgun_skin_01_runed_01_name",
 			template = "handgun_template_1",
 			display_unit = "units/weapons/weapon_display/display_1h_handguns",
@@ -4648,6 +4727,7 @@ WeaponSkins.skins = {
 			right_hand_unit = "units/weapons/player/wpn_empire_handgun_02_t2/wpn_empire_handgun_02_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
 			inventory_icon = "icon_wpn_empire_handgun_02_t2",
+			material_settings_name = "blue_glow",
 			display_name = "es_handgun_skin_02_runed_01_name",
 			template = "handgun_template_1",
 			display_unit = "units/weapons/weapon_display/display_1h_handguns",
@@ -4778,12 +4858,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "es_halberd_skin_04_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_wh_halberd_04/wpn_wh_halberd_04_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_halberds",
 			inventory_icon = "icon_wpn_wh_halberd_04",
 			display_name = "es_halberd_skin_04_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_wh_halberd_04/wpn_wh_halberd_04_runed_01",
-			template = "two_handed_halberds_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_halberds_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_halberds"
 		}
 	},
 	{
@@ -4870,12 +4951,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "we_2h_axe_skin_05_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_we_2h_axe_03_t1/wpn_we_2h_axe_03_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_axes",
 			inventory_icon = "icon_wpn_we_2h_axe_03_t1",
 			display_name = "we_2h_axe_skin_05_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_we_2h_axe_03_t1/wpn_we_2h_axe_03_t1_runed_01",
-			template = "two_handed_axes_template_2"
+			material_settings_name = "blue_glow",
+			template = "two_handed_axes_template_2",
+			display_unit = "units/weapons/weapon_display/display_2h_axes"
 		}
 	},
 	{
@@ -4923,12 +5005,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "we_2h_axe_skin_07_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_we_2h_axe_04_t1/wpn_we_2h_axe_04_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_axes",
 			inventory_icon = "icon_wpn_we_2h_axe_04_t1",
 			display_name = "we_2h_axe_skin_07_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_we_2h_axe_04_t1/wpn_we_2h_axe_04_t1_runed_01",
-			template = "two_handed_axes_template_2"
+			material_settings_name = "blue_glow",
+			template = "two_handed_axes_template_2",
+			display_unit = "units/weapons/weapon_display/display_2h_axes"
 		}
 	},
 	{
@@ -5014,12 +5097,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "we_2h_sword_skin_05_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_we_2h_sword_03_t1/wpn_we_2h_sword_03_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_swords_wood_elf",
 			inventory_icon = "icon_wpn_we_2h_sword_03_t1",
 			display_name = "we_2h_sword_skin_05_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_we_2h_sword_03_t1/wpn_we_2h_sword_03_t1_runed_01",
-			template = "two_handed_swords_wood_elf_template"
+			material_settings_name = "blue_glow",
+			template = "two_handed_swords_wood_elf_template",
+			display_unit = "units/weapons/weapon_display/display_2h_swords_wood_elf"
 		}
 	},
 	{
@@ -5040,12 +5124,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "we_2h_sword_skin_06_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_we_2h_sword_03_t2/wpn_we_2h_sword_03_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_swords_wood_elf",
 			inventory_icon = "icon_wpn_we_2h_sword_03_t2",
 			display_name = "we_2h_sword_skin_06_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_we_2h_sword_03_t2/wpn_we_2h_sword_03_t2_runed_01",
-			template = "two_handed_swords_wood_elf_template"
+			material_settings_name = "blue_glow",
+			template = "two_handed_swords_wood_elf_template",
+			display_unit = "units/weapons/weapon_display/display_2h_swords_wood_elf"
 		}
 	},
 	{
@@ -5153,6 +5238,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_we_repeater_crossbow_t2",
 			left_hand_unit = "units/weapons/player/wpn_we_repeater_crossbow_t2/wpn_we_repeater_crossbow_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "repeating_crossbow_elf_template",
 			ammo_unit_3p = "units/weapons/player/wpn_crossbow_quiver/wpn_crossbow_bolt_3p",
 			hud_icon = "weapon_generic_icon_staff_3",
@@ -5183,6 +5269,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_we_repeater_crossbow_t3",
 			left_hand_unit = "units/weapons/player/wpn_we_repeater_crossbow_t3/wpn_we_repeater_crossbow_t3_runed_01",
+			material_settings_name = "blue_glow",
 			template = "repeating_crossbow_elf_template",
 			ammo_unit_3p = "units/weapons/player/wpn_crossbow_quiver/wpn_crossbow_bolt_3p",
 			hud_icon = "weapon_generic_icon_staff_3",
@@ -5298,6 +5385,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_we_bow_03_t2",
 			left_hand_unit = "units/weapons/player/wpn_we_bow_03_t2/wpn_we_bow_03_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "longbow_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_bow"
@@ -5383,6 +5471,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_we_bow_short_01",
 			left_hand_unit = "units/weapons/player/wpn_we_bow_short_01/wpn_we_bow_short_01_runed_01",
+			material_settings_name = "blue_glow",
 			template = "shortbow_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_bow"
@@ -5439,6 +5528,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_we_bow_short_04",
 			left_hand_unit = "units/weapons/player/wpn_we_bow_short_04/wpn_we_bow_short_04_runed_01",
+			material_settings_name = "blue_glow",
 			template = "shortbow_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_bow"
@@ -5496,6 +5586,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_we_bow_short_01",
 			left_hand_unit = "units/weapons/player/wpn_we_bow_short_01/wpn_we_bow_short_01_runed_01",
+			material_settings_name = "blue_glow",
 			template = "shortbow_hagbane_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_bow"
@@ -5567,6 +5658,7 @@ WeaponSkins.skins = {
 			rarity = "unique",
 			inventory_icon = "icon_wpn_we_bow_short_04",
 			left_hand_unit = "units/weapons/player/wpn_we_bow_short_04/wpn_we_bow_short_04_runed_01",
+			material_settings_name = "blue_glow",
 			template = "shortbow_hagbane_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_bow"
@@ -5624,6 +5716,7 @@ WeaponSkins.skins = {
 			display_name = "we_dual_dagger_skin_01_runed_01_name",
 			inventory_icon = "icon_wpn_we_dagger_01_t1_dual",
 			left_hand_unit = "units/weapons/player/wpn_we_dagger_01_t1/wpn_we_dagger_01_t1_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_daggers_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_dual_daggers"
@@ -5652,6 +5745,7 @@ WeaponSkins.skins = {
 			display_name = "we_dual_dagger_skin_02_runed_01_name",
 			inventory_icon = "icon_wpn_we_dagger_01_t2_dual",
 			left_hand_unit = "units/weapons/player/wpn_we_dagger_01_t2/wpn_we_dagger_01_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_daggers_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_dual_daggers"
@@ -5779,6 +5873,7 @@ WeaponSkins.skins = {
 			display_name = "we_dual_sword_skin_02_runed_01_name",
 			inventory_icon = "icon_wpn_we_sword_01_t2_dual",
 			left_hand_unit = "units/weapons/player/wpn_we_sword_01_t2/wpn_we_sword_01_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_swords_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_dual_weapons"
@@ -5821,6 +5916,7 @@ WeaponSkins.skins = {
 			display_name = "we_dual_sword_skin_04_runed_01_name",
 			inventory_icon = "icon_wpn_we_sword_02_t1_dual",
 			left_hand_unit = "units/weapons/player/wpn_we_sword_02_t1/wpn_we_sword_02_t1_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_swords_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_dual_weapons"
@@ -5849,6 +5945,7 @@ WeaponSkins.skins = {
 			display_name = "we_dual_sword_skin_05_runed_01_name",
 			inventory_icon = "icon_wpn_we_sword_02_t2_dual",
 			left_hand_unit = "units/weapons/player/wpn_we_sword_02_t2/wpn_we_sword_02_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_swords_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_dual_weapons"
@@ -5928,12 +6025,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "we_sword_skin_02_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_we_sword_01_t2/wpn_we_sword_01_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_swords_wood_elf",
 			inventory_icon = "icon_wpn_we_sword_01_t2",
 			display_name = "we_sword_skin_02_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_we_sword_01_t2/wpn_we_sword_01_t2_runed_01",
-			template = "we_one_hand_sword_template_1"
+			material_settings_name = "blue_glow",
+			template = "we_one_hand_sword_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_swords_wood_elf"
 		}
 	},
 	{
@@ -5967,12 +6065,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "we_sword_skin_04_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_we_sword_02_t1/wpn_we_sword_02_t1_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_swords_wood_elf",
 			inventory_icon = "icon_wpn_we_sword_02_t1",
 			display_name = "we_sword_skin_04_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_we_sword_02_t1/wpn_we_sword_02_t1_runed_01",
-			template = "we_one_hand_sword_template_1"
+			material_settings_name = "blue_glow",
+			template = "we_one_hand_sword_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_swords_wood_elf"
 		}
 	},
 	{
@@ -5993,12 +6092,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "we_sword_skin_05_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_we_sword_02_t2/wpn_we_sword_02_t2_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_1h_swords_wood_elf",
 			inventory_icon = "icon_wpn_we_sword_02_t2",
 			display_name = "we_sword_skin_05_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_we_sword_02_t2/wpn_we_sword_02_t2_runed_01",
-			template = "we_one_hand_sword_template_1"
+			material_settings_name = "blue_glow",
+			template = "we_one_hand_sword_template_1",
+			display_unit = "units/weapons/weapon_display/display_1h_swords_wood_elf"
 		}
 	},
 	{
@@ -6064,6 +6164,7 @@ WeaponSkins.skins = {
 			display_name = "we_dual_sword_dagger_skin_01_runed_01_name",
 			inventory_icon = "icon_wpn_we_sword_01_t1_dagger_dual",
 			left_hand_unit = "units/weapons/player/wpn_we_dagger_01_t1/wpn_we_dagger_01_t1_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_sword_dagger_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_dual_weapons"
@@ -6107,6 +6208,7 @@ WeaponSkins.skins = {
 			display_name = "we_dual_sword_dagger_skin_02_runed_01_name",
 			inventory_icon = "icon_wpn_we_sword_01_t2_dagger_dual",
 			left_hand_unit = "units/weapons/player/wpn_we_dagger_01_t2/wpn_we_dagger_01_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_sword_dagger_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_dual_weapons"
@@ -6135,6 +6237,7 @@ WeaponSkins.skins = {
 			display_name = "we_dual_sword_dagger_skin_04_runed_01_name",
 			inventory_icon = "icon_wpn_we_sword_02_t1_dagger_dual",
 			left_hand_unit = "units/weapons/player/wpn_we_dagger_01_t1/wpn_we_dagger_01_t1_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_sword_dagger_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_dual_weapons"
@@ -6163,6 +6266,7 @@ WeaponSkins.skins = {
 			display_name = "we_dual_sword_dagger_skin_05_runed_01_name",
 			inventory_icon = "icon_wpn_we_sword_02_t2_dagger_dual",
 			left_hand_unit = "units/weapons/player/wpn_we_dagger_01_t2/wpn_we_dagger_01_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_sword_dagger_template_1",
 			hud_icon = "weapon_generic_icon_staff_3",
 			display_unit = "units/weapons/weapon_display/display_dual_weapons"
@@ -6240,12 +6344,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "we_spear_skin_03_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_we_spear_03/wpn_we_spear_03_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_spears_wood_elf",
 			inventory_icon = "icon_wpn_we_spear_03",
 			display_name = "we_spear_skin_03_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_we_spear_03/wpn_we_spear_03_runed_01",
-			template = "two_handed_spears_elf_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_spears_elf_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_spears_wood_elf"
 		}
 	},
 	{
@@ -6280,12 +6385,13 @@ WeaponSkins.skins = {
 		data = {
 			description = "we_spear_skin_04_runed_01_description",
 			rarity = "unique",
+			right_hand_unit = "units/weapons/player/wpn_we_spear_04/wpn_we_spear_04_runed_01",
 			hud_icon = "weapon_generic_icon_staff_3",
-			display_unit = "units/weapons/weapon_display/display_2h_spears_wood_elf",
 			inventory_icon = "icon_wpn_we_spear_04",
 			display_name = "we_spear_skin_04_runed_01_name",
-			right_hand_unit = "units/weapons/player/wpn_we_spear_04/wpn_we_spear_04_runed_01",
-			template = "two_handed_spears_elf_template_1"
+			material_settings_name = "blue_glow",
+			template = "two_handed_spears_elf_template_1",
+			display_unit = "units/weapons/weapon_display/display_2h_spears_wood_elf"
 		}
 	},
 	{
@@ -7679,17 +7785,17 @@ WeaponSkins.skins = var_0_0
 
 DLCUtils.require_list("weapon_skins_file_names")
 
-WeaponSkins.item_has_skin_table = function (arg_1_0)
+function WeaponSkins.item_has_skin_table(arg_1_0)
 	return WeaponSkins.skins[arg_1_0] ~= nil
 end
 
-WeaponSkins.will_have_skin = function (arg_2_0)
+function WeaponSkins.will_have_skin(arg_2_0)
 	local var_2_0 = arg_2_0
 
 	return WeaponSkins.skin_weights[var_2_0] > math.random(1, 100)
 end
 
-WeaponSkins.is_matching_skin = function (arg_3_0, arg_3_1)
+function WeaponSkins.is_matching_skin(arg_3_0, arg_3_1)
 	local var_3_0 = ItemMasterList[arg_3_0].skin_combination_table
 	local var_3_1 = WeaponSkins.skin_combinations[var_3_0]
 
@@ -7712,7 +7818,7 @@ WeaponSkins.is_matching_skin = function (arg_3_0, arg_3_1)
 	return false
 end
 
-WeaponSkins.matching_weapon_skin_item_key = function (arg_4_0)
+function WeaponSkins.matching_weapon_skin_item_key(arg_4_0)
 	if not WeaponSkins._matching_weapon_skin_item_keys then
 		WeaponSkins._matching_weapon_skin_item_keys = {}
 

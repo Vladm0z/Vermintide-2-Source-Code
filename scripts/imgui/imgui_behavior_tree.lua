@@ -2,7 +2,7 @@
 
 ImguiBehaviorTree = class(ImguiBehaviorTree)
 
-ImguiBehaviorTree.init = function (arg_1_0, arg_1_1, ...)
+function ImguiBehaviorTree.init(arg_1_0, arg_1_1, ...)
 	arg_1_0._window_width = 1800
 	arg_1_0._window_height = 1000
 	arg_1_0._padding = 38
@@ -50,7 +50,7 @@ ImguiBehaviorTree.init = function (arg_1_0, arg_1_1, ...)
 	arg_1_0._history_stack = {}
 end
 
-ImguiBehaviorTree._update_leaf_history = function (arg_2_0, arg_2_1)
+function ImguiBehaviorTree._update_leaf_history(arg_2_0, arg_2_1)
 	arg_2_0._running_leaf_history[#arg_2_0._running_leaf_history + 1] = arg_2_1
 
 	if #arg_2_0._running_leaf_history > arg_2_0._max_history_quantity then
@@ -62,7 +62,7 @@ ImguiBehaviorTree._update_leaf_history = function (arg_2_0, arg_2_1)
 	end
 end
 
-ImguiBehaviorTree._calculate_rect_box = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+function ImguiBehaviorTree._calculate_rect_box(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0, var_3_1 = Imgui.calculate_text_size(arg_3_1)
 	local var_3_2, var_3_3 = Imgui.calculate_text_size(arg_3_2)
 	local var_3_4, var_3_5 = Imgui.calculate_text_size(arg_3_3)
@@ -72,7 +72,7 @@ ImguiBehaviorTree._calculate_rect_box = function (arg_3_0, arg_3_1, arg_3_2, arg
 	return var_3_6, var_3_7
 end
 
-ImguiBehaviorTree._draw_node = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+function ImguiBehaviorTree._draw_node(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_3._identifier
 	local var_4_1 = arg_4_3.name
 	local var_4_2 = arg_4_3._condition_name
@@ -141,7 +141,7 @@ ImguiBehaviorTree._draw_node = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg
 	return var_4_22 - var_4_16, var_4_26
 end
 
-ImguiBehaviorTree._draw_nodes = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+function ImguiBehaviorTree._draw_nodes(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0, var_5_1 = arg_5_0:_draw_node(arg_5_2, arg_5_3, arg_5_1, arg_5_4)
 	local var_5_2 = 0
 
@@ -167,7 +167,7 @@ ImguiBehaviorTree._draw_nodes = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, ar
 	return arg_5_3
 end
 
-ImguiBehaviorTree._get_blackboard_value_type = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function ImguiBehaviorTree._get_blackboard_value_type(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	for iter_6_0, iter_6_1 in pairs(arg_6_2) do
 		if iter_6_0 == arg_6_1 then
 			arg_6_3 = arg_6_2[arg_6_1]
@@ -187,7 +187,7 @@ ImguiBehaviorTree._get_blackboard_value_type = function (arg_6_0, arg_6_1, arg_6
 	return arg_6_3
 end
 
-ImguiBehaviorTree._draw_blackboard_element = function (arg_7_0, arg_7_1, arg_7_2)
+function ImguiBehaviorTree._draw_blackboard_element(arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = type(arg_7_2)
 
 	Imgui.indent(10)
@@ -211,7 +211,7 @@ ImguiBehaviorTree._draw_blackboard_element = function (arg_7_0, arg_7_1, arg_7_2
 	Imgui.unindent(10)
 end
 
-ImguiBehaviorTree._draw_blackboard_value = function (arg_8_0, arg_8_1)
+function ImguiBehaviorTree._draw_blackboard_value(arg_8_0, arg_8_1)
 	for iter_8_0, iter_8_1 in pairs(arg_8_1) do
 		if iter_8_0 ~= "running_nodes" then
 			if type(iter_8_1) == "table" then
@@ -227,7 +227,7 @@ ImguiBehaviorTree._draw_blackboard_value = function (arg_8_0, arg_8_1)
 	end
 end
 
-ImguiBehaviorTree._save_history = function (arg_9_0, arg_9_1, arg_9_2)
+function ImguiBehaviorTree._save_history(arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0
 
 	for iter_9_0, iter_9_1 in pairs(arg_9_1._blackboard.running_nodes) do
@@ -277,11 +277,11 @@ ImguiBehaviorTree._save_history = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0._history_stack[#arg_9_0._history_stack + 1] = var_9_5
 end
 
-ImguiBehaviorTree.update = function (arg_10_0)
+function ImguiBehaviorTree.update(arg_10_0)
 	return
 end
 
-ImguiBehaviorTree.draw = function (arg_11_0)
+function ImguiBehaviorTree.draw(arg_11_0)
 	local var_11_0 = Imgui.begin_window("Behavior Tree")
 
 	Imgui.set_window_size(arg_11_0._window_width, arg_11_0._window_height, "once")
@@ -448,7 +448,7 @@ ImguiBehaviorTree.draw = function (arg_11_0)
 	return var_11_0
 end
 
-ImguiBehaviorTree._draw_graph = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+function ImguiBehaviorTree._draw_graph(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = Color(180, 100, 100, 100)
 	local var_12_1 = Color(255, 255, 255, 255)
 	local var_12_2 = Color(255, 255, 255, 255)
@@ -534,7 +534,7 @@ ImguiBehaviorTree._draw_graph = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3
 	Imgui.dummy(var_12_7, var_12_8)
 end
 
-ImguiBehaviorTree._draw_action_data = function (arg_13_0, arg_13_1, arg_13_2)
+function ImguiBehaviorTree._draw_action_data(arg_13_0, arg_13_1, arg_13_2)
 	if not arg_13_1 then
 		return
 	end
@@ -588,7 +588,7 @@ ImguiBehaviorTree._draw_action_data = function (arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-ImguiBehaviorTree.is_persistent = function (arg_14_0)
+function ImguiBehaviorTree.is_persistent(arg_14_0)
 	return true
 end
 

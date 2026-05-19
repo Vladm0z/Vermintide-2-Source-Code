@@ -2,7 +2,7 @@
 
 SimpleHuskInventoryExtension = class(SimpleHuskInventoryExtension)
 
-SimpleHuskInventoryExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function SimpleHuskInventoryExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._game_object_id = arg_1_3.id
 	arg_1_0._game = arg_1_3.game
@@ -55,13 +55,13 @@ SimpleHuskInventoryExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3
 	arg_1_0._show_third_person = true
 end
 
-SimpleHuskInventoryExtension.ammo_percentage = function (arg_2_0)
+function SimpleHuskInventoryExtension.ammo_percentage(arg_2_0)
 	if GameSession.game_object_exists(arg_2_0._game, arg_2_0._game_object_id) then
 		return (GameSession.game_object_field(arg_2_0._game, arg_2_0._game_object_id, "ammo_percentage"))
 	end
 end
 
-SimpleHuskInventoryExtension.ammo_status = function (arg_3_0)
+function SimpleHuskInventoryExtension.ammo_status(arg_3_0)
 	if GameSession.game_object_exists(arg_3_0._game, arg_3_0._game_object_id) then
 		local var_3_0 = GameSession.game_object_field(arg_3_0._game, arg_3_0._game_object_id, "current_ammo")
 		local var_3_1 = GameSession.game_object_field(arg_3_0._game, arg_3_0._game_object_id, "max_ammo")
@@ -70,7 +70,7 @@ SimpleHuskInventoryExtension.ammo_status = function (arg_3_0)
 	end
 end
 
-SimpleHuskInventoryExtension.destroy = function (arg_4_0)
+function SimpleHuskInventoryExtension.destroy(arg_4_0)
 	if Managers.player.is_server then
 		for iter_4_0, iter_4_1 in pairs(arg_4_0._equipment.slots) do
 			if iter_4_1.limited_item_data then
@@ -86,19 +86,19 @@ SimpleHuskInventoryExtension.destroy = function (arg_4_0)
 	arg_4_0:_stop_all_weapon_fx()
 end
 
-SimpleHuskInventoryExtension.get_weapon_unit = function (arg_5_0)
+function SimpleHuskInventoryExtension.get_weapon_unit(arg_5_0)
 	local var_5_0 = arg_5_0._equipment
 
 	return var_5_0.left_hand_wielded_unit_3p or var_5_0.right_hand_wielded_unit_3p
 end
 
-SimpleHuskInventoryExtension.get_all_weapon_unit = function (arg_6_0)
+function SimpleHuskInventoryExtension.get_all_weapon_unit(arg_6_0)
 	local var_6_0 = arg_6_0._equipment
 
 	return var_6_0.left_hand_wielded_unit_3p, var_6_0.right_hand_wielded_unit_3p
 end
 
-SimpleHuskInventoryExtension.drop_level_event_item = function (arg_7_0, arg_7_1)
+function SimpleHuskInventoryExtension.drop_level_event_item(arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0:get_item_template(arg_7_1)
 
 	if var_7_0.no_drop then
@@ -124,7 +124,7 @@ SimpleHuskInventoryExtension.drop_level_event_item = function (arg_7_0, arg_7_1)
 	arg_7_0:destroy_slot("slot_level_event")
 end
 
-SimpleHuskInventoryExtension._unlink_unit = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+function SimpleHuskInventoryExtension._unlink_unit(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	World.unlink_unit(arg_8_0._world, arg_8_1)
 
 	local var_8_0 = arg_8_3.wielded or arg_8_3
@@ -151,7 +151,7 @@ SimpleHuskInventoryExtension._unlink_unit = function (arg_8_0, arg_8_1, arg_8_2,
 	Actor.add_velocity(var_8_4, Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
 end
 
-SimpleHuskInventoryExtension.drop_equipped_weapons = function (arg_9_0, arg_9_1)
+function SimpleHuskInventoryExtension.drop_equipped_weapons(arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._equipment
 	local var_9_1 = var_9_0.wielded
 	local var_9_2 = var_9_1.template
@@ -174,11 +174,11 @@ SimpleHuskInventoryExtension.drop_equipped_weapons = function (arg_9_0, arg_9_1)
 	end
 end
 
-SimpleHuskInventoryExtension.equipment = function (arg_10_0)
+function SimpleHuskInventoryExtension.equipment(arg_10_0)
 	return arg_10_0._equipment
 end
 
-SimpleHuskInventoryExtension.add_equipment = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+function SimpleHuskInventoryExtension.add_equipment(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = ItemMasterList[arg_11_2]
 
 	arg_11_0:clear_buffs_on_slot("equip", arg_11_1)
@@ -218,7 +218,7 @@ SimpleHuskInventoryExtension.add_equipment = function (arg_11_0, arg_11_1, arg_1
 	}
 end
 
-SimpleHuskInventoryExtension.add_equipment_limited_item = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+function SimpleHuskInventoryExtension.add_equipment_limited_item(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = ItemMasterList[arg_12_2]
 	local var_12_1 = BackendUtils.get_item_template(var_12_0)
 
@@ -233,7 +233,7 @@ SimpleHuskInventoryExtension.add_equipment_limited_item = function (arg_12_0, ar
 	}
 end
 
-SimpleHuskInventoryExtension.destroy_item_by_name = function (arg_13_0, arg_13_1, arg_13_2)
+function SimpleHuskInventoryExtension.destroy_item_by_name(arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0:get_slot_data(arg_13_1)
 
 	if var_13_0 and var_13_0.item_data.name == arg_13_2 then
@@ -241,7 +241,7 @@ SimpleHuskInventoryExtension.destroy_item_by_name = function (arg_13_0, arg_13_1
 	end
 end
 
-SimpleHuskInventoryExtension.destroy_slot = function (arg_14_0, arg_14_1)
+function SimpleHuskInventoryExtension.destroy_slot(arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._equipment
 	local var_14_1 = var_14_0.slots[arg_14_1]
 
@@ -256,7 +256,7 @@ SimpleHuskInventoryExtension.destroy_slot = function (arg_14_0, arg_14_1)
 	GearUtils.destroy_slot(arg_14_0._world, arg_14_0._unit, var_14_1, var_14_0, true)
 end
 
-SimpleHuskInventoryExtension.evaluate_limited_item_state = function (arg_15_0, arg_15_1)
+function SimpleHuskInventoryExtension.evaluate_limited_item_state(arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_1.limited_item_data
 	local var_15_1 = var_15_0.spawner_unit
 
@@ -270,19 +270,19 @@ SimpleHuskInventoryExtension.evaluate_limited_item_state = function (arg_15_0, a
 	end
 end
 
-SimpleHuskInventoryExtension._setup_equipment = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+function SimpleHuskInventoryExtension._setup_equipment(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	return {
 		slots = {}
 	}
 end
 
-SimpleHuskInventoryExtension.update = function (arg_17_0)
+function SimpleHuskInventoryExtension.update(arg_17_0)
 	return
 end
 
 local var_0_0 = {}
 
-SimpleHuskInventoryExtension._reapply_fade = function (arg_18_0, arg_18_1)
+function SimpleHuskInventoryExtension._reapply_fade(arg_18_0, arg_18_1)
 	table.clear(var_0_0)
 
 	if arg_18_1.right_hand_wielded_unit_3p then
@@ -304,7 +304,7 @@ SimpleHuskInventoryExtension._reapply_fade = function (arg_18_0, arg_18_1)
 	Managers.state.entity:system("fade_system"):new_linked_units(arg_18_0._unit, var_0_0)
 end
 
-SimpleHuskInventoryExtension.wield = function (arg_19_0, arg_19_1)
+function SimpleHuskInventoryExtension.wield(arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._equipment
 
 	arg_19_0:_stop_all_weapon_fx()
@@ -356,7 +356,7 @@ SimpleHuskInventoryExtension.wield = function (arg_19_0, arg_19_1)
 	end
 end
 
-SimpleHuskInventoryExtension._despawn_attached_units = function (arg_20_0)
+function SimpleHuskInventoryExtension._despawn_attached_units(arg_20_0)
 	local var_20_0 = arg_20_0._attached_units
 	local var_20_1 = arg_20_0._world
 
@@ -367,7 +367,7 @@ SimpleHuskInventoryExtension._despawn_attached_units = function (arg_20_0)
 	end
 end
 
-SimpleHuskInventoryExtension._spawn_attached_units = function (arg_21_0, arg_21_1)
+function SimpleHuskInventoryExtension._spawn_attached_units(arg_21_0, arg_21_1)
 	if arg_21_1 == nil then
 		return
 	end
@@ -381,7 +381,7 @@ SimpleHuskInventoryExtension._spawn_attached_units = function (arg_21_0, arg_21_
 	end
 end
 
-SimpleHuskInventoryExtension.clear_buffs_on_slot = function (arg_22_0, arg_22_1, arg_22_2)
+function SimpleHuskInventoryExtension.clear_buffs_on_slot(arg_22_0, arg_22_1, arg_22_2)
 	if arg_22_2 == "slot_ranged" or arg_22_2 == "slot_melee" then
 		local var_22_0 = arg_22_0._slot_buffs[arg_22_1][arg_22_2]
 
@@ -389,7 +389,7 @@ SimpleHuskInventoryExtension.clear_buffs_on_slot = function (arg_22_0, arg_22_1,
 	end
 end
 
-SimpleHuskInventoryExtension.set_buffs_to_slot = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+function SimpleHuskInventoryExtension.set_buffs_to_slot(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	if arg_23_2 == "slot_ranged" or arg_23_2 == "slot_melee" then
 		arg_23_0._slot_buffs[arg_23_1][arg_23_2] = arg_23_3
 
@@ -399,7 +399,7 @@ end
 
 local var_0_1 = {}
 
-SimpleHuskInventoryExtension._refresh_buffs = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+function SimpleHuskInventoryExtension._refresh_buffs(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = ScriptUnit.extension(arg_24_0._unit, "buff_system")
 	local var_24_1 = arg_24_0.current_item_buffs[arg_24_2]
 
@@ -429,7 +429,7 @@ SimpleHuskInventoryExtension._refresh_buffs = function (arg_24_0, arg_24_1, arg_
 	end
 end
 
-SimpleHuskInventoryExtension.has_inventory_item = function (arg_25_0, arg_25_1, arg_25_2)
+function SimpleHuskInventoryExtension.has_inventory_item(arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0:get_slot_data(arg_25_1)
 
 	if var_25_0 and arg_25_2 == var_25_0.item_data.name then
@@ -449,7 +449,7 @@ SimpleHuskInventoryExtension.has_inventory_item = function (arg_25_0, arg_25_1, 
 	return false
 end
 
-SimpleHuskInventoryExtension.show_third_person_inventory = function (arg_26_0, arg_26_1)
+function SimpleHuskInventoryExtension.show_third_person_inventory(arg_26_0, arg_26_1)
 	arg_26_0._show_third_person = arg_26_1
 
 	local var_26_0 = arg_26_0._equipment.right_hand_wielded_unit_3p
@@ -528,19 +528,19 @@ SimpleHuskInventoryExtension.show_third_person_inventory = function (arg_26_0, a
 	end
 end
 
-SimpleHuskInventoryExtension.get_item_template = function (arg_27_0, arg_27_1)
+function SimpleHuskInventoryExtension.get_item_template(arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_1.item_data
 
 	return (BackendUtils.get_item_template(var_27_0))
 end
 
-SimpleHuskInventoryExtension.get_wielded_slot_data = function (arg_28_0)
+function SimpleHuskInventoryExtension.get_wielded_slot_data(arg_28_0)
 	local var_28_0 = arg_28_0:get_wielded_slot_name()
 
 	return (arg_28_0:get_slot_data(var_28_0))
 end
 
-SimpleHuskInventoryExtension.get_wielded_slot_item_template = function (arg_29_0)
+function SimpleHuskInventoryExtension.get_wielded_slot_item_template(arg_29_0)
 	local var_29_0 = arg_29_0.wielded_slot
 	local var_29_1 = arg_29_0._equipment.slots[var_29_0]
 
@@ -551,29 +551,29 @@ SimpleHuskInventoryExtension.get_wielded_slot_item_template = function (arg_29_0
 	return (arg_29_0:get_item_template(var_29_1))
 end
 
-SimpleHuskInventoryExtension.hot_join_sync = function (arg_30_0, arg_30_1)
+function SimpleHuskInventoryExtension.hot_join_sync(arg_30_0, arg_30_1)
 	GearUtils.hot_join_sync(arg_30_1, arg_30_0._unit, arg_30_0._equipment, arg_30_0._additional_items)
 end
 
-SimpleHuskInventoryExtension.get_wielded_slot_name = function (arg_31_0)
+function SimpleHuskInventoryExtension.get_wielded_slot_name(arg_31_0)
 	return arg_31_0._equipment.wielded_slot
 end
 
-SimpleHuskInventoryExtension.get_slot_data = function (arg_32_0, arg_32_1)
+function SimpleHuskInventoryExtension.get_slot_data(arg_32_0, arg_32_1)
 	return arg_32_0._equipment.slots[arg_32_1]
 end
 
-SimpleHuskInventoryExtension.get_wielded_slot_data = function (arg_33_0)
+function SimpleHuskInventoryExtension.get_wielded_slot_data(arg_33_0)
 	local var_33_0 = arg_33_0:get_wielded_slot_name()
 
 	return (arg_33_0:get_slot_data(var_33_0))
 end
 
-SimpleHuskInventoryExtension.set_loaded_projectile_override = function (arg_34_0)
+function SimpleHuskInventoryExtension.set_loaded_projectile_override(arg_34_0)
 	return
 end
 
-SimpleHuskInventoryExtension._override_career_skill_item_template = function (arg_35_0, arg_35_1)
+function SimpleHuskInventoryExtension._override_career_skill_item_template(arg_35_0, arg_35_1)
 	local var_35_0
 	local var_35_1 = arg_35_1.slot_to_use
 
@@ -605,7 +605,7 @@ local function var_0_2(arg_36_0, arg_36_1, arg_36_2)
 	return arg_36_1 and arg_36_1[arg_36_2] or arg_36_0
 end
 
-SimpleHuskInventoryExtension._wield_slot = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+function SimpleHuskInventoryExtension._wield_slot(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
 	local var_37_0 = arg_37_2.slots[arg_37_3]
 
 	if not var_37_0 then
@@ -750,11 +750,11 @@ SimpleHuskInventoryExtension._wield_slot = function (arg_37_0, arg_37_1, arg_37_
 	return var_37_1
 end
 
-SimpleHuskInventoryExtension.is_showing_third_person_inventory = function (arg_38_0)
+function SimpleHuskInventoryExtension.is_showing_third_person_inventory(arg_38_0)
 	return arg_38_0._show_third_person
 end
 
-SimpleHuskInventoryExtension.start_weapon_fx = function (arg_39_0, arg_39_1)
+function SimpleHuskInventoryExtension.start_weapon_fx(arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0._equipment
 	local var_39_1 = var_39_0.wielded_slot
 	local var_39_2 = var_39_0.slots[var_39_1]
@@ -766,11 +766,11 @@ SimpleHuskInventoryExtension.start_weapon_fx = function (arg_39_0, arg_39_1)
 	end
 end
 
-SimpleHuskInventoryExtension.stop_weapon_fx = function (arg_40_0, arg_40_1)
+function SimpleHuskInventoryExtension.stop_weapon_fx(arg_40_0, arg_40_1)
 	arg_40_0._weapon_fx[arg_40_1] = GearUtils.destroy_attached_particles(arg_40_0._world, arg_40_0._weapon_fx[arg_40_1])
 end
 
-SimpleHuskInventoryExtension._stop_all_weapon_fx = function (arg_41_0)
+function SimpleHuskInventoryExtension._stop_all_weapon_fx(arg_41_0)
 	local var_41_0 = arg_41_0._world
 	local var_41_1 = arg_41_0._weapon_fx
 
@@ -781,33 +781,33 @@ SimpleHuskInventoryExtension._stop_all_weapon_fx = function (arg_41_0)
 	end
 end
 
-SimpleHuskInventoryExtension.has_additional_item_slots = function (arg_42_0, arg_42_1)
+function SimpleHuskInventoryExtension.has_additional_item_slots(arg_42_0, arg_42_1)
 	return arg_42_0._additional_items[arg_42_1] ~= nil
 end
 
-SimpleHuskInventoryExtension.can_store_additional_item = function (arg_43_0, arg_43_1)
+function SimpleHuskInventoryExtension.can_store_additional_item(arg_43_0, arg_43_1)
 	local var_43_0 = arg_43_0._additional_items[arg_43_1]
 
 	return var_43_0 and #var_43_0.items < var_43_0.max_slots
 end
 
-SimpleHuskInventoryExtension.has_additional_items = function (arg_44_0, arg_44_1)
+function SimpleHuskInventoryExtension.has_additional_items(arg_44_0, arg_44_1)
 	local var_44_0 = arg_44_0._additional_items[arg_44_1]
 
 	return var_44_0 and #var_44_0.items > 0
 end
 
-SimpleHuskInventoryExtension.get_additional_items = function (arg_45_0, arg_45_1)
+function SimpleHuskInventoryExtension.get_additional_items(arg_45_0, arg_45_1)
 	local var_45_0 = arg_45_0._additional_items[arg_45_1]
 
 	return var_45_0 and var_45_0.items
 end
 
-SimpleHuskInventoryExtension.get_additional_items_table = function (arg_46_0)
+function SimpleHuskInventoryExtension.get_additional_items_table(arg_46_0)
 	return arg_46_0._additional_items
 end
 
-SimpleHuskInventoryExtension.get_total_item_count = function (arg_47_0, arg_47_1)
+function SimpleHuskInventoryExtension.get_total_item_count(arg_47_0, arg_47_1)
 	local var_47_0 = 0
 
 	if arg_47_0._equipment.slots[arg_47_1] then
@@ -823,7 +823,7 @@ SimpleHuskInventoryExtension.get_total_item_count = function (arg_47_0, arg_47_1
 	return var_47_0
 end
 
-SimpleHuskInventoryExtension.update_additional_items = function (arg_48_0, arg_48_1, arg_48_2)
+function SimpleHuskInventoryExtension.update_additional_items(arg_48_0, arg_48_1, arg_48_2)
 	local var_48_0 = arg_48_0._additional_items[arg_48_1]
 
 	if var_48_0 then

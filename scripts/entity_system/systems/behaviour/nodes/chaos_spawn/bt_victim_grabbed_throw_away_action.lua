@@ -5,11 +5,11 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTVictimGrabbedThrowAwayAction = class(BTVictimGrabbedThrowAwayAction, BTNode)
 BTVictimGrabbedThrowAwayAction.name = "BTVictimGrabbedThrowAwayAction"
 
-BTVictimGrabbedThrowAwayAction.init = function (arg_1_0, ...)
+function BTVictimGrabbedThrowAwayAction.init(arg_1_0, ...)
 	BTVictimGrabbedThrowAwayAction.super.init(arg_1_0, ...)
 end
 
-BTVictimGrabbedThrowAwayAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function BTVictimGrabbedThrowAwayAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = Managers.state.network
 	local var_2_1 = "attack_grabbed_throw"
 
@@ -57,7 +57,7 @@ BTVictimGrabbedThrowAwayAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_
 	end
 end
 
-BTVictimGrabbedThrowAwayAction.find_throw_direction = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+function BTVictimGrabbedThrowAwayAction.find_throw_direction(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = POSITION_LOOKUP[arg_3_1] + Vector3.up()
 	local var_3_1 = Unit.local_rotation(arg_3_1, 0)
 	local var_3_2 = arg_3_2.nav_world
@@ -85,7 +85,7 @@ BTVictimGrabbedThrowAwayAction.find_throw_direction = function (arg_3_0, arg_3_1
 	return nil
 end
 
-BTVictimGrabbedThrowAwayAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+function BTVictimGrabbedThrowAwayAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.navigation_extension:set_enabled(true)
 
 	arg_4_2.anim_cb_throw = false
@@ -106,7 +106,7 @@ BTVictimGrabbedThrowAwayAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_
 	arg_4_2.chew_attacks_done = 0
 end
 
-BTVictimGrabbedThrowAwayAction.catapult_player = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+function BTVictimGrabbedThrowAwayAction.catapult_player(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.victim_grabbed
 	local var_5_1 = POSITION_LOOKUP[var_5_0]
 	local var_5_2
@@ -131,7 +131,7 @@ end
 
 local var_0_0 = Unit.alive
 
-BTVictimGrabbedThrowAwayAction.run = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+function BTVictimGrabbedThrowAwayAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if arg_6_2.attack_finished or not Unit.alive(arg_6_2.victim_grabbed) or arg_6_2.drop_grabbed_player then
 		return "done"
 	elseif arg_6_2.anim_cb_throw then

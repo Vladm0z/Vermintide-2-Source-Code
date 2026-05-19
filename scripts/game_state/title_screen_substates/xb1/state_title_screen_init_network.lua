@@ -12,7 +12,7 @@ require("scripts/network/network_transmit")
 StateTitleScreenInitNetwork = class(StateTitleScreenInitNetwork)
 StateTitleScreenInitNetwork.NAME = "StateTitleScreenInitNetwork"
 
-StateTitleScreenInitNetwork.on_enter = function (arg_1_0, arg_1_1)
+function StateTitleScreenInitNetwork.on_enter(arg_1_0, arg_1_1)
 	print("[Gamestate] Enter Substate StateTitleScreenInitNetwork")
 
 	arg_1_0._params = arg_1_1
@@ -22,7 +22,7 @@ StateTitleScreenInitNetwork.on_enter = function (arg_1_0, arg_1_1)
 	arg_1_0:_init_network()
 end
 
-StateTitleScreenInitNetwork._init_network = function (arg_2_0)
+function StateTitleScreenInitNetwork._init_network(arg_2_0)
 	local var_2_0 = Development.parameter("auto_join")
 
 	Development.set_parameter("auto_join", nil)
@@ -41,7 +41,7 @@ StateTitleScreenInitNetwork._init_network = function (arg_2_0)
 	arg_2_0._network_state = "_create_session"
 end
 
-StateTitleScreenInitNetwork.update = function (arg_3_0, arg_3_1, arg_3_2)
+function StateTitleScreenInitNetwork.update(arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_0[arg_3_0._network_state] then
 		arg_3_0[arg_3_0._network_state](arg_3_0, arg_3_1, arg_3_2)
 	end
@@ -52,7 +52,7 @@ StateTitleScreenInitNetwork.update = function (arg_3_0, arg_3_1, arg_3_2)
 	return arg_3_0:_next_state()
 end
 
-StateTitleScreenInitNetwork._create_session = function (arg_4_0)
+function StateTitleScreenInitNetwork._create_session(arg_4_0)
 	local var_4_0 = Development.parameter("auto_join")
 	local var_4_1 = Development.parameter("unique_server_name")
 	local var_4_2 = arg_4_0.parent.parent.loading_context
@@ -92,7 +92,7 @@ StateTitleScreenInitNetwork._create_session = function (arg_4_0)
 	end
 end
 
-StateTitleScreenInitNetwork._creating_session_host = function (arg_5_0, arg_5_1, arg_5_2)
+function StateTitleScreenInitNetwork._creating_session_host(arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = Managers.lobby:get_lobby("matchmaking_session_lobby")
 
 	var_5_0:update(arg_5_1)
@@ -106,7 +106,7 @@ StateTitleScreenInitNetwork._creating_session_host = function (arg_5_0, arg_5_1,
 	end
 end
 
-StateTitleScreenInitNetwork._join_session = function (arg_6_0, arg_6_1, arg_6_2)
+function StateTitleScreenInitNetwork._join_session(arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.lobby:get_lobby("matchmaking_session_lobby")
 
 	var_6_0:update(arg_6_1)
@@ -136,7 +136,7 @@ StateTitleScreenInitNetwork._join_session = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._network_state = "_update_host_lobby"
 end
 
-StateTitleScreenInitNetwork._update_host_lobby = function (arg_7_0, arg_7_1, arg_7_2)
+function StateTitleScreenInitNetwork._update_host_lobby(arg_7_0, arg_7_1, arg_7_2)
 	Managers.level_transition_handler:update()
 	arg_7_0._network_transmit:transmit_local_rpcs()
 
@@ -155,7 +155,7 @@ StateTitleScreenInitNetwork._update_host_lobby = function (arg_7_0, arg_7_1, arg
 	arg_7_0._network_server:update(arg_7_1, arg_7_2)
 end
 
-StateTitleScreenInitNetwork._update_lobby_client = function (arg_8_0, arg_8_1, arg_8_2)
+function StateTitleScreenInitNetwork._update_lobby_client(arg_8_0, arg_8_1, arg_8_2)
 	Managers.level_transition_handler:update()
 
 	local var_8_0 = Managers.lobby:get_lobby("matchmaking_session_lobby")
@@ -199,7 +199,7 @@ StateTitleScreenInitNetwork._update_lobby_client = function (arg_8_0, arg_8_1, a
 	end
 end
 
-StateTitleScreenInitNetwork._update_lobby_join = function (arg_9_0, arg_9_1, arg_9_2)
+function StateTitleScreenInitNetwork._update_lobby_join(arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._lobby_finder
 
 	var_9_0:update(arg_9_1)
@@ -226,11 +226,11 @@ StateTitleScreenInitNetwork._update_lobby_join = function (arg_9_0, arg_9_1, arg
 	end
 end
 
-StateTitleScreenInitNetwork._error = function (arg_10_0, arg_10_1, arg_10_2)
+function StateTitleScreenInitNetwork._error(arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-StateTitleScreenInitNetwork._next_state = function (arg_11_0)
+function StateTitleScreenInitNetwork._next_state(arg_11_0)
 	if not arg_11_0:_packages_loaded() or not arg_11_0._wanted_game_state then
 		return
 	end
@@ -308,7 +308,7 @@ StateTitleScreenInitNetwork._next_state = function (arg_11_0)
 	arg_11_0._wanted_game_state = nil
 end
 
-StateTitleScreenInitNetwork.on_exit = function (arg_12_0, arg_12_1)
+function StateTitleScreenInitNetwork.on_exit(arg_12_0, arg_12_1)
 	Managers.level_transition_handler:unregister_rpcs()
 
 	if Managers.mechanism then
@@ -398,7 +398,7 @@ StateTitleScreenInitNetwork.on_exit = function (arg_12_0, arg_12_1)
 	end
 end
 
-StateTitleScreenInitNetwork._packages_loaded = function (arg_13_0)
+function StateTitleScreenInitNetwork._packages_loaded(arg_13_0)
 	local var_13_0 = Managers.level_transition_handler
 
 	if var_13_0:all_packages_loaded() then

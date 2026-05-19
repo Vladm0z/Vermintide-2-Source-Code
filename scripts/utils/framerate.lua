@@ -2,13 +2,13 @@
 
 Framerate = {}
 
-Framerate.set_low_power = function ()
+function Framerate.set_low_power()
 	if IS_WINDOWS and not DEDICATED_SERVER then
 		Application.set_time_step_policy("no_smoothing", "clear_history", "throttle", 60)
 	end
 end
 
-Framerate.set_playing = function ()
+function Framerate.set_playing()
 	Application.set_time_step_policy("external_step_range", 0, 100, "system_step_range", 0, 100, "debt_payback", 0)
 
 	if DEDICATED_SERVER then
@@ -30,12 +30,12 @@ Framerate.set_playing = function ()
 	end
 end
 
-Framerate.set_catchup = function ()
+function Framerate.set_catchup()
 	if IS_WINDOWS then
 		Application.set_time_step_policy("smoothing", 11, 2, 0.5)
 	end
 end
 
-Framerate.set_replay = function ()
+function Framerate.set_replay()
 	Application.set_time_step_policy("throttle", 60, "no_smoothing", "debt_payback", 0)
 end

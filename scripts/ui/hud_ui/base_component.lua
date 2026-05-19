@@ -2,7 +2,7 @@
 
 BaseComponent = class(BaseComponent)
 
-BaseComponent.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function BaseComponent.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	assert(arg_1_3, "No definitions passed")
 	assert(arg_1_3.scenegraph_definition, "No scenegraph in definitions")
 
@@ -18,7 +18,7 @@ BaseComponent.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0:_create_ui_elements()
 end
 
-BaseComponent._create_ui_elements = function (arg_2_0)
+function BaseComponent._create_ui_elements(arg_2_0)
 	local var_2_0 = arg_2_0._definitions
 	local var_2_1 = var_2_0.scenegraph_definition
 
@@ -37,11 +37,11 @@ BaseComponent._create_ui_elements = function (arg_2_0)
 	arg_2_0._widgets_by_name = var_2_2
 end
 
-BaseComponent.destroy = function (arg_3_0)
+function BaseComponent.destroy(arg_3_0)
 	arg_3_0:_destroy_ui_elements()
 end
 
-BaseComponent._destroy_ui_elements = function (arg_4_0)
+function BaseComponent._destroy_ui_elements(arg_4_0)
 	if arg_4_0._retained_mode then
 		UIUtils.destroy_widgets(arg_4_0._ui_renderer, arg_4_0._widgets_by_name)
 	end
@@ -52,7 +52,7 @@ BaseComponent._destroy_ui_elements = function (arg_4_0)
 	arg_4_0._ui_scenegraph = nil
 end
 
-BaseComponent.set_visible = function (arg_5_0, arg_5_1)
+function BaseComponent.set_visible(arg_5_0, arg_5_1)
 	if arg_5_0._retained_mode then
 		local var_5_0 = arg_5_0._ui_renderer
 
@@ -64,15 +64,15 @@ BaseComponent.set_visible = function (arg_5_0, arg_5_1)
 	end
 end
 
-BaseComponent.debug_set_definitions = function (arg_6_0, arg_6_1)
+function BaseComponent.debug_set_definitions(arg_6_0, arg_6_1)
 	arg_6_0._definitions = arg_6_1
 end
 
-BaseComponent.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+function BaseComponent.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	return
 end
 
-BaseComponent.post_update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+function BaseComponent.post_update(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	if arg_8_0._dirty or not arg_8_0._retained_mode then
 		arg_8_0:_draw(arg_8_1, arg_8_0:input_service())
 
@@ -80,15 +80,15 @@ BaseComponent.post_update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	end
 end
 
-BaseComponent._draw_widgets = function (arg_9_0, arg_9_1, arg_9_2)
+function BaseComponent._draw_widgets(arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-BaseComponent._draw_top_widgets = function (arg_10_0, arg_10_1, arg_10_2)
+function BaseComponent._draw_top_widgets(arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-BaseComponent._draw = function (arg_11_0, arg_11_1, arg_11_2)
+function BaseComponent._draw(arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._ui_renderer
 	local var_11_1 = arg_11_0._ui_top_renderer
 	local var_11_2 = arg_11_0._ui_scenegraph
@@ -107,10 +107,10 @@ BaseComponent._draw = function (arg_11_0, arg_11_1, arg_11_2)
 	UIRenderer.end_pass(var_11_1)
 end
 
-BaseComponent.input_service = function (arg_12_0)
+function BaseComponent.input_service(arg_12_0)
 	return arg_12_0._input_manager:get_service("Player")
 end
 
-BaseComponent._set_widget_dirty = function (arg_13_0, arg_13_1)
+function BaseComponent._set_widget_dirty(arg_13_0, arg_13_1)
 	arg_13_1.element.dirty = true
 end

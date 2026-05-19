@@ -20,7 +20,7 @@ local var_0_1 = {
 
 IngameView = class(IngameView)
 
-IngameView.init = function (arg_1_0, arg_1_1)
+function IngameView.init(arg_1_0, arg_1_1)
 	arg_1_0.ui_renderer = arg_1_1.ui_renderer
 	arg_1_0.ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0.input_manager = arg_1_1.input_manager
@@ -62,7 +62,7 @@ end
 
 local var_0_2 = 0.3
 
-IngameView.on_enter = function (arg_2_0, arg_2_1)
+function IngameView.on_enter(arg_2_0, arg_2_1)
 	arg_2_0.layout_logic = IngameViewLayoutLogic:new(arg_2_0.ingame_ui_context, arg_2_1, var_0_0.menu_layouts, var_0_0.full_access_layout)
 	arg_2_0.controller_cooldown = 0.2
 
@@ -89,7 +89,7 @@ IngameView.on_enter = function (arg_2_0, arg_2_1)
 	Managers.state.event:trigger("ingame_menu_opened", "interacting")
 end
 
-IngameView.on_exit = function (arg_3_0)
+function IngameView.on_exit(arg_3_0)
 	if arg_3_0._friends_component_ui:is_active() then
 		arg_3_0._friends_component_ui:deactivate_friends_ui()
 	end
@@ -115,11 +115,11 @@ IngameView.on_exit = function (arg_3_0)
 	arg_3_0.layout_logic = nil
 end
 
-IngameView.input_service = function (arg_4_0)
+function IngameView.input_service(arg_4_0)
 	return arg_4_0.input_manager:get_service("ingame_menu")
 end
 
-IngameView.create_ui_elements = function (arg_5_0)
+function IngameView.create_ui_elements(arg_5_0)
 	local var_5_0 = arg_5_0.menu_definition.widgets
 
 	arg_5_0.stored_buttons = {
@@ -151,7 +151,7 @@ IngameView.create_ui_elements = function (arg_5_0)
 	arg_5_0.ui_scenegraph = UISceneGraph.init_scenegraph(arg_5_0.menu_definition.scenegraph_definition)
 end
 
-IngameView._update_presentation = function (arg_6_0)
+function IngameView._update_presentation(arg_6_0)
 	local var_6_0 = #arg_6_0.layout_logic:layout_data()
 
 	if var_6_0 ~= arg_6_0._num_entries then
@@ -167,13 +167,13 @@ IngameView._update_presentation = function (arg_6_0)
 	end
 end
 
-IngameView.destroy = function (arg_7_0)
+function IngameView.destroy(arg_7_0)
 	arg_7_0.menu_input_description:destroy()
 
 	arg_7_0.menu_input_description = nil
 end
 
-IngameView.set_background_height = function (arg_8_0, arg_8_1)
+function IngameView.set_background_height(arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.menu_definition.MENU_BUTTON_SPACING
 	local var_8_1 = arg_8_1 * (arg_8_0.menu_definition.MENU_BUTTON_SIZE[2] + var_8_0)
 	local var_8_2 = arg_8_0.ui_scenegraph
@@ -183,7 +183,7 @@ IngameView.set_background_height = function (arg_8_0, arg_8_1)
 	var_8_2[arg_8_0.right_chain_widget.scenegraph_id].size[2] = var_8_1 + 100
 end
 
-IngameView.update = function (arg_9_0, arg_9_1)
+function IngameView.update(arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0.layout_logic
 
 	var_9_0:update(arg_9_1)
@@ -277,13 +277,13 @@ IngameView.update = function (arg_9_0, arg_9_1)
 	end
 end
 
-IngameView.setup_controller_selection = function (arg_10_0)
+function IngameView.setup_controller_selection(arg_10_0)
 	local var_10_0 = 1
 
 	arg_10_0:controller_select_button_index(var_10_0, true)
 end
 
-IngameView.controller_select_button_index = function (arg_11_0, arg_11_1, arg_11_2)
+function IngameView.controller_select_button_index(arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = false
 	local var_11_1 = arg_11_0.layout_logic
 	local var_11_2 = arg_11_0.stored_buttons
@@ -321,7 +321,7 @@ IngameView.controller_select_button_index = function (arg_11_0, arg_11_1, arg_11
 	return true
 end
 
-IngameView.clear_controller_selection = function (arg_12_0)
+function IngameView.clear_controller_selection(arg_12_0)
 	local var_12_0 = arg_12_0.layout_logic
 	local var_12_1 = arg_12_0.stored_buttons
 	local var_12_2 = var_12_0:layout_data()
@@ -331,7 +331,7 @@ IngameView.clear_controller_selection = function (arg_12_0)
 	end
 end
 
-IngameView.update_controller_input = function (arg_13_0, arg_13_1, arg_13_2)
+function IngameView.update_controller_input(arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = #arg_13_0.layout_logic:layout_data()
 
 	if arg_13_0.controller_cooldown > 0 then
@@ -388,12 +388,12 @@ IngameView.update_controller_input = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0.speed_multiplier = 1
 end
 
-IngameView.get_transition = function (arg_14_0)
+function IngameView.get_transition(arg_14_0)
 	if arg_14_0.leave_game then
 		return "leave_game"
 	end
 end
 
-IngameView.play_sound = function (arg_15_0, arg_15_1)
+function IngameView.play_sound(arg_15_0, arg_15_1)
 	WwiseWorld.trigger_event(arg_15_0.wwise_world, arg_15_1)
 end

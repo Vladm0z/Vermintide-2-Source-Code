@@ -1070,7 +1070,7 @@ local var_0_23 = {
 			selected = "tabs_icon_equipment_glow",
 			normal = "tabs_icon_equipment"
 		},
-		contains_new_content = function ()
+		contains_new_content = function()
 			return false
 		end,
 		slot_type = ItemType.LOOT_CHEST,
@@ -1383,14 +1383,18 @@ end
 local function var_0_29(arg_3_0, arg_3_1)
 	local var_3_0 = UIFrameSettings.menu_frame_09
 	local var_3_1 = {
-		element = {}
+		80,
+		80
 	}
 	local var_3_2 = {
+		element = {}
+	}
+	local var_3_3 = {
 		{
 			style_id = "button_hotspot",
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function (arg_4_0)
+			content_check_function = function(arg_4_0)
 				return not arg_4_0.parent.presentation_complete
 			end
 		},
@@ -1398,14 +1402,14 @@ local function var_0_29(arg_3_0, arg_3_1)
 			style_id = "item_icon",
 			pass_type = "hotspot",
 			content_id = "item_hotspot",
-			content_check_function = function (arg_5_0)
+			content_check_function = function(arg_5_0)
 				return arg_5_0.parent.presentation_complete
 			end
 		},
 		{
 			pass_type = "hotspot",
 			content_id = "item_hotspot_2",
-			content_check_function = function (arg_6_0)
+			content_check_function = function(arg_6_0)
 				return arg_6_0.parent.presentation_complete
 			end
 		},
@@ -1433,7 +1437,7 @@ local function var_0_29(arg_3_0, arg_3_1)
 			item_id = "item",
 			style_id = "item_tooltip",
 			pass_type = "item_tooltip",
-			content_check_function = function (arg_7_0)
+			content_check_function = function(arg_7_0)
 				return (arg_7_0.item_hotspot.is_hover or arg_7_0.item_hotspot_2.is_hover) and arg_7_0.item
 			end
 		},
@@ -1444,11 +1448,6 @@ local function var_0_29(arg_3_0, arg_3_1)
 		},
 		{
 			pass_type = "texture",
-			style_id = "item_icon_frame",
-			texture_id = "item_icon_frame"
-		},
-		{
-			pass_type = "texture",
 			style_id = "item_icon_rarity",
 			texture_id = "item_icon_rarity"
 		},
@@ -1456,7 +1455,7 @@ local function var_0_29(arg_3_0, arg_3_1)
 			pass_type = "texture",
 			style_id = "illusion_overlay",
 			texture_id = "illusion_overlay",
-			content_check_function = function (arg_8_0)
+			content_check_function = function(arg_8_0)
 				local var_8_0 = arg_8_0.item
 
 				if var_8_0 and var_8_0.skin then
@@ -1468,7 +1467,7 @@ local function var_0_29(arg_3_0, arg_3_1)
 			pass_type = "texture",
 			style_id = "illusion_icon",
 			texture_id = "illusion_icon",
-			content_check_function = function (arg_9_0)
+			content_check_function = function(arg_9_0)
 				local var_9_0 = arg_9_0.item
 				local var_9_1 = var_9_0 and var_9_0.skin
 
@@ -1481,7 +1480,7 @@ local function var_0_29(arg_3_0, arg_3_1)
 			pass_type = "texture_frame",
 			style_id = "frame",
 			texture_id = "frame",
-			content_check_function = function (arg_10_0)
+			content_check_function = function(arg_10_0)
 				return arg_10_0.draw_frame
 			end
 		},
@@ -1549,7 +1548,7 @@ local function var_0_29(arg_3_0, arg_3_1)
 			pass_type = "texture",
 			style_id = "image",
 			texture_id = "image",
-			content_check_function = function (arg_11_0)
+			content_check_function = function(arg_11_0)
 				return arg_11_0.image
 			end
 		},
@@ -1557,10 +1556,10 @@ local function var_0_29(arg_3_0, arg_3_1)
 			style_id = "loading_icon",
 			texture_id = "loading_icon",
 			pass_type = "rotated_texture",
-			content_check_function = function (arg_12_0)
+			content_check_function = function(arg_12_0)
 				return arg_12_0.is_loading
 			end,
-			content_change_function = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			content_change_function = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				local var_13_0 = ((arg_13_1.progress or 0) + arg_13_3) % 1
 
 				arg_13_1.angle = math.pow(2, math.smoothstep(var_13_0, 0, 1)) * (math.pi * 2)
@@ -1571,7 +1570,7 @@ local function var_0_29(arg_3_0, arg_3_1)
 			style_id = "amount_text",
 			pass_type = "text",
 			text_id = "amount_text",
-			content_check_function = function (arg_14_0)
+			content_check_function = function(arg_14_0)
 				return arg_14_0.amount_text
 			end
 		},
@@ -1579,12 +1578,12 @@ local function var_0_29(arg_3_0, arg_3_1)
 			style_id = "amount_text_shadow",
 			pass_type = "text",
 			text_id = "amount_text",
-			content_check_function = function (arg_15_0)
+			content_check_function = function(arg_15_0)
 				return arg_15_0.amount_text
 			end
 		}
 	}
-	local var_3_3 = {
+	local var_3_4 = {
 		loading_icon = "loot_loading",
 		draw_frame = false,
 		lock_glow_1 = "loot_presentation_glow_04",
@@ -1603,7 +1602,6 @@ local function var_0_29(arg_3_0, arg_3_1)
 		amount_text = "",
 		final_glow_1 = "loot_presentation_glow_06",
 		lock_bottom_glow = "loot_presentation_glow_02",
-		item_icon_frame = "item_frame",
 		final_glow = "loot_presentation_circle_glow_plentiful_large",
 		item_name = "n/a",
 		lock_glow_2 = "loot_presentation_glow_03",
@@ -1616,7 +1614,7 @@ local function var_0_29(arg_3_0, arg_3_1)
 			hover_type = "circle"
 		}
 	}
-	local var_3_4 = {
+	local var_3_5 = {
 		button_hotspot = {
 			size = {
 				400,
@@ -2002,10 +2000,7 @@ local function var_0_29(arg_3_0, arg_3_1)
 		illusion_overlay = {
 			vertical_alignment = "top",
 			horizontal_alignment = "center",
-			texture_size = {
-				80,
-				80
-			},
+			texture_size = var_3_1,
 			offset = {
 				0,
 				40,
@@ -2032,30 +2027,8 @@ local function var_0_29(arg_3_0, arg_3_1)
 			},
 			color = Colors.get_color_table_with_alpha("promo", 255)
 		},
-		item_icon_frame = {
-			vertical_alignment = "top",
-			horizontal_alignment = "center",
-			texture_size = {
-				80,
-				80
-			},
-			offset = {
-				0,
-				40,
-				17
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			}
-		},
 		item_icon = {
-			size = {
-				80,
-				80
-			},
+			size = var_3_1,
 			offset = {
 				arg_3_1[1] / 2 - 40,
 				-40,
@@ -2071,10 +2044,7 @@ local function var_0_29(arg_3_0, arg_3_1)
 		item_icon_rarity = {
 			vertical_alignment = "top",
 			horizontal_alignment = "center",
-			texture_size = {
-				80,
-				80
-			},
+			texture_size = var_3_1,
 			offset = {
 				0,
 				40,
@@ -2171,10 +2141,7 @@ local function var_0_29(arg_3_0, arg_3_1)
 				Colors.get_color_table_with_alpha("font_title", 255),
 				Colors.get_color_table_with_alpha("white", 255)
 			},
-			size = {
-				80,
-				80
-			},
+			size = var_3_1,
 			offset = {
 				arg_3_1[1] / 2 - 40,
 				-40,
@@ -2183,17 +2150,26 @@ local function var_0_29(arg_3_0, arg_3_1)
 		}
 	}
 
-	var_3_1.element.passes = var_3_2
-	var_3_1.content = var_3_3
-	var_3_1.style = var_3_4
-	var_3_1.offset = {
+	UIWidgets.append_item_frame_pass("item_icon_frame", var_3_3, var_3_4, var_3_5, var_3_1, {
+		0,
+		40,
+		17
+	}, false, nil, {
+		vertical_alignment = "top",
+		horizontal_alignment = "center"
+	}, nil, nil)
+
+	var_3_2.element.passes = var_3_3
+	var_3_2.content = var_3_4
+	var_3_2.style = var_3_5
+	var_3_2.offset = {
 		0,
 		0,
 		0
 	}
-	var_3_1.scenegraph_id = "loot_option_" .. arg_3_0
+	var_3_2.scenegraph_id = "loot_option_" .. arg_3_0
 
-	return var_3_1
+	return var_3_2
 end
 
 local function var_0_30(arg_16_0, arg_16_1)
@@ -2404,7 +2380,7 @@ local function var_0_32(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 					pass_type = "texture",
 					style_id = "indicator_selected",
 					texture_id = "dot_lit",
-					content_check_function = function (arg_19_0)
+					content_check_function = function(arg_19_0)
 						return arg_19_0.selected
 					end
 				},
@@ -2412,7 +2388,7 @@ local function var_0_32(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 					pass_type = "texture",
 					style_id = "indicator_unselected",
 					texture_id = "dot_unlit",
-					content_check_function = function (arg_20_0)
+					content_check_function = function(arg_20_0)
 						return not arg_20_0.selected
 					end
 				},
@@ -2420,7 +2396,7 @@ local function var_0_32(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 					pass_type = "texture",
 					style_id = "texture_hover_id",
 					texture_id = "dot_lit",
-					content_check_function = function (arg_21_0)
+					content_check_function = function(arg_21_0)
 						return not arg_21_0.selected
 					end
 				},
@@ -2433,7 +2409,7 @@ local function var_0_32(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 					pass_type = "texture",
 					style_id = "rarity_b",
 					texture_id = "rarity_icon",
-					content_check_function = function (arg_22_0)
+					content_check_function = function(arg_22_0)
 						return var_18_4
 					end
 				},
@@ -2441,7 +2417,7 @@ local function var_0_32(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 					pass_type = "texture",
 					style_id = "rarity_c",
 					texture_id = "rarity_icon",
-					content_check_function = function (arg_23_0)
+					content_check_function = function(arg_23_0)
 						return var_18_6
 					end
 				}
@@ -2936,12 +2912,12 @@ local var_0_46 = {
 			name = "rumble",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 				local var_24_0 = arg_24_3.wwise_world
 
 				WwiseWorld.trigger_event(var_24_0, "play_gui_chest_reward_rumble")
 			end,
-			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 				local var_25_0 = math.easeOutCubic(arg_25_3)
 				local var_25_1 = math.bounce(arg_25_3)
 				local var_25_2 = arg_25_2.content
@@ -2952,7 +2928,7 @@ local var_0_46 = {
 				var_25_4[1] = 5 - 5 * math.catmullrom(var_25_1, 10, 1, 1, -1)
 				var_25_4[2] = 5 - 5 * math.catmullrom(var_25_1, -1, 1, 1, 10)
 			end,
-			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				return
 			end
 		},
@@ -2960,10 +2936,10 @@ local var_0_46 = {
 			name = "glow_exit",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			init = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				return
 			end,
-			update = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+			update = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 				local var_28_0 = math.easeOutCubic(arg_28_3)
 				local var_28_1 = arg_28_2.content
 				local var_28_2 = arg_28_2.style
@@ -2974,7 +2950,7 @@ local var_0_46 = {
 				var_28_2.lock_glow_1.color[1] = math.min(var_28_2.lock_glow_1.color[1], var_28_2.lock_glow_1.default_color[1] * (1 - var_28_0))
 				var_28_2.lock_glow_2.color[1] = math.min(var_28_2.lock_glow_2.color[1], var_28_2.lock_glow_2.default_color[1] * (1 - var_28_0))
 			end,
-			on_complete = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			on_complete = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				return
 			end
 		},
@@ -2982,10 +2958,10 @@ local var_0_46 = {
 			name = "open",
 			start_progress = 0.3,
 			end_progress = 0.6,
-			init = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			init = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 				return
 			end,
-			update = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+			update = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 				if not arg_31_4.played_open_sound then
 					local var_31_0 = arg_31_4.wwise_world
 
@@ -3024,7 +3000,7 @@ local var_0_46 = {
 				var_31_12.offset[2] = -10
 				var_31_7.opened = true
 			end,
-			on_complete = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			on_complete = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 				local var_32_0 = true
 				local var_32_1 = arg_32_3.reward_option
 				local var_32_2 = var_32_1.item_previewer
@@ -3056,10 +3032,10 @@ local var_0_46 = {
 			name = "glow_enter",
 			start_progress = 0.6,
 			end_progress = 0.8,
-			init = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			init = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 				return
 			end,
-			update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+			update = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 				local var_34_0 = math.easeOutCubic(arg_34_3)
 				local var_34_1 = arg_34_2.content
 				local var_34_2 = arg_34_2.style
@@ -3068,7 +3044,7 @@ local var_0_46 = {
 				var_34_2.final_glow_1.color[1] = math.max(var_34_2.final_glow_1.color[1], var_34_2.final_glow_1.default_color[1] * var_34_0)
 				var_34_2.final_glow_2.color[1] = math.max(var_34_2.final_glow_2.color[1], var_34_2.final_glow_2.default_color[1] * var_34_0)
 			end,
-			on_complete = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			on_complete = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 				return
 			end
 		},
@@ -3076,10 +3052,10 @@ local var_0_46 = {
 			name = "fade_in_text",
 			start_progress = 0.8,
 			end_progress = 1.2,
-			init = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			init = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 				return
 			end,
-			update = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+			update = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 				local var_37_0 = math.easeOutCubic(arg_37_3)
 				local var_37_1 = arg_37_2.content
 				local var_37_2 = arg_37_2.style
@@ -3090,7 +3066,7 @@ local var_0_46 = {
 				var_37_2.item_type.text_color[1] = var_37_3
 				var_37_2.item_type_shadow.text_color[1] = var_37_3
 			end,
-			on_complete = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			on_complete = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 				return
 			end
 		}
@@ -3100,15 +3076,15 @@ local var_0_46 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			init = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 				arg_39_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+			update = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 				local var_40_0 = math.easeOutCubic(arg_40_3)
 
 				arg_40_4.render_settings.alpha_multiplier = var_40_0
 			end,
-			on_complete = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			on_complete = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 				return
 			end
 		}
@@ -3118,15 +3094,15 @@ local var_0_46 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			init = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 				arg_42_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+			update = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
 				local var_43_0 = math.easeOutCubic(arg_43_3)
 
 				arg_43_4.render_settings.alpha_multiplier = 1 - var_43_0
 			end,
-			on_complete = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			on_complete = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 				return
 			end
 		}

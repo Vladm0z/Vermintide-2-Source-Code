@@ -2,7 +2,7 @@
 
 PlayerCharacterStateDodging = class(PlayerCharacterStateDodging, PlayerCharacterState)
 
-PlayerCharacterStateDodging.init = function (arg_1_0, arg_1_1)
+function PlayerCharacterStateDodging.init(arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "dodging")
 
 	local var_1_0 = arg_1_1
@@ -12,7 +12,7 @@ PlayerCharacterStateDodging.init = function (arg_1_0, arg_1_1)
 	arg_1_0.last_position = Vector3Box(0, 0, 0)
 end
 
-PlayerCharacterStateDodging.on_enter_animation = function (arg_2_0, arg_2_1)
+function PlayerCharacterStateDodging.on_enter_animation(arg_2_0, arg_2_1)
 	local var_2_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_2_1)
 	local var_2_1 = arg_2_0.dodge_direction:unbox()
 	local var_2_2 = Vector3.x(var_2_1)
@@ -33,7 +33,7 @@ PlayerCharacterStateDodging.on_enter_animation = function (arg_2_0, arg_2_1)
 	end
 end
 
-PlayerCharacterStateDodging.on_enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+function PlayerCharacterStateDodging.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	local var_3_0 = arg_3_0.unit
 	local var_3_1 = arg_3_0.input_extension
 	local var_3_2 = arg_3_0.first_person_extension
@@ -64,7 +64,7 @@ PlayerCharacterStateDodging.on_enter = function (arg_3_0, arg_3_1, arg_3_2, arg_
 	Unit.set_local_rotation(var_3_0, 0, var_3_9)
 end
 
-PlayerCharacterStateDodging.on_exit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+function PlayerCharacterStateDodging.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	local var_4_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
 	local var_4_1 = math.max(var_4_0.dodging.dodge_cd, var_4_0.dodging.dodge_jump_override_timer - arg_4_0.time_in_dodge)
 
@@ -92,7 +92,7 @@ PlayerCharacterStateDodging.on_exit = function (arg_4_0, arg_4_1, arg_4_2, arg_4
 	end
 end
 
-PlayerCharacterStateDodging.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+function PlayerCharacterStateDodging.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.unit
 	local var_5_2 = PlayerUnitMovementSettings.get_movement_settings_table(var_5_1)
@@ -220,7 +220,7 @@ end
 
 local var_0_0 = {}
 
-PlayerCharacterStateDodging.update_dodge = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+function PlayerCharacterStateDodging.update_dodge(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_6_1)
 	local var_6_1 = arg_6_0.distance_left
 	local var_6_2 = arg_6_0.status_extension:get_dodge_cooldown()
@@ -277,11 +277,11 @@ PlayerCharacterStateDodging.update_dodge = function (arg_6_0, arg_6_1, arg_6_2, 
 	return true
 end
 
-PlayerCharacterStateDodging.get_is_dodging = function (arg_7_0)
+function PlayerCharacterStateDodging.get_is_dodging(arg_7_0)
 	return arg_7_0.dodge_timer or arg_7_0.dodge_stand_still_timer or arg_7_0.dodge_return_timer
 end
 
-PlayerCharacterStateDodging.start_dodge = function (arg_8_0, arg_8_1, arg_8_2)
+function PlayerCharacterStateDodging.start_dodge(arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_8_1)
 	local var_8_1 = Managers.state.network
 
@@ -305,7 +305,7 @@ PlayerCharacterStateDodging.start_dodge = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:calculate_dodge_total_time(arg_8_1)
 end
 
-PlayerCharacterStateDodging.calculate_dodge_total_time = function (arg_9_0, arg_9_1)
+function PlayerCharacterStateDodging.calculate_dodge_total_time(arg_9_0, arg_9_1)
 	local var_9_0 = 0.016666666666666666
 	local var_9_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_9_1)
 	local var_9_2 = true

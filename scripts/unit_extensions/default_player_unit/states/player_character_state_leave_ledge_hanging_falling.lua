@@ -2,7 +2,7 @@
 
 PlayerCharacterStateLeaveLedgeHangingFalling = class(PlayerCharacterStateLeaveLedgeHangingFalling, PlayerCharacterState)
 
-PlayerCharacterStateLeaveLedgeHangingFalling.init = function (arg_1_0, arg_1_1)
+function PlayerCharacterStateLeaveLedgeHangingFalling.init(arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "leave_ledge_hanging_falling")
 
 	local var_1_0 = arg_1_1
@@ -10,11 +10,11 @@ PlayerCharacterStateLeaveLedgeHangingFalling.init = function (arg_1_0, arg_1_1)
 	arg_1_0.is_server = Managers.player.is_server
 end
 
-PlayerCharacterStateLeaveLedgeHangingFalling.on_enter_animation = function (arg_2_0)
+function PlayerCharacterStateLeaveLedgeHangingFalling.on_enter_animation(arg_2_0)
 	CharacterStateHelper.play_animation_event(arg_2_0.unit, "jump_idle")
 end
 
-PlayerCharacterStateLeaveLedgeHangingFalling.on_enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+function PlayerCharacterStateLeaveLedgeHangingFalling.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	local var_3_0 = arg_3_0.unit
 	local var_3_1 = arg_3_7.ledge_unit
 
@@ -34,14 +34,14 @@ PlayerCharacterStateLeaveLedgeHangingFalling.on_enter = function (arg_3_0, arg_3
 	arg_3_0:on_enter_animation()
 end
 
-PlayerCharacterStateLeaveLedgeHangingFalling.on_exit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+function PlayerCharacterStateLeaveLedgeHangingFalling.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	if arg_4_6 and arg_4_6 ~= "falling" and Managers.state.network:game() then
 		CharacterStateHelper.play_animation_event(arg_4_1, "land_still")
 		CharacterStateHelper.play_animation_event(arg_4_1, "to_onground")
 	end
 end
 
-PlayerCharacterStateLeaveLedgeHangingFalling.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+function PlayerCharacterStateLeaveLedgeHangingFalling.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.unit
 	local var_5_2 = arg_5_0.input_extension

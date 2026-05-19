@@ -10,7 +10,7 @@ local var_0_2 = var_0_0.DIORAMA_SIZE
 
 VersusTeamParadingView = class(VersusTeamParadingView, BaseView)
 
-VersusTeamParadingView.init = function (arg_1_0, arg_1_1)
+function VersusTeamParadingView.init(arg_1_0, arg_1_1)
 	arg_1_0.normal_chat = true
 
 	local var_1_0 = arg_1_1.player
@@ -28,7 +28,7 @@ VersusTeamParadingView.init = function (arg_1_0, arg_1_1)
 	arg_1_0.super.init(arg_1_0, arg_1_1, var_0_0)
 end
 
-VersusTeamParadingView.on_enter = function (arg_2_0, arg_2_1)
+function VersusTeamParadingView.on_enter(arg_2_0, arg_2_1)
 	arg_2_0.super.on_enter(arg_2_0)
 
 	local var_2_0 = Managers.state.game_mode:game_mode()
@@ -60,7 +60,7 @@ VersusTeamParadingView.on_enter = function (arg_2_0, arg_2_1)
 	Managers.state.event:register(arg_2_0, "player_party_changed", "on_player_party_changed")
 end
 
-VersusTeamParadingView._create_diorama = function (arg_3_0, arg_3_1)
+function VersusTeamParadingView._create_diorama(arg_3_0, arg_3_1)
 	local var_3_0 = "left"
 	local var_3_1 = "bottom"
 	local var_3_2 = {
@@ -73,11 +73,11 @@ VersusTeamParadingView._create_diorama = function (arg_3_0, arg_3_1)
 	return HeroDioramaUI:new(arg_3_0._ingame_ui_context, var_3_2)
 end
 
-VersusTeamParadingView._set_round_text = function (arg_4_0, arg_4_1)
+function VersusTeamParadingView._set_round_text(arg_4_0, arg_4_1)
 	arg_4_0._widgets_by_name.round_title.content.text = arg_4_1
 end
 
-VersusTeamParadingView.get_loadout = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+function VersusTeamParadingView.get_loadout(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	local var_5_0 = Managers.backend:get_interface("items")
 	local var_5_1
 	local var_5_2
@@ -142,12 +142,12 @@ VersusTeamParadingView.get_loadout = function (arg_5_0, arg_5_1, arg_5_2, arg_5_
 	}
 end
 
-VersusTeamParadingView._initialize_timers = function (arg_6_0)
+function VersusTeamParadingView._initialize_timers(arg_6_0)
 	arg_6_0._screen_timer = Managers.state.game_mode:setting("character_picking_settings").parading_duration or 1
 	arg_6_0._screen_timer_ended = nil
 end
 
-VersusTeamParadingView._present_team = function (arg_7_0, arg_7_1)
+function VersusTeamParadingView._present_team(arg_7_0, arg_7_1)
 	local var_7_0 = Managers.state.game_mode:setting("parade_dark_pact")
 	local var_7_1 = Managers.party:get_party(arg_7_1)
 	local var_7_2 = var_7_1.slots_data
@@ -203,7 +203,7 @@ VersusTeamParadingView._present_team = function (arg_7_0, arg_7_1)
 	arg_7_0:_start_animation("start", "start", arg_7_0._widgets_by_name, arg_7_0._animation_params)
 end
 
-VersusTeamParadingView._destroy_diorama_list = function (arg_8_0)
+function VersusTeamParadingView._destroy_diorama_list(arg_8_0)
 	local var_8_0 = arg_8_0._diorama_list
 
 	if var_8_0 then
@@ -215,22 +215,22 @@ VersusTeamParadingView._destroy_diorama_list = function (arg_8_0)
 	arg_8_0._diorama_list = nil
 end
 
-VersusTeamParadingView.on_exit = function (arg_9_0)
+function VersusTeamParadingView.on_exit(arg_9_0)
 	arg_9_0.super.on_exit(arg_9_0)
 	Managers.transition:fade_out(1.5)
 	Managers.state.event:unregister("on_player_party_changed", arg_9_0)
 end
 
-VersusTeamParadingView.post_update_on_exit = function (arg_10_0)
+function VersusTeamParadingView.post_update_on_exit(arg_10_0)
 	arg_10_0.super.post_update_on_exit(arg_10_0)
 	arg_10_0:_destroy_diorama_list()
 end
 
-VersusTeamParadingView._draw_widgets = function (arg_11_0, arg_11_1, arg_11_2)
+function VersusTeamParadingView._draw_widgets(arg_11_0, arg_11_1, arg_11_2)
 	return
 end
 
-VersusTeamParadingView.post_update = function (arg_12_0, arg_12_1, arg_12_2)
+function VersusTeamParadingView.post_update(arg_12_0, arg_12_1, arg_12_2)
 	if var_0_1 then
 		var_0_1 = false
 
@@ -248,7 +248,7 @@ VersusTeamParadingView.post_update = function (arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-VersusTeamParadingView._update_screen_timer = function (arg_13_0, arg_13_1, arg_13_2)
+function VersusTeamParadingView._update_screen_timer(arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = math.clamp(arg_13_2, 0, 999999)
 	local var_13_1
 	local var_13_2 = var_13_0 <= 0 and "" or string.format("%.0f", var_13_0)
@@ -256,7 +256,7 @@ VersusTeamParadingView._update_screen_timer = function (arg_13_0, arg_13_1, arg_
 	arg_13_1.content.text = var_13_2
 end
 
-VersusTeamParadingView._animate_font_size_bounce = function (arg_14_0, arg_14_1, arg_14_2)
+function VersusTeamParadingView._animate_font_size_bounce(arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._widgets_by_name
 	local var_14_1 = var_14_0.screen_timer_text_big
 	local var_14_2 = var_14_1.content
@@ -283,7 +283,7 @@ VersusTeamParadingView._animate_font_size_bounce = function (arg_14_0, arg_14_1,
 	end
 end
 
-VersusTeamParadingView._set_text_widget_alpha = function (arg_15_0, arg_15_1, arg_15_2)
+function VersusTeamParadingView._set_text_widget_alpha(arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_1.style
 	local var_15_1 = var_15_0.text
 	local var_15_2 = var_15_0.text_shadow
@@ -292,7 +292,7 @@ VersusTeamParadingView._set_text_widget_alpha = function (arg_15_0, arg_15_1, ar
 	var_15_2.text_color[1] = arg_15_2
 end
 
-VersusTeamParadingView.update = function (arg_16_0, arg_16_1, arg_16_2)
+function VersusTeamParadingView.update(arg_16_0, arg_16_1, arg_16_2)
 	if var_0_1 then
 		arg_16_0.super.debug_set_definitions(arg_16_0, var_0_0)
 	end
@@ -331,7 +331,7 @@ VersusTeamParadingView.update = function (arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0.super.update(arg_16_0, arg_16_1, arg_16_2)
 end
 
-VersusTeamParadingView.destroy = function (arg_17_0)
+function VersusTeamParadingView.destroy(arg_17_0)
 	if not Managers.chat:chat_is_focused() then
 		local var_17_0 = Managers.input
 
@@ -343,11 +343,11 @@ VersusTeamParadingView.destroy = function (arg_17_0)
 	Managers.state.event:unregister("on_player_party_changed", arg_17_0)
 end
 
-VersusTeamParadingView._handle_input = function (arg_18_0, arg_18_1, arg_18_2)
+function VersusTeamParadingView._handle_input(arg_18_0, arg_18_1, arg_18_2)
 	return
 end
 
-VersusTeamParadingView.on_player_party_changed = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+function VersusTeamParadingView.on_player_party_changed(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	if not arg_19_2 then
 		return
 	end

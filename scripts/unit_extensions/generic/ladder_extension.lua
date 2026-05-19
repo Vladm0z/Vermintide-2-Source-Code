@@ -2,7 +2,7 @@
 
 LadderExtension = class(LadderExtension)
 
-LadderExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function LadderExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._unit = arg_1_2
 	arg_1_0._is_server = Managers.state.network.is_server
@@ -19,7 +19,7 @@ LadderExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-LadderExtension.ladder_extents = function (arg_2_0)
+function LadderExtension.ladder_extents(arg_2_0)
 	return arg_2_0._bottom_position:unbox(), arg_2_0._top_position:unbox()
 end
 
@@ -67,7 +67,7 @@ local function var_0_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	return var_6_0 / var_6_1
 end
 
-LadderExtension.update_enabled = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+function LadderExtension.update_enabled(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	if arg_7_0._shaking then
 		local var_7_0 = arg_7_5 - arg_7_0._shaking
 		local var_7_1 = arg_7_0.perlin_shake
@@ -90,11 +90,11 @@ LadderExtension.update_enabled = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, a
 	end
 end
 
-LadderExtension.is_shaking = function (arg_8_0)
+function LadderExtension.is_shaking(arg_8_0)
 	return arg_8_0._shaking and true or false
 end
 
-LadderExtension.shake = function (arg_9_0)
+function LadderExtension.shake(arg_9_0)
 	if not arg_9_0._shaking then
 		arg_9_0._shaking = Managers.time:time("game")
 
@@ -111,7 +111,7 @@ LadderExtension.shake = function (arg_9_0)
 	end
 end
 
-LadderExtension.destroy = function (arg_10_0)
+function LadderExtension.destroy(arg_10_0)
 	if arg_10_0._is_server then
 		Managers.state.bot_nav_transition:unregister_ladder(arg_10_0._unit)
 	end

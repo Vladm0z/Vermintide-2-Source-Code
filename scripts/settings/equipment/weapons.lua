@@ -114,7 +114,7 @@ local function var_0_10(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 end
 
 Dots = {
-	poison_dot = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9, arg_4_10)
+	poison_dot = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9, arg_4_10)
 		local var_4_0
 
 		if arg_4_1 then
@@ -145,7 +145,7 @@ Dots = {
 
 		return var_4_1
 	end,
-	burning_dot = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10)
+	burning_dot = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10)
 		if arg_5_1 then
 			arg_5_0 = arg_5_0 or (arg_5_1.targets[arg_5_2] or arg_5_1.default_target).dot_template_name or arg_5_1.dot_template_name
 		end
@@ -172,7 +172,7 @@ Dots = {
 
 		return true
 	end,
-	slow_debuff = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
+	slow_debuff = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
 		if arg_6_1 then
 			arg_6_0 = arg_6_0 or (arg_6_1.targets[arg_6_2] or arg_6_1.default_target).dot_template_name or arg_6_1.dot_template_name
 		end
@@ -187,19 +187,22 @@ Dots = {
 	end
 }
 DotTypeLookup = DotTypeLookup or {
-	aoe_poison_dot = "poison_dot",
-	vs_ratling_gunner_slow = "burning_dot",
+	weapon_bleed_dot_dagger = "poison_dot",
 	burning_dot_fire_grenade = "burning_dot",
+	burning_dot_3tick = "burning_dot",
 	weapon_bleed_dot_maidenguard = "poison_dot",
-	weapon_bleed_dot_whc = "poison_dot",
-	burning_dot_1tick = "burning_dot",
+	burning_dot_2tick_slow_unstackable = "burning_dot",
+	burning_dot_2tick = "burning_dot",
 	arrow_poison_dot = "poison_dot",
 	beam_burning_dot = "burning_dot",
-	weapon_bleed_dot_dagger = "poison_dot",
-	burning_dot_3tick = "burning_dot",
-	burning_dot_unchained_push = "burning_dot",
+	weapon_bleed_dot_whc = "poison_dot",
+	burning_dot_1tick = "burning_dot",
 	burning_flamethrower_dot = "burning_dot",
+	burning_dot_unchained_push = "burning_dot",
+	aoe_poison_dot = "poison_dot",
 	death_staff_dot = "burning_dot",
+	burning_dot_scythe_special = "burning_dot",
+	vs_ratling_gunner_slow = "burning_dot",
 	burning_dot = "burning_dot",
 	burning_dot_1tick_vs = "burning_dot",
 	sienna_necromancer_4_3_dot = "burning_dot",

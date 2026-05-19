@@ -4,14 +4,14 @@ require("scripts/ui/views/world_hero_previewer")
 
 TeamPreviewer = class(TeamPreviewer)
 
-TeamPreviewer.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function TeamPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.hero_previewers = {}
 	arg_1_0._context = arg_1_1
 	arg_1_0.world = arg_1_2
 	arg_1_0.camera = ScriptViewport.camera(arg_1_3)
 end
 
-TeamPreviewer.setup_team = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function TeamPreviewer.setup_team(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0:destroy_previewers()
 
 	local var_2_0 = arg_2_0.hero_previewers
@@ -32,11 +32,11 @@ TeamPreviewer.setup_team = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0:update_hero_arrangement(arg_2_2, var_2_3, var_2_2)
 end
 
-TeamPreviewer.on_enter = function (arg_3_0)
+function TeamPreviewer.on_enter(arg_3_0)
 	return
 end
 
-TeamPreviewer.loading_done = function (arg_4_0)
+function TeamPreviewer.loading_done(arg_4_0)
 	local var_4_0 = arg_4_0.hero_previewers
 
 	for iter_4_0 = 1, #var_4_0 do
@@ -48,7 +48,7 @@ TeamPreviewer.loading_done = function (arg_4_0)
 	return true
 end
 
-TeamPreviewer.update = function (arg_5_0, arg_5_1, arg_5_2)
+function TeamPreviewer.update(arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.hero_previewers
 
 	for iter_5_0 = 1, #var_5_0 do
@@ -56,7 +56,7 @@ TeamPreviewer.update = function (arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-TeamPreviewer.post_update = function (arg_6_0, arg_6_1, arg_6_2)
+function TeamPreviewer.post_update(arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.hero_previewers
 
 	for iter_6_0 = 1, #var_6_0 do
@@ -64,11 +64,11 @@ TeamPreviewer.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-TeamPreviewer.on_exit = function (arg_7_0)
+function TeamPreviewer.on_exit(arg_7_0)
 	arg_7_0:destroy_previewers()
 end
 
-TeamPreviewer.clear_team = function (arg_8_0)
+function TeamPreviewer.clear_team(arg_8_0)
 	local var_8_0 = arg_8_0.hero_previewers
 
 	for iter_8_0 = 1, #var_8_0 do
@@ -80,7 +80,7 @@ TeamPreviewer.clear_team = function (arg_8_0)
 	end
 end
 
-TeamPreviewer.destroy_previewers = function (arg_9_0)
+function TeamPreviewer.destroy_previewers(arg_9_0)
 	local var_9_0 = arg_9_0.hero_previewers
 
 	for iter_9_0 = 1, #var_9_0 do
@@ -96,7 +96,7 @@ TeamPreviewer.destroy_previewers = function (arg_9_0)
 	arg_9_0.hero_previewers = {}
 end
 
-TeamPreviewer._spawn_hero = function (arg_10_0, arg_10_1, arg_10_2)
+function TeamPreviewer._spawn_hero(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_1:on_enter(arg_10_0.world)
 
 	local var_10_0 = callback(arg_10_0, "cb_hero_unit_spawned_skin_preview", arg_10_1, arg_10_2)
@@ -106,7 +106,7 @@ end
 
 local var_0_0 = {}
 
-TeamPreviewer.cb_hero_unit_spawned_skin_preview = function (arg_11_0, arg_11_1, arg_11_2)
+function TeamPreviewer.cb_hero_unit_spawned_skin_preview(arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_2.preview_items
 	local var_11_1 = arg_11_2.weapon_slot
 
@@ -155,7 +155,7 @@ TeamPreviewer.cb_hero_unit_spawned_skin_preview = function (arg_11_0, arg_11_1, 
 	end
 end
 
-TeamPreviewer.update_hero_arrangement = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+function TeamPreviewer.update_hero_arrangement(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_1
 	local var_12_1 = arg_12_0.hero_previewers
 	local var_12_2 = ScriptCamera.position(arg_12_0.camera)
@@ -178,7 +178,7 @@ TeamPreviewer.update_hero_arrangement = function (arg_12_0, arg_12_1, arg_12_2, 
 	end
 end
 
-TeamPreviewer.set_camera_orientation = function (arg_13_0, arg_13_1, arg_13_2)
+function TeamPreviewer.set_camera_orientation(arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = Vector3Aux.unbox(arg_13_1)
 	local var_13_1 = Vector3Aux.unbox(arg_13_2)
 	local var_13_2 = Vector3.normalize(var_13_1 - var_13_0)
@@ -188,11 +188,11 @@ TeamPreviewer.set_camera_orientation = function (arg_13_0, arg_13_1, arg_13_2)
 	ScriptCamera.set_local_position(arg_13_0.camera, var_13_0)
 end
 
-TeamPreviewer.set_camera_fov = function (arg_14_0, arg_14_1)
+function TeamPreviewer.set_camera_fov(arg_14_0, arg_14_1)
 	Camera.set_vertical_fov(arg_14_0.camera, math.degrees_to_radians(arg_14_1))
 end
 
-TeamPreviewer.get_hero_previewer = function (arg_15_0, arg_15_1)
+function TeamPreviewer.get_hero_previewer(arg_15_0, arg_15_1)
 	fassert(arg_15_0.hero_previewers[arg_15_1], "[TeamPreviewer] The hero previewer at the index %d you are trying to access does not exist!", arg_15_1)
 
 	return arg_15_0.hero_previewers[arg_15_1] or nil

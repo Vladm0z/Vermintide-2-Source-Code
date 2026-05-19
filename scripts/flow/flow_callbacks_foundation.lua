@@ -710,7 +710,7 @@ function flow_callback_attach_player_item(arg_39_0)
 						end
 					end
 
-					if var_39_7.ammo_data ~= nil and var_39_7.actions.action_one.default.projectile_info ~= nil then
+					if var_39_7.ammo_data ~= nil and var_39_7.actions.action_one ~= nil and var_39_7.actions.action_one.default.projectile_info ~= nil then
 						local var_39_13 = ProjectileUnits
 
 						if var_39_13[var_39_7.actions.action_one.default.projectile_info.projectile_units_template].dummy_linker_unit_name ~= nil then

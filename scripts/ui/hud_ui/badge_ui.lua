@@ -7,7 +7,7 @@ local var_0_3 = var_0_0.animation_definitions
 
 BadgeUI = class(BadgeUI)
 
-BadgeUI.init = function (arg_1_0, arg_1_1, arg_1_2)
+function BadgeUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._input_manager = arg_1_2.input_manager
@@ -30,21 +30,21 @@ BadgeUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "add_local_badge", "event_add_local_badge")
 end
 
-BadgeUI.destroy = function (arg_2_0)
+function BadgeUI.destroy(arg_2_0)
 	GarbageLeakDetector.register_object(arg_2_0, "badge_ui")
 	Managers.state.event:unregister("add_badge", arg_2_0)
 
 	arg_2_0.ui_animator = nil
 end
 
-BadgeUI._create_ui_elements = function (arg_3_0)
+function BadgeUI._create_ui_elements(arg_3_0)
 	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_3_0._badge_widget = UIWidget.init(var_0_1)
 end
 
-BadgeUI.update = function (arg_4_0, arg_4_1, arg_4_2)
+function BadgeUI.update(arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0._animations
 	local var_4_1 = arg_4_0._ui_animator
 
@@ -63,7 +63,7 @@ BadgeUI.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_draw(arg_4_1)
 end
 
-BadgeUI._draw = function (arg_5_0, arg_5_1)
+function BadgeUI._draw(arg_5_0, arg_5_1)
 	if not arg_5_0._has_active_badge then
 		return
 	end
@@ -78,7 +78,7 @@ BadgeUI._draw = function (arg_5_0, arg_5_1)
 	UIRenderer.end_pass(var_5_0)
 end
 
-BadgeUI._get_badge = function (arg_6_0, arg_6_1)
+function BadgeUI._get_badge(arg_6_0, arg_6_1)
 	local var_6_0 = NetworkLookup.badges[arg_6_1]
 	local var_6_1 = BadgeDefinitions[var_6_0]
 
@@ -87,15 +87,15 @@ BadgeUI._get_badge = function (arg_6_0, arg_6_1)
 	return var_6_1
 end
 
-BadgeUI.event_add_local_badge = function (arg_7_0, arg_7_1)
+function BadgeUI.event_add_local_badge(arg_7_0, arg_7_1)
 	arg_7_0:add_badge(arg_7_0._local_unique_id .. "_" .. arg_7_1, arg_7_0:_get_badge(arg_7_1))
 end
 
-BadgeUI.event_add_remote_player_badge = function (arg_8_0, arg_8_1, arg_8_2)
+function BadgeUI.event_add_remote_player_badge(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:add_badge(arg_8_1 .. "_" .. arg_8_2, arg_8_0:_get_badge(arg_8_2))
 end
 
-BadgeUI._add_to_queue = function (arg_9_0, arg_9_1, arg_9_2)
+function BadgeUI._add_to_queue(arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._badges_queue
 
 	for iter_9_0, iter_9_1 in ipairs(var_9_0) do
@@ -113,7 +113,7 @@ BadgeUI._add_to_queue = function (arg_9_0, arg_9_1, arg_9_2)
 	}
 end
 
-BadgeUI.add_badge = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+function BadgeUI.add_badge(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	arg_10_3 = arg_10_3 == nil and true or arg_10_3
 	arg_10_4 = arg_10_4 == nil and 1 or arg_10_4
 
@@ -144,7 +144,7 @@ BadgeUI.add_badge = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	arg_10_0:_start_animation("on_enter", 1, var_10_0)
 end
 
-BadgeUI._start_animation = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+function BadgeUI._start_animation(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = {
 		wwise_world = arg_11_0._wwise_world,
 		render_settings = arg_11_0._render_settings,
@@ -158,12 +158,12 @@ BadgeUI._start_animation = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	}
 end
 
-BadgeUI._remove_active_badge = function (arg_12_0, arg_12_1)
+function BadgeUI._remove_active_badge(arg_12_0, arg_12_1)
 	arg_12_0._animations[arg_12_1] = nil
 	arg_12_0._has_active_badge = false
 end
 
-BadgeUI._add_badge_from_queue = function (arg_13_0)
+function BadgeUI._add_badge_from_queue(arg_13_0)
 	if arg_13_0._has_active_badge then
 		return
 	end

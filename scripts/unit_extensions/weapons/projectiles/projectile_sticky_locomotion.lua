@@ -4,7 +4,7 @@ require("scripts/helpers/network_utils")
 
 ProjectileStickyLocomotion = class(ProjectileStickyLocomotion)
 
-ProjectileStickyLocomotion.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function ProjectileStickyLocomotion.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.is_server = Managers.player.is_server
@@ -41,7 +41,7 @@ ProjectileStickyLocomotion.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-ProjectileStickyLocomotion._init_from_seed = function (arg_2_0, arg_2_1)
+function ProjectileStickyLocomotion._init_from_seed(arg_2_0, arg_2_1)
 	arg_2_1 = arg_2_1 or 0
 	arg_2_0._seed = arg_2_1
 	arg_2_0._spin_dir = 1 - bit.band(arg_2_1, 128) / 64
@@ -53,11 +53,11 @@ ProjectileStickyLocomotion._init_from_seed = function (arg_2_0, arg_2_1)
 	arg_2_1, arg_2_0._wobble_stabiliztion_speed = math.next_random_range(arg_2_1, 0.5, 0.5)
 end
 
-ProjectileStickyLocomotion.destroy = function (arg_3_0)
+function ProjectileStickyLocomotion.destroy(arg_3_0)
 	return
 end
 
-ProjectileStickyLocomotion.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+function ProjectileStickyLocomotion.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_0.moved = false
 
 	local var_4_0 = arg_4_5 - arg_4_0.spawn_time
@@ -150,27 +150,27 @@ ProjectileStickyLocomotion.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3
 	arg_4_0.moved = true
 end
 
-ProjectileStickyLocomotion.moved_this_frame = function (arg_5_0)
+function ProjectileStickyLocomotion.moved_this_frame(arg_5_0)
 	return arg_5_0.moved
 end
 
-ProjectileStickyLocomotion.current_velocity = function (arg_6_0)
+function ProjectileStickyLocomotion.current_velocity(arg_6_0)
 	return arg_6_0.velocity:unbox()
 end
 
-ProjectileStickyLocomotion.current_position = function (arg_7_0)
+function ProjectileStickyLocomotion.current_position(arg_7_0)
 	return arg_7_0.position_boxed:unbox()
 end
 
-ProjectileStickyLocomotion.current_rotation = function (arg_8_0)
+function ProjectileStickyLocomotion.current_rotation(arg_8_0)
 	return arg_8_0._rotation:unbox()
 end
 
-ProjectileStickyLocomotion.last_position = function (arg_9_0)
+function ProjectileStickyLocomotion.last_position(arg_9_0)
 	return arg_9_0._last_position:unbox()
 end
 
-ProjectileStickyLocomotion.stop = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+function ProjectileStickyLocomotion.stop(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if arg_10_0.is_husk then
 		return
 	end
@@ -211,7 +211,7 @@ ProjectileStickyLocomotion.stop = function (arg_10_0, arg_10_1, arg_10_2, arg_10
 	end
 end
 
-ProjectileStickyLocomotion.stick_to_unit = function (arg_11_0, arg_11_1)
+function ProjectileStickyLocomotion.stick_to_unit(arg_11_0, arg_11_1)
 	arg_11_0.stopped = true
 	arg_11_0.stop_time = Managers.time:time("game")
 
@@ -235,7 +235,7 @@ ProjectileStickyLocomotion.stick_to_unit = function (arg_11_0, arg_11_1)
 	end
 end
 
-ProjectileStickyLocomotion.stick_to_position = function (arg_12_0, arg_12_1, arg_12_2)
+function ProjectileStickyLocomotion.stick_to_position(arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0.stopped = true
 	arg_12_0.stop_time = Managers.time:time("game")
 
@@ -254,11 +254,11 @@ ProjectileStickyLocomotion.stick_to_position = function (arg_12_0, arg_12_1, arg
 	Unit.flow_event(arg_12_0.unit, "stopped")
 end
 
-ProjectileStickyLocomotion.has_stopped = function (arg_13_0)
+function ProjectileStickyLocomotion.has_stopped(arg_13_0)
 	return arg_13_0.stopped
 end
 
-ProjectileStickyLocomotion.hot_join_sync = function (arg_14_0, arg_14_1)
+function ProjectileStickyLocomotion.hot_join_sync(arg_14_0, arg_14_1)
 	local var_14_0 = PEER_ID_TO_CHANNEL[arg_14_1]
 
 	if ALIVE[arg_14_0.unit] then
@@ -269,7 +269,7 @@ ProjectileStickyLocomotion.hot_join_sync = function (arg_14_0, arg_14_1)
 	end
 end
 
-ProjectileStickyLocomotion.hot_join_sync_projectile_sticky = function (arg_15_0, arg_15_1, arg_15_2)
+function ProjectileStickyLocomotion.hot_join_sync_projectile_sticky(arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = Managers.time:time("game")
 
 	arg_15_0.spawn_time = var_15_0 - arg_15_1

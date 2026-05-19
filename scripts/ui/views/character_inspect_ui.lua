@@ -5,7 +5,7 @@ local var_0_1 = var_0_0.create_loot_widget
 
 CharacterInspectUI = class(CharacterInspectUI)
 
-CharacterInspectUI.init = function (arg_1_0, arg_1_1)
+function CharacterInspectUI.init(arg_1_0, arg_1_1)
 	arg_1_0.ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0.ui_renderer = arg_1_1.ui_renderer
 	arg_1_0.ingame_ui = arg_1_1.ingame_ui
@@ -21,7 +21,7 @@ end
 
 local var_0_2 = true
 
-CharacterInspectUI.create_ui_elements = function (arg_2_0)
+function CharacterInspectUI.create_ui_elements(arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	local var_2_0 = {}
@@ -43,11 +43,11 @@ CharacterInspectUI.create_ui_elements = function (arg_2_0)
 	var_0_2 = false
 end
 
-CharacterInspectUI.destroy = function (arg_3_0)
+function CharacterInspectUI.destroy(arg_3_0)
 	GarbageLeakDetector.register_object(arg_3_0, "character_inspect_ui")
 end
 
-CharacterInspectUI.update = function (arg_4_0, arg_4_1)
+function CharacterInspectUI.update(arg_4_0, arg_4_1)
 	if var_0_2 then
 		arg_4_0:create_ui_elements()
 	end
@@ -56,7 +56,7 @@ CharacterInspectUI.update = function (arg_4_0, arg_4_1)
 	arg_4_0:draw(arg_4_1)
 end
 
-CharacterInspectUI._update_animations = function (arg_5_0, arg_5_1)
+function CharacterInspectUI._update_animations(arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._animations
 
 	for iter_5_0, iter_5_1 in pairs(var_5_0) do
@@ -68,7 +68,7 @@ CharacterInspectUI._update_animations = function (arg_5_0, arg_5_1)
 	end
 end
 
-CharacterInspectUI.draw = function (arg_6_0, arg_6_1)
+function CharacterInspectUI.draw(arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.ui_top_renderer
 	local var_6_1 = arg_6_0.ui_scenegraph
 	local var_6_2 = arg_6_0.input_manager:get_service("ingame_menu")
@@ -83,7 +83,7 @@ CharacterInspectUI.draw = function (arg_6_0, arg_6_1)
 	UIRenderer.end_pass(var_6_0)
 end
 
-CharacterInspectUI.set_position = function (arg_7_0, arg_7_1, arg_7_2)
+function CharacterInspectUI.set_position(arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0.ui_scenegraph.background.local_position
 
 	var_7_0[1] = arg_7_1

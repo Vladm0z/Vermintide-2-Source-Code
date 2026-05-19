@@ -12,7 +12,7 @@ end
 
 local var_0_1 = {}
 
-SteamItemService.parse = function (arg_2_0)
+function SteamItemService.parse(arg_2_0)
 	string.split_deprecated(arg_2_0, ";", var_0_1)
 
 	if var_0_1[1] ~= "1" then
@@ -43,7 +43,7 @@ SteamItemService.parse = function (arg_2_0)
 	return var_2_0
 end
 
-SteamItemService.get_item_data = function (arg_3_0)
+function SteamItemService.get_item_data(arg_3_0)
 	local var_3_0 = SteamInventory.get_item_definition_property(arg_3_0, "price")
 
 	if not var_3_0 then

@@ -32,7 +32,7 @@ local var_0_16 = {
 	slot_melee = true
 }
 
-CharacterSelectionStateVersusLoadouts.on_enter = function (arg_1_0, arg_1_1)
+function CharacterSelectionStateVersusLoadouts.on_enter(arg_1_0, arg_1_1)
 	print("[HeroViewState] Enter Substate CharacterSelectionStateVersusLoadouts")
 
 	local var_1_0 = arg_1_1.ingame_ui_context
@@ -97,7 +97,7 @@ CharacterSelectionStateVersusLoadouts.on_enter = function (arg_1_0, arg_1_1)
 	arg_1_0._menu_input_description:set_input_description(nil)
 end
 
-CharacterSelectionStateVersusLoadouts._disable_unused_careers = function (arg_2_0)
+function CharacterSelectionStateVersusLoadouts._disable_unused_careers(arg_2_0)
 	for iter_2_0, iter_2_1 in ipairs(arg_2_0._hero_widgets) do
 		local var_2_0 = iter_2_1.content
 
@@ -106,7 +106,7 @@ CharacterSelectionStateVersusLoadouts._disable_unused_careers = function (arg_2_
 	end
 end
 
-CharacterSelectionStateVersusLoadouts.on_exit = function (arg_3_0, arg_3_1)
+function CharacterSelectionStateVersusLoadouts.on_exit(arg_3_0, arg_3_1)
 	arg_3_0.super.on_exit(arg_3_0, arg_3_1)
 
 	if not arg_3_0._new_loadout_confirmed then
@@ -121,7 +121,7 @@ CharacterSelectionStateVersusLoadouts.on_exit = function (arg_3_0, arg_3_1)
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._store_selected_loadout_index = function (arg_4_0, arg_4_1)
+function CharacterSelectionStateVersusLoadouts._store_selected_loadout_index(arg_4_0, arg_4_1)
 	local var_4_0 = Managers.mechanism:current_mechanism_name()
 	local var_4_1 = PlayerData.loadout_selection and PlayerData.loadout_selection[var_4_0]
 	local var_4_2 = var_4_1 and var_4_1[arg_4_1] or 1
@@ -144,7 +144,7 @@ CharacterSelectionStateVersusLoadouts._store_selected_loadout_index = function (
 	fassert(arg_4_0._stored_selected_loadout_index, "[CharacterSelectionStateVersusLoadouts] Couldn't find any stored loadout index")
 end
 
-CharacterSelectionStateVersusLoadouts._setup_rarity_indices = function (arg_5_0)
+function CharacterSelectionStateVersusLoadouts._setup_rarity_indices(arg_5_0)
 	arg_5_0._rarity_indices = {}
 
 	for iter_5_0, iter_5_1 in pairs(RaritySettings) do
@@ -152,7 +152,7 @@ CharacterSelectionStateVersusLoadouts._setup_rarity_indices = function (arg_5_0)
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._create_ui_elements = function (arg_6_0)
+function CharacterSelectionStateVersusLoadouts._create_ui_elements(arg_6_0)
 	arg_6_0:_inject_additional_scenegraph_definitions(var_0_4)
 
 	arg_6_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_4)
@@ -238,7 +238,7 @@ CharacterSelectionStateVersusLoadouts._create_ui_elements = function (arg_6_0)
 	arg_6_0:_populate_tags()
 end
 
-CharacterSelectionStateVersusLoadouts._setup_item_grid = function (arg_7_0)
+function CharacterSelectionStateVersusLoadouts._setup_item_grid(arg_7_0)
 	arg_7_0:_setup_item_grid_categories()
 
 	local var_7_0 = ItemGridUI:new(arg_7_0._categories, arg_7_0._widgets_by_name.item_grid, arg_7_0._hero_name, arg_7_0._career_index)
@@ -253,7 +253,7 @@ CharacterSelectionStateVersusLoadouts._setup_item_grid = function (arg_7_0)
 	arg_7_0._item_grid = var_7_0
 end
 
-CharacterSelectionStateVersusLoadouts._setup_item_grid_categories = function (arg_8_0)
+function CharacterSelectionStateVersusLoadouts._setup_item_grid_categories(arg_8_0)
 	local var_8_0 = arg_8_0._career_index
 	local var_8_1 = arg_8_0._profile_index
 	local var_8_2 = SPProfiles[var_8_1].careers[var_8_0].item_slot_types_by_slot_name
@@ -294,7 +294,7 @@ CharacterSelectionStateVersusLoadouts._setup_item_grid_categories = function (ar
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._setup_hero_widgets = function (arg_9_0)
+function CharacterSelectionStateVersusLoadouts._setup_hero_widgets(arg_9_0)
 	local var_9_0 = {}
 	local var_9_1 = {}
 
@@ -359,7 +359,7 @@ CharacterSelectionStateVersusLoadouts._setup_hero_widgets = function (arg_9_0)
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._populate_hero_info = function (arg_10_0)
+function CharacterSelectionStateVersusLoadouts._populate_hero_info(arg_10_0)
 	local var_10_0 = SPProfiles[arg_10_0._profile_index]
 	local var_10_1 = var_10_0.careers[arg_10_0._career_index]
 	local var_10_2 = var_10_0.display_name
@@ -375,7 +375,7 @@ CharacterSelectionStateVersusLoadouts._populate_hero_info = function (arg_10_0)
 	arg_10_0._widgets_by_name.info_hero_level.content.text = var_10_8
 end
 
-CharacterSelectionStateVersusLoadouts._start_animation = function (arg_11_0, arg_11_1, arg_11_2)
+function CharacterSelectionStateVersusLoadouts._start_animation(arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = {
 		render_settings = arg_11_2 or arg_11_0._render_settings,
 		ui_scenegraph = arg_11_0._ui_scenegraph
@@ -386,7 +386,7 @@ CharacterSelectionStateVersusLoadouts._start_animation = function (arg_11_0, arg
 	arg_11_0._animations[arg_11_1] = var_11_2
 end
 
-CharacterSelectionStateVersusLoadouts._update_animations = function (arg_12_0, arg_12_1, arg_12_2)
+function CharacterSelectionStateVersusLoadouts._update_animations(arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._ui_animations
 	local var_12_1 = arg_12_0._animations
 	local var_12_2 = arg_12_0._ui_animator
@@ -424,7 +424,7 @@ CharacterSelectionStateVersusLoadouts._update_animations = function (arg_12_0, a
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._animate_back_button = function (arg_13_0, arg_13_1, arg_13_2)
+function CharacterSelectionStateVersusLoadouts._animate_back_button(arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_1.content
 	local var_13_1 = arg_13_1.style
 	local var_13_2 = var_13_0.button_hotspot
@@ -476,12 +476,12 @@ CharacterSelectionStateVersusLoadouts._animate_back_button = function (arg_13_0,
 	var_13_2.selection_progress = var_13_8
 end
 
-CharacterSelectionStateVersusLoadouts.post_update = function (arg_14_0, arg_14_1, arg_14_2)
+function CharacterSelectionStateVersusLoadouts.post_update(arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0:_update_animations(arg_14_1, arg_14_2)
 	arg_14_0:_handle_spawn(arg_14_1, arg_14_2)
 end
 
-CharacterSelectionStateVersusLoadouts._handle_spawn = function (arg_15_0, arg_15_1, arg_15_2)
+function CharacterSelectionStateVersusLoadouts._handle_spawn(arg_15_0, arg_15_1, arg_15_2)
 	if not arg_15_0.parent:transitioning() and not arg_15_0._transition_timer then
 		if arg_15_0._prepare_exit then
 			arg_15_0._prepare_exit = false
@@ -514,7 +514,7 @@ CharacterSelectionStateVersusLoadouts._handle_spawn = function (arg_15_0, arg_15
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._close_menu = function (arg_16_0)
+function CharacterSelectionStateVersusLoadouts._close_menu(arg_16_0)
 	local var_16_0 = arg_16_0._parent:get_exit_button_widget()
 	local var_16_1 = false or arg_16_0._items_dirty
 
@@ -533,7 +533,7 @@ CharacterSelectionStateVersusLoadouts._close_menu = function (arg_16_0)
 	end
 end
 
-CharacterSelectionStateVersusLoadouts.update = function (arg_17_0, arg_17_1, arg_17_2)
+function CharacterSelectionStateVersusLoadouts.update(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0:_handle_input(arg_17_1, arg_17_2)
 	arg_17_0:_update_profile_request()
 	arg_17_0:_update_video_player_settings()
@@ -542,7 +542,7 @@ CharacterSelectionStateVersusLoadouts.update = function (arg_17_0, arg_17_1, arg
 	return arg_17_0:_handle_transitions()
 end
 
-CharacterSelectionStateVersusLoadouts._handle_input = function (arg_18_0, arg_18_1, arg_18_2)
+function CharacterSelectionStateVersusLoadouts._handle_input(arg_18_0, arg_18_1, arg_18_2)
 	if arg_18_0._prepare_exit then
 		return
 	end
@@ -555,7 +555,7 @@ CharacterSelectionStateVersusLoadouts._handle_input = function (arg_18_0, arg_18
 	arg_18_0:_handle_gamepad_selection(var_18_0)
 end
 
-CharacterSelectionStateVersusLoadouts._handle_keyboard_selection = function (arg_19_0, arg_19_1)
+function CharacterSelectionStateVersusLoadouts._handle_keyboard_selection(arg_19_0, arg_19_1)
 	if not Managers.input:is_device_active("keyboard") then
 		return
 	end
@@ -585,7 +585,7 @@ CharacterSelectionStateVersusLoadouts._handle_keyboard_selection = function (arg
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._handle_gamepad_selection = function (arg_20_0, arg_20_1)
+function CharacterSelectionStateVersusLoadouts._handle_gamepad_selection(arg_20_0, arg_20_1)
 	if not Managers.input:is_device_active("gamepad") then
 		return
 	end
@@ -629,7 +629,7 @@ CharacterSelectionStateVersusLoadouts._handle_gamepad_selection = function (arg_
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._enable_loadout_selection = function (arg_21_0, arg_21_1, arg_21_2)
+function CharacterSelectionStateVersusLoadouts._enable_loadout_selection(arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = {
 		loadout_weapons = {
 			"item_grid",
@@ -666,7 +666,7 @@ CharacterSelectionStateVersusLoadouts._enable_loadout_selection = function (arg_
 	arg_21_0._loadout_selection_active = arg_21_1
 end
 
-CharacterSelectionStateVersusLoadouts._update_items = function (arg_22_0)
+function CharacterSelectionStateVersusLoadouts._update_items(arg_22_0)
 	if not arg_22_0._items_dirty then
 		return
 	end
@@ -676,7 +676,7 @@ CharacterSelectionStateVersusLoadouts._update_items = function (arg_22_0)
 	arg_22_0._items_dirty = false
 end
 
-CharacterSelectionStateVersusLoadouts._update_talents = function (arg_23_0)
+function CharacterSelectionStateVersusLoadouts._update_talents(arg_23_0)
 	if not arg_23_0._talents_dirty then
 		return
 	end
@@ -698,7 +698,7 @@ CharacterSelectionStateVersusLoadouts._update_talents = function (arg_23_0)
 	arg_23_0._talents_dirty = false
 end
 
-CharacterSelectionStateVersusLoadouts._handle_mouse_selection = function (arg_24_0, arg_24_1)
+function CharacterSelectionStateVersusLoadouts._handle_mouse_selection(arg_24_0, arg_24_1)
 	if Managers.input:is_device_active("keyboard") then
 		return
 	end
@@ -778,7 +778,7 @@ CharacterSelectionStateVersusLoadouts._handle_mouse_selection = function (arg_24
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._handle_item_loadout_selection = function (arg_25_0, arg_25_1)
+function CharacterSelectionStateVersusLoadouts._handle_item_loadout_selection(arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._widgets_by_name.item_grid
 	local var_25_1 = arg_25_0._item_grid
 	local var_25_2 = false
@@ -808,7 +808,7 @@ CharacterSelectionStateVersusLoadouts._handle_item_loadout_selection = function 
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._set_loadout_item = function (arg_26_0, arg_26_1, arg_26_2)
+function CharacterSelectionStateVersusLoadouts._set_loadout_item(arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = Managers.player:player_from_peer_id(arg_26_0.peer_id).player_unit
 
 	if not var_26_0 or not Unit.alive(var_26_0) then
@@ -850,7 +850,7 @@ CharacterSelectionStateVersusLoadouts._set_loadout_item = function (arg_26_0, ar
 	Managers.state.event:trigger("event_set_loadout_items")
 end
 
-CharacterSelectionStateVersusLoadouts._get_slot_by_type = function (arg_27_0, arg_27_1)
+function CharacterSelectionStateVersusLoadouts._get_slot_by_type(arg_27_0, arg_27_1)
 	local var_27_0 = InventorySettings.slots_by_slot_index
 
 	for iter_27_0, iter_27_1 in pairs(var_27_0) do
@@ -860,7 +860,7 @@ CharacterSelectionStateVersusLoadouts._get_slot_by_type = function (arg_27_0, ar
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._handle_talent_loadout_selection = function (arg_28_0, arg_28_1)
+function CharacterSelectionStateVersusLoadouts._handle_talent_loadout_selection(arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0._widgets_by_name.talent_grid
 	local var_28_1 = var_28_0.content
 
@@ -899,7 +899,7 @@ CharacterSelectionStateVersusLoadouts._handle_talent_loadout_selection = functio
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._confirm_loadout = function (arg_29_0)
+function CharacterSelectionStateVersusLoadouts._confirm_loadout(arg_29_0)
 	arg_29_0:_play_sound("play_gui_start_menu_button_click")
 
 	if arg_29_0._loadout_selection_active then
@@ -935,7 +935,7 @@ CharacterSelectionStateVersusLoadouts._confirm_loadout = function (arg_29_0)
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._populate_talent_grid = function (arg_30_0)
+function CharacterSelectionStateVersusLoadouts._populate_talent_grid(arg_30_0)
 	local var_30_0 = arg_30_0._hero_name
 	local var_30_1 = arg_30_0._career_index
 	local var_30_2 = FindProfileIndex(var_30_0)
@@ -980,7 +980,7 @@ CharacterSelectionStateVersusLoadouts._populate_talent_grid = function (arg_30_0
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._set_loadout = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5)
+function CharacterSelectionStateVersusLoadouts._set_loadout(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5)
 	if not arg_31_1 or not arg_31_2 or not arg_31_3 then
 		return false
 	end
@@ -1049,7 +1049,7 @@ CharacterSelectionStateVersusLoadouts._set_loadout = function (arg_31_0, arg_31_
 	return var_31_2 ~= arg_31_0._stored_selected_loadout_index
 end
 
-CharacterSelectionStateVersusLoadouts._save_loadout_index = function (arg_32_0, arg_32_1, arg_32_2)
+function CharacterSelectionStateVersusLoadouts._save_loadout_index(arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = Managers.state.game_mode:game_mode_key()
 
 	if not InventorySettings.save_local_loadout_selection[var_32_0] then
@@ -1065,7 +1065,7 @@ CharacterSelectionStateVersusLoadouts._save_loadout_index = function (arg_32_0, 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-CharacterSelectionStateVersusLoadouts._change_loadout = function (arg_33_0, arg_33_1, arg_33_2)
+function CharacterSelectionStateVersusLoadouts._change_loadout(arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_0._widgets_by_name.loadout_frame
 	local var_33_1 = arg_33_0._widgets_by_name.selected_loadout_header
 	local var_33_2 = arg_33_0._widgets_by_name.selected_loadout_desc
@@ -1120,7 +1120,7 @@ CharacterSelectionStateVersusLoadouts._change_loadout = function (arg_33_0, arg_
 	arg_33_0:_play_sound("Play_gui_loadout_select")
 end
 
-CharacterSelectionStateVersusLoadouts._draw = function (arg_34_0, arg_34_1, arg_34_2)
+function CharacterSelectionStateVersusLoadouts._draw(arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0._ui_scenegraph
 	local var_34_1 = arg_34_0.ui_top_renderer
 	local var_34_2 = arg_34_0._render_settings
@@ -1193,7 +1193,7 @@ CharacterSelectionStateVersusLoadouts._draw = function (arg_34_0, arg_34_1, arg_
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._populate_loadout_buttons = function (arg_35_0)
+function CharacterSelectionStateVersusLoadouts._populate_loadout_buttons(arg_35_0)
 	local var_35_0 = arg_35_0._selected_profile_index or arg_35_0._profile_index
 	local var_35_1 = arg_35_0._selected_career_index or arg_35_0._career_index
 	local var_35_2 = SPProfiles[var_35_0].careers[var_35_1].name
@@ -1237,7 +1237,7 @@ CharacterSelectionStateVersusLoadouts._populate_loadout_buttons = function (arg_
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._populate_tags = function (arg_36_0)
+function CharacterSelectionStateVersusLoadouts._populate_tags(arg_36_0)
 	local var_36_0 = arg_36_0._selected_profile_index or arg_36_0._profile_index
 	local var_36_1 = arg_36_0._selected_career_index or arg_36_0._career_index
 	local var_36_2 = SPProfiles[var_36_0].careers[var_36_1].name
@@ -1281,7 +1281,7 @@ CharacterSelectionStateVersusLoadouts._populate_tags = function (arg_36_0)
 	arg_36_0._tag_widgets = var_36_7
 end
 
-CharacterSelectionStateVersusLoadouts._populate_loadout = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
+function CharacterSelectionStateVersusLoadouts._populate_loadout(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
 	local var_38_0 = arg_38_0._selected_profile_index or arg_38_0._profile_index
 	local var_38_1 = arg_38_0._selected_career_index or arg_38_0._career_index
 	local var_38_2 = SPProfiles[var_38_0]
@@ -1349,7 +1349,7 @@ CharacterSelectionStateVersusLoadouts._populate_loadout = function (arg_38_0, ar
 	arg_38_0._widgets_by_name.talents_header.content.default_loadout = var_38_6 and var_38_6.loadout_type == "default"
 end
 
-CharacterSelectionStateVersusLoadouts._populate_career_info = function (arg_39_0)
+function CharacterSelectionStateVersusLoadouts._populate_career_info(arg_39_0)
 	local var_39_0 = arg_39_0._selected_profile_index or arg_39_0._profile_index
 	local var_39_1 = arg_39_0._selected_career_index or arg_39_0._career_index
 	local var_39_2 = arg_39_0._ui_scenegraph
@@ -1426,7 +1426,7 @@ CharacterSelectionStateVersusLoadouts._populate_career_info = function (arg_39_0
 	arg_39_0:_destroy_video_player()
 end
 
-CharacterSelectionStateVersusLoadouts._draw_video = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+function CharacterSelectionStateVersusLoadouts._draw_video(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 	if not arg_40_0._draw_video_next_frame then
 		if arg_40_0._video_widget and not arg_40_0._prepare_exit then
 			if not arg_40_0._video_created then
@@ -1440,7 +1440,7 @@ CharacterSelectionStateVersusLoadouts._draw_video = function (arg_40_0, arg_40_1
 	end
 end
 
-CharacterSelectionStateVersusLoadouts._select_hero = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5)
+function CharacterSelectionStateVersusLoadouts._select_hero(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5)
 	local var_41_0 = SPProfiles[arg_41_1]
 	local var_41_1 = var_41_0.careers[arg_41_2]
 	local var_41_2 = var_41_0.display_name
@@ -1492,7 +1492,7 @@ CharacterSelectionStateVersusLoadouts._select_hero = function (arg_41_0, arg_41_
 	arg_41_0:_change_loadout(var_41_15, arg_41_5)
 end
 
-CharacterSelectionStateVersusLoadouts._spawn_hero_unit = function (arg_42_0, arg_42_1)
+function CharacterSelectionStateVersusLoadouts._spawn_hero_unit(arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_0.world_previewer
 	local var_42_1 = arg_42_0._selected_career_index
 	local var_42_2 = callback(arg_42_0, "cb_hero_unit_spawned", arg_42_1)

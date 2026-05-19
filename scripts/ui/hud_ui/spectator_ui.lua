@@ -2,7 +2,7 @@
 
 SpectatorUI = class(SpectatorUI)
 
-SpectatorUI.init = function (arg_1_0, arg_1_1, arg_1_2)
+function SpectatorUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._ingame_ui = arg_1_2.ingame_ui
@@ -26,7 +26,7 @@ SpectatorUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._marker_ids = {}
 end
 
-SpectatorUI.destroy = function (arg_2_0)
+function SpectatorUI.destroy(arg_2_0)
 	print("[SpectatorUI] - Destroy")
 
 	local var_2_0 = Managers.state.event
@@ -36,7 +36,7 @@ SpectatorUI.destroy = function (arg_2_0)
 	arg_2_0:set_visible(false)
 end
 
-SpectatorUI.update = function (arg_3_0, arg_3_1, arg_3_2)
+function SpectatorUI.update(arg_3_0, arg_3_1, arg_3_2)
 	if not arg_3_0._is_visible then
 		return
 	end
@@ -44,15 +44,15 @@ SpectatorUI.update = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:draw(arg_3_1, arg_3_2)
 end
 
-SpectatorUI.draw = function (arg_4_0, arg_4_1, arg_4_2)
+function SpectatorUI.draw(arg_4_0, arg_4_1, arg_4_2)
 	return
 end
 
-SpectatorUI.set_dirty = function (arg_5_0)
+function SpectatorUI.set_dirty(arg_5_0)
 	arg_5_0._dirty = true
 end
 
-SpectatorUI.set_visible = function (arg_6_0, arg_6_1)
+function SpectatorUI.set_visible(arg_6_0, arg_6_1)
 	arg_6_0._is_visible = arg_6_1
 
 	if arg_6_1 then
@@ -70,7 +70,7 @@ SpectatorUI.set_visible = function (arg_6_0, arg_6_1)
 	end
 end
 
-SpectatorUI._get_actual_players = function (arg_7_0)
+function SpectatorUI._get_actual_players(arg_7_0)
 	local var_7_0 = {}
 	local var_7_1 = Managers.party:parties()
 
@@ -87,7 +87,7 @@ SpectatorUI._get_actual_players = function (arg_7_0)
 	return var_7_0
 end
 
-SpectatorUI._add_world_marker = function (arg_8_0, arg_8_1)
+function SpectatorUI._add_world_marker(arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._marker_ids[arg_8_1]
 
 	if var_8_0 then
@@ -99,26 +99,26 @@ SpectatorUI._add_world_marker = function (arg_8_0, arg_8_1)
 	Managers.state.event:trigger("add_world_marker_unit", "versus_pactsworn_ghostmode", arg_8_1, var_8_1)
 end
 
-SpectatorUI._clear_world_markers = function (arg_9_0)
+function SpectatorUI._clear_world_markers(arg_9_0)
 	for iter_9_0, iter_9_1 in pairs(arg_9_0._marker_ids) do
 		arg_9_0:_clear_world_marker(iter_9_0, iter_9_1)
 	end
 end
 
-SpectatorUI._clear_world_marker = function (arg_10_0, arg_10_1, arg_10_2)
+function SpectatorUI._clear_world_marker(arg_10_0, arg_10_1, arg_10_2)
 	Managers.state.event:trigger("remove_world_marker", arg_10_2)
 
 	arg_10_0._marker_ids[arg_10_1] = nil
 end
 
-SpectatorUI.on_spectator_target_changed = function (arg_11_0, arg_11_1)
+function SpectatorUI.on_spectator_target_changed(arg_11_0, arg_11_1)
 	arg_11_0._spectated_player_unit = arg_11_1
 	arg_11_0._spectated_player = Managers.player:owner(arg_11_1)
 	arg_11_0._is_spectator = true
 	arg_11_0._text = "Spectating: " .. arg_11_0._spectated_player:name()
 end
 
-SpectatorUI.on_player_spawned = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+function SpectatorUI.on_player_spawned(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	if not arg_12_0._is_visible then
 		return
 	end
@@ -126,7 +126,7 @@ SpectatorUI.on_player_spawned = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3
 	arg_12_0:_add_world_marker(arg_12_2)
 end
 
-SpectatorUI.cb_world_marker_spawned = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+function SpectatorUI.cb_world_marker_spawned(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = Managers.player:owner(arg_13_1):profile_index()
 	local var_13_1 = SPProfiles[var_13_0]
 

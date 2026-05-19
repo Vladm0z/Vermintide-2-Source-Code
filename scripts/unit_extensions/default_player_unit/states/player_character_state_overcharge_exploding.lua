@@ -2,7 +2,7 @@
 
 PlayerCharacterStateOverchargeExploding = class(PlayerCharacterStateOverchargeExploding, PlayerCharacterState)
 
-PlayerCharacterStateOverchargeExploding.init = function (arg_1_0, arg_1_1)
+function PlayerCharacterStateOverchargeExploding.init(arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "overcharge_exploding")
 
 	arg_1_0.movement_speed = 0
@@ -11,7 +11,7 @@ PlayerCharacterStateOverchargeExploding.init = function (arg_1_0, arg_1_1)
 	arg_1_0.inside_inn = global_is_inside_inn
 end
 
-PlayerCharacterStateOverchargeExploding.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+function PlayerCharacterStateOverchargeExploding.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "exploding")
 	CharacterStateHelper.stop_career_abilities(arg_2_0.career_extension, "exploding")
 
@@ -44,7 +44,7 @@ PlayerCharacterStateOverchargeExploding.on_enter = function (arg_2_0, arg_2_1, a
 	arg_2_0.falling = false
 end
 
-PlayerCharacterStateOverchargeExploding.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+function PlayerCharacterStateOverchargeExploding.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	if not Managers.state.network:game() or not arg_3_6 then
 		return
 	end
@@ -64,7 +64,7 @@ PlayerCharacterStateOverchargeExploding.on_exit = function (arg_3_0, arg_3_1, ar
 	end
 end
 
-PlayerCharacterStateOverchargeExploding.explode = function (arg_4_0)
+function PlayerCharacterStateOverchargeExploding.explode(arg_4_0)
 	arg_4_0.has_exploded = true
 
 	local var_4_0 = arg_4_0.unit
@@ -115,7 +115,7 @@ PlayerCharacterStateOverchargeExploding.explode = function (arg_4_0)
 	end
 end
 
-PlayerCharacterStateOverchargeExploding.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+function PlayerCharacterStateOverchargeExploding.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.world
 	local var_5_2 = PlayerUnitMovementSettings.get_movement_settings_table(arg_5_1)

@@ -14,6 +14,12 @@ local var_0_0 = {
 	weakspot = 8
 }
 local var_0_1 = {
+	exploosion = 6,
+	medium = 5.6,
+	weak = 7,
+	heavy = 2
+}
+local var_0_2 = {
 	ahead_dist = 1.5,
 	push_width = 1.25,
 	push_forward_offset = 1.5,
@@ -32,7 +38,7 @@ local var_0_1 = {
 		0
 	}
 }
-local var_0_2 = {
+local var_0_3 = {
 	shield_burning_block_sound = "Play_weapon_fire_torch_metal_shield_hit",
 	push_sound_event = "Play_generic_pushed_impact_large_armour",
 	walk_speed = 2,
@@ -135,7 +141,7 @@ local var_0_2 = {
 	weapon_reach = 2,
 	trigger_dialogue_on_target_switch = true,
 	shield_stab_block_sound = "stab_hit_shield_metal",
-	displace_players_data = var_0_1,
+	displace_players_data = var_0_2,
 	infighting = InfightingSettings.large,
 	shield_opening_event = {
 		"idle_shield_down",
@@ -203,10 +209,10 @@ local var_0_2 = {
 	},
 	run_on_spawn = AiBreedSnippets.on_chaos_warrior_spawn,
 	run_on_update = AiBreedSnippets.on_chaos_warrior_update,
-	hit_reaction_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	hit_reaction_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		return arg_1_1.hit_reactions.bwd
 	end,
-	handle_stagger_anim_cb = function (arg_2_0, arg_2_1, arg_2_2)
+	handle_stagger_anim_cb = function(arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = arg_2_1.stagger_level
 		local var_2_1 = false
 
@@ -220,7 +226,7 @@ local var_0_2 = {
 
 		arg_2_1.stagger_anim_done = var_2_1
 	end,
-	stagger_modifier_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	stagger_modifier_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 		local var_3_0 = arg_3_6 and arg_3_6.damage_profile
 
 		arg_3_4.latest_hit_charge_value = arg_3_6 and arg_3_6.is_ranged and "ranged_attack" or var_3_0 and var_3_0.charge_value
@@ -312,7 +318,7 @@ local var_0_2 = {
 			}
 		}
 	},
-	before_stagger_enter_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	before_stagger_enter_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 		local var_4_0 = ScriptUnit.extension(arg_4_0, "ai_shield_system")
 		local var_4_1 = Managers.time:time("game")
 		local var_4_2 = arg_4_1.breed
@@ -332,29 +338,41 @@ local var_0_2 = {
 			arg_4_1.weakspot_exploded = true
 		end
 
+		local var_4_10 = ScriptUnit.has_extension(arg_4_2, "career_system")
+
+		if arg_4_6 == "career_ability" then
+			arg_4_4 = var_4_5.shield_open_stagger_threshold - var_0_1.medium
+		elseif arg_4_6 == "charge_ability_hit" then
+			arg_4_4 = var_4_5.shield_open_stagger_threshold - var_0_1.heavy
+		elseif arg_4_6 == "charge_ability_hit_blast" and not var_4_10._career_name == "wh_zealot" then
+			arg_4_4 = var_4_5.shield_open_stagger_threshold - var_0_1.exploosion
+		elseif arg_4_6 == "buff" then
+			arg_4_4 = var_4_5.shield_open_stagger_threshold - var_0_1.weak
+		end
+
 		arg_4_5 = arg_4_5 or 0.1
 
-		local var_4_10 = {
+		local var_4_11 = {
 			0,
 			10
 		}
-		local var_4_11 = (arg_4_4 + (arg_4_5 - var_4_10[1]) / (var_4_10[2] - var_4_10[1])) * var_4_3
-		local var_4_12 = math.lerp(var_4_8[1], var_4_8[2], (arg_4_1.cached_stagger or 0.1) / var_4_6)
-		local var_4_13 = math.clamp(var_4_1 - (arg_4_1.shield_regen_time_stamp or var_4_1), 0, math.huge) * var_4_12
+		local var_4_12 = (arg_4_4 + (arg_4_5 - var_4_11[1]) / (var_4_11[2] - var_4_11[1])) * var_4_3
+		local var_4_13 = math.lerp(var_4_8[1], var_4_8[2], (arg_4_1.cached_stagger or 0.1) / var_4_6)
+		local var_4_14 = math.clamp(var_4_1 - (arg_4_1.shield_regen_time_stamp or var_4_1), 0, math.huge) * var_4_13
 
-		arg_4_1.stagger = math.clamp((arg_4_1.cached_stagger or 0) - var_4_13, 0, math.huge) + var_4_11
+		arg_4_1.stagger = math.clamp((arg_4_1.cached_stagger or 0) - var_4_14, 0, math.huge) + var_4_12
 		arg_4_1.shield_regen_time_stamp = var_4_1
 
-		local var_4_14 = var_4_7 <= var_4_11
-		local var_4_15 = var_4_6 <= arg_4_1.stagger
+		local var_4_15 = var_4_7 <= var_4_12
+		local var_4_16 = var_4_6 <= arg_4_1.stagger
 
 		arg_4_1.override_stagger = arg_4_1.max_stagger_reached and not var_4_9
 
 		if arg_4_1.stagger_level == var_0_0.shield_open_stagger or var_4_9 then
 			arg_4_1.stagger_level = var_0_0.heavy
-		elseif var_4_15 then
+		elseif var_4_16 then
 			arg_4_1.stagger_level = var_0_0.shield_open_stagger
-		elseif var_4_14 then
+		elseif var_4_15 then
 			arg_4_1.stagger_level = var_0_0.shield_block_stagger
 		else
 			arg_4_1.override_stagger = true
@@ -570,9 +588,9 @@ local var_0_2 = {
 	}
 }
 
-Breeds.chaos_bulwark = table.create_copy(Breeds.chaos_bulwark, var_0_2)
+Breeds.chaos_bulwark = table.create_copy(Breeds.chaos_bulwark, var_0_3)
 
-local var_0_3 = {
+local var_0_4 = {
 	normal = {
 		easy = {
 			normal = 3
@@ -699,7 +717,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local var_0_5 = {
 	idle = {
 		idle = {
 			"idle",
@@ -786,7 +804,7 @@ local var_0_4 = {
 		step_attack_distance = 0.2,
 		bot_threat_start_time_step = 0.5,
 		step_attack_distance_override = 0.7,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = var_0_4,
 		considerations = UtilityConsiderations.chaos_bulwark_sweep_attack,
 		attack_anim = {
 			"attack_sweep_01",
@@ -837,7 +855,7 @@ local var_0_4 = {
 		player_push_speed_blocked = 8,
 		step_attack_distance_override = 0.7,
 		width = 0.4,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = var_0_4,
 		considerations = UtilityConsiderations.chaos_bulwark_push_attack,
 		attack_anim = {
 			"attack_quick_01"
@@ -867,7 +885,7 @@ local var_0_4 = {
 		target_running_velocity_threshold = 0,
 		attack_intensity_type = "running",
 		action_weight = 1,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = var_0_4,
 		considerations = UtilityConsiderations.chaos_bulwark_running_attack,
 		difficulty_damage = BreedTweaks.difficulty_damage.elite_attack,
 		fatigue_type = BreedTweaks.fatigue_types.elite_sweep.running_attack,
@@ -923,7 +941,7 @@ local var_0_4 = {
 		attack_intensity_type = "running",
 		action_weight = 1,
 		no_block_stagger = true,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = var_0_4,
 		considerations = UtilityConsiderations.chaos_bulwark_running_attack_charging,
 		difficulty_damage = BreedTweaks.difficulty_damage.elite_shield_push,
 		attacks = {
@@ -978,7 +996,7 @@ local var_0_4 = {
 		damage_type = "blunt",
 		unblockable = true,
 		max_impact_push_speed = 9,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = var_0_4,
 		considerations = UtilityConsiderations.chaos_bulwark_push_attack,
 		attack_anim = {
 			"attack_push"
@@ -1012,7 +1030,7 @@ local var_0_4 = {
 		difficulty_duration = BreedTweaks.blocked_duration.chaos_elite
 	},
 	stagger = {
-		custom_enter_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		custom_enter_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			assert(ScriptUnit.has_extension(arg_5_0, "ai_shield_system"), "chaos bulwark dont have ai_shield_user_extension")
 
 			local var_5_0 = ScriptUnit.extension(arg_5_0, "ai_shield_system")
@@ -1364,4 +1382,4 @@ local var_0_4 = {
 	}
 }
 
-BreedActions.chaos_bulwark = table.create_copy(BreedActions.chaos_bulwark, var_0_4)
+BreedActions.chaos_bulwark = table.create_copy(BreedActions.chaos_bulwark, var_0_5)

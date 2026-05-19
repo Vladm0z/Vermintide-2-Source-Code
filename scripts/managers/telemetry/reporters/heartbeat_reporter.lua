@@ -5,17 +5,17 @@ HeartbeatReporter.NAME = "HeartbeatReporter"
 
 local var_0_0 = 300
 
-HeartbeatReporter.init = function (arg_1_0)
+function HeartbeatReporter.init(arg_1_0)
 	arg_1_0._last_sample_time = 0
 
 	Managers.telemetry_events:heartbeat()
 end
 
-HeartbeatReporter.destroy = function (arg_2_0)
+function HeartbeatReporter.destroy(arg_2_0)
 	return
 end
 
-HeartbeatReporter.update = function (arg_3_0, arg_3_1, arg_3_2)
+function HeartbeatReporter.update(arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_2 - arg_3_0._last_sample_time > var_0_0 then
 		Managers.telemetry_events:heartbeat()
 
@@ -23,6 +23,6 @@ HeartbeatReporter.update = function (arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-HeartbeatReporter.report = function (arg_4_0)
+function HeartbeatReporter.report(arg_4_0)
 	return
 end

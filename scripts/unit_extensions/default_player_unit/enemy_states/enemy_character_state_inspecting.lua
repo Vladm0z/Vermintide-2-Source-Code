@@ -2,13 +2,13 @@
 
 EnemyCharacterStateInspecting = class(EnemyCharacterStateInspecting, EnemyCharacterState)
 
-EnemyCharacterStateInspecting.init = function (arg_1_0, arg_1_1)
+function EnemyCharacterStateInspecting.init(arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "inspecting")
 
 	local var_1_0 = arg_1_1
 end
 
-EnemyCharacterStateInspecting.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+function EnemyCharacterStateInspecting.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	arg_2_0._locomotion_extension:set_wanted_velocity(Vector3.zero())
 	CharacterStateHelper.change_camera_state(arg_2_0._player, "follow_third_person")
 
@@ -28,13 +28,13 @@ EnemyCharacterStateInspecting.on_enter = function (arg_2_0, arg_2_1, arg_2_2, ar
 	arg_2_0._status_extension:set_inspecting(true)
 end
 
-EnemyCharacterStateInspecting.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+function EnemyCharacterStateInspecting.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	CharacterStateHelper.change_camera_state(arg_3_0._player, "follow")
 	arg_3_0._first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
 	arg_3_0._status_extension:set_inspecting(false)
 end
 
-EnemyCharacterStateInspecting.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+function EnemyCharacterStateInspecting.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0._csm
 	local var_4_1 = arg_4_0._unit
 	local var_4_2 = arg_4_0._input_extension

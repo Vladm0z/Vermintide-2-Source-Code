@@ -5,21 +5,21 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTGlobadierSuicideStaggerAction = class(BTGlobadierSuicideStaggerAction, BTNode)
 BTGlobadierSuicideStaggerAction.name = "BTGlobadierSuicideStaggerAction"
 
-BTGlobadierSuicideStaggerAction.init = function (arg_1_0, ...)
+function BTGlobadierSuicideStaggerAction.init(arg_1_0, ...)
 	BTGlobadierSuicideStaggerAction.super.init(arg_1_0, ...)
 end
 
-BTGlobadierSuicideStaggerAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+function BTGlobadierSuicideStaggerAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = "kinetic"
 	local var_2_1 = Vector3(0, 0, -1)
 
 	AiUtils.kill_unit(arg_2_1, nil, nil, var_2_0, var_2_1)
 end
 
-BTGlobadierSuicideStaggerAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+function BTGlobadierSuicideStaggerAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	return
 end
 
-BTGlobadierSuicideStaggerAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+function BTGlobadierSuicideStaggerAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "done"
 end

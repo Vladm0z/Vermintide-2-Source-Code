@@ -29,7 +29,7 @@ local var_0_4 = {
 		type = "slider_float",
 		label = "Pivot Power:",
 		column_width = 210,
-		max = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		max = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 			return arg_1_2.max * 2
 		end
 	},
@@ -54,10 +54,10 @@ local var_0_4 = {
 		type = "text",
 		label = "Color:",
 		column_width = 205,
-		data = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+		data = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 			return arg_2_0._colors
 		end,
-		key = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+		key = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 			return arg_3_1 .. "." .. arg_3_5
 		end
 	}
@@ -68,11 +68,11 @@ for iter_0_0 = 1, #var_0_4 do
 	var_0_5 = var_0_5 + var_0_4[iter_0_0].column_width
 end
 
-ImguiGeneratePowerLevelPivots.init = function (arg_4_0)
+function ImguiGeneratePowerLevelPivots.init(arg_4_0)
 	return
 end
 
-ImguiGeneratePowerLevelPivots._lazy_init = function (arg_5_0)
+function ImguiGeneratePowerLevelPivots._lazy_init(arg_5_0)
 	local var_5_0 = arg_5_0:_power_level_settings()
 
 	arg_5_0._default_settings = arg_5_0._default_settings or table.clone(var_5_0)
@@ -144,7 +144,7 @@ ImguiGeneratePowerLevelPivots._lazy_init = function (arg_5_0)
 			ease = "ease_out_quart"
 		}
 	}
-	arg_5_0._easing_as_array = table.select_array(arg_5_0._easing_functions, function (arg_6_0, arg_6_1)
+	arg_5_0._easing_as_array = table.select_array(arg_5_0._easing_functions, function(arg_6_0, arg_6_1)
 		return arg_6_1.ease
 	end)
 	arg_5_0._easing_func_index = arg_5_0._easing_func_index or 1
@@ -155,18 +155,22 @@ ImguiGeneratePowerLevelPivots._lazy_init = function (arg_5_0)
 	arg_5_0._filter = ""
 end
 
-ImguiGeneratePowerLevelPivots.is_persistent = function (arg_7_0)
+function ImguiGeneratePowerLevelPivots.is_persistent(arg_7_0)
 	return false
 end
 
-ImguiGeneratePowerLevelPivots._power_level_settings = function (arg_8_0)
+function ImguiGeneratePowerLevelPivots._power_level_settings(arg_8_0)
 	return (Managers.backend:get_interface("loot"):get_power_level_settings())
 end
 
 local var_0_6 = true
 
-ImguiGeneratePowerLevelPivots.update = function (arg_9_0, arg_9_1, arg_9_2)
-	if var_0_6 then
+function ImguiGeneratePowerLevelPivots.update(arg_9_0, arg_9_1, arg_9_2)
+	if not Managers.state.game_mode then
+		return
+	end
+
+	if var_0_6 or arg_9_0._run_lazy_init then
 		arg_9_0:_lazy_init()
 
 		var_0_6 = false
@@ -187,15 +191,22 @@ ImguiGeneratePowerLevelPivots.update = function (arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-ImguiGeneratePowerLevelPivots.on_show = function (arg_10_0)
-	arg_10_0:_lazy_init()
+function ImguiGeneratePowerLevelPivots.on_show(arg_10_0)
+	arg_10_0._run_lazy_init = true
 end
 
-ImguiGeneratePowerLevelPivots.draw = function (arg_11_0)
+function ImguiGeneratePowerLevelPivots.draw(arg_11_0)
 	local var_11_0, var_11_1 = Imgui.begin_window("Generate Power Level Pivots", "always_auto_resize", "menu_bar")
 
 	if not var_11_1 then
 		return var_11_0
+	end
+
+	if not Managers.state.game_mode then
+		Imgui.text("Disabled outside game state.")
+		Imgui.end_window()
+
+		return
 	end
 
 	arg_11_0:_reset_control_id()
@@ -245,17 +256,17 @@ ImguiGeneratePowerLevelPivots.draw = function (arg_11_0)
 	return var_11_0
 end
 
-ImguiGeneratePowerLevelPivots._reset_control_id = function (arg_12_0)
+function ImguiGeneratePowerLevelPivots._reset_control_id(arg_12_0)
 	arg_12_0._next_control_id_internal = 0
 end
 
-ImguiGeneratePowerLevelPivots._next_control_id = function (arg_13_0)
+function ImguiGeneratePowerLevelPivots._next_control_id(arg_13_0)
 	arg_13_0._next_control_id_internal = arg_13_0._next_control_id_internal + 1
 
 	return tostring(arg_13_0._next_control_id_internal)
 end
 
-ImguiGeneratePowerLevelPivots._nan_backup = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+function ImguiGeneratePowerLevelPivots._nan_backup(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	if arg_14_1 ~= arg_14_1 then
 		return 0, true, arg_14_3
 	end
@@ -263,7 +274,7 @@ ImguiGeneratePowerLevelPivots._nan_backup = function (arg_14_0, arg_14_1, arg_14
 	return arg_14_1, arg_14_2, arg_14_3
 end
 
-ImguiGeneratePowerLevelPivots._draw_graph = function (arg_15_0, arg_15_1)
+function ImguiGeneratePowerLevelPivots._draw_graph(arg_15_0, arg_15_1)
 	local var_15_0 = Color(180, 100, 100, 100)
 	local var_15_1 = Color(255, 255, 255, 255)
 	local var_15_2 = Color(255, 255, 255, 255)
@@ -574,7 +585,7 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (arg_15_0, arg_15_1)
 	end
 end
 
-ImguiGeneratePowerLevelPivots._draw_pivot_edit_row = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+function ImguiGeneratePowerLevelPivots._draw_pivot_edit_row(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	for iter_16_0 = 1, arg_16_4 do
 		Imgui.next_column()
 	end
@@ -643,13 +654,13 @@ ImguiGeneratePowerLevelPivots._draw_pivot_edit_row = function (arg_16_0, arg_16_
 	end
 end
 
-ImguiGeneratePowerLevelPivots._draw_code = function (arg_17_0, arg_17_1)
+function ImguiGeneratePowerLevelPivots._draw_code(arg_17_0, arg_17_1)
 	Imgui.push_item_width(arg_17_1[1])
 
 	local var_17_0 = arg_17_0:_power_level_settings()
 	local var_17_1 = var_0_0.save_simple(var_17_0)
 	local var_17_2 = Imgui.input_text_multiline("", var_17_1, arg_17_1[2])
-	local var_17_3, var_17_4 = pcall(function ()
+	local var_17_3, var_17_4 = pcall(function()
 		return cjson.decode(var_17_2)
 	end)
 
@@ -665,7 +676,7 @@ ImguiGeneratePowerLevelPivots._draw_code = function (arg_17_0, arg_17_1)
 	Imgui.pop_item_width()
 end
 
-ImguiGeneratePowerLevelPivots._draw_summary = function (arg_19_0, arg_19_1)
+function ImguiGeneratePowerLevelPivots._draw_summary(arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0:_power_level_settings().pivots
 	local var_19_1 = arg_19_0:_sorted_pivot_keys(var_19_0)
 	local var_19_2 = 47
@@ -723,10 +734,10 @@ ImguiGeneratePowerLevelPivots._draw_summary = function (arg_19_0, arg_19_1)
 	end
 end
 
-ImguiGeneratePowerLevelPivots._sorted_pivot_keys = function (arg_20_0, arg_20_1)
+function ImguiGeneratePowerLevelPivots._sorted_pivot_keys(arg_20_0, arg_20_1)
 	local var_20_0 = table.keys(arg_20_1)
 
-	table.sort(var_20_0, function (arg_21_0, arg_21_1)
+	table.sort(var_20_0, function(arg_21_0, arg_21_1)
 		if arg_20_0._display_order[arg_21_0] then
 			return arg_20_0._display_order[arg_21_0] < (arg_20_0._display_order[arg_21_1] or math.huge)
 		elseif arg_20_0._display_order[arg_21_1] then
@@ -739,7 +750,7 @@ ImguiGeneratePowerLevelPivots._sorted_pivot_keys = function (arg_20_0, arg_20_1)
 	return var_20_0
 end
 
-ImguiGeneratePowerLevelPivots._graph_colors = function (arg_22_0, arg_22_1)
+function ImguiGeneratePowerLevelPivots._graph_colors(arg_22_0, arg_22_1)
 	arg_22_0._colors[arg_22_1] = arg_22_0._colors[arg_22_1] or {
 		hi = arg_22_0._fallback_color,
 		low = arg_22_0._fallback_color

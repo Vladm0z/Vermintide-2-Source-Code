@@ -63,7 +63,7 @@ local var_0_11 = "trigger_cycle_previous"
 StartGameWindowMutatorGridConsole = class(StartGameWindowMutatorGridConsole)
 StartGameWindowMutatorGridConsole.NAME = "StartGameWindowMutatorGridConsole"
 
-StartGameWindowMutatorGridConsole.on_enter = function (arg_2_0, arg_2_1, arg_2_2)
+function StartGameWindowMutatorGridConsole.on_enter(arg_2_0, arg_2_1, arg_2_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowMutatorGridConsole")
 
 	arg_2_0.parent = arg_2_1.parent
@@ -136,7 +136,7 @@ StartGameWindowMutatorGridConsole.on_enter = function (arg_2_0, arg_2_1, arg_2_2
 	arg_2_0._can_delete_deeds = false
 end
 
-StartGameWindowMutatorGridConsole._start_transition_animation = function (arg_3_0, arg_3_1)
+function StartGameWindowMutatorGridConsole._start_transition_animation(arg_3_0, arg_3_1)
 	local var_3_0 = {
 		render_settings = arg_3_0.render_settings
 	}
@@ -146,7 +146,7 @@ StartGameWindowMutatorGridConsole._start_transition_animation = function (arg_3_
 	arg_3_0._animations[arg_3_1] = var_3_2
 end
 
-StartGameWindowMutatorGridConsole.create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
+function StartGameWindowMutatorGridConsole.create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_4_0._widgets, arg_4_0._widgets_by_name = UIUtils.create_widgets(var_0_1)
 	arg_4_0._overlay_widgets, arg_4_0._overlay_widgets_by_name = UIUtils.create_widgets(var_0_4)
@@ -172,7 +172,7 @@ StartGameWindowMutatorGridConsole.create_ui_elements = function (arg_4_0, arg_4_
 	end
 end
 
-StartGameWindowMutatorGridConsole.on_exit = function (arg_5_0, arg_5_1)
+function StartGameWindowMutatorGridConsole.on_exit(arg_5_0, arg_5_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowMutatorGridConsole")
 
 	arg_5_0.ui_animator = nil
@@ -190,7 +190,7 @@ StartGameWindowMutatorGridConsole.on_exit = function (arg_5_0, arg_5_1)
 	arg_5_0._confirm_selection = nil
 end
 
-StartGameWindowMutatorGridConsole.update = function (arg_6_0, arg_6_1, arg_6_2)
+function StartGameWindowMutatorGridConsole.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._item_grid:update(arg_6_1, arg_6_2)
 	arg_6_0:_update_animations(arg_6_1)
 	arg_6_0:_update_page_info()
@@ -215,11 +215,11 @@ StartGameWindowMutatorGridConsole.update = function (arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-StartGameWindowMutatorGridConsole.post_update = function (arg_7_0, arg_7_1, arg_7_2)
+function StartGameWindowMutatorGridConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-StartGameWindowMutatorGridConsole._update_animations = function (arg_8_0, arg_8_1)
+function StartGameWindowMutatorGridConsole._update_animations(arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.ui_animator
 
 	var_8_0:update(arg_8_1)
@@ -242,7 +242,7 @@ StartGameWindowMutatorGridConsole._update_animations = function (arg_8_0, arg_8_
 	UIWidgetUtils.animate_arrow_button(var_8_4, arg_8_1)
 end
 
-StartGameWindowMutatorGridConsole._handle_input = function (arg_9_0, arg_9_1, arg_9_2)
+function StartGameWindowMutatorGridConsole._handle_input(arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0.parent:window_input_service()
 	local var_9_1 = arg_9_0._item_grid
 
@@ -371,11 +371,11 @@ StartGameWindowMutatorGridConsole._handle_input = function (arg_9_0, arg_9_1, ar
 	end
 end
 
-StartGameWindowMutatorGridConsole._play_sound = function (arg_10_0, arg_10_1)
+function StartGameWindowMutatorGridConsole._play_sound(arg_10_0, arg_10_1)
 	arg_10_0.parent:play_sound(arg_10_1)
 end
 
-StartGameWindowMutatorGridConsole._update_selected_item_backend_id = function (arg_11_0)
+function StartGameWindowMutatorGridConsole._update_selected_item_backend_id(arg_11_0)
 	local var_11_0 = Managers.input:is_device_active("mouse")
 	local var_11_1 = arg_11_0.parent
 	local var_11_2 = arg_11_0._item_grid
@@ -411,7 +411,7 @@ StartGameWindowMutatorGridConsole._update_selected_item_backend_id = function (a
 	end
 end
 
-StartGameWindowMutatorGridConsole.draw = function (arg_12_0, arg_12_1)
+function StartGameWindowMutatorGridConsole.draw(arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._ui_top_renderer
 	local var_12_1 = arg_12_0.ui_scenegraph
 	local var_12_2 = arg_12_0.parent:window_input_service()
@@ -450,7 +450,7 @@ StartGameWindowMutatorGridConsole.draw = function (arg_12_0, arg_12_1)
 	UIRenderer.end_pass(var_12_0)
 end
 
-StartGameWindowMutatorGridConsole._update_page_info = function (arg_13_0)
+function StartGameWindowMutatorGridConsole._update_page_info(arg_13_0)
 	local var_13_0, var_13_1 = arg_13_0._item_grid:get_page_info()
 
 	if var_13_0 ~= arg_13_0._current_page or var_13_1 ~= arg_13_0._total_pages then
@@ -468,7 +468,7 @@ StartGameWindowMutatorGridConsole._update_page_info = function (arg_13_0)
 	end
 end
 
-StartGameWindowMutatorGridConsole._setup_input_buttons = function (arg_14_0)
+function StartGameWindowMutatorGridConsole._setup_input_buttons(arg_14_0)
 	local var_14_0 = arg_14_0.parent:window_input_service()
 	local var_14_1 = arg_14_0._widgets_by_name
 	local var_14_2 = UISettings.get_gamepad_input_texture_data(var_14_0, var_0_10, true)
@@ -496,7 +496,7 @@ StartGameWindowMutatorGridConsole._setup_input_buttons = function (arg_14_0)
 	var_14_6.content.texture_id = var_14_5.texture
 end
 
-StartGameWindowMutatorGridConsole._set_gamepad_input_buttons_visibility = function (arg_15_0, arg_15_1)
+function StartGameWindowMutatorGridConsole._set_gamepad_input_buttons_visibility(arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._widgets_by_name
 	local var_15_1 = var_15_0.input_icon_next
 	local var_15_2 = var_15_0.input_icon_previous
@@ -509,7 +509,7 @@ StartGameWindowMutatorGridConsole._set_gamepad_input_buttons_visibility = functi
 	var_15_4.content.visible = arg_15_1
 end
 
-StartGameWindowMutatorGridConsole._handle_gamepad_activity = function (arg_16_0)
+function StartGameWindowMutatorGridConsole._handle_gamepad_activity(arg_16_0)
 	local var_16_0 = arg_16_0.gamepad_active_last_frame == nil
 
 	if Managers.input:is_device_active("gamepad") then
@@ -527,7 +527,7 @@ StartGameWindowMutatorGridConsole._handle_gamepad_activity = function (arg_16_0)
 	end
 end
 
-StartGameWindowMutatorGridConsole._delete_deeds = function (arg_17_0, arg_17_1, arg_17_2)
+function StartGameWindowMutatorGridConsole._delete_deeds(arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0._deed_manager
 	local var_17_1
 	local var_17_2, var_17_3, var_17_4 = var_17_0:can_delete_deeds(arg_17_1, arg_17_2)
@@ -543,7 +543,7 @@ StartGameWindowMutatorGridConsole._delete_deeds = function (arg_17_0, arg_17_1, 
 	arg_17_0.parent:window_input_service():set_blocked(true)
 end
 
-StartGameWindowMutatorGridConsole._handle_deeds_deletion = function (arg_18_0)
+function StartGameWindowMutatorGridConsole._handle_deeds_deletion(arg_18_0)
 	local var_18_0 = arg_18_0._item_grid:items()
 
 	if arg_18_0._delete_type == "clear" then
@@ -561,7 +561,7 @@ StartGameWindowMutatorGridConsole._handle_deeds_deletion = function (arg_18_0)
 	arg_18_0._deed_removal_id = var_18_2
 end
 
-StartGameWindowMutatorGridConsole._update_on_removal_state = function (arg_19_0, arg_19_1)
+function StartGameWindowMutatorGridConsole._update_on_removal_state(arg_19_0, arg_19_1)
 	if not arg_19_0._deed_removal_id then
 		return
 	end
@@ -573,11 +573,11 @@ StartGameWindowMutatorGridConsole._update_on_removal_state = function (arg_19_0,
 	end
 end
 
-StartGameWindowMutatorGridConsole._is_deleting = function (arg_20_0)
+function StartGameWindowMutatorGridConsole._is_deleting(arg_20_0)
 	return arg_20_0._deed_removal_id
 end
 
-StartGameWindowMutatorGridConsole._on_removal_complete = function (arg_21_0)
+function StartGameWindowMutatorGridConsole._on_removal_complete(arg_21_0)
 	local var_21_0 = arg_21_0._item_grid
 
 	var_21_0:clear_item_grid()
@@ -589,7 +589,7 @@ StartGameWindowMutatorGridConsole._on_removal_complete = function (arg_21_0)
 	arg_21_0:_play_sound("hud_deed_delete_confirmed")
 end
 
-StartGameWindowMutatorGridConsole._set_delete_buttons_visible = function (arg_22_0, arg_22_1)
+function StartGameWindowMutatorGridConsole._set_delete_buttons_visible(arg_22_0, arg_22_1)
 	local var_22_0
 	local var_22_1
 	local var_22_2 = arg_22_0._delete_deeds_buttons_widgets_by_name.button_clear
@@ -599,7 +599,7 @@ StartGameWindowMutatorGridConsole._set_delete_buttons_visible = function (arg_22
 	var_22_3.content.visible = arg_22_1
 end
 
-StartGameWindowMutatorGridConsole._mark_all_for_deletion = function (arg_23_0)
+function StartGameWindowMutatorGridConsole._mark_all_for_deletion(arg_23_0)
 	arg_23_0._deeds_marked_for_deletion = {}
 
 	local var_23_0 = arg_23_0._item_grid:items()

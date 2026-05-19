@@ -2,7 +2,7 @@
 
 ControllerSettingsView = class(ControllerSettingsView)
 
-ControllerSettingsView.init = function (arg_1_0, arg_1_1)
+function ControllerSettingsView.init(arg_1_0, arg_1_1)
 	arg_1_0.ui_renderer = arg_1_1.ui_renderer
 	arg_1_0.input_manager = arg_1_1.input_manager
 	arg_1_0.ingame_ui = arg_1_1.ingame_ui
@@ -55,7 +55,7 @@ UIElements.KeyBindElement = {
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (arg_2_0)
+			content_check_function = function(arg_2_0)
 				return arg_2_0.button_hotspot.is_hover
 			end
 		},
@@ -63,7 +63,7 @@ UIElements.KeyBindElement = {
 			style_id = "hover_text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (arg_3_0)
+			content_check_function = function(arg_3_0)
 				return arg_3_0.button_hotspot.is_hover
 			end
 		}
@@ -109,7 +109,7 @@ local function var_0_3(arg_4_0, arg_4_1)
 	return var_4_4
 end
 
-ControllerSettingsView.create_ui_elements = function (arg_5_0)
+function ControllerSettingsView.create_ui_elements(arg_5_0)
 	local var_5_0 = {}
 	local var_5_1 = 0
 	local var_5_2 = var_0_1
@@ -184,15 +184,15 @@ ControllerSettingsView.create_ui_elements = function (arg_5_0)
 	arg_5_0.ui_widgets = var_5_0
 end
 
-ControllerSettingsView.on_enter = function (arg_6_0)
+function ControllerSettingsView.on_enter(arg_6_0)
 	arg_6_0:create_ui_elements()
 end
 
-ControllerSettingsView.destroy = function (arg_7_0)
+function ControllerSettingsView.destroy(arg_7_0)
 	return
 end
 
-ControllerSettingsView.update = function (arg_8_0, arg_8_1)
+function ControllerSettingsView.update(arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.ui_renderer
 	local var_8_1 = arg_8_0.input_manager:get_service("ingame_menu")
 

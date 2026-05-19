@@ -7,7 +7,7 @@ ShowCursorStack = ShowCursorStack or {
 
 local var_0_0 = Window.set_clip_cursor
 
-ShowCursorStack.render_cursor = function (arg_1_0)
+function ShowCursorStack.render_cursor(arg_1_0)
 	ShowCursorStack.allow_cursor_rendering = arg_1_0
 
 	if ShowCursorStack.stack_depth > 0 then
@@ -18,7 +18,7 @@ ShowCursorStack.render_cursor = function (arg_1_0)
 	end
 end
 
-ShowCursorStack.push = function (arg_2_0)
+function ShowCursorStack.push(arg_2_0)
 	if ShowCursorStack.stack_depth == 0 and ShowCursorStack.allow_cursor_rendering then
 		local var_2_0 = Application.is_fullscreen and Application.is_fullscreen()
 
@@ -29,7 +29,7 @@ ShowCursorStack.push = function (arg_2_0)
 	ShowCursorStack.stack_depth = ShowCursorStack.stack_depth + 1
 end
 
-ShowCursorStack.pop = function (arg_3_0)
+function ShowCursorStack.pop(arg_3_0)
 	ShowCursorStack.stack_depth = ShowCursorStack.stack_depth - 1
 
 	if ShowCursorStack.stack_depth < 0 and IS_WINDOWS then
@@ -45,7 +45,7 @@ ShowCursorStack.pop = function (arg_3_0)
 	ShowCursorStack.stack_depth = math.max(ShowCursorStack.stack_depth, 0)
 end
 
-ShowCursorStack.show = function (arg_4_0)
+function ShowCursorStack.show(arg_4_0)
 	local var_4_0 = not table.is_empty(ShowCursorStack.reasons)
 
 	ShowCursorStack.reasons[arg_4_0] = true
@@ -55,7 +55,7 @@ ShowCursorStack.show = function (arg_4_0)
 	end
 end
 
-ShowCursorStack.hide = function (arg_5_0)
+function ShowCursorStack.hide(arg_5_0)
 	local var_5_0 = not table.is_empty(ShowCursorStack.reasons)
 
 	ShowCursorStack.reasons[arg_5_0] = nil
@@ -65,7 +65,7 @@ ShowCursorStack.hide = function (arg_5_0)
 	end
 end
 
-ShowCursorStack.update_clip_cursor = function ()
+function ShowCursorStack.update_clip_cursor()
 	local var_6_0 = Application.is_fullscreen and Application.is_fullscreen()
 	local var_6_1 = ShowCursorStack.allow_cursor_rendering
 
@@ -76,11 +76,11 @@ ShowCursorStack.update_clip_cursor = function ()
 	end
 end
 
-ShowCursorStack.cursor_active = function ()
+function ShowCursorStack.cursor_active()
 	return ShowCursorStack.stack_depth > 0
 end
 
-ShowCursorStack.dump = function ()
+function ShowCursorStack.dump()
 	local var_8_0 = {}
 
 	table.insert(var_8_0, "Stack size: " .. ShowCursorStack.stack_depth)

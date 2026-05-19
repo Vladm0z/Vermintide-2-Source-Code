@@ -47,7 +47,7 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function (arg_1_0, arg_1_1)
+				enter_function = function(arg_1_0, arg_1_1)
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -61,7 +61,7 @@ local var_0_0 = {
 					wall_nail = true,
 					depth = 0.025,
 					targets = 2,
-					damage_profile = "crossbow_bolt_repeating",
+					damage_profile = "crossbow_bolt_repeating_elf",
 					link = true,
 					depth_offset = -0.2
 				},
@@ -100,7 +100,7 @@ local var_0_0 = {
 				charge_value = "zoomed_arrow_hit",
 				num_projectiles = 3,
 				hold_input = "action_two_hold",
-				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -127,7 +127,7 @@ local var_0_0 = {
 						input = "action_one"
 					}
 				},
-				enter_function = function (arg_3_0, arg_3_1)
+				enter_function = function(arg_3_0, arg_3_1)
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -141,14 +141,14 @@ local var_0_0 = {
 					wall_nail = true,
 					depth = 0.025,
 					targets = 2,
-					damage_profile = "crossbow_bolt_repeating",
+					damage_profile = "crossbow_bolt_repeating_elf",
 					link = true,
 					depth_offset = -0.2
 				},
 				recoil_settings = {
 					horizontal_climb = 0,
 					restore_duration = 0.3,
-					vertical_climb = 0.05,
+					vertical_climb = 0.3,
 					climb_duration = 0.075,
 					climb_function = math.ease_out_quad,
 					restore_function = math.ease_out_quad
@@ -156,7 +156,7 @@ local var_0_0 = {
 				first_recoil_settings = {
 					horizontal_climb = 0,
 					restore_duration = 0.3,
-					vertical_climb = 1,
+					vertical_climb = 0.3,
 					climb_duration = 0.075,
 					climb_function = math.ease_out_quad,
 					restore_function = math.ease_out_quad
@@ -177,7 +177,7 @@ local var_0_0 = {
 				aim_at_gaze_setting = "tobii_aim_at_gaze_repeating_crossbow_elf",
 				hold_input = "action_two_hold",
 				anim_event = "to_zoom",
-				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -202,18 +202,18 @@ local var_0_0 = {
 						input = "action_one"
 					}
 				},
-				enter_function = function (arg_5_0, arg_5_1)
+				enter_function = function(arg_5_0, arg_5_1)
 					arg_5_1:clear_input_buffer()
 
 					return arg_5_1:reset_release_input()
 				end,
-				zoom_condition_function = function ()
+				zoom_condition_function = function()
 					return true
 				end,
-				unzoom_condition_function = function (arg_7_0)
+				unzoom_condition_function = function(arg_7_0)
 					return arg_7_0 ~= "new_interupting_action"
 				end,
-				condition_func = function (arg_8_0, arg_8_1, arg_8_2)
+				condition_func = function(arg_8_0, arg_8_1, arg_8_2)
 					if arg_8_2 and (arg_8_2:total_remaining_ammo() <= 0 or arg_8_2:is_reloading()) then
 						return false
 					end
@@ -250,7 +250,7 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.default_spread_template = "repeating_handgun"
+var_0_0.default_spread_template = "brace_of_pistols"
 var_0_0.spread_lerp_speed = 2
 var_0_0.left_hand_unit = ""
 var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.wood_elf_repeating_crossbow

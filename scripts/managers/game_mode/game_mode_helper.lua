@@ -2,7 +2,7 @@
 
 GameModeHelper = class(GameModeHelper)
 
-GameModeHelper.side_is_dead = function (arg_1_0, arg_1_1)
+function GameModeHelper.side_is_dead(arg_1_0, arg_1_1)
 	local var_1_0 = Managers.state.side:get_party_from_side_name(arg_1_0).occupied_slots
 
 	for iter_1_0 = 1, #var_1_0 do
@@ -19,7 +19,7 @@ GameModeHelper.side_is_dead = function (arg_1_0, arg_1_1)
 	return true
 end
 
-GameModeHelper.side_is_disabled = function (arg_2_0)
+function GameModeHelper.side_is_disabled(arg_2_0)
 	local var_2_0 = Managers.state.side:get_party_from_side_name(arg_2_0).occupied_slots
 
 	for iter_2_0 = 1, #var_2_0 do
@@ -33,7 +33,7 @@ GameModeHelper.side_is_disabled = function (arg_2_0)
 	return true
 end
 
-GameModeHelper.side_delaying_loss = function (arg_3_0)
+function GameModeHelper.side_delaying_loss(arg_3_0)
 	local var_3_0 = Managers.state.side:get_side_from_name(arg_3_0).PLAYER_AND_BOT_UNITS
 	local var_3_1 = #var_3_0
 
@@ -49,7 +49,7 @@ GameModeHelper.side_delaying_loss = function (arg_3_0)
 	return false
 end
 
-GameModeHelper.get_object_sets = function (arg_4_0, arg_4_1)
+function GameModeHelper.get_object_sets(arg_4_0, arg_4_1)
 	local var_4_0 = GameModeSettings[arg_4_1].object_sets
 	local var_4_1 = {}
 	local var_4_2 = {}

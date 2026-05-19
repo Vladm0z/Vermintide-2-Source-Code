@@ -4,21 +4,21 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTEtherealSkullTakeOffAction = class(BTEtherealSkullTakeOffAction, BTNode)
 
-BTEtherealSkullTakeOffAction.init = function (arg_1_0, ...)
+function BTEtherealSkullTakeOffAction.init(arg_1_0, ...)
 	BTEtherealSkullTakeOffAction.super.init(arg_1_0, ...)
 end
 
 BTEtherealSkullTakeOffAction.name = "BTEtherealSkullTakeOffAction"
 
-BTEtherealSkullTakeOffAction.enter = function (arg_2_0)
+function BTEtherealSkullTakeOffAction.enter(arg_2_0)
 	arg_2_0._duration = 2
 end
 
-BTEtherealSkullTakeOffAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+function BTEtherealSkullTakeOffAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	return
 end
 
-BTEtherealSkullTakeOffAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+function BTEtherealSkullTakeOffAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if not arg_4_2.take_off_duration then
 		arg_4_2.take_off_duration = arg_4_3 + 2
 	end

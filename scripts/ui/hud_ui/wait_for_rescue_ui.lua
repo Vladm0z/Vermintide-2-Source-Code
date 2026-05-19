@@ -57,7 +57,7 @@ local var_0_2 = true
 
 WaitForRescueUI = class(WaitForRescueUI)
 
-WaitForRescueUI.init = function (arg_1_0, arg_1_1, arg_1_2)
+function WaitForRescueUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -67,17 +67,17 @@ WaitForRescueUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:create_ui_elements()
 end
 
-WaitForRescueUI.create_ui_elements = function (arg_2_0)
+function WaitForRescueUI.create_ui_elements(arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
 	arg_2_0.waiting_for_rescue_text = UIWidget.init(var_0_1)
 	var_0_2 = false
 end
 
-WaitForRescueUI.destroy = function (arg_3_0)
+function WaitForRescueUI.destroy(arg_3_0)
 	return
 end
 
-WaitForRescueUI.update = function (arg_4_0, arg_4_1, arg_4_2)
+function WaitForRescueUI.update(arg_4_0, arg_4_1, arg_4_2)
 	if var_0_2 then
 		arg_4_0:create_ui_elements()
 	end

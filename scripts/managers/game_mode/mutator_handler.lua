@@ -24,7 +24,7 @@ local var_0_0 = {
 	"rpc_deactivate_mutator_client"
 }
 
-MutatorHandler.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+function MutatorHandler.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	arg_3_0._is_server = arg_3_2
 	arg_3_0._network_handler = arg_3_3
 	arg_3_0._has_local_client = arg_3_4
@@ -53,7 +53,7 @@ MutatorHandler.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg
 	Managers.state.event:register(arg_3_0, "on_player_disabled", "player_disabled")
 end
 
-MutatorHandler.destroy = function (arg_4_0)
+function MutatorHandler.destroy(arg_4_0)
 	Managers.state.event:unregister(arg_4_0)
 
 	if not arg_4_0._is_server then
@@ -76,7 +76,7 @@ MutatorHandler.destroy = function (arg_4_0)
 	arg_4_0._active_mutators = nil
 end
 
-MutatorHandler.initialize_mutators = function (arg_5_0, arg_5_1)
+function MutatorHandler.initialize_mutators(arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._active_mutators
 	local var_5_1 = arg_5_0._mutator_context
 
@@ -91,7 +91,7 @@ MutatorHandler.initialize_mutators = function (arg_5_0, arg_5_1)
 	end
 end
 
-MutatorHandler.activate_mutators = function (arg_6_0)
+function MutatorHandler.activate_mutators(arg_6_0)
 	if arg_6_0._is_server then
 		local var_6_0 = arg_6_0._mutator_context
 		local var_6_1 = arg_6_0._active_mutators
@@ -103,7 +103,7 @@ MutatorHandler.activate_mutators = function (arg_6_0)
 	end
 end
 
-MutatorHandler.deactivate_mutators = function (arg_7_0, arg_7_1)
+function MutatorHandler.deactivate_mutators(arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._active_mutators
 	local var_7_1 = arg_7_0._mutator_context
 
@@ -114,7 +114,7 @@ MutatorHandler.deactivate_mutators = function (arg_7_0, arg_7_1)
 	end
 end
 
-MutatorHandler.activate_mutator = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+function MutatorHandler.activate_mutator(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	if arg_8_0._is_server then
 		local var_8_0 = arg_8_0._mutator_context
 		local var_8_1 = arg_8_0._active_mutators
@@ -128,7 +128,7 @@ MutatorHandler.activate_mutator = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	end
 end
 
-MutatorHandler.deactivate_mutator = function (arg_9_0, arg_9_1)
+function MutatorHandler.deactivate_mutator(arg_9_0, arg_9_1)
 	if arg_9_0._is_server then
 		local var_9_0 = arg_9_0._active_mutators
 		local var_9_1 = arg_9_0._mutator_context
@@ -137,7 +137,7 @@ MutatorHandler.deactivate_mutator = function (arg_9_0, arg_9_1)
 	end
 end
 
-MutatorHandler.hot_join_sync = function (arg_10_0, arg_10_1)
+function MutatorHandler.hot_join_sync(arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._network_transmit
 	local var_10_1 = arg_10_0._active_mutators
 	local var_10_2 = arg_10_0._mutator_context
@@ -161,7 +161,7 @@ MutatorHandler.hot_join_sync = function (arg_10_0, arg_10_1)
 	end
 end
 
-MutatorHandler.pre_update = function (arg_11_0, arg_11_1, arg_11_2)
+function MutatorHandler.pre_update(arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._active_mutators
 	local var_11_1 = arg_11_0._mutator_context
 	local var_11_2 = arg_11_0._is_server
@@ -181,7 +181,7 @@ end
 
 local var_0_1 = true
 
-MutatorHandler.update = function (arg_12_0, arg_12_1, arg_12_2)
+function MutatorHandler.update(arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._active_mutators
 	local var_12_1 = arg_12_0._mutator_context
 	local var_12_2 = arg_12_0._is_server
@@ -209,27 +209,27 @@ MutatorHandler.update = function (arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-MutatorHandler.has_activated_mutator = function (arg_13_0, arg_13_1)
+function MutatorHandler.has_activated_mutator(arg_13_0, arg_13_1)
 	return arg_13_0._active_mutators[arg_13_1] ~= nil
 end
 
-MutatorHandler.has_mutator = function (arg_14_0, arg_14_1)
+function MutatorHandler.has_mutator(arg_14_0, arg_14_1)
 	return arg_14_0._mutators[arg_14_1] ~= nil
 end
 
-MutatorHandler.activated_mutators = function (arg_15_0)
+function MutatorHandler.activated_mutators(arg_15_0)
 	return arg_15_0._active_mutators
 end
 
-MutatorHandler.mutators = function (arg_16_0)
+function MutatorHandler.mutators(arg_16_0)
 	return arg_16_0._mutators
 end
 
-MutatorHandler.initialized_mutator_map = function (arg_17_0)
+function MutatorHandler.initialized_mutator_map(arg_17_0)
 	return arg_17_0._initialized_mutator_map
 end
 
-MutatorHandler.player_disabled = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+function MutatorHandler.player_disabled(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = arg_18_0._mutator_context
 	local var_18_1 = arg_18_0._active_mutators
 	local var_18_2 = arg_18_0._is_server
@@ -243,7 +243,7 @@ MutatorHandler.player_disabled = function (arg_18_0, arg_18_1, arg_18_2, arg_18_
 	end
 end
 
-MutatorHandler.ai_killed = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+function MutatorHandler.ai_killed(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	local var_19_0 = arg_19_0._mutator_context
 	local var_19_1 = arg_19_0._active_mutators
 	local var_19_2 = arg_19_0._is_server
@@ -262,7 +262,7 @@ MutatorHandler.ai_killed = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg
 	end
 end
 
-MutatorHandler.level_object_killed = function (arg_20_0, arg_20_1, arg_20_2)
+function MutatorHandler.level_object_killed(arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_0._mutator_context
 	local var_20_1 = arg_20_0._active_mutators
 	local var_20_2 = arg_20_0._is_server
@@ -281,7 +281,7 @@ MutatorHandler.level_object_killed = function (arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-MutatorHandler.ai_hit_by_player = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+function MutatorHandler.ai_hit_by_player(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = arg_21_0._mutator_context
 	local var_21_1 = arg_21_0._active_mutators
 	local var_21_2 = arg_21_0._is_server
@@ -300,7 +300,7 @@ MutatorHandler.ai_hit_by_player = function (arg_21_0, arg_21_1, arg_21_2, arg_21
 	end
 end
 
-MutatorHandler.player_hit = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+function MutatorHandler.player_hit(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	local var_22_0 = arg_22_0._mutator_context
 	local var_22_1 = arg_22_0._active_mutators
 	local var_22_2 = arg_22_0._is_server
@@ -319,7 +319,7 @@ MutatorHandler.player_hit = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	end
 end
 
-MutatorHandler.modify_player_base_damage = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+function MutatorHandler.modify_player_base_damage(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	local var_23_0 = arg_23_0._mutator_context
 	local var_23_1 = arg_23_0._active_mutators
 	local var_23_2 = arg_23_0._is_server
@@ -335,7 +335,7 @@ MutatorHandler.modify_player_base_damage = function (arg_23_0, arg_23_1, arg_23_
 	return arg_23_3
 end
 
-MutatorHandler.player_respawned = function (arg_24_0, arg_24_1)
+function MutatorHandler.player_respawned(arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0._mutator_context
 	local var_24_1 = arg_24_0._active_mutators
 	local var_24_2 = arg_24_0._is_server
@@ -354,7 +354,7 @@ MutatorHandler.player_respawned = function (arg_24_0, arg_24_1)
 	end
 end
 
-MutatorHandler.damage_taken = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+function MutatorHandler.damage_taken(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
 	local var_25_0 = arg_25_0._mutator_context
 	local var_25_1 = arg_25_0._active_mutators
 	local var_25_2 = arg_25_0._is_server
@@ -373,7 +373,7 @@ MutatorHandler.damage_taken = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, 
 	end
 end
 
-MutatorHandler.pre_ai_spawned = function (arg_26_0, arg_26_1, arg_26_2)
+function MutatorHandler.pre_ai_spawned(arg_26_0, arg_26_1, arg_26_2)
 	if not arg_26_0._is_server then
 		return
 	end
@@ -390,7 +390,7 @@ MutatorHandler.pre_ai_spawned = function (arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-MutatorHandler.ai_spawned = function (arg_27_0, arg_27_1)
+function MutatorHandler.ai_spawned(arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0._mutator_context
 	local var_27_1 = arg_27_0._active_mutators
 	local var_27_2 = arg_27_0._is_server
@@ -409,7 +409,7 @@ MutatorHandler.ai_spawned = function (arg_27_0, arg_27_1)
 	end
 end
 
-MutatorHandler.post_ai_spawned = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+function MutatorHandler.post_ai_spawned(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	if not arg_28_0._is_server then
 		return
 	end
@@ -426,7 +426,7 @@ MutatorHandler.post_ai_spawned = function (arg_28_0, arg_28_1, arg_28_2, arg_28_
 	end
 end
 
-MutatorHandler.players_left_safe_zone = function (arg_29_0)
+function MutatorHandler.players_left_safe_zone(arg_29_0)
 	local var_29_0 = arg_29_0._mutator_context
 	local var_29_1 = arg_29_0._active_mutators
 	local var_29_2 = arg_29_0._is_server
@@ -440,7 +440,7 @@ MutatorHandler.players_left_safe_zone = function (arg_29_0)
 	end
 end
 
-MutatorHandler.evaluate_lose_conditions = function (arg_30_0)
+function MutatorHandler.evaluate_lose_conditions(arg_30_0)
 	fassert(arg_30_0._is_server, "evaluate_lose_conditions only runs on server")
 
 	local var_30_0 = arg_30_0._mutator_context
@@ -467,7 +467,7 @@ MutatorHandler.evaluate_lose_conditions = function (arg_30_0)
 	return var_30_2, var_30_3
 end
 
-MutatorHandler.evaluate_end_zone_activation_conditions = function (arg_31_0)
+function MutatorHandler.evaluate_end_zone_activation_conditions(arg_31_0)
 	fassert(arg_31_0._is_server, "evaluate_end_zone_activation_conditions only runs on server")
 
 	local var_31_0 = arg_31_0._mutator_context
@@ -484,7 +484,7 @@ MutatorHandler.evaluate_end_zone_activation_conditions = function (arg_31_0)
 	return true
 end
 
-MutatorHandler.post_process_terror_event = function (arg_32_0, arg_32_1)
+function MutatorHandler.post_process_terror_event(arg_32_0, arg_32_1)
 	fassert(arg_32_0._is_server, "post_process_terror_event only runs on server")
 
 	local var_32_0 = arg_32_0._mutator_context
@@ -499,7 +499,7 @@ MutatorHandler.post_process_terror_event = function (arg_32_0, arg_32_1)
 	end
 end
 
-MutatorHandler.pickup_settings_updated_settings = function (arg_33_0, arg_33_1)
+function MutatorHandler.pickup_settings_updated_settings(arg_33_0, arg_33_1)
 	if not arg_33_0._is_server then
 		return
 	end
@@ -549,7 +549,7 @@ MutatorHandler.pickup_settings_updated_settings = function (arg_33_0, arg_33_1)
 	return var_33_0
 end
 
-MutatorHandler.conflict_director_updated_settings = function (arg_35_0)
+function MutatorHandler.conflict_director_updated_settings(arg_35_0)
 	if not arg_35_0._is_server then
 		return
 	end
@@ -566,7 +566,7 @@ MutatorHandler.conflict_director_updated_settings = function (arg_35_0)
 	end
 end
 
-MutatorHandler.get_terror_event_tags = function (arg_36_0)
+function MutatorHandler.get_terror_event_tags(arg_36_0)
 	local var_36_0 = arg_36_0._mutator_context
 	local var_36_1 = arg_36_0._mutators
 	local var_36_2
@@ -584,7 +584,7 @@ MutatorHandler.get_terror_event_tags = function (arg_36_0)
 	return var_36_2
 end
 
-MutatorHandler.tweak_zones = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+function MutatorHandler.tweak_zones(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	if not arg_37_0._is_server then
 		return
 	end
@@ -603,7 +603,7 @@ MutatorHandler.tweak_zones = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	return arg_37_2
 end
 
-MutatorHandler._server_initialize_mutator = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+function MutatorHandler._server_initialize_mutator(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 	fassert(arg_38_0._is_server, "Only server is allowed to run mutator initialization function.")
 
 	if not MutatorTemplates[arg_38_1] then
@@ -634,7 +634,7 @@ MutatorHandler._server_initialize_mutator = function (arg_38_0, arg_38_1, arg_38
 	arg_38_0._initialized_mutator_map[arg_38_1] = true
 end
 
-MutatorHandler._activate_mutator = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
+function MutatorHandler._activate_mutator(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
 	fassert(arg_39_2[arg_39_1] == nil, "Can't have multiple of same mutator running at the same time (%s)", arg_39_1)
 
 	if not MutatorTemplates[arg_39_1] then
@@ -685,7 +685,7 @@ MutatorHandler._activate_mutator = function (arg_39_0, arg_39_1, arg_39_2, arg_3
 	end
 end
 
-MutatorHandler._deactivate_mutator = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+function MutatorHandler._deactivate_mutator(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 	fassert(arg_40_2[arg_40_1], "Trying to deactivate mutator (%s) but it isn't active", arg_40_1)
 	mutator_print("Deactivating mutator '%s'", arg_40_1)
 
@@ -726,7 +726,7 @@ MutatorHandler._deactivate_mutator = function (arg_40_0, arg_40_1, arg_40_2, arg
 	end
 end
 
-MutatorHandler.tweak_pack_spawning_settings = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+function MutatorHandler.tweak_pack_spawning_settings(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 	local var_41_0
 
 	local function var_41_1(arg_42_0)
@@ -749,7 +749,7 @@ MutatorHandler.tweak_pack_spawning_settings = function (arg_41_0, arg_41_1, arg_
 	return var_41_0 or arg_41_3
 end
 
-MutatorHandler.rpc_activate_mutator_client = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+function MutatorHandler.rpc_activate_mutator_client(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	fassert(not arg_43_0._is_server, "Only call rpc_activate_mutator_client on clients.")
 
 	local var_43_0 = NetworkLookup.mutator_templates[arg_43_2]
@@ -763,7 +763,7 @@ MutatorHandler.rpc_activate_mutator_client = function (arg_43_0, arg_43_1, arg_4
 	arg_43_0:_activate_mutator(var_43_0, var_43_1, var_43_2, var_43_3)
 end
 
-MutatorHandler.rpc_deactivate_mutator_client = function (arg_44_0, arg_44_1, arg_44_2)
+function MutatorHandler.rpc_deactivate_mutator_client(arg_44_0, arg_44_1, arg_44_2)
 	fassert(not arg_44_0._is_server, "Only call rpc_deactivate_mutator_client on clients.")
 
 	local var_44_0 = NetworkLookup.mutator_templates[arg_44_2]
@@ -773,6 +773,6 @@ MutatorHandler.rpc_deactivate_mutator_client = function (arg_44_0, arg_44_1, arg
 	arg_44_0:_deactivate_mutator(var_44_0, var_44_1, var_44_2)
 end
 
-MutatorHandler.on_client_mutator_list_updated = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7)
+function MutatorHandler.on_client_mutator_list_updated(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7)
 	arg_45_0._initialized_mutator_map = arg_45_7
 end

@@ -2,13 +2,13 @@
 
 FunctionCommandQueue = class(FunctionCommandQueue)
 
-FunctionCommandQueue.init = function (arg_1_0, arg_1_1)
+function FunctionCommandQueue.init(arg_1_0, arg_1_1)
 	arg_1_0._command_queue = {}
 	arg_1_0._next_command_index = 1
 	arg_1_0._command_stride = arg_1_1 + 1
 end
 
-FunctionCommandQueue.run_commands = function (arg_2_0)
+function FunctionCommandQueue.run_commands(arg_2_0)
 	local var_2_0 = arg_2_0._command_queue
 	local var_2_1 = arg_2_0._command_stride
 
@@ -25,7 +25,7 @@ FunctionCommandQueue.run_commands = function (arg_2_0)
 	arg_2_0._next_command_index = 1
 end
 
-FunctionCommandQueue.cleanup_destroyed_unit = function (arg_3_0, arg_3_1)
+function FunctionCommandQueue.cleanup_destroyed_unit(arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._command_queue
 	local var_3_1 = arg_3_0._command_stride
 	local var_3_2 = Unit.animation_event
@@ -56,7 +56,7 @@ FunctionCommandQueue.cleanup_destroyed_unit = function (arg_3_0, arg_3_1)
 	arg_3_0._next_command_index = var_3_3 + 1
 end
 
-FunctionCommandQueue.queue_function_command = function (arg_4_0, arg_4_1, ...)
+function FunctionCommandQueue.queue_function_command(arg_4_0, arg_4_1, ...)
 	local var_4_0 = arg_4_0._next_command_index
 	local var_4_1 = arg_4_0._command_queue
 

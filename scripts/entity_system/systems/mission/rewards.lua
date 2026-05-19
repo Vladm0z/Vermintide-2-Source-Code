@@ -20,7 +20,7 @@ Rewards = class(Rewards)
 local var_0_2 = 800
 local var_0_3 = 500
 
-Rewards.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function Rewards.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._level_key = arg_1_1
 	arg_1_0._game_mode_key = arg_1_2
 	arg_1_0._multiplier = ExperienceSettings.multiplier
@@ -28,7 +28,7 @@ Rewards.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._quickplay_bonus = arg_1_3
 end
 
-Rewards.award_end_of_level_rewards = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+function Rewards.award_end_of_level_rewards(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	local var_2_0 = Managers.deed
 
 	if arg_2_1 and var_2_0:has_deed() and not var_2_0:is_deed_owner() then
@@ -56,7 +56,7 @@ Rewards.award_end_of_level_rewards = function (arg_2_0, arg_2_1, arg_2_2, arg_2_
 	end
 end
 
-Rewards._award_end_of_level_rewards = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+function Rewards._award_end_of_level_rewards(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	local var_3_0 = Managers.backend
 	local var_3_1 = var_3_0:get_interface("hero_attributes")
 	local var_3_2 = var_3_1:get(arg_3_2, "experience")
@@ -95,7 +95,7 @@ Rewards._award_end_of_level_rewards = function (arg_3_0, arg_3_1, arg_3_2, arg_3
 	arg_3_0:_generate_end_of_level_loot(arg_3_1, arg_3_2, var_3_2, var_3_12, var_3_4, var_3_14, arg_3_3, var_3_5, var_3_6, arg_3_4, arg_3_5)
 end
 
-Rewards._mission_results = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+function Rewards._mission_results(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_0._game_mode_key
 	local var_4_1 = {}
 	local var_4_2 = Managers.state.difficulty
@@ -351,7 +351,7 @@ Rewards._mission_results = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return var_4_1
 end
 
-Rewards._add_missions_from_mission_system = function (arg_5_0, arg_5_1, arg_5_2)
+function Rewards._add_missions_from_mission_system(arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = 0
 	local var_5_1, var_5_2 = Managers.state.entity:system("mission_system"):get_missions()
 
@@ -432,7 +432,7 @@ Rewards._add_missions_from_mission_system = function (arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-Rewards._generate_end_of_level_loot = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11)
+function Rewards._generate_end_of_level_loot(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11)
 	local var_6_0 = Managers.state.difficulty:get_difficulty()
 	local var_6_1 = Managers.backend:get_interface("loot")
 	local var_6_2 = arg_6_0._quickplay_bonus
@@ -442,7 +442,7 @@ Rewards._generate_end_of_level_loot = function (arg_6_0, arg_6_1, arg_6_2, arg_6
 	arg_6_0._is_loot_handled = false
 end
 
-Rewards.cb_deed_consumed = function (arg_7_0)
+function Rewards.cb_deed_consumed(arg_7_0)
 	print("Deed has been consumed callback!")
 
 	arg_7_0._consuming_deed = nil
@@ -460,7 +460,7 @@ Rewards.cb_deed_consumed = function (arg_7_0)
 	arg_7_0:_award_end_of_level_rewards(var_7_1, var_7_2, var_7_3, var_7_4, var_7_5)
 end
 
-Rewards.rewards_generated = function (arg_8_0)
+function Rewards.rewards_generated(arg_8_0)
 	local var_8_0 = Managers.backend:get_interface("loot")
 	local var_8_1 = arg_8_0._end_of_level_loot_id
 
@@ -502,7 +502,7 @@ Rewards.rewards_generated = function (arg_8_0)
 	return false
 end
 
-Rewards._evaluate_backend_mission_results = function (arg_9_0)
+function Rewards._evaluate_backend_mission_results(arg_9_0)
 	if arg_9_0._game_mode_key == "versus" and arg_9_0._end_of_level_info.game_won then
 		local var_9_0 = Managers.state.game_mode:settings().experience
 		local var_9_1 = Managers.backend:get_interface("versus")
@@ -520,43 +520,43 @@ Rewards._evaluate_backend_mission_results = function (arg_9_0)
 	arg_9_0._backend_mission_results_evaluated = true
 end
 
-Rewards.consuming_deed = function (arg_10_0)
+function Rewards.consuming_deed(arg_10_0)
 	return arg_10_0._consuming_deed
 end
 
-Rewards.get_rewards = function (arg_11_0)
+function Rewards.get_rewards(arg_11_0)
 	local var_11_0 = Managers.backend:get_interface("loot")
 	local var_11_1 = arg_11_0._end_of_level_loot_id
 
 	return var_11_0:get_loot(var_11_1), arg_11_0._end_of_level_rewards_arguments
 end
 
-Rewards.get_end_of_level_rewards_arguments = function (arg_12_0)
+function Rewards.get_end_of_level_rewards_arguments(arg_12_0)
 	return arg_12_0._end_of_level_rewards_arguments
 end
 
-Rewards.get_mission_results = function (arg_13_0)
+function Rewards.get_mission_results(arg_13_0)
 	return arg_13_0._mission_results
 end
 
-Rewards.get_level_start = function (arg_14_0)
+function Rewards.get_level_start(arg_14_0)
 	local var_14_0 = arg_14_0._start_experience or 0
 	local var_14_1 = arg_14_0._start_experience_pool or 0
 
 	return ExperienceSettings.get_level(var_14_0), var_14_0, var_14_1
 end
 
-Rewards.get_versus_level_start = function (arg_15_0)
+function Rewards.get_versus_level_start(arg_15_0)
 	local var_15_0 = arg_15_0._versus_start_experience or 0
 
 	return ExperienceSettings.get_versus_level_from_experience(var_15_0), var_15_0
 end
 
-Rewards.get_win_track_experience_start = function (arg_16_0)
+function Rewards.get_win_track_experience_start(arg_16_0)
 	return arg_16_0._start_win_track_experience
 end
 
-Rewards.get_level_end = function (arg_17_0)
+function Rewards.get_level_end(arg_17_0)
 	local var_17_0 = arg_17_0._mission_results
 	local var_17_1 = 0
 
@@ -569,7 +569,7 @@ Rewards.get_level_end = function (arg_17_0)
 	return ExperienceSettings.get_level(var_17_2), var_17_2
 end
 
-Rewards.get_versus_level_end = function (arg_18_0)
+function Rewards.get_versus_level_end(arg_18_0)
 	local var_18_0 = arg_18_0._mission_results
 	local var_18_1 = 0
 
@@ -582,7 +582,7 @@ Rewards.get_versus_level_end = function (arg_18_0)
 	return ExperienceSettings.get_versus_level_from_experience(var_18_2), var_18_2
 end
 
-Rewards._experience_multipliers = function (arg_19_0, arg_19_1)
+function Rewards._experience_multipliers(arg_19_0, arg_19_1)
 	local var_19_0 = {}
 	local var_19_1 = Managers.backend:get_title_data("experience_multiplier") or 1
 

@@ -2,20 +2,20 @@
 
 AILineOfSightExtension = class(AILineOfSightExtension)
 
-AILineOfSightExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+function AILineOfSightExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0._offsets = {}
 end
 
-AILineOfSightExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
+function AILineOfSightExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._physics_world = World.physics_world(arg_2_1)
 end
 
-AILineOfSightExtension.destroy = function (arg_3_0)
+function AILineOfSightExtension.destroy(arg_3_0)
 	return
 end
 
-AILineOfSightExtension.reset = function (arg_4_0)
+function AILineOfSightExtension.reset(arg_4_0)
 	return
 end
 
@@ -23,7 +23,7 @@ local var_0_0 = 36
 local var_0_1 = 0.1
 local var_0_2 = 0.1
 
-AILineOfSightExtension.has_line_of_sight = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+function AILineOfSightExtension.has_line_of_sight(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_2.pause_line_of_sight_t then
 		if Managers.time:time("game") < arg_5_2.pause_line_of_sight_t then
 			return false, 1

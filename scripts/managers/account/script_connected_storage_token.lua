@@ -2,7 +2,7 @@
 
 ScriptConnectedStorageToken = class(ScriptConnectedStorageToken, ScriptSaveToken)
 
-ScriptConnectedStorageToken.info = function (arg_1_0)
+function ScriptConnectedStorageToken.info(arg_1_0)
 	local var_1_0 = {}
 
 	if arg_1_0._status == arg_1_0._adapter.COMPLETED then
@@ -24,7 +24,7 @@ end
 
 ScriptConnectedStorageQueryToken = class(ScriptConnectedStorageQueryToken, ScriptSaveToken)
 
-ScriptConnectedStorageQueryToken.info = function (arg_2_0)
+function ScriptConnectedStorageQueryToken.info(arg_2_0)
 	local var_2_0 = {}
 
 	if arg_2_0._status == arg_2_0._adapter.COMPLETED then
@@ -42,7 +42,7 @@ end
 
 ScriptConnectedStorageDeleteToken = class(ScriptConnectedStorageDeleteToken, ScriptSaveToken)
 
-ScriptConnectedStorageDeleteToken.info = function (arg_3_0)
+function ScriptConnectedStorageDeleteToken.info(arg_3_0)
 	local var_3_0 = {}
 
 	if arg_3_0._status == arg_3_0._adapter.ERROR then

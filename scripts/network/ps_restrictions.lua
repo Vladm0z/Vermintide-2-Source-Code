@@ -36,11 +36,11 @@ end
 
 local var_0_5 = script_data.fake_restrictions
 
-PSRestrictions.init = function (arg_3_0)
+function PSRestrictions.init(arg_3_0)
 	arg_3_0._current_users = {}
 end
 
-PSRestrictions.add_user = function (arg_4_0, arg_4_1)
+function PSRestrictions.add_user(arg_4_0, arg_4_1)
 	arg_4_0._current_users[arg_4_1] = {
 		restrictions = table.clone(var_0_0)
 	}
@@ -48,13 +48,13 @@ PSRestrictions.add_user = function (arg_4_0, arg_4_1)
 	arg_4_0:_start_restriction_access_fetched(arg_4_1)
 end
 
-PSRestrictions._start_restriction_access_fetched = function (arg_5_0, arg_5_1)
+function PSRestrictions._start_restriction_access_fetched(arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._current_users[arg_5_1]
 
 	arg_5_0:_fetch_next_restriction_access(arg_5_1)
 end
 
-PSRestrictions._fetch_next_restriction_access = function (arg_6_0, arg_6_1)
+function PSRestrictions._fetch_next_restriction_access(arg_6_0, arg_6_1)
 	if var_0_5 then
 		return
 	end
@@ -77,7 +77,7 @@ PSRestrictions._fetch_next_restriction_access = function (arg_6_0, arg_6_1)
 	end
 end
 
-PSRestrictions.has_access = function (arg_7_0, arg_7_1, arg_7_2)
+function PSRestrictions.has_access(arg_7_0, arg_7_1, arg_7_2)
 	if var_0_5 then
 		return true
 	end
@@ -89,7 +89,7 @@ PSRestrictions.has_access = function (arg_7_0, arg_7_1, arg_7_2)
 	return var_7_0
 end
 
-PSRestrictions.has_error = function (arg_8_0, arg_8_1, arg_8_2)
+function PSRestrictions.has_error(arg_8_0, arg_8_1, arg_8_2)
 	if var_0_5 then
 		return false
 	end
@@ -97,7 +97,7 @@ PSRestrictions.has_error = function (arg_8_0, arg_8_1, arg_8_2)
 	return arg_8_0._current_users[arg_8_1][arg_8_2].error
 end
 
-PSRestrictions.restriction_access_fetched = function (arg_9_0, arg_9_1, arg_9_2)
+function PSRestrictions.restriction_access_fetched(arg_9_0, arg_9_1, arg_9_2)
 	if var_0_5 then
 		return true
 	end
@@ -105,7 +105,7 @@ PSRestrictions.restriction_access_fetched = function (arg_9_0, arg_9_1, arg_9_2)
 	return arg_9_0._current_users[arg_9_1][arg_9_2]
 end
 
-PSRestrictions.refetch_restriction_access = function (arg_10_0, arg_10_1, arg_10_2)
+function PSRestrictions.refetch_restriction_access(arg_10_0, arg_10_1, arg_10_2)
 	fassert(arg_10_0._current_users[arg_10_1] ~= nil, "User (%d) is not added", arg_10_1)
 
 	local var_10_0 = arg_10_0._current_users[arg_10_1]
@@ -119,7 +119,7 @@ PSRestrictions.refetch_restriction_access = function (arg_10_0, arg_10_1, arg_10
 	arg_10_0:_fetch_next_restriction_access(arg_10_1)
 end
 
-PSRestrictions._set_restriction_fetched = function (arg_11_0, arg_11_1, arg_11_2)
+function PSRestrictions._set_restriction_fetched(arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._current_users[arg_11_1].restrictions
 	local var_11_1 = table.find(var_11_0, arg_11_2)
 
@@ -128,25 +128,25 @@ PSRestrictions._set_restriction_fetched = function (arg_11_0, arg_11_1, arg_11_2
 	end
 end
 
-PSRestrictions._try_fetch_next_restriction_access = function (arg_12_0, arg_12_1)
+function PSRestrictions._try_fetch_next_restriction_access(arg_12_0, arg_12_1)
 	if #arg_12_0._current_users[arg_12_1].restrictions > 0 then
 		arg_12_0:_fetch_next_restriction_access(arg_12_1)
 	end
 end
 
-PSRestrictions._playstation_plus_start = function (arg_13_0, arg_13_1)
+function PSRestrictions._playstation_plus_start(arg_13_0, arg_13_1)
 	return NpCheck.check_plus(arg_13_1, NpCheck.REALTIME_MULTIPLAY)
 end
 
-PSRestrictions._network_availability_start = function (arg_14_0, arg_14_1)
+function PSRestrictions._network_availability_start(arg_14_0, arg_14_1)
 	return NpCheck.check_availability(arg_14_1)
 end
 
-PSRestrictions._parental_control_start = function (arg_15_0, arg_15_1)
+function PSRestrictions._parental_control_start(arg_15_0, arg_15_1)
 	return NpCheck.parental_control_info(arg_15_1)
 end
 
-PSRestrictions.cb_network_availability = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+function PSRestrictions.cb_network_availability(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = arg_16_3.error or NpCheck.error_code(arg_16_3.token)
 
 	if var_16_0 then
@@ -171,7 +171,7 @@ PSRestrictions.cb_network_availability = function (arg_16_0, arg_16_1, arg_16_2,
 	arg_16_0:_try_fetch_next_restriction_access(arg_16_1)
 end
 
-PSRestrictions.cb_playstation_plus = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+function PSRestrictions.cb_playstation_plus(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = arg_17_3.error or NpCheck.error_code(arg_17_3.token)
 
 	if var_17_0 then
@@ -196,7 +196,7 @@ PSRestrictions.cb_playstation_plus = function (arg_17_0, arg_17_1, arg_17_2, arg
 	arg_17_0:_try_fetch_next_restriction_access(arg_17_1)
 end
 
-PSRestrictions.cb_parental_control = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+function PSRestrictions.cb_parental_control(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = arg_18_3.error or NpCheck.error_code(arg_18_3.token)
 
 	if var_18_0 then

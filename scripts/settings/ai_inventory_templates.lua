@@ -2439,13 +2439,13 @@ local var_0_5 = {
 	"spear"
 }
 
-AIInventoryTemplates.random_melee = function ()
+function AIInventoryTemplates.random_melee()
 	local var_1_0 = math.random(1, #var_0_5)
 
 	return var_0_5[var_1_0]
 end
 
-AIInventoryTemplates.default = function ()
+function AIInventoryTemplates.default()
 	return AIInventoryTemplates.random_melee()
 end
 
@@ -2459,7 +2459,7 @@ for iter_0_6, iter_0_7 in pairs(InventoryConfigurations) do
 
 	assert(AIInventoryTemplates[iter_0_6] == nil, "Can't override configuration based templates")
 
-	AIInventoryTemplates[iter_0_6] = function ()
+	AIInventoryTemplates[iter_0_6] = function()
 		return iter_0_6
 	end
 

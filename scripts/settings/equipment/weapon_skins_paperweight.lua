@@ -32,12 +32,13 @@ local var_0_0 = {
 		data = {
 			description = "bw_1h_crowbill_skin_02_runed_01_description",
 			rarity = "unique",
-			hud_icon = "weapon_generic_icon_falken",
-			right_hand_unit = "units/weapons/player/wpn_brw_crowbill_02/wpn_brw_crowbill_02_runed_01",
-			inventory_icon = "icon_bw_1h_crowbill_02_runed_01",
 			display_name = "bw_1h_crowbill_skin_02_runed_01_name",
-			trait_table_name = "melee",
-			template = "one_handed_crowbill"
+			hud_icon = "weapon_generic_icon_falken",
+			inventory_icon = "icon_bw_1h_crowbill_02_runed_01",
+			right_hand_unit = "units/weapons/player/wpn_brw_crowbill_02/wpn_brw_crowbill_02_runed_01",
+			material_settings_name = "blue_glow",
+			template = "one_handed_crowbill",
+			trait_table_name = "melee"
 		}
 	},
 	{
@@ -71,12 +72,13 @@ local var_0_0 = {
 		data = {
 			description = "we_1h_axe_skin_02_runed_01_description",
 			rarity = "unique",
-			hud_icon = "weapon_generic_icon_falken",
-			right_hand_unit = "units/weapons/player/wpn_we_axe_03_t1/wpn_we_axe_03_t1_runed_01",
-			inventory_icon = "icon_we_1h_axe_02_runed_01",
 			display_name = "we_1h_axe_skin_02_runed_01_name",
-			trait_table_name = "melee",
-			template = "we_one_hand_axe_template"
+			hud_icon = "weapon_generic_icon_falken",
+			inventory_icon = "icon_we_1h_axe_02_runed_01",
+			right_hand_unit = "units/weapons/player/wpn_we_axe_03_t1/wpn_we_axe_03_t1_runed_01",
+			material_settings_name = "blue_glow",
+			template = "we_one_hand_axe_template",
+			trait_table_name = "melee"
 		}
 	},
 	{
@@ -116,6 +118,7 @@ local var_0_0 = {
 			right_hand_unit = "units/weapons/player/wpn_axe_03_t2/wpn_axe_03_t2_runed_01",
 			inventory_icon = "icon_wh_dual_wield_axe_falchion_02_runed_01",
 			left_hand_unit = "units/weapons/player/wpn_emp_sword_04_t2/wpn_emp_sword_04_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_axe_falchion_template",
 			hud_icon = "weapon_generic_icon_falken",
 			trait_table_name = "melee"
@@ -158,6 +161,7 @@ local var_0_0 = {
 			right_hand_unit = "units/weapons/player/wpn_dw_hammer_01_t2/wpn_dw_hammer_01_t2_runed_01",
 			inventory_icon = "icon_dr_dual_wield_hammers_02_runed_01",
 			left_hand_unit = "units/weapons/player/wpn_dw_hammer_01_t2/wpn_dw_hammer_01_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_axe_falchion_template",
 			hud_icon = "weapon_generic_icon_falken",
 			trait_table_name = "melee"
@@ -200,6 +204,7 @@ local var_0_0 = {
 			right_hand_unit = "units/weapons/player/wpn_emp_mace_05_t2/wpn_emp_mace_05_t2_runed_01",
 			inventory_icon = "icon_es_dual_wield_hammer_sword_02_runed_01",
 			left_hand_unit = "units/weapons/player/wpn_emp_sword_06_t2/wpn_emp_sword_06_t2_runed_01",
+			material_settings_name = "blue_glow",
 			template = "dual_wield_hammer_sword_template",
 			hud_icon = "weapon_generic_icon_falken",
 			trait_table_name = "melee"

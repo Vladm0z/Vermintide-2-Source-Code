@@ -60,7 +60,7 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function (arg_1_0, arg_1_1)
+				enter_function = function(arg_1_0, arg_1_1)
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -149,7 +149,7 @@ local var_0_0 = {
 				hold_input = "action_two_hold",
 				can_abort_reload = true,
 				allow_hold_toggle = true,
-				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -180,10 +180,10 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				zoom_condition_function = function ()
+				zoom_condition_function = function()
 					return false
 				end,
-				condition_func = function (arg_4_0, arg_4_1, arg_4_2)
+				condition_func = function(arg_4_0, arg_4_1, arg_4_2)
 					if arg_4_2 and (arg_4_2:total_remaining_ammo() <= 0 or arg_4_2:is_reloading()) then
 						return false
 					end
@@ -209,6 +209,7 @@ local var_0_0 = {
 }
 
 var_0_0.default_spread_template = "repeating_pistol"
+var_0_0.spread_lerp_speed = 5
 var_0_0.right_hand_unit = "units/weapons/player/wpn_emp_pistol_01_t1/wpn_emp_pistol_01_t1"
 var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.repeater_pistol
 var_0_0.display_unit = "units/weapons/weapon_display/display_repeating_pistols"

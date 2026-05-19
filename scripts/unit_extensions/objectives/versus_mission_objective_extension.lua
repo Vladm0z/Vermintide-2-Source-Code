@@ -3,14 +3,14 @@
 VersusMissionObjectiveExtension = class(VersusMissionObjectiveExtension, BaseObjectiveExtension)
 VersusMissionObjectiveExtension.NAME = "VersusMissionObjectiveExtension"
 
-VersusMissionObjectiveExtension.init = function (arg_1_0, ...)
+function VersusMissionObjectiveExtension.init(arg_1_0, ...)
 	VersusMissionObjectiveExtension.super.init(arg_1_0, ...)
 
 	arg_1_0._mission_system = Managers.state.entity:system("mission_system")
 	arg_1_0._percentage = 0
 end
 
-VersusMissionObjectiveExtension._set_objective_data = function (arg_2_0, arg_2_1)
+function VersusMissionObjectiveExtension._set_objective_data(arg_2_0, arg_2_1)
 	local var_2_0 = GameModeSettings.versus.objectives.mission
 
 	arg_2_0._score_for_completion = arg_2_1.score_for_completion or var_2_0.score_for_completion
@@ -21,15 +21,15 @@ VersusMissionObjectiveExtension._set_objective_data = function (arg_2_0, arg_2_1
 	arg_2_0._mission_name = arg_2_1.mission_name
 end
 
-VersusMissionObjectiveExtension._activate = function (arg_3_0)
+function VersusMissionObjectiveExtension._activate(arg_3_0)
 	return
 end
 
-VersusMissionObjectiveExtension._deactivate = function (arg_4_0)
+function VersusMissionObjectiveExtension._deactivate(arg_4_0)
 	return
 end
 
-VersusMissionObjectiveExtension._server_update = function (arg_5_0, arg_5_1, arg_5_2)
+function VersusMissionObjectiveExtension._server_update(arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0._mission_system.completed_missions[arg_5_0._mission_name] ~= nil then
 		arg_5_0._percentage = 1
 
@@ -37,10 +37,10 @@ VersusMissionObjectiveExtension._server_update = function (arg_5_0, arg_5_1, arg
 	end
 end
 
-VersusMissionObjectiveExtension._client_update = function (arg_6_0, arg_6_1, arg_6_2)
+function VersusMissionObjectiveExtension._client_update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._percentage = arg_6_0:client_get_value()
 end
 
-VersusMissionObjectiveExtension.get_percentage_done = function (arg_7_0)
+function VersusMissionObjectiveExtension.get_percentage_done(arg_7_0)
 	return arg_7_0._percentage
 end

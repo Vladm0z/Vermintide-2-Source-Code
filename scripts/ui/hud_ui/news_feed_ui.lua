@@ -17,7 +17,7 @@ local var_0_11 = var_0_0.NEWS_SPACING
 
 NewsFeedUI = class(NewsFeedUI)
 
-NewsFeedUI.init = function (arg_1_0, arg_1_1, arg_1_2)
+function NewsFeedUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -30,7 +30,7 @@ NewsFeedUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_create_ui_elements()
 end
 
-NewsFeedUI._create_ui_elements = function (arg_2_0)
+function NewsFeedUI._create_ui_elements(arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_2_0 = {}
@@ -57,7 +57,7 @@ end
 local var_0_12 = {}
 local var_0_13 = {}
 
-NewsFeedUI._sync_news = function (arg_3_0, arg_3_1, arg_3_2)
+function NewsFeedUI._sync_news(arg_3_0, arg_3_1, arg_3_2)
 	if not arg_3_0.is_in_inn then
 		return
 	end
@@ -182,7 +182,7 @@ NewsFeedUI._sync_news = function (arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-NewsFeedUI._add_entry = function (arg_4_0, arg_4_1)
+function NewsFeedUI._add_entry(arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_1.name
 	local var_4_1 = arg_4_1.hidden
 	local var_4_2 = arg_4_1.duration
@@ -244,7 +244,7 @@ NewsFeedUI._add_entry = function (arg_4_0, arg_4_1)
 	return true
 end
 
-NewsFeedUI._update_alignment_duration = function (arg_5_0)
+function NewsFeedUI._update_alignment_duration(arg_5_0)
 	arg_5_0._alignment_duration = var_0_2
 
 	for iter_5_0, iter_5_1 in ipairs(arg_5_0._active_news) do
@@ -256,7 +256,7 @@ NewsFeedUI._update_alignment_duration = function (arg_5_0)
 	end
 end
 
-NewsFeedUI._update_entries_expire_time = function (arg_6_0, arg_6_1, arg_6_2)
+function NewsFeedUI._update_entries_expire_time(arg_6_0, arg_6_1, arg_6_2)
 	for iter_6_0, iter_6_1 in ipairs(arg_6_0._active_news) do
 		local var_6_0 = iter_6_1.duration
 
@@ -274,7 +274,7 @@ NewsFeedUI._update_entries_expire_time = function (arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-NewsFeedUI._mark_entry_for_removal = function (arg_7_0, arg_7_1)
+function NewsFeedUI._mark_entry_for_removal(arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._active_news[arg_7_1]
 
 	if var_7_0.state ~= var_0_7 then
@@ -283,7 +283,7 @@ NewsFeedUI._mark_entry_for_removal = function (arg_7_0, arg_7_1)
 	end
 end
 
-NewsFeedUI._remove_entry = function (arg_8_0, arg_8_1)
+function NewsFeedUI._remove_entry(arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._active_news
 	local var_8_1 = table.remove(var_8_0, arg_8_1)
 	local var_8_2 = var_8_1.widget
@@ -308,7 +308,7 @@ NewsFeedUI._remove_entry = function (arg_8_0, arg_8_1)
 	end
 end
 
-NewsFeedUI._update_alignment = function (arg_9_0, arg_9_1)
+function NewsFeedUI._update_alignment(arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._alignment_duration
 
 	if not var_9_0 then
@@ -341,7 +341,7 @@ NewsFeedUI._update_alignment = function (arg_9_0, arg_9_1)
 	end
 end
 
-NewsFeedUI._update_state_animations = function (arg_10_0, arg_10_1)
+function NewsFeedUI._update_state_animations(arg_10_0, arg_10_1)
 	local var_10_0 = var_0_10[2] + var_0_11
 	local var_10_1 = 0
 	local var_10_2 = arg_10_0._active_news
@@ -393,7 +393,7 @@ NewsFeedUI._update_state_animations = function (arg_10_0, arg_10_1)
 	end
 end
 
-NewsFeedUI._animate_widget = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+function NewsFeedUI._animate_widget(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_1.offset
 	local var_11_1 = arg_11_1.style
 	local var_11_2 = 0
@@ -431,24 +431,24 @@ NewsFeedUI._animate_widget = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	end
 end
 
-NewsFeedUI.set_position = function (arg_12_0, arg_12_1, arg_12_2)
+function NewsFeedUI.set_position(arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.ui_scenegraph.pivot.local_position
 
 	var_12_0[1] = arg_12_1
 	var_12_0[2] = arg_12_2
 end
 
-NewsFeedUI.destroy = function (arg_13_0)
+function NewsFeedUI.destroy(arg_13_0)
 	arg_13_0:set_visible(false)
 end
 
-NewsFeedUI.set_visible = function (arg_14_0, arg_14_1)
+function NewsFeedUI.set_visible(arg_14_0, arg_14_1)
 	arg_14_0._is_visible = arg_14_1
 
 	local var_14_0 = arg_14_0.ui_renderer
 end
 
-NewsFeedUI.update = function (arg_15_0, arg_15_1, arg_15_2)
+function NewsFeedUI.update(arg_15_0, arg_15_1, arg_15_2)
 	if not arg_15_0._is_visible then
 		return
 	end
@@ -461,17 +461,17 @@ NewsFeedUI.update = function (arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0:draw(arg_15_1)
 end
 
-NewsFeedUI._handle_resolution_modified = function (arg_16_0)
+function NewsFeedUI._handle_resolution_modified(arg_16_0)
 	if RESOLUTION_LOOKUP.modified then
 		arg_16_0:_on_resolution_modified()
 	end
 end
 
-NewsFeedUI._on_resolution_modified = function (arg_17_0)
+function NewsFeedUI._on_resolution_modified(arg_17_0)
 	return
 end
 
-NewsFeedUI.draw = function (arg_18_0, arg_18_1)
+function NewsFeedUI.draw(arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0.ui_renderer
 	local var_18_1 = arg_18_0.ui_scenegraph
 	local var_18_2 = arg_18_0.input_manager:get_service("ingame_menu")

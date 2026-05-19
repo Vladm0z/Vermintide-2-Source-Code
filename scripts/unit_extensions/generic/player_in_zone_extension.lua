@@ -2,7 +2,7 @@
 
 PlayerInZoneExtension = class(PlayerInZoneExtension)
 
-PlayerInZoneExtension.init = function (arg_1_0, arg_1_1, arg_1_2)
+function PlayerInZoneExtension.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._unit = arg_1_2
 
 	arg_1_0:_get_script_data()
@@ -30,7 +30,7 @@ PlayerInZoneExtension.init = function (arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-PlayerInZoneExtension._get_script_data = function (arg_2_0)
+function PlayerInZoneExtension._get_script_data(arg_2_0)
 	arg_2_0._num_player_in_zone = Unit.get_data(arg_2_0._unit, "player_in_zone", "num_player_in_zone")
 	arg_2_0._animation_time = Unit.get_data(arg_2_0._unit, "player_in_zone", "start_stop_animation_time")
 	arg_2_0._timer = Unit.get_data(arg_2_0._unit, "player_in_zone", "timer")
@@ -47,7 +47,7 @@ PlayerInZoneExtension._get_script_data = function (arg_2_0)
 	arg_2_0._player_units = Managers.state.side:get_side_from_name(var_2_0).PLAYER_UNITS
 end
 
-PlayerInZoneExtension._create_game_object = function (arg_3_0)
+function PlayerInZoneExtension._create_game_object(arg_3_0)
 	local var_3_0 = LevelHelper:current_level(arg_3_0._world)
 
 	arg_3_0._level_unit_index = Level.unit_index(var_3_0, arg_3_0._unit)
@@ -65,19 +65,19 @@ PlayerInZoneExtension._create_game_object = function (arg_3_0)
 	arg_3_0._go_id = Managers.state.network:create_game_object("progress_timer", var_3_1, var_3_2)
 end
 
-PlayerInZoneExtension.cb_game_session_disconnect = function (arg_4_0)
+function PlayerInZoneExtension.cb_game_session_disconnect(arg_4_0)
 	arg_4_0._go_id = nil
 end
 
-PlayerInZoneExtension.on_game_object_created = function (arg_5_0, arg_5_1)
+function PlayerInZoneExtension.on_game_object_created(arg_5_0, arg_5_1)
 	arg_5_0._go_id = arg_5_1
 end
 
-PlayerInZoneExtension.on_game_object_destroyed = function (arg_6_0)
+function PlayerInZoneExtension.on_game_object_destroyed(arg_6_0)
 	arg_6_0._go_id = nil
 end
 
-PlayerInZoneExtension.extensions_ready = function (arg_7_0)
+function PlayerInZoneExtension.extensions_ready(arg_7_0)
 	if not arg_7_0._is_server then
 		return
 	end
@@ -89,35 +89,35 @@ PlayerInZoneExtension.extensions_ready = function (arg_7_0)
 	end
 end
 
-PlayerInZoneExtension.activated = function (arg_8_0)
+function PlayerInZoneExtension.activated(arg_8_0)
 	return arg_8_0._activated
 end
 
-PlayerInZoneExtension._current_time = function (arg_9_0)
+function PlayerInZoneExtension._current_time(arg_9_0)
 	return arg_9_0._state_data.end_progression_timer
 end
 
-PlayerInZoneExtension.should_progress_count_down = function (arg_10_0)
+function PlayerInZoneExtension.should_progress_count_down(arg_10_0)
 	return arg_10_0._progress_bar_countdown
 end
 
-PlayerInZoneExtension.progress_bar_personal = function (arg_11_0)
+function PlayerInZoneExtension.progress_bar_personal(arg_11_0)
 	return arg_11_0._show_progress_bar_personal
 end
 
-PlayerInZoneExtension.progress_bar_global = function (arg_12_0)
+function PlayerInZoneExtension.progress_bar_global(arg_12_0)
 	return arg_12_0._show_progress_bar_global
 end
 
-PlayerInZoneExtension.player_been_in_zone = function (arg_13_0)
+function PlayerInZoneExtension.player_been_in_zone(arg_13_0)
 	return arg_13_0._has_been_in_zone
 end
 
-PlayerInZoneExtension.progress = function (arg_14_0)
+function PlayerInZoneExtension.progress(arg_14_0)
 	return arg_14_0._state_data.end_progression_timer
 end
 
-PlayerInZoneExtension.update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+function PlayerInZoneExtension.update(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	if not arg_15_0._activated then
 		return
 	end
@@ -131,7 +131,7 @@ PlayerInZoneExtension.update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3,
 	end
 end
 
-PlayerInZoneExtension._update_client = function (arg_16_0, arg_16_1)
+function PlayerInZoneExtension._update_client(arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._go_id
 
 	if not var_16_0 then
@@ -173,7 +173,7 @@ PlayerInZoneExtension._update_client = function (arg_16_0, arg_16_1)
 	arg_16_0:_check_progress_percent(arg_16_0._state_data.end_progression_timer)
 end
 
-PlayerInZoneExtension._client_unit_inactive = function (arg_17_0, arg_17_1)
+function PlayerInZoneExtension._client_unit_inactive(arg_17_0, arg_17_1)
 	arg_17_0._state_data.end_progression_timer = arg_17_1
 	arg_17_0._progress_time = arg_17_1
 	arg_17_0._has_been_in_zone = false
@@ -181,7 +181,7 @@ PlayerInZoneExtension._client_unit_inactive = function (arg_17_0, arg_17_1)
 	arg_17_0:_trigger_stop_events()
 end
 
-PlayerInZoneExtension._client_progress = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+function PlayerInZoneExtension._client_progress(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	if arg_18_1 then
 		local var_18_0, var_18_1 = arg_18_0:_fulfill_in_zone_check()
 
@@ -191,7 +191,7 @@ PlayerInZoneExtension._client_progress = function (arg_18_0, arg_18_1, arg_18_2,
 	end
 end
 
-PlayerInZoneExtension.set_active = function (arg_19_0)
+function PlayerInZoneExtension.set_active(arg_19_0)
 	if arg_19_0._activated then
 		return
 	end
@@ -210,15 +210,15 @@ PlayerInZoneExtension.set_active = function (arg_19_0)
 	arg_19_0:set_active_rpc()
 end
 
-PlayerInZoneExtension.set_active_rpc = function (arg_20_0)
+function PlayerInZoneExtension.set_active_rpc(arg_20_0)
 	arg_20_0._activated = true
 end
 
-PlayerInZoneExtension._update_state = function (arg_21_0, arg_21_1, arg_21_2)
+function PlayerInZoneExtension._update_state(arg_21_0, arg_21_1, arg_21_2)
 	arg_21_0[arg_21_0._state](arg_21_0, arg_21_1, arg_21_2, arg_21_0._state_data)
 end
 
-PlayerInZoneExtension.hot_join_sync = function (arg_22_0, arg_22_1)
+function PlayerInZoneExtension.hot_join_sync(arg_22_0, arg_22_1)
 	if arg_22_0._activated then
 		local var_22_0 = Managers.state.network
 		local var_22_1 = LevelHelper:unit_index(arg_22_0._world, arg_22_0._unit)
@@ -229,11 +229,11 @@ PlayerInZoneExtension.hot_join_sync = function (arg_22_0, arg_22_1)
 	end
 end
 
-PlayerInZoneExtension.destroy = function (arg_23_0)
+function PlayerInZoneExtension.destroy(arg_23_0)
 	Managers.state.network.network_transmit.network_event_delegate:unregister(arg_23_0)
 end
 
-PlayerInZoneExtension._update_distances = function (arg_24_0)
+function PlayerInZoneExtension._update_distances(arg_24_0)
 	local var_24_0 = Unit.local_position(arg_24_0._unit, 0)
 	local var_24_1 = arg_24_0._player_units
 	local var_24_2 = arg_24_0._player_distances
@@ -259,13 +259,13 @@ PlayerInZoneExtension._update_distances = function (arg_24_0)
 	arg_24_0._closest_player_distance = var_24_3
 end
 
-PlayerInZoneExtension._idle = function (arg_25_0, arg_25_1, arg_25_2)
+function PlayerInZoneExtension._idle(arg_25_0, arg_25_1, arg_25_2)
 	if arg_25_0:_fulfill_in_zone_check() then
 		arg_25_0._state = "_progress_check"
 	end
 end
 
-PlayerInZoneExtension._fulfill_in_zone_check = function (arg_26_0)
+function PlayerInZoneExtension._fulfill_in_zone_check(arg_26_0)
 	local var_26_0 = arg_26_0._progress_zone_size * arg_26_0._progress_zone_size
 
 	if not (var_26_0 >= arg_26_0._closest_player_distance) then
@@ -286,7 +286,7 @@ PlayerInZoneExtension._fulfill_in_zone_check = function (arg_26_0)
 	return var_26_2 == var_26_1 or var_26_1 >= arg_26_0._num_player_in_zone, var_26_1
 end
 
-PlayerInZoneExtension._local_player_in_zone = function (arg_27_0)
+function PlayerInZoneExtension._local_player_in_zone(arg_27_0)
 	local var_27_0 = Managers.player:local_player()
 
 	if not var_27_0 then
@@ -312,7 +312,7 @@ PlayerInZoneExtension._local_player_in_zone = function (arg_27_0)
 	return true
 end
 
-PlayerInZoneExtension._progress_frozen = function (arg_28_0)
+function PlayerInZoneExtension._progress_frozen(arg_28_0)
 	local var_28_0, var_28_1 = arg_28_0:_fulfill_in_zone_check()
 
 	if var_28_0 then
@@ -327,7 +327,7 @@ PlayerInZoneExtension._progress_frozen = function (arg_28_0)
 	end
 end
 
-PlayerInZoneExtension._progress_check = function (arg_29_0, arg_29_1, arg_29_2)
+function PlayerInZoneExtension._progress_check(arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0._go_id
 	local var_29_1 = arg_29_0._game
 	local var_29_2
@@ -408,7 +408,7 @@ PlayerInZoneExtension._progress_check = function (arg_29_0, arg_29_1, arg_29_2)
 	end
 end
 
-PlayerInZoneExtension._progress_finished = function (arg_30_0)
+function PlayerInZoneExtension._progress_finished(arg_30_0)
 	local var_30_0 = Managers.state.network
 	local var_30_1 = LevelHelper:unit_index(arg_30_0._world, arg_30_0._unit)
 
@@ -416,17 +416,17 @@ PlayerInZoneExtension._progress_finished = function (arg_30_0)
 	arg_30_0:end_event()
 end
 
-PlayerInZoneExtension._trigger_start_events = function (arg_31_0)
+function PlayerInZoneExtension._trigger_start_events(arg_31_0)
 	Managers.state.event:trigger("start_progression_zone", arg_31_0._unit, arg_31_0)
 	Unit.flow_event(arg_31_0._unit, "lua_start_progression")
 end
 
-PlayerInZoneExtension._trigger_stop_events = function (arg_32_0)
+function PlayerInZoneExtension._trigger_stop_events(arg_32_0)
 	Managers.state.event:trigger("stop_progression_zone", arg_32_0._unit, arg_32_0)
 	Unit.flow_event(arg_32_0._unit, "lua_stop_progression")
 end
 
-PlayerInZoneExtension._check_progress_percent = function (arg_33_0, arg_33_1)
+function PlayerInZoneExtension._check_progress_percent(arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0._progression_percentage
 	local var_33_1 = arg_33_0._unit
 
@@ -445,7 +445,7 @@ PlayerInZoneExtension._check_progress_percent = function (arg_33_0, arg_33_1)
 	end
 end
 
-PlayerInZoneExtension._count_up = function (arg_34_0, arg_34_1, arg_34_2)
+function PlayerInZoneExtension._count_up(arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0._timer
 	local var_34_1 = 1
 
@@ -456,13 +456,13 @@ PlayerInZoneExtension._count_up = function (arg_34_0, arg_34_1, arg_34_2)
 	return math.clamp(arg_34_0:_current_time() + arg_34_1 / var_34_0 * var_34_1, 0, 1)
 end
 
-PlayerInZoneExtension._count_down = function (arg_35_0, arg_35_1)
+function PlayerInZoneExtension._count_down(arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._timer
 
 	return math.clamp(arg_35_0:_current_time() - arg_35_1 / var_35_0, 0, 1)
 end
 
-PlayerInZoneExtension._reset = function (arg_36_0)
+function PlayerInZoneExtension._reset(arg_36_0)
 	arg_36_0._activated = false
 
 	Managers.state.event:trigger("stop_progression_zone", arg_36_0._unit)
@@ -482,19 +482,19 @@ PlayerInZoneExtension._reset = function (arg_36_0)
 	end
 end
 
-PlayerInZoneExtension.end_event = function (arg_37_0)
+function PlayerInZoneExtension.end_event(arg_37_0)
 	arg_37_0:_reset()
 	Unit.flow_event(arg_37_0._unit, "lua_start_end_event")
 end
 
-PlayerInZoneExtension._register_count_up = function (arg_38_0, arg_38_1)
+function PlayerInZoneExtension._register_count_up(arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0._go_id
 	local var_38_1 = arg_38_0._game
 
 	GameSession.set_game_object_field(var_38_1, var_38_0, "counting_up", arg_38_1)
 end
 
-PlayerInZoneExtension._debug_drawer = function (arg_39_0, arg_39_1)
+function PlayerInZoneExtension._debug_drawer(arg_39_0, arg_39_1)
 	if arg_39_1 == "counting" then
 		arg_39_0._drawer = arg_39_0._drawer or Managers.state.debug:drawer({
 			mode = "immediate"

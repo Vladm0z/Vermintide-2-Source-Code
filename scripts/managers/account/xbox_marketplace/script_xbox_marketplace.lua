@@ -2,7 +2,7 @@
 
 ScriptXboxMarketplace = class(ScriptXboxMarketplace)
 
-ScriptXboxMarketplace.init = function (arg_1_0)
+function ScriptXboxMarketplace.init(arg_1_0)
 	arg_1_0._state = nil
 	arg_1_0._response_cb = nil
 	arg_1_0._error_code = nil
@@ -12,11 +12,11 @@ ScriptXboxMarketplace.init = function (arg_1_0)
 	arg_1_0._initialized = XboxMarketplace.initialize(var_1_0.xb1_product_id)
 end
 
-ScriptXboxMarketplace.destroy = function (arg_2_0)
+function ScriptXboxMarketplace.destroy(arg_2_0)
 	XboxMarketplace.shutdown()
 end
 
-ScriptXboxMarketplace.update = function (arg_3_0, arg_3_1)
+function ScriptXboxMarketplace.update(arg_3_0, arg_3_1)
 	if not arg_3_0._state or not arg_3_0._initialized then
 		return
 	end
@@ -24,7 +24,7 @@ ScriptXboxMarketplace.update = function (arg_3_0, arg_3_1)
 	arg_3_0[arg_3_0._state](arg_3_0, arg_3_1)
 end
 
-ScriptXboxMarketplace.get_product_details = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+function ScriptXboxMarketplace.get_product_details(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	if not XboxMarketplace.get_catalog_items(arg_4_1, unpack(arg_4_2)) then
 		arg_4_3({
 			error = "failed calling XboxMarketplace.get_catalog_items"
@@ -35,7 +35,7 @@ ScriptXboxMarketplace.get_product_details = function (arg_4_0, arg_4_1, arg_4_2,
 	end
 end
 
-ScriptXboxMarketplace._waiting_for_catalog_details_result = function (arg_5_0, arg_5_1)
+function ScriptXboxMarketplace._waiting_for_catalog_details_result(arg_5_0, arg_5_1)
 	local var_5_0, var_5_1 = XboxMarketplace.status()
 
 	if var_5_0 then
@@ -44,7 +44,7 @@ ScriptXboxMarketplace._waiting_for_catalog_details_result = function (arg_5_0, a
 	end
 end
 
-ScriptXboxMarketplace._get_catalog_details_information = function (arg_6_0, arg_6_1)
+function ScriptXboxMarketplace._get_catalog_details_information(arg_6_0, arg_6_1)
 	local var_6_0
 
 	if arg_6_0._error_code ~= 0 then
@@ -63,7 +63,7 @@ ScriptXboxMarketplace._get_catalog_details_information = function (arg_6_0, arg_
 	arg_6_0._state = "_cleanup"
 end
 
-ScriptXboxMarketplace._cleanup = function (arg_7_0, arg_7_1)
+function ScriptXboxMarketplace._cleanup(arg_7_0, arg_7_1)
 	XboxMarketplace.release_catalog()
 
 	arg_7_0._state = nil

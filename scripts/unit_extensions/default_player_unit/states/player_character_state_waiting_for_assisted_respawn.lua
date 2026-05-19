@@ -2,14 +2,14 @@
 
 PlayerCharacterStateWaitingForAssistedRespawn = class(PlayerCharacterStateWaitingForAssistedRespawn, PlayerCharacterState)
 
-PlayerCharacterStateWaitingForAssistedRespawn.init = function (arg_1_0, arg_1_1)
+function PlayerCharacterStateWaitingForAssistedRespawn.init(arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "waiting_for_assisted_respawn")
 
 	arg_1_0.recovery_timer = nil
 	arg_1_0.recovered = false
 end
 
-PlayerCharacterStateWaitingForAssistedRespawn.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+function PlayerCharacterStateWaitingForAssistedRespawn.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	arg_2_0.first_person_extension:set_first_person_mode(false)
 
 	local var_2_0 = true
@@ -34,7 +34,7 @@ PlayerCharacterStateWaitingForAssistedRespawn.on_enter = function (arg_2_0, arg_
 	CharacterStateHelper.stop_career_abilities(var_2_3, "respawning")
 end
 
-PlayerCharacterStateWaitingForAssistedRespawn.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+function PlayerCharacterStateWaitingForAssistedRespawn.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0.first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
 
 	local var_3_0 = true
@@ -66,7 +66,7 @@ PlayerCharacterStateWaitingForAssistedRespawn.on_exit = function (arg_3_0, arg_3
 	end
 end
 
-PlayerCharacterStateWaitingForAssistedRespawn.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+function PlayerCharacterStateWaitingForAssistedRespawn.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.csm
 	local var_4_1 = arg_4_0.status_extension
 

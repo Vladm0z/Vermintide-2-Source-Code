@@ -13,7 +13,8 @@ ItemMasterList.frame_gotwf_2025 = {
 	item_type = "frame",
 	can_wield = CanWieldAllItemTemplates,
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.dr_deus_01_skin_03_runed_05 = {
@@ -32,7 +33,8 @@ ItemMasterList.dr_deus_01_skin_03_runed_05 = {
 		"dr_ironbreaker"
 	},
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.dw_1h_hammer_shield_skin_04_runed_05 = {
@@ -51,7 +53,8 @@ ItemMasterList.dw_1h_hammer_shield_skin_04_runed_05 = {
 		"dr_ranger"
 	},
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.we_deus_01_skin_02_runed_05 = {
@@ -72,7 +75,8 @@ ItemMasterList.we_deus_01_skin_02_runed_05 = {
 		"we_waywatcher"
 	},
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.we_sword_skin_05_runed_05 = {
@@ -92,7 +96,8 @@ ItemMasterList.we_sword_skin_05_runed_05 = {
 		"we_waywatcher"
 	},
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.es_deus_01_skin_01_runed_05 = {
@@ -113,7 +118,8 @@ ItemMasterList.es_deus_01_skin_01_runed_05 = {
 		"es_mercenary"
 	},
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.es_longbow_skin_04_runed_05 = {
@@ -131,7 +137,8 @@ ItemMasterList.es_longbow_skin_04_runed_05 = {
 		"es_huntsman"
 	},
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.bw_ghost_scythe_skin_02_runed_05 = {
@@ -150,7 +157,8 @@ ItemMasterList.bw_ghost_scythe_skin_02_runed_05 = {
 		"bw_necromancer"
 	},
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.bw_beam_staff_skin_04_runed_05 = {
@@ -170,7 +178,8 @@ ItemMasterList.bw_beam_staff_skin_04_runed_05 = {
 		"bw_unchained"
 	},
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.wh_hammer_book_skin_02_runed_05 = {
@@ -189,7 +198,8 @@ ItemMasterList.wh_hammer_book_skin_02_runed_05 = {
 		"wh_priest"
 	},
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }
 ItemMasterList.wh_2h_sword_skin_05_runed_05 = {
@@ -209,6 +219,7 @@ ItemMasterList.wh_2h_sword_skin_05_runed_05 = {
 		"wh_captain"
 	},
 	events = {
-		"gotwf"
+		"gotwf",
+		"dwarf_fest"
 	}
 }

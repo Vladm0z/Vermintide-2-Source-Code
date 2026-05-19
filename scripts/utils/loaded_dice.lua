@@ -2,7 +2,7 @@
 
 LoadedDice = {}
 
-LoadedDice.create = function (arg_1_0, arg_1_1)
+function LoadedDice.create(arg_1_0, arg_1_1)
 	local var_1_0 = #arg_1_0
 	local var_1_1 = {}
 	local var_1_2 = {}
@@ -68,13 +68,13 @@ LoadedDice.create = function (arg_1_0, arg_1_1)
 	return var_1_2, var_1_1
 end
 
-LoadedDice.roll = function (arg_2_0, arg_2_1)
+function LoadedDice.roll(arg_2_0, arg_2_1)
 	local var_2_0 = math.random(1, #arg_2_0)
 
 	return math.random() < arg_2_0[var_2_0] and var_2_0 or arg_2_1[var_2_0]
 end
 
-LoadedDice.roll_seeded = function (arg_3_0, arg_3_1, arg_3_2)
+function LoadedDice.roll_seeded(arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0, var_3_1 = Math.next_random(arg_3_2, 1, #arg_3_0)
 	local var_3_2, var_3_3 = Math.next_random(var_3_0)
 	local var_3_4 = var_3_3 < arg_3_0[var_3_1]
@@ -84,7 +84,7 @@ end
 
 local var_0_0 = {}
 
-LoadedDice.create_from_mixed = function (arg_4_0, arg_4_1)
+function LoadedDice.create_from_mixed(arg_4_0, arg_4_1)
 	local var_4_0 = var_0_0
 	local var_4_1 = #arg_4_0 / 2
 
@@ -104,15 +104,15 @@ LoadedDice.create_from_mixed = function (arg_4_0, arg_4_1)
 	}
 end
 
-LoadedDice.roll_easy = function (arg_5_0)
+function LoadedDice.roll_easy(arg_5_0)
 	return LoadedDice.roll(arg_5_0[1], arg_5_0[2])
 end
 
-LoadedDice.roll_easy_seeded = function (arg_6_0, arg_6_1)
+function LoadedDice.roll_easy_seeded(arg_6_0, arg_6_1)
 	return LoadedDice.roll_seeded(arg_6_0[1], arg_6_0[2], arg_6_1)
 end
 
-LoadedDice.test = function ()
+function LoadedDice.test()
 	local var_7_0 = {
 		10,
 		5,
