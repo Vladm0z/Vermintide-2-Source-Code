@@ -404,7 +404,7 @@ var_0_1.bless_punch_back = {
 					local var_18_8 = arg_18_2.last_hit
 					local var_18_9 = arg_18_2.last_hit_n
 
-					for iter_18_0, iter_18_1 in var_18_8 do
+					for iter_18_0, iter_18_1 in pairs(var_18_8) do
 						if not ALIVE[iter_18_0] or var_18_7 > iter_18_1 + var_0_34 then
 							var_18_8[iter_18_0] = nil
 							var_18_9 = var_18_9 - 1

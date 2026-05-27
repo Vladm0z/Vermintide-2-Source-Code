@@ -459,56 +459,82 @@ function EacManager._pump_eos_actions(arg_24_0)
 	end
 end
 
-local var_0_4 = {
-	init = function(arg_25_0)
+local var_0_4 = 5
+local var_0_5 = 2
+local var_0_6 = {
+	init = function(arg_25_0, arg_25_1)
+		var_0_2("Retrieving Steam auth session ticket...")
+
+		arg_25_0._auth_retries = 0
+
 		return "retrieve_ticket"
 	end,
 	retrieve_ticket = function(arg_26_0, arg_26_1)
-		var_0_2("Retrieving Steam auth session ticket...")
+		local var_26_0 = Steam.retrieve_auth_session_ticket("epiconlineservices")
 
-		arg_26_0._steam_ticket_job = Steam.retrieve_auth_session_ticket("epiconlineservices")
+		if var_26_0 then
+			arg_26_0._steam_ticket_job = var_26_0
 
-		return "poll_ticket"
+			return "poll_ticket"
+		end
+
+		arg_26_0._auth_retries = arg_26_0._auth_retries + 1
+
+		if arg_26_0._auth_retries > var_0_5 then
+			var_0_2("Failed to retrieve auth session ticket. Exceded max %d retry attempt(s).", var_0_5)
+
+			arg_26_0._eos_auth_complete = true
+			arg_26_0._eos_auth_error = Localize("backend_err_auth_steam")
+		end
+
+		arg_26_0._auth_retry_t = arg_26_1 + var_0_4
+
+		return "retrying_retrieve_ticket"
 	end,
-	poll_ticket = function(arg_27_0)
-		local var_27_0 = Steam.poll_auth_session_ticket(arg_27_0._steam_ticket_job)
+	retrying_retrieve_ticket = function(arg_27_0, arg_27_1)
+		if arg_27_1 >= arg_27_0._auth_retry_t then
+			return "retrieve_ticket"
+		end
+	end,
+	poll_ticket = function(arg_28_0, arg_28_1)
+		local var_28_0 = Steam.poll_auth_session_ticket(arg_28_0._steam_ticket_job)
 
-		if var_27_0 then
-			arg_27_0._steam_ticket_job = nil
-			arg_27_0._auth_session_ticket = var_27_0
+		if var_28_0 then
+			arg_28_0._steam_ticket_job = nil
+			arg_28_0._auth_session_ticket = var_28_0
 
 			return "start_authenticate"
 		end
 	end,
-	start_authenticate = function(arg_28_0)
+	start_authenticate = function(arg_29_0, arg_29_1)
 		var_0_2("Authenticating with Steam as an identity provider...")
-		EOS_EAC.authenticate_with_steam(arg_28_0._auth_session_ticket)
+		EOS_EAC.authenticate_with_steam(arg_29_0._auth_session_ticket)
 
-		arg_28_0._auth_session_ticket = nil
+		arg_29_0._auth_session_ticket = nil
 
 		return "poll_authenticate"
 	end,
-	poll_authenticate = function(arg_29_0)
-		local var_29_0, var_29_1 = EOS_EAC.poll_authenticate_status()
+	poll_authenticate = function(arg_30_0, arg_30_1)
+		local var_30_0, var_30_1 = EOS_EAC.poll_authenticate_status()
 
-		if var_29_0 == "in_flight" then
+		if var_30_0 == "in_flight" then
 			return
 		end
 
-		if var_29_0 == "success" then
-			arg_29_0._user_id = EOS_EAC.user_id()
-			arg_29_0._eos_auth_error = nil
+		if var_30_0 == "success" then
+			arg_30_0._user_id = EOS_EAC.user_id()
+			arg_30_0._eos_auth_error = nil
 		else
-			arg_29_0._eos_auth_error = string.format("EOS auth status=%s, result=%s", var_29_0, table.find(EOS_Result, var_29_1) or "?")
+			arg_30_0._eos_auth_error = string.format("EOS auth status=%s, result=%s", var_30_0, table.find(EOS_Result, var_30_1) or "?")
 		end
 
-		arg_29_0._eos_auth_complete = true
+		arg_30_0._eos_auth_complete = true
 
-		var_0_2("Login complete. Error: %s", arg_29_0._eos_auth_error or "none")
+		var_0_2("Login complete. Error: %s", arg_30_0._eos_auth_error or "none")
 
 		return "poll_valid"
 	end,
-	poll_valid = function(arg_30_0)
+	poll_valid = function(arg_31_0, arg_31_1)
 		if EOS_EAC.poll_authenticate_status() == "expired" then
 			var_0_2("Refreshing user id ...")
 
@@ -517,160 +543,160 @@ local var_0_4 = {
 	end
 }
 
-function EacManager._handle_eos(arg_31_0, arg_31_1)
-	if not USE_EOS or not arg_31_0._eac_supported then
+function EacManager._handle_eos(arg_32_0, arg_32_1)
+	if not USE_EOS or not arg_32_0._eac_supported then
 		return
 	end
 
 	if not DEDICATED_SERVER then
-		local var_31_0 = arg_31_0._auth_state or "init"
-		local var_31_1 = var_0_4[var_31_0](arg_31_0, arg_31_1)
+		local var_32_0 = arg_32_0._auth_state or "init"
+		local var_32_1 = var_0_6[var_32_0](arg_32_0, arg_32_1)
 
-		if var_31_1 then
-			arg_31_0._auth_state = var_31_1
+		if var_32_1 then
+			arg_32_0._auth_state = var_32_1
 		end
 
-		if not arg_31_0._user_id then
+		if not arg_32_0._user_id then
 			return
 		end
 	end
 
-	arg_31_0:_pump_eos_actions()
+	arg_32_0:_pump_eos_actions()
 
-	for iter_31_0, iter_31_1 in pairs(arg_31_0._peer_data) do
-		if arg_31_1 > iter_31_1.timeout_t then
-			iter_31_1.untrusted = true
+	for iter_32_0, iter_32_1 in pairs(arg_32_0._peer_data) do
+		if arg_32_1 > iter_32_1.timeout_t then
+			iter_32_1.untrusted = true
 		end
 	end
 end
 
-local var_0_5 = {}
+local var_0_7 = {}
 
 if USE_EOS then
-	var_0_5.IntegrityCatalogNotFound = true
-	var_0_5.IntegrityCatalogError = true
-	var_0_5.IntegrityCatalogMissingMainExecutable = true
-	var_0_5.GameFileMismatch = true
-	var_0_5.RequiredGameFileNotFound = true
-	var_0_5.UnknownGameFileForbidden = true
+	var_0_7.IntegrityCatalogNotFound = true
+	var_0_7.IntegrityCatalogError = true
+	var_0_7.IntegrityCatalogMissingMainExecutable = true
+	var_0_7.GameFileMismatch = true
+	var_0_7.RequiredGameFileNotFound = true
+	var_0_7.UnknownGameFileForbidden = true
 else
-	var_0_5.hash_catalogue_file_not_found = true
-	var_0_5.hash_catalogue_error = true
-	var_0_5.unknown_game_file_version = true
-	var_0_5.required_game_file_not_found = true
+	var_0_7.hash_catalogue_file_not_found = true
+	var_0_7.hash_catalogue_error = true
+	var_0_7.unknown_game_file_version = true
+	var_0_7.required_game_file_not_found = true
 end
 
-function EacManager._handle_violations(arg_32_0)
-	if arg_32_0._eac_violation_type then
+function EacManager._handle_violations(arg_33_0)
+	if arg_33_0._eac_violation_type then
 		return
 	end
 
 	if USE_EOS and rawget(_G, "EOS_EAC") then
-		local var_32_0
-		local var_32_1
+		local var_33_0
+		local var_33_1
 
 		if not EOS_EAC.has_eac_client() then
-			var_32_0, var_32_1 = "NO_BOOTSTRAPPER", "NO_BOOTSTRAPPER"
-		elseif arg_32_0._eos_auth_error then
-			var_32_0, var_32_1 = "AUTH_ERROR", arg_32_0._eos_auth_error
+			var_33_0, var_33_1 = "NO_BOOTSTRAPPER", "NO_BOOTSTRAPPER"
+		elseif arg_33_0._eos_auth_error then
+			var_33_0, var_33_1 = "AUTH_ERROR", arg_33_0._eos_auth_error
 		else
-			var_32_0, var_32_1 = EOS_EAC.get_integrity_violation()
-			var_32_0 = var_32_0 and (table.find(EOS_EAC_ACCVT, var_32_0) or "UNKNOWN")
+			var_33_0, var_33_1 = EOS_EAC.get_integrity_violation()
+			var_33_0 = var_33_0 and (table.find(EOS_EAC_ACCVT, var_33_0) or "UNKNOWN")
 		end
 
-		if var_32_0 then
-			local var_32_2 = "{#color(193,91,36)}"
-			local var_32_3 = "{#color(255,255,255)}: "
-			local var_32_4 = "{#reset()}"
+		if var_33_0 then
+			local var_33_2 = "{#color(193,91,36)}"
+			local var_33_3 = "{#color(255,255,255)}: "
+			local var_33_4 = "{#reset()}"
 
-			arg_32_0._eac_violation_message = var_32_2 .. Localize("eac_state") .. var_32_3 .. Localize("eac_state_untrusted") .. "\n" .. var_32_2 .. Localize("eac_violation_type") .. var_32_3 .. var_32_0 .. "\n" .. var_32_2 .. Localize("eac_cause") .. var_32_3 .. var_32_1 .. "\n" .. var_32_4 .. Localize("eac_untrusted_explanation")
-			arg_32_0._eac_violation_type = var_32_0
+			arg_33_0._eac_violation_message = var_33_2 .. Localize("eac_state") .. var_33_3 .. Localize("eac_state_untrusted") .. "\n" .. var_33_2 .. Localize("eac_violation_type") .. var_33_3 .. var_33_0 .. "\n" .. var_33_2 .. Localize("eac_cause") .. var_33_3 .. var_33_1 .. "\n" .. var_33_4 .. Localize("eac_untrusted_explanation")
+			arg_33_0._eac_violation_type = var_33_0
 		end
 	elseif rawget(_G, "EAC") then
-		local var_32_5, var_32_6, var_32_7, var_32_8 = EAC.state()
+		local var_33_5, var_33_6, var_33_7, var_33_8 = EAC.state()
 
-		if var_32_5 == var_0_0.untrusted or var_32_5 == var_0_0.banned then
-			local var_32_9 = "{#color(193,91,36)}"
-			local var_32_10 = "{#color(255,255,255)}: "
-			local var_32_11 = "{#reset()}"
+		if var_33_5 == var_0_0.untrusted or var_33_5 == var_0_0.banned then
+			local var_33_9 = "{#color(193,91,36)}"
+			local var_33_10 = "{#color(255,255,255)}: "
+			local var_33_11 = "{#reset()}"
 
-			arg_32_0._eac_violation_message = var_32_9 .. Localize("eac_state") .. var_32_10 .. Localize("eac_state_untrusted") .. "\n" .. var_32_9 .. Localize("eac_violation_type") .. var_32_10 .. var_32_8 .. "\n" .. var_32_9 .. Localize("eac_cause") .. var_32_10 .. var_32_7 .. "\n" .. var_32_11 .. Localize(var_32_5 == var_0_0.banned and "eac_banned_explanation" or "eac_untrusted_explanation")
-			arg_32_0._eac_violation_type = var_32_8
+			arg_33_0._eac_violation_message = var_33_9 .. Localize("eac_state") .. var_33_10 .. Localize("eac_state_untrusted") .. "\n" .. var_33_9 .. Localize("eac_violation_type") .. var_33_10 .. var_33_8 .. "\n" .. var_33_9 .. Localize("eac_cause") .. var_33_10 .. var_33_7 .. "\n" .. var_33_11 .. Localize(var_33_5 == var_0_0.banned and "eac_banned_explanation" or "eac_untrusted_explanation")
+			arg_33_0._eac_violation_type = var_33_8
 		end
 	end
 
-	if arg_32_0._eac_violation_type then
-		Crashify.print_exception("EAC", "Integrity violation: %s", arg_32_0._eac_violation_type)
+	if arg_33_0._eac_violation_type then
+		Crashify.print_exception("EAC", "Integrity violation: %s", arg_33_0._eac_violation_type)
 	end
 end
 
-function EacManager._handle_popups(arg_33_0)
-	local var_33_0 = Managers.popup
+function EacManager._handle_popups(arg_34_0)
+	local var_34_0 = Managers.popup
 
-	if arg_33_0._popup_id ~= nil and var_33_0:query_result(arg_33_0._popup_id) == "quit" then
-		arg_33_0._popup_id = nil
+	if arg_34_0._popup_id ~= nil and var_34_0:query_result(arg_34_0._popup_id) == "quit" then
+		arg_34_0._popup_id = nil
 
 		Application.quit()
 	end
 
-	if arg_33_0._suppress_popup then
+	if arg_34_0._suppress_popup then
 		return
 	end
 
-	if not var_0_5[arg_33_0._eac_violation_type] then
+	if not var_0_7[arg_34_0._eac_violation_type] then
 		return
 	end
 
-	local var_33_1 = Localize("eac_file_corruption_detected")
-	local var_33_2 = Localize("eac_file_corruption_topic")
-	local var_33_3 = Localize("menu_quit")
+	local var_34_1 = Localize("eac_file_corruption_detected")
+	local var_34_2 = Localize("eac_file_corruption_topic")
+	local var_34_3 = Localize("menu_quit")
 
-	arg_33_0._popup_id = var_33_0:queue_popup(var_33_1, var_33_2, "quit", var_33_3)
-	arg_33_0._suppress_popup = true
+	arg_34_0._popup_id = var_34_0:queue_popup(var_34_1, var_34_2, "quit", var_34_3)
+	arg_34_0._suppress_popup = true
 end
 
-function EacManager.draw_panel(arg_34_0, arg_34_1, arg_34_2)
-	local var_34_0 = arg_34_0._eac_violation_message
+function EacManager.draw_panel(arg_35_0, arg_35_1, arg_35_2)
+	local var_35_0 = arg_35_0._eac_violation_message
 
-	if not var_34_0 or arg_34_0._suppress_panel then
+	if not var_35_0 or arg_35_0._suppress_panel then
 		return
 	end
 
-	local var_34_1 = Vector2
-	local var_34_2 = Vector3
-	local var_34_3 = Color
-	local var_34_4 = math.max(RESOLUTION_LOOKUP.scale, 0.5)
-	local var_34_5 = var_34_1(RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h)
-	local var_34_6 = "materials/fonts/arial"
-	local var_34_7 = 14 * var_34_4
-	local var_34_8 = 1.1 * var_34_7
-	local var_34_9 = var_34_3(192, 91, 36)
-	local var_34_10 = var_34_3(200, 0, 0, 0)
-	local var_34_11 = var_34_3(180, 180, 180)
-	local var_34_12 = 500 * var_34_4
-	local var_34_13 = 1 * var_34_4
-	local var_34_14 = var_34_1(15, 10) * var_34_4
-	local var_34_15 = var_34_1(40, 20) * var_34_4
-	local var_34_16 = 995
-	local var_34_17 = Gui.word_wrap(arg_34_1, var_34_0, var_34_6, var_34_7, var_34_12, " ", "_-+&/", "\n", true, Gui.FormatDirectives)
-	local var_34_18 = 2 * var_34_14 + var_34_1(var_34_12, #var_34_17 * var_34_8)
-	local var_34_19 = var_34_5 - var_34_18 - var_34_15 + var_34_2(0, 0, var_34_16)
+	local var_35_1 = Vector2
+	local var_35_2 = Vector3
+	local var_35_3 = Color
+	local var_35_4 = math.max(RESOLUTION_LOOKUP.scale, 0.5)
+	local var_35_5 = var_35_1(RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h)
+	local var_35_6 = "materials/fonts/arial"
+	local var_35_7 = 14 * var_35_4
+	local var_35_8 = 1.1 * var_35_7
+	local var_35_9 = var_35_3(192, 91, 36)
+	local var_35_10 = var_35_3(200, 0, 0, 0)
+	local var_35_11 = var_35_3(180, 180, 180)
+	local var_35_12 = 500 * var_35_4
+	local var_35_13 = 1 * var_35_4
+	local var_35_14 = var_35_1(15, 10) * var_35_4
+	local var_35_15 = var_35_1(40, 20) * var_35_4
+	local var_35_16 = 995
+	local var_35_17 = Gui.word_wrap(arg_35_1, var_35_0, var_35_6, var_35_7, var_35_12, " ", "_-+&/", "\n", true, Gui.FormatDirectives)
+	local var_35_18 = 2 * var_35_14 + var_35_1(var_35_12, #var_35_17 * var_35_8)
+	local var_35_19 = var_35_5 - var_35_18 - var_35_15 + var_35_2(0, 0, var_35_16)
 
-	Gui.rect(arg_34_1, var_34_19, var_34_18, var_34_10)
-	Gui.rect(arg_34_1, var_34_19 + var_34_2(0, 0, 1), var_34_1(var_34_13, var_34_18.y), var_34_9)
-	Gui.rect(arg_34_1, var_34_19 + var_34_2(0, 0, 1), var_34_1(var_34_18.x, var_34_13), var_34_9)
-	Gui.rect(arg_34_1, var_34_19 + var_34_2(0, var_34_18.y, 1), var_34_1(var_34_18.x, -var_34_13), var_34_9)
-	Gui.rect(arg_34_1, var_34_19 + var_34_2(var_34_18.x, 0, 1), var_34_1(-var_34_13, var_34_18.y), var_34_9)
+	Gui.rect(arg_35_1, var_35_19, var_35_18, var_35_10)
+	Gui.rect(arg_35_1, var_35_19 + var_35_2(0, 0, 1), var_35_1(var_35_13, var_35_18.y), var_35_9)
+	Gui.rect(arg_35_1, var_35_19 + var_35_2(0, 0, 1), var_35_1(var_35_18.x, var_35_13), var_35_9)
+	Gui.rect(arg_35_1, var_35_19 + var_35_2(0, var_35_18.y, 1), var_35_1(var_35_18.x, -var_35_13), var_35_9)
+	Gui.rect(arg_35_1, var_35_19 + var_35_2(var_35_18.x, 0, 1), var_35_1(-var_35_13, var_35_18.y), var_35_9)
 
-	local var_34_20 = var_34_19 + var_34_14 + var_34_2(0, 0.18 * var_34_7, 2)
+	local var_35_20 = var_35_19 + var_35_14 + var_35_2(0, 0.18 * var_35_7, 2)
 
-	for iter_34_0 = #var_34_17, 1, -1 do
-		Gui.text(arg_34_1, var_34_17[iter_34_0], var_34_6, var_34_7, nil, var_34_20, var_34_11, Gui.FormatDirectives)
+	for iter_35_0 = #var_35_17, 1, -1 do
+		Gui.text(arg_35_1, var_35_17[iter_35_0], var_35_6, var_35_7, nil, var_35_20, var_35_11, Gui.FormatDirectives)
 
-		var_34_20.y = var_34_20.y + var_34_8
+		var_35_20.y = var_35_20.y + var_35_8
 	end
 end
 
-function EacManager.eac_ready_locally(arg_35_0)
-	return not not arg_35_0._local_role
+function EacManager.eac_ready_locally(arg_36_0)
+	return not not arg_36_0._local_role
 end
