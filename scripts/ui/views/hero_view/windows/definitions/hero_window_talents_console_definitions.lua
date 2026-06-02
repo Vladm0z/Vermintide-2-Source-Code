@@ -12,13 +12,14 @@ local var_0_2 = {
 	364,
 	80
 }
-local var_0_3 = UISettings.console_menu_scenegraphs
-local var_0_4 = {
-	screen = var_0_3.screen,
-	area = var_0_3.area,
-	area_left = var_0_3.area_left,
-	area_right = var_0_3.area_right,
-	area_divider = var_0_3.area_divider,
+local var_0_3 = 6
+local var_0_4 = UISettings.console_menu_scenegraphs
+local var_0_5 = {
+	screen = var_0_4.screen,
+	area = var_0_4.area,
+	area_left = var_0_4.area_left,
+	area_right = var_0_4.area_right,
+	area_divider = var_0_4.area_divider,
 	info_window = {
 		vertical_alignment = "top",
 		parent = "area_right",
@@ -268,45 +269,18 @@ local var_0_4 = {
 			1
 		}
 	},
-	career_perk_1 = {
+	career_perk_anchor = {
 		vertical_alignment = "bottom",
 		parent = "perk_title_divider",
 		horizontal_alignment = "left",
 		size = {
-			420,
+			0,
+			0,
 			1
 		},
 		position = {
 			10,
 			-30,
-			1
-		}
-	},
-	career_perk_2 = {
-		vertical_alignment = "center",
-		parent = "career_perk_1",
-		horizontal_alignment = "left",
-		size = {
-			420,
-			1
-		},
-		position = {
-			0,
-			0,
-			1
-		}
-	},
-	career_perk_3 = {
-		vertical_alignment = "center",
-		parent = "career_perk_2",
-		horizontal_alignment = "left",
-		size = {
-			420,
-			1
-		},
-		position = {
-			0,
-			0,
 			1
 		}
 	},
@@ -451,7 +425,31 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+
+for iter_0_0 = 1, var_0_3 do
+	local var_0_6 = iter_0_0 - 1
+
+	if iter_0_0 == 1 then
+		var_0_6 = "anchor"
+	end
+
+	var_0_5["career_perk_" .. iter_0_0] = {
+		vertical_alignment = "bottom",
+		horizontal_alignment = "left",
+		parent = "career_perk_" .. var_0_6,
+		size = {
+			410,
+			1
+		},
+		position = {
+			0,
+			0,
+			1
+		}
+	}
+end
+
+local var_0_7 = {
 	font_size = 42,
 	upper_case = true,
 	localize = false,
@@ -466,7 +464,7 @@ local var_0_5 = {
 		2
 	}
 }
-local var_0_6 = {
+local var_0_8 = {
 	font_size = 18,
 	use_shadow = true,
 	localize = false,
@@ -482,7 +480,7 @@ local var_0_6 = {
 		2
 	}
 }
-local var_0_7 = {
+local var_0_9 = {
 	word_wrap = true,
 	font_size = 24,
 	localize = false,
@@ -497,7 +495,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local var_0_10 = {
 	word_wrap = true,
 	font_size = 24,
 	localize = false,
@@ -512,7 +510,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local var_0_11 = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -528,7 +526,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local var_0_12 = {
 	font_size = 32,
 	upper_case = false,
 	localize = false,
@@ -545,7 +543,7 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = {
+local var_0_13 = {
 	font_size = 32,
 	upper_case = false,
 	localize = false,
@@ -563,7 +561,7 @@ local var_0_11 = {
 	}
 }
 
-local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = UIFrameSettings.menu_frame_09
 	local var_1_1 = "frame_outer_glow_01"
 	local var_1_2 = UIFrameSettings[var_1_1]
@@ -1159,7 +1157,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	return var_1_4
 end
 
-local function var_0_13(arg_10_0)
+local function var_0_15(arg_10_0)
 	return {
 		element = {
 			passes = {
@@ -1282,7 +1280,7 @@ local function var_0_13(arg_10_0)
 	}
 end
 
-local var_0_14 = {
+local var_0_16 = {
 	font_size = 32,
 	use_shadow = true,
 	localize = false,
@@ -1298,38 +1296,40 @@ local var_0_14 = {
 		2
 	}
 }
-local var_0_15 = {
-	tooltip_area = UIWidgets.create_rect_with_outer_frame("tooltip_area", var_0_4.tooltip_area.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
-	tooltip_title = UIWidgets.create_simple_text("n/a", "tooltip_title", nil, nil, var_0_10),
-	tooltip_description = UIWidgets.create_simple_text("n/a", "tooltip_description", nil, nil, var_0_7),
-	tooltip_info = UIWidgets.create_simple_text("n/a", "tooltip_info", nil, nil, var_0_8),
-	talent_row_1 = var_0_12("talent_row_1", var_0_4.talent_row_1.size, var_0_2, 3),
-	talent_row_2 = var_0_12("talent_row_2", var_0_4.talent_row_2.size, var_0_2, 3),
-	talent_row_3 = var_0_12("talent_row_3", var_0_4.talent_row_3.size, var_0_2, 3),
-	talent_row_4 = var_0_12("talent_row_4", var_0_4.talent_row_4.size, var_0_2, 3),
-	talent_row_5 = var_0_12("talent_row_5", var_0_4.talent_row_5.size, var_0_2, 3),
-	talent_row_6 = var_0_12("talent_row_6", var_0_4.talent_row_6.size, var_0_2, 3),
-	info_window_background = UIWidgets.create_rect_with_outer_frame("info_window", var_0_4.info_window.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
+local var_0_17 = {
+	tooltip_area = UIWidgets.create_rect_with_outer_frame("tooltip_area", var_0_5.tooltip_area.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
+	tooltip_title = UIWidgets.create_simple_text("n/a", "tooltip_title", nil, nil, var_0_12),
+	tooltip_description = UIWidgets.create_simple_text("n/a", "tooltip_description", nil, nil, var_0_9),
+	tooltip_info = UIWidgets.create_simple_text("n/a", "tooltip_info", nil, nil, var_0_10),
+	talent_row_1 = var_0_14("talent_row_1", var_0_5.talent_row_1.size, var_0_2, 3),
+	talent_row_2 = var_0_14("talent_row_2", var_0_5.talent_row_2.size, var_0_2, 3),
+	talent_row_3 = var_0_14("talent_row_3", var_0_5.talent_row_3.size, var_0_2, 3),
+	talent_row_4 = var_0_14("talent_row_4", var_0_5.talent_row_4.size, var_0_2, 3),
+	talent_row_5 = var_0_14("talent_row_5", var_0_5.talent_row_5.size, var_0_2, 3),
+	talent_row_6 = var_0_14("talent_row_6", var_0_5.talent_row_6.size, var_0_2, 3),
+	info_window_background = UIWidgets.create_rect_with_outer_frame("info_window", var_0_5.info_window.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
 	mask = UIWidgets.create_simple_texture("mask_rect", "scrollbar_anchor"),
-	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, var_0_11),
+	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, var_0_13),
 	perk_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "perk_title_divider", true),
-	career_perk_1 = var_0_13("career_perk_1"),
-	career_perk_2 = var_0_13("career_perk_2"),
-	career_perk_3 = var_0_13("career_perk_3"),
-	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, var_0_11),
-	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, var_0_9),
+	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, var_0_13),
+	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, var_0_11),
 	passive_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "passive_title_divider", true),
-	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, var_0_6),
+	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, var_0_8),
 	passive_icon = UIWidgets.create_simple_texture("icons_placeholder", "passive_icon", true),
 	passive_icon_frame = UIWidgets.create_simple_texture("talent_frame", "passive_icon_frame", true),
-	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, var_0_11),
-	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, var_0_9),
+	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, var_0_13),
+	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, var_0_11),
 	active_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "active_title_divider", true),
-	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, var_0_6),
+	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, var_0_8),
 	active_icon = UIWidgets.create_simple_texture("icons_placeholder", "active_icon", true),
 	active_icon_frame = UIWidgets.create_simple_texture("talent_frame", "active_icon_frame", true)
 }
-local var_0_16 = {
+
+for iter_0_1 = 1, var_0_3 do
+	var_0_17["career_perk_" .. iter_0_1] = UIWidgets.create_career_perk_text("career_perk_" .. iter_0_1)
+end
+
+local var_0_18 = {
 	default = {
 		{
 			input_action = "d_pad",
@@ -1371,7 +1371,7 @@ local var_0_16 = {
 		}
 	}
 }
-local var_0_17 = {
+local var_0_19 = {
 	on_enter = {
 		{
 			name = "fade_in",
@@ -1413,8 +1413,9 @@ local var_0_17 = {
 }
 
 return {
-	widgets = var_0_15,
-	scenegraph_definition = var_0_4,
-	animation_definitions = var_0_17,
-	generic_input_actions = var_0_16
+	widgets = var_0_17,
+	scenegraph_definition = var_0_5,
+	animation_definitions = var_0_19,
+	generic_input_actions = var_0_18,
+	NUM_PERKS = var_0_3
 }

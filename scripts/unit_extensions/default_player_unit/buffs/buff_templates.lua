@@ -5217,7 +5217,7 @@ BuffTemplates = {
 	burning_dot_unchained_push = {
 		buffs = {
 			{
-				duration = 6.5,
+				duration = 6,
 				name = "burning_dot_unchained_push",
 				max_stacks = 1,
 				refresh_durations = true,
@@ -5255,7 +5255,7 @@ BuffTemplates = {
 	burning_dot_3tick = {
 		buffs = {
 			{
-				duration = 3.5,
+				duration = 3,
 				name = "burning_dot_3tick",
 				apply_buff_func = "start_dot_damage",
 				update_start_delay = 1,
@@ -5272,7 +5272,7 @@ BuffTemplates = {
 	burning_dot_2tick = {
 		buffs = {
 			{
-				duration = 2.5,
+				duration = 2,
 				name = "burning_dot_2tick_slow_unstackable",
 				refresh_durations = true,
 				apply_buff_func = "start_dot_damage",
@@ -5290,7 +5290,7 @@ BuffTemplates = {
 	burning_dot_2tick_slow_unstackable = {
 		buffs = {
 			{
-				duration = 5.5,
+				duration = 5,
 				name = "burning_dot_2tick_slow_unstackable",
 				max_stacks = 1,
 				refresh_durations = true,
@@ -5309,7 +5309,7 @@ BuffTemplates = {
 	burning_dot_scythe_special = {
 		buffs = {
 			{
-				duration = 5.5,
+				duration = 5,
 				name = "burning_dot_scythe_special",
 				max_stacks = 1,
 				refresh_durations = true,

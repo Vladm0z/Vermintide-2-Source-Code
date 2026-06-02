@@ -894,8 +894,8 @@ var_0_0.buff_function_templates = {
 							enhancements = var_10_10,
 							name_index = var_10_13
 						}
-						local var_10_22 = ConflictUtils.get_closest_position(var_10_20, var_10_2.ENEMY_PLAYER_AND_BOT_POSITIONS)
-						local var_10_23 = ConflictUtils.look_at_position_flat(var_10_20, var_10_22)
+						local var_10_22 = ConflictUtils.get_closest_position(var_10_20, var_10_2.ENEMY_PLAYER_AND_BOT_POSITIONS) or var_10_9 or Vector3.zero()
+						local var_10_23 = var_10_22 and ConflictUtils.look_at_position_flat(var_10_20, var_10_22)
 
 						Managers.state.conflict:spawn_queued_unit(var_10_1, Vector3Box(var_10_20), QuaternionBox(var_10_23), "mirror_spawn", nil, nil, var_10_21, nil)
 

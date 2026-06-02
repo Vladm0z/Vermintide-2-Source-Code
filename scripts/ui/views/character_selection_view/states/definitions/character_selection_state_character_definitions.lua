@@ -6,7 +6,8 @@ local var_0_2 = {
 	450,
 	170
 }
-local var_0_3 = {
+local var_0_3 = 6
+local var_0_4 = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -491,45 +492,18 @@ local var_0_3 = {
 			1
 		}
 	},
-	career_perk_1 = {
+	career_perk_anchor = {
 		vertical_alignment = "bottom",
 		parent = "perk_title_divider",
 		horizontal_alignment = "left",
 		size = {
-			410,
+			0,
+			0,
 			1
 		},
 		position = {
 			10,
 			-30,
-			1
-		}
-	},
-	career_perk_2 = {
-		vertical_alignment = "center",
-		parent = "career_perk_1",
-		horizontal_alignment = "left",
-		size = {
-			410,
-			1
-		},
-		position = {
-			0,
-			0,
-			1
-		}
-	},
-	career_perk_3 = {
-		vertical_alignment = "center",
-		parent = "career_perk_2",
-		horizontal_alignment = "left",
-		size = {
-			410,
-			1
-		},
-		position = {
-			0,
-			0,
 			1
 		}
 	},
@@ -576,7 +550,31 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+
+for iter_0_0 = 1, var_0_3 do
+	local var_0_5 = iter_0_0 - 1
+
+	if iter_0_0 == 1 then
+		var_0_5 = "anchor"
+	end
+
+	var_0_4["career_perk_" .. iter_0_0] = {
+		vertical_alignment = "bottom",
+		horizontal_alignment = "left",
+		parent = "career_perk_" .. var_0_5,
+		size = {
+			410,
+			1
+		},
+		position = {
+			0,
+			0,
+			1
+		}
+	}
+end
+
+local var_0_6 = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -592,7 +590,7 @@ local var_0_4 = {
 		2
 	}
 }
-local var_0_5 = {
+local var_0_7 = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -608,7 +606,7 @@ local var_0_5 = {
 		2
 	}
 }
-local var_0_6 = {
+local var_0_8 = {
 	font_size = 32,
 	upper_case = false,
 	localize = false,
@@ -625,7 +623,7 @@ local var_0_6 = {
 		2
 	}
 }
-local var_0_7 = {
+local var_0_9 = {
 	font_size = 40,
 	upper_case = true,
 	localize = false,
@@ -642,7 +640,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local var_0_10 = {
 	word_wrap = true,
 	font_size = 30,
 	localize = false,
@@ -657,7 +655,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local var_0_11 = {
 	word_wrap = true,
 	font_size = 52,
 	localize = false,
@@ -672,7 +670,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local var_0_12 = {
 	word_wrap = false,
 	upper_case = true,
 	localize = true,
@@ -688,11 +686,11 @@ local var_0_10 = {
 		20
 	}
 }
-local var_0_11 = {
+local var_0_13 = {
 	110,
 	130
 }
-local var_0_12 = {
+local var_0_14 = {
 	scenegraph_id = "hero_root",
 	offset = {
 		0,
@@ -727,7 +725,7 @@ local var_0_12 = {
 	},
 	style = {
 		bg = {
-			texture_size = var_0_11,
+			texture_size = var_0_13,
 			offset = {
 				0,
 				0,
@@ -748,7 +746,7 @@ local var_0_12 = {
 	}
 }
 
-local function var_0_13(arg_2_0, arg_2_1)
+local function var_0_15(arg_2_0, arg_2_1)
 	return {
 		element = {
 			passes = {
@@ -819,8 +817,8 @@ local function var_0_13(arg_2_0, arg_2_1)
 	}
 end
 
-local var_0_14 = true
-local var_0_15 = {
+local var_0_16 = true
+local var_0_17 = {
 	background = UIWidgets.create_simple_rect("screen", {
 		0,
 		0,
@@ -837,9 +835,9 @@ local var_0_15 = {
 			0
 		}
 	}, "bottom_panel", nil, nil, UISettings.console_menu_rect_color),
-	info_window_background = UIWidgets.create_rect_with_outer_frame("info_window", var_0_3.info_window.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
+	info_window_background = UIWidgets.create_rect_with_outer_frame("info_window", var_0_4.info_window.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
 	mask = UIWidgets.create_simple_texture("mask_rect", "scrollbar_anchor"),
-	info_window_video = UIWidgets.create_frame("info_window_video", var_0_3.info_window_video.size, "menu_frame_06"),
+	info_window_video = UIWidgets.create_frame("info_window_video", var_0_4.info_window_video.size, "menu_frame_06"),
 	info_video_edge_left = UIWidgets.create_simple_texture("frame_detail_03", "info_video_edge_left"),
 	info_video_edge_right = UIWidgets.create_simple_uv_texture("frame_detail_03", {
 		{
@@ -851,26 +849,28 @@ local var_0_15 = {
 			1
 		}
 	}, "info_video_edge_right"),
-	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, var_0_6),
+	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, var_0_8),
 	perk_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "perk_title_divider", true),
-	career_perk_1 = UIWidgets.create_career_perk_text("career_perk_1"),
-	career_perk_2 = UIWidgets.create_career_perk_text("career_perk_2"),
-	career_perk_3 = UIWidgets.create_career_perk_text("career_perk_3"),
-	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, var_0_6),
-	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, var_0_5),
+	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, var_0_8),
+	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, var_0_7),
 	passive_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "passive_title_divider", true),
-	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, var_0_4),
+	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, var_0_6),
 	passive_icon = UIWidgets.create_simple_texture("icons_placeholder", "passive_icon", true),
 	passive_icon_frame = UIWidgets.create_simple_texture("talent_frame", "passive_icon_frame", true),
-	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, var_0_6),
-	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, var_0_5),
+	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, var_0_8),
+	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, var_0_7),
 	active_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "active_title_divider", true),
-	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, var_0_4),
+	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, var_0_6),
 	active_icon = UIWidgets.create_simple_texture("icons_placeholder", "active_icon", true),
 	active_icon_frame = UIWidgets.create_simple_texture("talent_frame", "active_icon_frame", true)
 }
-local var_0_16 = {
-	locked_info_text = var_0_13(Localize("career_locked_info"), "locked_info_text"),
+
+for iter_0_1 = 1, var_0_3 do
+	var_0_17["career_perk_" .. iter_0_1] = UIWidgets.create_career_perk_text("career_perk_" .. iter_0_1)
+end
+
+local var_0_18 = {
+	locked_info_text = var_0_15(Localize("career_locked_info"), "locked_info_text"),
 	hero_info_panel = UIWidgets.create_simple_texture("item_slot_side_fade", "hero_info_panel", nil, nil, {
 		255,
 		0,
@@ -881,18 +881,18 @@ local var_0_16 = {
 	hero_info_level_bg = UIWidgets.create_simple_texture("hero_level_bg", "hero_info_level_bg"),
 	hero_info_divider = UIWidgets.create_simple_texture("divider_vertical_hero_middle", "hero_info_divider"),
 	hero_info_divider_edge = UIWidgets.create_simple_texture("divider_vertical_hero_end", "hero_info_divider_edge"),
-	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, var_0_7),
-	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, var_0_8),
-	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, var_0_9),
-	select_button = UIWidgets.create_default_button("select_button", var_0_3.select_button.size, nil, nil, Localize("input_description_confirm"), nil, nil, nil, nil, var_0_14),
-	bot_priority_button = UIWidgets.create_default_button("bot_priority_button", var_0_3.bot_priority_button.size, nil, nil, Localize("input_description_prio_bot"), nil, nil, nil, nil, var_0_14)
+	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, var_0_9),
+	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, var_0_10),
+	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, var_0_11),
+	select_button = UIWidgets.create_default_button("select_button", var_0_4.select_button.size, nil, nil, Localize("input_description_confirm"), nil, nil, nil, nil, var_0_16),
+	bot_priority_button = UIWidgets.create_default_button("bot_priority_button", var_0_4.bot_priority_button.size, nil, nil, Localize("input_description_prio_bot"), nil, nil, nil, nil, var_0_16)
 }
-local var_0_17 = {
-	bot_header_text = UIWidgets.create_simple_text("input_description_prio_bot", "locked_info_text", nil, nil, var_0_10),
-	bot_info_text = var_0_13(Localize("assign_career_tooltip"), "locked_info_text"),
-	back_button = UIWidgets.create_default_button("back_button", var_0_3.back_button.size, nil, nil, Localize("back_menu_button_name"), nil, nil, nil, nil, var_0_14)
+local var_0_19 = {
+	bot_header_text = UIWidgets.create_simple_text("input_description_prio_bot", "locked_info_text", nil, nil, var_0_12),
+	bot_info_text = var_0_15(Localize("assign_career_tooltip"), "locked_info_text"),
+	back_button = UIWidgets.create_default_button("back_button", var_0_4.back_button.size, nil, nil, Localize("back_menu_button_name"), nil, nil, nil, nil, var_0_16)
 }
-local var_0_18 = {
+local var_0_20 = {
 	default = {
 		{
 			input_action = "refresh",
@@ -952,7 +952,7 @@ local var_0_18 = {
 		}
 	}
 }
-local var_0_19 = {
+local var_0_21 = {
 	on_enter = {
 		{
 			name = "fade_in",
@@ -1046,14 +1046,15 @@ local var_0_19 = {
 }
 
 return {
-	widgets = var_0_15,
-	info_widgets = var_0_16,
-	bot_selection_widgets = var_0_17,
-	hero_widget = UIWidgets.create_hero_widget("hero_root", var_0_3.hero_root.size),
-	empty_hero_widget = var_0_12,
-	hero_icon_widget = UIWidgets.create_hero_icon_widget("hero_icon_root", var_0_3.hero_icon_root.size),
-	character_selection_widgets = var_0_15,
-	generic_input_actions = var_0_18,
-	scenegraph_definition = var_0_3,
-	animation_definitions = var_0_19
+	widgets = var_0_17,
+	info_widgets = var_0_18,
+	bot_selection_widgets = var_0_19,
+	hero_widget = UIWidgets.create_hero_widget("hero_root", var_0_4.hero_root.size),
+	empty_hero_widget = var_0_14,
+	hero_icon_widget = UIWidgets.create_hero_icon_widget("hero_icon_root", var_0_4.hero_icon_root.size),
+	character_selection_widgets = var_0_17,
+	generic_input_actions = var_0_20,
+	scenegraph_definition = var_0_4,
+	animation_definitions = var_0_21,
+	NUM_PERKS = var_0_3
 }

@@ -1,6 +1,7 @@
 -- chunkname: @scripts/network_lookup/network_constants.lua
 
 NetworkConstants = NetworkConstants or {}
+NetworkConstants.max_string_length = 500
 
 local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = Network.type_info(arg_1_0)

@@ -7,7 +7,8 @@ local var_0_1 = var_0_0.widgets
 local var_0_2 = var_0_0.scenegraph_definition
 local var_0_3 = var_0_0.animation_definitions
 local var_0_4 = var_0_0.generic_input_actions
-local var_0_5 = false
+local var_0_5 = var_0_0.NUM_PERKS
+local var_0_6 = false
 
 HeroWindowTalentsConsole = class(HeroWindowTalentsConsole)
 HeroWindowTalentsConsole.NAME = "HeroWindowTalentsConsole"
@@ -158,8 +159,8 @@ function HeroWindowTalentsConsole._input_service(arg_7_0)
 end
 
 function HeroWindowTalentsConsole.update(arg_8_0, arg_8_1, arg_8_2)
-	if var_0_5 then
-		var_0_5 = false
+	if var_0_6 then
+		var_0_6 = false
 
 		arg_8_0:create_ui_elements()
 	end
@@ -636,7 +637,7 @@ function HeroWindowTalentsConsole._populate_career_info(arg_30_0, arg_30_1)
 	local var_30_18 = 0
 	local var_30_19 = 0
 
-	for iter_30_0 = 1, 3 do
+	for iter_30_0 = 1, var_0_5 do
 		local var_30_20 = var_30_9["career_perk_" .. iter_30_0]
 		local var_30_21 = var_30_20.content
 		local var_30_22 = var_30_20.style

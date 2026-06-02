@@ -304,7 +304,7 @@ function LevelEndView._verify_weapon_data(arg_13_0, arg_13_1, arg_13_2, arg_13_3
 	local var_13_3 = var_13_2.name
 	local var_13_4 = var_13_2.preview_wield_slot
 	local var_13_5 = {
-		item_name = var_13_2.preview_items[1]
+		item_name = var_13_2.preview_items[1].item_name
 	}
 	local var_13_6
 

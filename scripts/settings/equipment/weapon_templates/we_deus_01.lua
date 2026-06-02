@@ -460,7 +460,6 @@ var_0_3.tooltip_detail = {
 		custom_chain = true
 	}
 }
-var_0_3.tooltip_special_action_description = "special_action_billhook"
 
 return {
 	we_deus_01_template_1 = table.clone(var_0_3)

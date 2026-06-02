@@ -18,9 +18,8 @@ local var_0_0 = {
 	"rpc_shared_state_start_atomic_set_server",
 	"rpc_shared_state_end_atomic_set_server"
 }
-local var_0_1 = 500
 
-local function var_0_2(arg_1_0, arg_1_1)
+local function var_0_1(arg_1_0, arg_1_1)
 	local var_1_0 = arg_1_0[arg_1_1]
 
 	if not var_1_0 then
@@ -31,17 +30,17 @@ local function var_0_2(arg_1_0, arg_1_1)
 	return var_1_0
 end
 
-local function var_0_3(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
-	arg_2_0 = var_0_2(arg_2_0, arg_2_1)
-	arg_2_0 = var_0_2(arg_2_0, arg_2_2)
-	arg_2_0 = var_0_2(arg_2_0, arg_2_3)
-	arg_2_0 = var_0_2(arg_2_0, arg_2_4)
-	arg_2_0 = var_0_2(arg_2_0, arg_2_5)
-	arg_2_0 = var_0_2(arg_2_0, arg_2_6)
+local function var_0_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+	arg_2_0 = var_0_1(arg_2_0, arg_2_1)
+	arg_2_0 = var_0_1(arg_2_0, arg_2_2)
+	arg_2_0 = var_0_1(arg_2_0, arg_2_3)
+	arg_2_0 = var_0_1(arg_2_0, arg_2_4)
+	arg_2_0 = var_0_1(arg_2_0, arg_2_5)
+	arg_2_0 = var_0_1(arg_2_0, arg_2_6)
 	arg_2_0[arg_2_7] = arg_2_8
 end
 
-local function var_0_4(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+local function var_0_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	arg_3_0 = arg_3_0[arg_3_1]
 
 	if not arg_3_0 then
@@ -83,16 +82,16 @@ local function var_0_4(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg
 	return arg_3_0
 end
 
-local function var_0_5(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
-	arg_4_0 = var_0_2(arg_4_0, arg_4_1)
-	arg_4_0 = var_0_2(arg_4_0, arg_4_2)
-	arg_4_0 = var_0_2(arg_4_0, arg_4_3)
-	arg_4_0 = var_0_2(arg_4_0, arg_4_4)
-	arg_4_0 = var_0_2(arg_4_0, arg_4_5)
+local function var_0_4(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+	arg_4_0 = var_0_1(arg_4_0, arg_4_1)
+	arg_4_0 = var_0_1(arg_4_0, arg_4_2)
+	arg_4_0 = var_0_1(arg_4_0, arg_4_3)
+	arg_4_0 = var_0_1(arg_4_0, arg_4_4)
+	arg_4_0 = var_0_1(arg_4_0, arg_4_5)
 	arg_4_0[arg_4_6] = arg_4_7
 end
 
-local function var_0_6(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+local function var_0_5(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	arg_5_0 = arg_5_0[arg_5_1]
 
 	if not arg_5_0 then
@@ -128,7 +127,7 @@ local function var_0_6(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg
 	return arg_5_0
 end
 
-local function var_0_7(arg_6_0)
+local function var_0_6(arg_6_0)
 	if arg_6_0 == "number" then
 		return "rpc_shared_state_set_int"
 	end
@@ -142,7 +141,7 @@ local function var_0_7(arg_6_0)
 	end
 end
 
-local function var_0_8(arg_7_0)
+local function var_0_7(arg_7_0)
 	if arg_7_0 == "number" then
 		return "rpc_shared_state_set_server_int"
 	end
@@ -156,28 +155,28 @@ local function var_0_8(arg_7_0)
 	end
 end
 
-local function var_0_9(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+local function var_0_8(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
 	local var_8_0 = arg_8_0
-	local var_8_1 = var_0_2(var_8_0, arg_8_1)
+	local var_8_1 = var_0_1(var_8_0, arg_8_1)
 
 	if arg_8_2 then
-		var_8_1 = var_0_2(var_8_1, arg_8_2)
+		var_8_1 = var_0_1(var_8_1, arg_8_2)
 	end
 
 	if arg_8_3 then
-		var_8_1 = var_0_2(var_8_1, arg_8_3)
+		var_8_1 = var_0_1(var_8_1, arg_8_3)
 	end
 
 	if arg_8_4 then
-		var_8_1 = var_0_2(var_8_1, arg_8_4)
+		var_8_1 = var_0_1(var_8_1, arg_8_4)
 	end
 
 	if arg_8_5 then
-		var_8_1 = var_0_2(var_8_1, arg_8_5)
+		var_8_1 = var_0_1(var_8_1, arg_8_5)
 	end
 
 	if arg_8_6 then
-		var_8_1 = var_0_2(var_8_1, arg_8_6)
+		var_8_1 = var_0_1(var_8_1, arg_8_6)
 	end
 
 	if not var_8_1.__val then
@@ -194,7 +193,7 @@ local function var_0_9(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg
 	return var_8_1.__val
 end
 
-local function var_0_10(arg_9_0, arg_9_1)
+local function var_0_9(arg_9_0, arg_9_1)
 	fassert(type(arg_9_1) == "table", "[SharedState] key is not in the right format, did you call :get_key() to create it?")
 
 	local var_9_0 = arg_9_1.key_type
@@ -229,7 +228,7 @@ local function var_0_10(arg_9_0, arg_9_1)
 	fassert(var_9_6 ~= 0 or not var_9_1 or not var_9_1.party_id, "[SharedState] key type '%s' needs party_id as key parameter", tostring(var_9_0))
 end
 
-local function var_0_11(arg_10_0)
+local function var_0_10(arg_10_0)
 	local var_10_0 = {}
 
 	if arg_10_0.server then
@@ -256,7 +255,7 @@ local function var_0_11(arg_10_0)
 	return var_10_1
 end
 
-local function var_0_12(arg_11_0)
+local function var_0_11(arg_11_0)
 	local var_11_0 = type(arg_11_0)
 
 	if var_11_0 == "string" or var_11_0 == "number" or var_11_0 == "boolean" then
@@ -266,25 +265,25 @@ local function var_0_12(arg_11_0)
 	end
 end
 
-local var_0_13 = printf
+local var_0_12 = printf
 
-local function var_0_14(...)
+local function var_0_13(...)
 	local var_12_0 = sprintf(...)
 
-	var_0_13("[SharedState] %s", var_12_0)
+	var_0_12("[SharedState] %s", var_12_0)
 end
 
-local function var_0_15(...)
+local function var_0_14(...)
 	if script_data.shared_state_debug then
 		local var_13_0 = sprintf(...)
 
-		var_0_13("[SharedState] %s", var_13_0)
+		var_0_12("[SharedState] %s", var_13_0)
 	end
 end
 
-local function var_0_16(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9)
+local function var_0_15(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9)
 	local var_14_0 = type(arg_14_9)
-	local var_14_1 = var_0_7(var_14_0)
+	local var_14_1 = var_0_6(var_14_0)
 
 	if var_14_0 == "string" then
 		local var_14_2 = #arg_14_9
@@ -292,11 +291,13 @@ local function var_0_16(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14
 		if var_14_2 == 0 then
 			RPC[var_14_1](arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9, true)
 		else
-			for iter_14_0 = 1, var_14_2, var_0_1 do
-				local var_14_3 = arg_14_9:sub(iter_14_0, iter_14_0 + var_0_1 - 1)
-				local var_14_4 = var_14_2 < iter_14_0 + var_0_1
+			local var_14_3 = NetworkConstants.max_string_length
 
-				RPC[var_14_1](arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, var_14_3, var_14_4)
+			for iter_14_0 = 1, var_14_2, var_14_3 do
+				local var_14_4 = arg_14_9:sub(iter_14_0, iter_14_0 + var_14_3 - 1)
+				local var_14_5 = var_14_2 < iter_14_0 + var_14_3
+
+				RPC[var_14_1](arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, var_14_4, var_14_5)
 			end
 		end
 	else
@@ -304,9 +305,9 @@ local function var_0_16(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14
 	end
 end
 
-local function var_0_17(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8)
+local function var_0_16(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8)
 	local var_15_0 = type(arg_15_8)
-	local var_15_1 = var_0_8(var_15_0)
+	local var_15_1 = var_0_7(var_15_0)
 
 	if var_15_0 == "string" then
 		local var_15_2 = #arg_15_8
@@ -314,11 +315,13 @@ local function var_0_17(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15
 		if var_15_2 == 0 then
 			RPC[var_15_1](arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, true)
 		else
-			for iter_15_0 = 1, var_15_2, var_0_1 do
-				local var_15_3 = arg_15_8:sub(iter_15_0, iter_15_0 + var_0_1 - 1)
-				local var_15_4 = var_15_2 < iter_15_0 + var_0_1
+			local var_15_3 = NetworkConstants.max_string_length
 
-				RPC[var_15_1](arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, var_15_3, var_15_4)
+			for iter_15_0 = 1, var_15_2, var_15_3 do
+				local var_15_4 = arg_15_8:sub(iter_15_0, iter_15_0 + var_15_3 - 1)
+				local var_15_5 = var_15_2 < iter_15_0 + var_15_3
+
+				RPC[var_15_1](arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, var_15_4, var_15_5)
 			end
 		end
 	else
@@ -331,7 +334,7 @@ function SharedState.init(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_
 	arg_16_0._context = tostring(HashUtils.fnv32_hash(arg_16_1))
 	arg_16_0._spec = arg_16_2
 	arg_16_0._revision = 0
-	arg_16_0._key_type_lookup = var_0_11(arg_16_2)
+	arg_16_0._key_type_lookup = var_0_10(arg_16_2)
 	arg_16_0._is_server = arg_16_3
 	arg_16_0._peer_state = {}
 	arg_16_0._server_state = {}
@@ -429,7 +432,7 @@ function SharedState.clear_peer_data(arg_22_0, arg_22_1)
 		return
 	end
 
-	var_0_15("%s: <clear_peer_data> %s", arg_22_0._original_context, arg_22_1)
+	var_0_14("%s: <clear_peer_data> %s", arg_22_0._original_context, arg_22_1)
 	arg_22_0:_clear_peer_id_data(arg_22_1)
 
 	if arg_22_0._network_server then
@@ -511,7 +514,7 @@ function SharedState.is_peer_fully_synced(arg_26_0, arg_26_1)
 end
 
 function SharedState.get_key(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
-	return var_0_9(arg_27_0._key_cache, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
+	return var_0_8(arg_27_0._key_cache, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
 end
 
 function SharedState.set_peer(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
@@ -524,11 +527,11 @@ function SharedState.set_peer(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	local var_28_0 = arg_28_0._spec.peer[arg_28_2.key_type]
 
 	fassert(type(arg_28_3) == var_28_0.type, "value type is not the same as the spec defines.")
-	var_0_3(arg_28_0._peer_state, arg_28_1, arg_28_2.key_type, arg_28_2.peer_id, arg_28_2.local_player_id, arg_28_2.profile_index, arg_28_2.career_index, arg_28_2.party_id, arg_28_3)
+	var_0_2(arg_28_0._peer_state, arg_28_1, arg_28_2.key_type, arg_28_2.peer_id, arg_28_2.local_player_id, arg_28_2.profile_index, arg_28_2.career_index, arg_28_2.party_id, arg_28_3)
 
 	if arg_28_1 == arg_28_0._peer_id then
 		if not var_28_0.mute_print then
-			var_0_15("%s: <set %s> %s:%s:%d:%d:%d:%d = %s", arg_28_0._original_context, arg_28_1, arg_28_2.key_type, arg_28_2.peer_id, arg_28_2.local_player_id, arg_28_2.profile_index, arg_28_2.career_index, arg_28_2.party_id, var_0_12(arg_28_3))
+			var_0_14("%s: <set %s> %s:%s:%d:%d:%d:%d = %s", arg_28_0._original_context, arg_28_1, arg_28_2.key_type, arg_28_2.peer_id, arg_28_2.local_player_id, arg_28_2.profile_index, arg_28_2.career_index, arg_28_2.party_id, var_0_11(arg_28_3))
 		end
 
 		local var_28_1 = arg_28_0._spec.peer[arg_28_2.key_type].encode
@@ -542,17 +545,17 @@ function SharedState.set_peer(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 					if iter_28_1 ~= arg_28_0._peer_id then
 						local var_28_4 = PEER_ID_TO_CHANNEL[iter_28_1]
 
-						var_0_16(var_28_4, arg_28_0._context, arg_28_0._peer_id, arg_28_0._key_type_lookup[arg_28_2.key_type], arg_28_2.peer_id, arg_28_2.local_player_id, arg_28_2.profile_index, arg_28_2.career_index, arg_28_2.party_id, var_28_2)
+						var_0_15(var_28_4, arg_28_0._context, arg_28_0._peer_id, arg_28_0._key_type_lookup[arg_28_2.key_type], arg_28_2.peer_id, arg_28_2.local_player_id, arg_28_2.profile_index, arg_28_2.career_index, arg_28_2.party_id, var_28_2)
 					end
 				end
 			end
 		else
 			local var_28_5 = PEER_ID_TO_CHANNEL[arg_28_0._server_peer_id]
 
-			var_0_16(var_28_5, arg_28_0._context, arg_28_0._peer_id, arg_28_0._key_type_lookup[arg_28_2.key_type], arg_28_2.peer_id, arg_28_2.local_player_id, arg_28_2.profile_index, arg_28_2.career_index, arg_28_2.party_id, var_28_2)
+			var_0_15(var_28_5, arg_28_0._context, arg_28_0._peer_id, arg_28_0._key_type_lookup[arg_28_2.key_type], arg_28_2.peer_id, arg_28_2.local_player_id, arg_28_2.profile_index, arg_28_2.career_index, arg_28_2.party_id, var_28_2)
 		end
 	elseif not var_28_0.mute_print then
-		var_0_15("%s: <set prediction %s> %s:%s:%d:%d:%d:%d = %s", arg_28_0._original_context, arg_28_1, arg_28_2.key_type, arg_28_2.peer_id, arg_28_2.local_player_id, arg_28_2.profile_index, arg_28_2.career_index, arg_28_2.party_id, var_0_12(arg_28_3))
+		var_0_14("%s: <set prediction %s> %s:%s:%d:%d:%d:%d = %s", arg_28_0._original_context, arg_28_1, arg_28_2.key_type, arg_28_2.peer_id, arg_28_2.local_player_id, arg_28_2.profile_index, arg_28_2.career_index, arg_28_2.party_id, var_0_11(arg_28_3))
 	end
 
 	arg_28_0:_increment_revision()
@@ -564,7 +567,7 @@ function SharedState.start_atomic_set_server(arg_29_0, arg_29_1)
 	arg_29_0._current_start_atomic_set_server = arg_29_1
 
 	if arg_29_0._is_server then
-		var_0_15("%s: <atomic_set_server start> name:%s", arg_29_0._original_context, arg_29_1)
+		var_0_14("%s: <atomic_set_server start> name:%s", arg_29_0._original_context, arg_29_1)
 
 		if arg_29_0._network_server then
 			local var_29_0 = arg_29_0._network_server:get_peers()
@@ -578,7 +581,7 @@ function SharedState.start_atomic_set_server(arg_29_0, arg_29_1)
 			end
 		end
 	else
-		var_0_15("%s: <atomic_set_server start prediction> name:%s", arg_29_0._original_context, arg_29_1)
+		var_0_14("%s: <atomic_set_server start prediction> name:%s", arg_29_0._original_context, arg_29_1)
 	end
 end
 
@@ -586,7 +589,7 @@ function SharedState.end_atomic_set_server(arg_30_0, arg_30_1)
 	fassert(arg_30_0._current_start_atomic_set_server == arg_30_1, "mismatched end_atomic_set_server(%s) and start_atomic_set_server(%s)", arg_30_1, arg_30_0._current_start_atomic_set_server)
 
 	if arg_30_0._is_server then
-		var_0_15("%s: <atomic_set_server end> name:%s", arg_30_0._original_context, arg_30_1)
+		var_0_14("%s: <atomic_set_server end> name:%s", arg_30_0._original_context, arg_30_1)
 
 		if arg_30_0._network_server then
 			local var_30_0 = arg_30_0._network_server:get_peers()
@@ -600,7 +603,7 @@ function SharedState.end_atomic_set_server(arg_30_0, arg_30_1)
 			end
 		end
 	else
-		var_0_15("%s: <atomic_set_server end prediction> name:%s", arg_30_0._original_context, arg_30_1)
+		var_0_14("%s: <atomic_set_server end prediction> name:%s", arg_30_0._original_context, arg_30_1)
 	end
 
 	arg_30_0._current_start_atomic_set_server = nil
@@ -616,11 +619,11 @@ function SharedState.set_server(arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = arg_31_0._spec.server[arg_31_1.key_type]
 
 	fassert(type(arg_31_2) == var_31_0.type, "value type is not the same as the spec defines.")
-	var_0_5(arg_31_0._server_state, arg_31_1.key_type, arg_31_1.peer_id, arg_31_1.local_player_id, arg_31_1.profile_index, arg_31_1.career_index, arg_31_1.party_id, arg_31_2)
+	var_0_4(arg_31_0._server_state, arg_31_1.key_type, arg_31_1.peer_id, arg_31_1.local_player_id, arg_31_1.profile_index, arg_31_1.career_index, arg_31_1.party_id, arg_31_2)
 
 	if arg_31_0._is_server then
 		if not var_31_0.mute_print then
-			var_0_15("%s: <set server> %s:%s:%d:%d:%d:%d = %s", arg_31_0._original_context, arg_31_1.key_type, arg_31_1.peer_id, arg_31_1.local_player_id, arg_31_1.profile_index, arg_31_1.career_index, arg_31_1.party_id, var_0_12(arg_31_2))
+			var_0_14("%s: <set server> %s:%s:%d:%d:%d:%d = %s", arg_31_0._original_context, arg_31_1.key_type, arg_31_1.peer_id, arg_31_1.local_player_id, arg_31_1.profile_index, arg_31_1.career_index, arg_31_1.party_id, var_0_11(arg_31_2))
 		end
 
 		local var_31_1 = arg_31_0._spec.server[arg_31_1.key_type].encode
@@ -633,12 +636,12 @@ function SharedState.set_server(arg_31_0, arg_31_1, arg_31_2)
 				if iter_31_1 ~= arg_31_0._peer_id then
 					local var_31_4 = PEER_ID_TO_CHANNEL[iter_31_1]
 
-					var_0_17(var_31_4, arg_31_0._context, arg_31_0._key_type_lookup[arg_31_1.key_type], arg_31_1.peer_id, arg_31_1.local_player_id, arg_31_1.profile_index, arg_31_1.career_index, arg_31_1.party_id, var_31_2)
+					var_0_16(var_31_4, arg_31_0._context, arg_31_0._key_type_lookup[arg_31_1.key_type], arg_31_1.peer_id, arg_31_1.local_player_id, arg_31_1.profile_index, arg_31_1.career_index, arg_31_1.party_id, var_31_2)
 				end
 			end
 		end
 	elseif not var_31_0.mute_print then
-		var_0_15("%s: <set server prediction> %s:%s:%d:%d:%d:%d = %s", arg_31_0._original_context, arg_31_1.key_type, arg_31_1.peer_id, arg_31_1.local_player_id, arg_31_1.profile_index, arg_31_1.career_index, arg_31_1.party_id, var_0_12(arg_31_2))
+		var_0_14("%s: <set server prediction> %s:%s:%d:%d:%d:%d = %s", arg_31_0._original_context, arg_31_1.key_type, arg_31_1.peer_id, arg_31_1.local_player_id, arg_31_1.profile_index, arg_31_1.career_index, arg_31_1.party_id, var_0_11(arg_31_2))
 	end
 
 	arg_31_0:_increment_revision()
@@ -653,7 +656,7 @@ function SharedState.get_peer(arg_33_0, arg_33_1, arg_33_2)
 		return arg_33_0._spec.peer[arg_33_2.key_type].default_value
 	end
 
-	return var_0_4(arg_33_0._peer_state, arg_33_1, arg_33_2.key_type, arg_33_2.peer_id, arg_33_2.local_player_id, arg_33_2.profile_index, arg_33_2.career_index, arg_33_2.party_id) or arg_33_0._spec.peer[arg_33_2.key_type].default_value
+	return var_0_3(arg_33_0._peer_state, arg_33_1, arg_33_2.key_type, arg_33_2.peer_id, arg_33_2.local_player_id, arg_33_2.profile_index, arg_33_2.career_index, arg_33_2.party_id) or arg_33_0._spec.peer[arg_33_2.key_type].default_value
 end
 
 function SharedState.get_own(arg_34_0, arg_34_1)
@@ -665,7 +668,7 @@ function SharedState.get_server(arg_35_0, arg_35_1)
 		return arg_35_0._spec.server[arg_35_1.key_type].default_value
 	end
 
-	return var_0_6(arg_35_0._server_state, arg_35_1.key_type, arg_35_1.peer_id, arg_35_1.local_player_id, arg_35_1.profile_index, arg_35_1.career_index, arg_35_1.party_id) or arg_35_0._spec.server[arg_35_1.key_type].default_value
+	return var_0_5(arg_35_0._server_state, arg_35_1.key_type, arg_35_1.peer_id, arg_35_1.local_player_id, arg_35_1.profile_index, arg_35_1.career_index, arg_35_1.party_id) or arg_35_0._spec.server[arg_35_1.key_type].default_value
 end
 
 function SharedState.rpc_shared_state_request_sync(arg_36_0, arg_36_1, arg_36_2)
@@ -687,7 +690,7 @@ function SharedState.rpc_shared_state_request_sync(arg_36_0, arg_36_1, arg_36_2)
 								local var_36_0 = arg_36_0._spec.server[iter_36_0].encode
 								local var_36_1 = var_36_0 and var_36_0(iter_36_11) or iter_36_11
 
-								var_0_17(arg_36_1, arg_36_0._context, arg_36_0._key_type_lookup[iter_36_0], iter_36_2, iter_36_4, iter_36_6, iter_36_8, iter_36_10, var_36_1)
+								var_0_16(arg_36_1, arg_36_0._context, arg_36_0._key_type_lookup[iter_36_0], iter_36_2, iter_36_4, iter_36_6, iter_36_8, iter_36_10, var_36_1)
 							end
 						end
 					end
@@ -847,7 +850,7 @@ function SharedState.rpc_shared_state_client_left(arg_44_0, arg_44_1, arg_44_2, 
 		return
 	end
 
-	var_0_15("%s: <rpc client left> %s", arg_44_0._original_context, arg_44_3)
+	var_0_14("%s: <rpc client left> %s", arg_44_0._original_context, arg_44_3)
 	arg_44_0:_clear_peer_id_data(arg_44_3)
 
 	local var_44_0 = arg_44_0._callbacks.client_left
@@ -866,10 +869,10 @@ function SharedState._set_rpc(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, 
 	local var_45_3 = var_45_2 and var_45_2(arg_45_9) or arg_45_9
 
 	if not var_45_1.mute_print then
-		var_0_15("%s: <rpc set %s> %s:%s:%d:%d:%d:%d = %s", arg_45_0._original_context, arg_45_2, var_45_0, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, var_0_12(var_45_3))
+		var_0_14("%s: <rpc set %s> %s:%s:%d:%d:%d:%d = %s", arg_45_0._original_context, arg_45_2, var_45_0, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, var_0_11(var_45_3))
 	end
 
-	var_0_3(arg_45_0._peer_state, arg_45_2, var_45_0, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, var_45_3)
+	var_0_2(arg_45_0._peer_state, arg_45_2, var_45_0, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, var_45_3)
 
 	if arg_45_0._is_server then
 		local var_45_4 = CHANNEL_TO_PEER_ID[arg_45_1]
@@ -881,7 +884,7 @@ function SharedState._set_rpc(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, 
 				if iter_45_1 ~= var_45_4 and iter_45_1 ~= arg_45_0._peer_id then
 					local var_45_6 = PEER_ID_TO_CHANNEL[iter_45_1]
 
-					var_0_16(var_45_6, arg_45_0._context, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9)
+					var_0_15(var_45_6, arg_45_0._context, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9)
 				end
 			end
 		end
@@ -922,10 +925,10 @@ function SharedState._set_server_rpc(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg
 	local var_46_5 = var_46_4 and var_46_4(arg_46_8) or arg_46_8
 
 	if not var_46_3.mute_print then
-		var_0_15("%s: <rpc set server> %s:%s:%d:%d:%d:%d = %s", arg_46_0._original_context, var_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7, var_0_12(var_46_5))
+		var_0_14("%s: <rpc set server> %s:%s:%d:%d:%d:%d = %s", arg_46_0._original_context, var_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7, var_0_11(var_46_5))
 	end
 
-	var_0_5(arg_46_0._server_state, var_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7, var_46_5)
+	var_0_4(arg_46_0._server_state, var_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7, var_46_5)
 	arg_46_0:_increment_revision()
 
 	local var_46_6 = arg_46_0._callbacks.server_data_updated
@@ -947,7 +950,7 @@ function SharedState._send_all(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 							local var_47_0 = arg_47_0._spec.peer[iter_47_0].encode
 							local var_47_1 = var_47_0 and var_47_0(iter_47_11) or iter_47_11
 
-							var_0_16(arg_47_1, arg_47_0._context, arg_47_2, arg_47_0._key_type_lookup[iter_47_0], iter_47_2, iter_47_4, iter_47_6, iter_47_8, iter_47_10, var_47_1)
+							var_0_15(arg_47_1, arg_47_0._context, arg_47_2, arg_47_0._key_type_lookup[iter_47_0], iter_47_2, iter_47_4, iter_47_6, iter_47_8, iter_47_10, var_47_1)
 						end
 					end
 				end
@@ -1000,7 +1003,7 @@ function SharedState._increment_revision(arg_51_0)
 	arg_51_0._revision = arg_51_0._revision + 1
 
 	if arg_51_0._revision == var_51_0 then
-		var_0_15("%s: revision reset back to zero", arg_51_0._original_context)
+		var_0_14("%s: revision reset back to zero", arg_51_0._original_context)
 
 		arg_51_0._revision = 0
 	end
@@ -1045,7 +1048,7 @@ function SharedState.rpc_shared_state_end_atomic_set_server(arg_53_0, arg_53_1)
 	end
 end
 
-local function var_0_18(arg_54_0)
+local function var_0_17(arg_54_0)
 	for iter_54_0, iter_54_1 in pairs(arg_54_0) do
 		fassert(iter_54_1.type, "spec %s invalid, missing type", iter_54_0)
 		fassert(iter_54_1.default_value ~= nil, "spec %s invalid, missing default_value", iter_54_0)
@@ -1069,8 +1072,8 @@ function SharedState.validate_spec(arg_55_0)
 	fassert(arg_55_0, "spec invalid, nil")
 	fassert(arg_55_0.peer, "spec invalid, missing peer spec")
 	fassert(arg_55_0.server, "spec invalid, missing server spec")
-	var_0_18(arg_55_0.peer)
-	var_0_18(arg_55_0.server)
+	var_0_17(arg_55_0.peer)
+	var_0_17(arg_55_0.server)
 end
 
 function SharedState._init_immediate_initializations(arg_56_0)

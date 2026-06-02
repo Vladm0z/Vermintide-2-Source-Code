@@ -5,7 +5,6 @@ require("scripts/utils/keystroke_helper")
 local var_0_0 = local_require("scripts/ui/views/chat_gui_definitions")
 
 ChatGui = class(ChatGui)
-ChatGui.MAX_CHARS = 500
 
 function ChatGui.init(arg_1_0, arg_1_1)
 	arg_1_0.input_manager = arg_1_1.input_manager
@@ -796,24 +795,25 @@ function ChatGui._update_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 					var_28_54 = Keyboard.button(var_28_53) > 0
 				end
 
-				local var_28_55, var_28_56, var_28_57 = KeystrokeHelper.parse_strokes(arg_28_0.chat_message, arg_28_0.chat_index, arg_28_0.chat_mode, var_28_52, ChatGui.MAX_CHARS)
+				local var_28_55 = NetworkConstants.max_string_length
+				local var_28_56, var_28_57, var_28_58 = KeystrokeHelper.parse_strokes(arg_28_0.chat_message, arg_28_0.chat_index, arg_28_0.chat_mode, var_28_52, var_28_55)
 
-				if var_28_56 ~= arg_28_0.chat_index then
-					if var_28_56 == 1 then
-						arg_28_0.chat_input_widget.content.text_index = var_28_56
-					elseif var_28_56 > UTF8Utils.string_length(var_28_55) then
+				if var_28_57 ~= arg_28_0.chat_index then
+					if var_28_57 == 1 then
+						arg_28_0.chat_input_widget.content.text_index = var_28_57
+					elseif var_28_57 > UTF8Utils.string_length(var_28_56) then
 						arg_28_0.chat_input_widget.content.jump_to_end = true
 					end
 				end
 
-				arg_28_0.chat_message = var_28_55
-				arg_28_0.chat_index = var_28_56
-				arg_28_0.chat_mode = var_28_57
+				arg_28_0.chat_message = var_28_56
+				arg_28_0.chat_index = var_28_57
+				arg_28_0.chat_mode = var_28_58
 			end
 		else
-			local var_28_58 = arg_28_1:get("execute_alt_chat_input")
+			local var_28_59 = arg_28_1:get("execute_alt_chat_input")
 
-			if arg_28_1:get("activate_chat_input") or (arg_28_1:get("execute_chat_input") or var_28_58) and GameSettingsDevelopment.allow_chat_input then
+			if arg_28_1:get("activate_chat_input") or (arg_28_1:get("execute_chat_input") or var_28_59) and GameSettingsDevelopment.allow_chat_input then
 				if arg_28_5 then
 					var_28_6 = false
 					var_28_2 = nil
@@ -831,38 +831,38 @@ function ChatGui._update_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				arg_28_0.recent_message_index = nil
 				arg_28_0.old_chat_message = nil
 
-				local var_28_59 = 1
-				local var_28_60
-				local var_28_61 = Managers.mechanism:game_mechanism()
+				local var_28_60 = 1
+				local var_28_61
+				local var_28_62 = Managers.mechanism:game_mechanism()
 
-				if var_28_61.get_chat_channel then
-					local var_28_62 = Network.peer_id()
+				if var_28_62.get_chat_channel then
+					local var_28_63 = Network.peer_id()
 
-					var_28_59, var_28_60 = var_28_61:get_chat_channel(var_28_62, var_28_58)
+					var_28_60, var_28_61 = var_28_62:get_chat_channel(var_28_63, var_28_59)
 				end
 
-				arg_28_0.channel_id = var_28_59 or 1
-				arg_28_0.alt_chat_input = var_28_58
+				arg_28_0.channel_id = var_28_60 or 1
+				arg_28_0.alt_chat_input = var_28_59
 
-				if var_28_60 then
-					Managers.chat:set_message_target_type(var_28_60)
+				if var_28_61 then
+					Managers.chat:set_message_target_type(var_28_61)
 				end
 
-				local var_28_63 = Managers.chat:current_message_target()
+				local var_28_64 = Managers.chat:current_message_target()
 
-				if var_28_63 then
-					local var_28_64 = "[" .. tostring(var_28_63.message_target) .. "]  "
-					local var_28_65, var_28_66 = UIFontByResolution(arg_28_0.chat_input_widget.style.channel_text)
-					local var_28_67, var_28_68, var_28_69 = UIRenderer.text_size(arg_28_0.ui_renderer, var_28_64, var_28_65[1], var_28_66)
+				if var_28_64 then
+					local var_28_65 = "[" .. tostring(var_28_64.message_target) .. "]  "
+					local var_28_66, var_28_67 = UIFontByResolution(arg_28_0.chat_input_widget.style.channel_text)
+					local var_28_68, var_28_69, var_28_70 = UIRenderer.text_size(arg_28_0.ui_renderer, var_28_65, var_28_66[1], var_28_67)
 
-					arg_28_0.chat_input_widget.content.channel_field = var_28_64
+					arg_28_0.chat_input_widget.content.channel_field = var_28_65
 
-					local var_28_70 = IRC_CHANNEL_COLORS[var_28_63.message_target_type]
+					local var_28_71 = IRC_CHANNEL_COLORS[var_28_64.message_target_type]
 
-					arg_28_0:_apply_color_values(arg_28_0.chat_input_widget.style.channel_text.text_color, var_28_70)
+					arg_28_0:_apply_color_values(arg_28_0.chat_input_widget.style.channel_text.text_color, var_28_71)
 
-					arg_28_0.ui_scenegraph.chat_input_text.size[1] = var_0_0.CHAT_INPUT_TEXT_WIDTH - var_28_67
-					arg_28_0.chat_input_widget.style.text.offset[1] = arg_28_0.chat_input_widget.style.channel_text.offset[1] + var_28_67
+					arg_28_0.ui_scenegraph.chat_input_text.size[1] = var_0_0.CHAT_INPUT_TEXT_WIDTH - var_28_68
+					arg_28_0.chat_input_widget.style.text.offset[1] = arg_28_0.chat_input_widget.style.channel_text.offset[1] + var_28_68
 				end
 
 				arg_28_0.chat_input_widget.content.caret_index = 1
@@ -870,14 +870,14 @@ function ChatGui._update_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 			end
 		end
 
-		local var_28_71 = arg_28_0.chat_input_widget.content
-		local var_28_72 = var_28_71.enlarge_hotspot
-		local var_28_73 = var_28_71.info_hotspot
-		local var_28_74 = var_28_71.filter_hotspot
-		local var_28_75 = var_28_71.target_hotspot
+		local var_28_72 = arg_28_0.chat_input_widget.content
+		local var_28_73 = var_28_72.enlarge_hotspot
+		local var_28_74 = var_28_72.info_hotspot
+		local var_28_75 = var_28_72.filter_hotspot
+		local var_28_76 = var_28_72.target_hotspot
 
 		if GameSettingsDevelopment.use_global_chat then
-			if var_28_72.on_release then
+			if var_28_73.on_release then
 				Managers.ui:handle_transition("chat_view_force", {
 					use_fade = true
 				})
@@ -885,80 +885,80 @@ function ChatGui._update_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				var_28_6 = true
 				var_28_2 = 0
 				var_28_0 = false
-			elseif var_28_73.on_release and false then
+			elseif var_28_74.on_release and false then
 				var_28_6 = true
 				var_28_2 = 0
 				var_28_0 = false
-			elseif var_28_74.on_release then
+			elseif var_28_75.on_release then
 				arg_28_0:clear_messages()
 				Managers.chat:switch_view()
 
-				local var_28_76, var_28_77 = Managers.chat:current_view_and_color()
+				local var_28_77, var_28_78 = Managers.chat:current_view_and_color()
 
-				arg_28_0.chat_input_widget.content.header_field = var_28_76
+				arg_28_0.chat_input_widget.content.header_field = var_28_77
 
-				arg_28_0:_apply_color_values(arg_28_0.chat_input_widget.style.header_text.text_color, var_28_77)
-			elseif var_28_75.on_release then
+				arg_28_0:_apply_color_values(arg_28_0.chat_input_widget.style.header_text.text_color, var_28_78)
+			elseif var_28_76.on_release then
 				if Managers.chat:next_message_target() then
 					arg_28_0:clear_messages()
 				end
 
-				local var_28_78 = Managers.chat:current_message_target()
-				local var_28_79 = "[" .. tostring(var_28_78.message_target) .. "]  "
-				local var_28_80, var_28_81 = UIFontByResolution(arg_28_0.chat_input_widget.style.channel_text)
-				local var_28_82, var_28_83, var_28_84 = UIRenderer.text_size(arg_28_0.ui_renderer, var_28_79, var_28_80[1], var_28_81)
+				local var_28_79 = Managers.chat:current_message_target()
+				local var_28_80 = "[" .. tostring(var_28_79.message_target) .. "]  "
+				local var_28_81, var_28_82 = UIFontByResolution(arg_28_0.chat_input_widget.style.channel_text)
+				local var_28_83, var_28_84, var_28_85 = UIRenderer.text_size(arg_28_0.ui_renderer, var_28_80, var_28_81[1], var_28_82)
 
-				arg_28_0.chat_input_widget.content.channel_field = var_28_79
+				arg_28_0.chat_input_widget.content.channel_field = var_28_80
 
-				local var_28_85 = IRC_CHANNEL_COLORS[var_28_78.message_target_type]
+				local var_28_86 = IRC_CHANNEL_COLORS[var_28_79.message_target_type]
 
-				arg_28_0:_apply_color_values(arg_28_0.chat_input_widget.style.channel_text.text_color, var_28_85)
+				arg_28_0:_apply_color_values(arg_28_0.chat_input_widget.style.channel_text.text_color, var_28_86)
 
-				arg_28_0.ui_scenegraph.chat_input_text.size[1] = var_0_0.CHAT_INPUT_TEXT_WIDTH - var_28_82
-				arg_28_0.chat_input_widget.style.text.offset[1] = arg_28_0.chat_input_widget.style.channel_text.offset[1] + var_28_82
+				arg_28_0.ui_scenegraph.chat_input_text.size[1] = var_0_0.CHAT_INPUT_TEXT_WIDTH - var_28_83
+				arg_28_0.chat_input_widget.style.text.offset[1] = arg_28_0.chat_input_widget.style.channel_text.offset[1] + var_28_83
 				arg_28_0.chat_input_widget.content.caret_index = UTF8Utils.string_length(arg_28_0.chat_message) + 1
 				arg_28_0.chat_index = arg_28_0.chat_input_widget.content.caret_index
 
-				local var_28_86, var_28_87 = Managers.chat:current_view_and_color()
+				local var_28_87, var_28_88 = Managers.chat:current_view_and_color()
 
-				arg_28_0.chat_input_widget.content.header_field = var_28_86
+				arg_28_0.chat_input_widget.content.header_field = var_28_87
 
-				arg_28_0:_apply_color_values(arg_28_0.chat_input_widget.style.header_text.text_color, var_28_87)
+				arg_28_0:_apply_color_values(arg_28_0.chat_input_widget.style.header_text.text_color, var_28_88)
 			end
 		end
 
-		local var_28_88 = 0.025
-		local var_28_89 = var_28_4.content
-		local var_28_90
+		local var_28_89 = 0.025
+		local var_28_90 = var_28_4.content
+		local var_28_91
 
 		if var_28_0 then
 			if arg_28_1:get("chat_scroll_up") then
-				var_28_90 = var_28_88
+				var_28_91 = var_28_89
 			elseif arg_28_1:get("chat_scroll_down") then
-				var_28_90 = -var_28_88
+				var_28_91 = -var_28_89
 			end
 
-			local var_28_91 = "chat_scroll"
+			local var_28_92 = "chat_scroll"
 
-			if arg_28_1:has(var_28_91) then
-				local var_28_92 = arg_28_1:get(var_28_91).y
+			if arg_28_1:has(var_28_92) then
+				local var_28_93 = arg_28_1:get(var_28_92).y
 
-				if var_28_92 ~= 0 then
-					var_28_90 = var_28_88 * var_28_92
+				if var_28_93 ~= 0 then
+					var_28_91 = var_28_89 * var_28_93
 				end
 			end
 		end
 
-		if var_28_90 then
-			local var_28_93 = arg_28_0.ui_scenegraph
-			local var_28_94 = var_28_93[var_28_4.scenegraph_id].position[2] + var_28_93.chat_window_root.position[2]
-			local var_28_95 = var_28_4.style.scrollbar.scenegraph_id
-			local var_28_96 = var_28_94 - var_28_89.scroll_bar_height / 2
-			local var_28_97 = UISceneGraph.get_size(var_28_93, var_28_95)
-			local var_28_98 = math.clamp(var_28_96, 0, var_28_97[2])
-			local var_28_99 = math.min(var_28_98 / var_28_97[2], 1)
+		if var_28_91 then
+			local var_28_94 = arg_28_0.ui_scenegraph
+			local var_28_95 = var_28_94[var_28_4.scenegraph_id].position[2] + var_28_94.chat_window_root.position[2]
+			local var_28_96 = var_28_4.style.scrollbar.scenegraph_id
+			local var_28_97 = var_28_95 - var_28_90.scroll_bar_height / 2
+			local var_28_98 = UISceneGraph.get_size(var_28_94, var_28_96)
+			local var_28_99 = math.clamp(var_28_97, 0, var_28_98[2])
+			local var_28_100 = math.min(var_28_99 / var_28_98[2], 1)
 
-			var_28_89.internal_scroll_value = math.clamp(var_28_89.internal_scroll_value + var_28_90, 0, var_28_99)
+			var_28_90.internal_scroll_value = math.clamp(var_28_90.internal_scroll_value + var_28_91, 0, var_28_100)
 		end
 	end
 

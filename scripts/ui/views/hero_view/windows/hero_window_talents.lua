@@ -456,10 +456,13 @@ function HeroWindowTalents._populate_career_info(arg_21_0, arg_21_1)
 
 	for iter_21_0, iter_21_1 in ipairs(var_21_14) do
 		local var_21_15 = var_21_6["career_perk_" .. iter_21_0]
-		local var_21_16 = iter_21_1.display_name
 
-		var_21_15.content.text = Localize(var_21_16)
-		var_21_15.content.tooltip_data = iter_21_1
+		if var_21_15 then
+			local var_21_16 = iter_21_1.display_name
+
+			var_21_15.content.text = Localize(var_21_16)
+			var_21_15.content.tooltip_data = iter_21_1
+		end
 	end
 end
 

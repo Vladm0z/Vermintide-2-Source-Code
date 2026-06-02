@@ -15,12 +15,13 @@ local var_0_11 = var_0_0.tag_widget_func
 local var_0_12 = var_0_0.loadout_button_widget_definitions
 local var_0_13 = var_0_0.console_cursor_definition
 local var_0_14 = var_0_0.generic_input_actions
-local var_0_15 = {}
+local var_0_15 = var_0_0.NUM_PERKS
+local var_0_16 = {}
 
 CharacterSelectionStateVersusLoadouts = class(CharacterSelectionStateVersusLoadouts, CharacterSelectionStateCharacter)
 CharacterSelectionStateVersusLoadouts.NAME = "CharacterSelectionStateVersusLoadouts"
 
-local var_0_16 = {
+local var_0_17 = {
 	slot_necklace = true,
 	slot_hat = true,
 	slot_ring = true,
@@ -943,7 +944,7 @@ function CharacterSelectionStateVersusLoadouts._populate_talent_grid(arg_30_0)
 	local var_30_4 = (var_30_1 - 1) * NumTalentRows
 	local var_30_5 = TalentTrees[var_30_0][var_30_3.talent_tree_index]
 	local var_30_6 = arg_30_0._selected_loadout_talents
-	local var_30_7 = PlayerUtils.get_talent_overrides_by_career(var_30_3.display_name) or var_0_15
+	local var_30_7 = PlayerUtils.get_talent_overrides_by_career(var_30_3.display_name) or var_0_16
 	local var_30_8 = arg_30_0._widgets_by_name.talent_grid
 	local var_30_9 = var_30_8.content
 	local var_30_10 = var_30_8.style
@@ -1018,7 +1019,7 @@ function CharacterSelectionStateVersusLoadouts._set_loadout(arg_31_0, arg_31_1, 
 		var_31_6:set_loadout_index(arg_31_4, var_31_4.loadout_index)
 
 		for iter_31_0, iter_31_1 in pairs(arg_31_1) do
-			if var_0_16[iter_31_0] then
+			if var_0_17[iter_31_0] then
 				if CosmeticUtils.is_cosmetic_slot(iter_31_0) then
 					iter_31_1 = var_31_6:get_backend_id_from_cosmetic_item(iter_31_1)
 				elseif iter_31_0 == "slot_pose" then
@@ -1289,8 +1290,8 @@ function CharacterSelectionStateVersusLoadouts._populate_loadout(arg_38_0, arg_3
 	local var_38_4 = var_38_2.display_name
 	local var_38_5 = var_38_3.name
 	local var_38_6 = arg_38_5 or InventorySettings.loadouts[arg_38_0._stored_selected_loadout_index]
-	local var_38_7 = var_0_15
-	local var_38_8 = var_0_15
+	local var_38_7 = var_0_16
+	local var_38_8 = var_0_16
 	local var_38_9 = Managers.backend:get_interface("talents")
 
 	if arg_38_4 then
@@ -1377,7 +1378,7 @@ function CharacterSelectionStateVersusLoadouts._populate_career_info(arg_39_0)
 	local var_39_16 = 0
 	local var_39_17 = 0
 
-	for iter_39_0 = 1, 3 do
+	for iter_39_0 = 1, var_0_15 do
 		local var_39_18 = var_39_4["career_perk_" .. iter_39_0]
 		local var_39_19 = var_39_18.content
 		local var_39_20 = var_39_18.style

@@ -4279,7 +4279,7 @@ PowerLevelTemplates = {
 		attack_template = "light_blunt_tank",
 		power_distribution = {
 			attack = 0.05,
-			impact = 0.08
+			impact = 0.075
 		}
 	},
 	pickaxe_heavy_linesman_horizontal_targets = {
@@ -5439,7 +5439,7 @@ PowerLevelTemplates = {
 		attack_armor_power_modifer = {
 			1,
 			1,
-			2,
+			2.5,
 			1,
 			1
 		},
@@ -5695,8 +5695,9 @@ PowerLevelTemplates = {
 		}
 	},
 	mace_1h_light_smiter_vertical_default_target = {
-		boost_curve_type = "smiter_curve",
 		dot_template_name = "burning_dot_1tick",
+		dot_balefire_variant = true,
+		boost_curve_type = "smiter_curve",
 		attack_template = "slashing_smiter",
 		power_distribution = {
 			attack = 0.2,
@@ -5854,7 +5855,7 @@ PowerLevelTemplates = {
 			boost_curve_type = "tank_curve",
 			attack_template = "heavy_blunt_tank",
 			power_distribution = {
-				attack = 0.075,
+				attack = 0.1,
 				impact = 0.2
 			}
 		},
@@ -5865,7 +5866,7 @@ PowerLevelTemplates = {
 			boost_curve_type = "tank_curve",
 			attack_template = "light_blunt_tank",
 			power_distribution = {
-				attack = 0.05,
+				attack = 0.075,
 				impact = 0.15
 			}
 		}

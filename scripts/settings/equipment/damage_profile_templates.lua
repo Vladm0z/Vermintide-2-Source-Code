@@ -1006,7 +1006,7 @@ DamageProfileTemplates.axe_shield_light_smiter_vertical = {
 DamageProfileTemplates.axe_shield_heavy_smiter_vertical = {
 	armor_modifier = "axe_shield_heavy_smiter_vertical_armor_modifier",
 	critical_strike = "axe_shield_heavy_smiter_vertical_critical_strike",
-	charge_value = "light_attack",
+	charge_value = "heavy_attack",
 	cleave_distribution = "axe_shield_heavy_smiter_vertical_cleave_distribution",
 	default_target = "axe_shield_heavy_smiter_vertical_default_target",
 	targets = "aaxe_shield_heavy_smiter_vertical_targets",
@@ -3251,7 +3251,7 @@ DamageProfileTemplates.shortbow_hagbane_charged = {
 		},
 		power_distribution_far = {
 			attack = 0.075,
-			impact = 0.1
+			impact = 0.2
 		},
 		range_modifier_settings = {
 			dropoff_start = 10,

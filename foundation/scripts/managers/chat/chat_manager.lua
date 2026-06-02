@@ -548,81 +548,88 @@ function ChatManager.send_chat_message(arg_45_0, arg_45_1, arg_45_2, arg_45_3, a
 		return var_45_0, var_45_1, var_45_2
 	end
 
+	local var_45_3 = arg_45_3
+	local var_45_4 = NetworkConstants.max_string_length - 5
+
+	if var_45_4 < #arg_45_3 then
+		var_45_3 = UTF8Utils.clamp_byte_length(var_45_3, var_45_4) .. "..."
+	end
+
 	fassert(arg_45_0:has_channel(arg_45_1), "Haven't registered channel: %s", tostring(arg_45_1))
 
-	local var_45_3 = false
-	local var_45_4 = true
-	local var_45_5 = arg_45_0.my_peer_id
-	local var_45_6 = SteamHelper.is_dev() and arg_45_2 == 1
+	local var_45_5 = false
+	local var_45_6 = true
+	local var_45_7 = arg_45_0.my_peer_id
+	local var_45_8 = SteamHelper.is_dev() and arg_45_2 == 1
 
 	if type(arg_45_5) ~= "table" then
 		arg_45_5[1], arg_45_5 = arg_45_5, FrameTable.alloc_table()
 	end
 
-	local var_45_7
+	local var_45_9
 
 	if arg_45_8 then
-		var_45_7 = arg_45_0:_get_message_target(arg_45_8)
+		var_45_9 = arg_45_0:_get_message_target(arg_45_8)
 	else
-		var_45_7 = arg_45_0.message_targets[arg_45_0.current_message_target_index]
+		var_45_9 = arg_45_0.message_targets[arg_45_0.current_message_target_index]
 	end
 
-	local var_45_8 = var_45_7.message_target
-	local var_45_9 = arg_45_9 or var_45_7.message_target_type
-	local var_45_10 = arg_45_10 or var_45_7.message_target_key
+	local var_45_10 = var_45_9.message_target
+	local var_45_11 = arg_45_9 or var_45_9.message_target_type
+	local var_45_12 = arg_45_10 or var_45_9.message_target_key
 
-	if var_45_9 == Irc.PARTY_MSG or var_45_9 == Irc.TEAM_MSG or var_45_9 == Irc.ALL_MSG then
+	if var_45_11 == Irc.PARTY_MSG or var_45_11 == Irc.TEAM_MSG or var_45_11 == Irc.ALL_MSG then
 		if arg_45_0.is_server then
-			var_45_5 = arg_45_11 or var_45_5
+			var_45_7 = arg_45_11 or var_45_7
 
-			local var_45_11 = Managers.mechanism:network_handler()
+			local var_45_13 = Managers.mechanism:network_handler()
 
-			if var_45_11 then
-				var_45_11:get_match_handler():send_rpc_others("rpc_chat_message", arg_45_1, var_45_5, arg_45_2, arg_45_3, arg_45_5, arg_45_4, arg_45_6, var_45_3, var_45_4, var_45_6, var_45_9)
+			if var_45_13 then
+				var_45_13:get_match_handler():send_rpc_others("rpc_chat_message", arg_45_1, var_45_7, arg_45_2, var_45_3, arg_45_5, arg_45_4, arg_45_6, var_45_5, var_45_6, var_45_8, var_45_11)
 			else
 				return
 			end
 		else
-			local var_45_12 = Managers.mechanism:network_handler()
+			local var_45_14 = Managers.mechanism:network_handler()
 
-			if var_45_12 then
-				var_45_12:get_match_handler():send_rpc_up("rpc_chat_message", arg_45_1, var_45_5, arg_45_2, arg_45_3, arg_45_5, arg_45_4, arg_45_6, var_45_3, var_45_4, var_45_6, var_45_9)
+			if var_45_14 then
+				var_45_14:get_match_handler():send_rpc_up("rpc_chat_message", arg_45_1, var_45_7, arg_45_2, var_45_3, arg_45_5, arg_45_4, arg_45_6, var_45_5, var_45_6, var_45_8, var_45_11)
 			else
 				return
 			end
 		end
 
 		if not arg_45_4 then
-			Managers.telemetry_events:chat_message(arg_45_3)
+			Managers.telemetry_events:chat_message(var_45_3)
 		end
-	elseif var_45_9 == Irc.CHANNEL_MSG or var_45_9 == Irc.PRIVATE_MSG then
-		Managers.irc:send_message(arg_45_3, var_45_8)
+	elseif var_45_11 == Irc.CHANNEL_MSG or var_45_11 == Irc.PRIVATE_MSG then
+		Managers.irc:send_message(var_45_3, var_45_10)
 
 		if rawget(_G, "Steam") then
-			var_45_5 = Steam.user_name()
+			var_45_7 = Steam.user_name()
 		end
 
-		if var_45_9 == Irc.CHANNEL_MSG then
-			if var_45_10 then
-				var_45_5 = string.format("[%s] ", Localize(var_45_10))
+		if var_45_11 == Irc.CHANNEL_MSG then
+			if var_45_12 then
+				var_45_7 = string.format("[%s] ", Localize(var_45_12))
 			else
-				var_45_5 = string.format("[%s]", var_45_8)
+				var_45_7 = string.format("[%s]", var_45_10)
 			end
-		elseif var_45_9 == Irc.PRIVATE_MSG then
-			var_45_5 = "To [" .. var_45_8 .. "]"
+		elseif var_45_11 == Irc.PRIVATE_MSG then
+			var_45_7 = "To [" .. var_45_10 .. "]"
 		end
 	end
 
 	if not arg_45_7 then
-		arg_45_0:add_recent_chat_message(arg_45_3)
-	elseif arg_45_0.recently_sent_messages[arg_45_7] ~= arg_45_3 then
-		arg_45_0:add_recent_chat_message(arg_45_3)
+		arg_45_0:add_recent_chat_message(var_45_3)
+	elseif arg_45_0.recently_sent_messages[arg_45_7] ~= var_45_3 then
+		arg_45_0:add_recent_chat_message(var_45_3)
 	end
 
-	if arg_45_0:is_channel_member(arg_45_1) and (var_45_3 or not arg_45_0.peer_ignore_list[var_45_5]) then
-		local var_45_13 = arg_45_0:_get_localized_message(arg_45_3, arg_45_4, arg_45_5, arg_45_6)
+	if arg_45_0:is_channel_member(arg_45_1) and (var_45_5 or not arg_45_0.peer_ignore_list[var_45_7]) then
+		local var_45_15 = arg_45_0:_get_localized_message(var_45_3, arg_45_4, arg_45_5, arg_45_6)
 
-		arg_45_0:_add_message_to_list(arg_45_1, var_45_5, arg_45_2, var_45_13, var_45_3, var_45_4, var_45_6, var_45_9)
+		arg_45_0:_add_message_to_list(arg_45_1, var_45_7, arg_45_2, var_45_15, var_45_5, var_45_6, var_45_8, var_45_11)
 	end
 end
 

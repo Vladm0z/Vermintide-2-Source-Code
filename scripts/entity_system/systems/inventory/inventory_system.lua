@@ -284,21 +284,25 @@ function InventorySystem.rpc_add_equipment(arg_14_0, arg_14_1, arg_14_2, arg_14_
 	local var_14_1 = arg_14_0.unit_storage:unit(arg_14_2)
 
 	if var_14_1 == nil or not ALIVE[var_14_1] then
+		local var_14_2 = CHANNEL_TO_PEER_ID[arg_14_1]
+
+		printf("[InventorySystem] Failed to call `rpc_add_equipment` for peer_id %s", var_14_2)
+
 		return
 	end
 
-	local var_14_2 = ScriptUnit.has_extension(var_14_1, "inventory_system")
+	local var_14_3 = ScriptUnit.has_extension(var_14_1, "inventory_system")
 
-	if var_14_2 then
-		local var_14_3 = NetworkLookup.equipment_slots[arg_14_3]
-		local var_14_4 = NetworkLookup.item_names[arg_14_4]
-		local var_14_5 = NetworkLookup.weapon_skins[arg_14_5]
+	if var_14_3 then
+		local var_14_4 = NetworkLookup.equipment_slots[arg_14_3]
+		local var_14_5 = NetworkLookup.item_names[arg_14_4]
+		local var_14_6 = NetworkLookup.weapon_skins[arg_14_5]
 
-		if var_14_5 == "n/a" then
-			var_14_5 = nil
+		if var_14_6 == "n/a" then
+			var_14_6 = nil
 		end
 
-		var_14_2:add_equipment(var_14_3, var_14_4, var_14_5)
+		var_14_3:add_equipment(var_14_4, var_14_5, var_14_6)
 	end
 end
 

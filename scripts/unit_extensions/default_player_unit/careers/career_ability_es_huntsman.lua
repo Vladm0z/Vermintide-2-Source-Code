@@ -88,7 +88,6 @@ function CareerAbilityESHuntsman._run_ability(arg_8_0, arg_8_1)
 
 	if var_8_9:has_talent("markus_huntsman_activated_ability_improved_stealth") then
 		var_8_11 = {
-			"markus_huntsman_activated_ability_increased_zoom",
 			"markus_huntsman_activated_ability_increased_reload_speed",
 			"markus_huntsman_activated_ability_decrease_move_speed",
 			"markus_huntsman_activated_ability_decrease_crouch_move_speed",
@@ -113,7 +112,6 @@ function CareerAbilityESHuntsman._run_ability(arg_8_0, arg_8_1)
 		}
 	else
 		var_8_11 = {
-			"markus_huntsman_activated_ability_increased_zoom",
 			"markus_huntsman_activated_ability_increased_reload_speed",
 			"markus_huntsman_activated_ability_decrease_move_speed",
 			"markus_huntsman_activated_ability_decrease_crouch_move_speed",

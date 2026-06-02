@@ -89,7 +89,7 @@ function NetworkUtils.split_ip_port(arg_8_0)
 end
 
 function NetworkUtils.net_pack_flexmatch_ticket(arg_9_0)
-	local var_9_0 = 500
+	local var_9_0 = NetworkConstants.max_string_length
 	local var_9_1 = #arg_9_0
 	local var_9_2 = math.ceil(var_9_1 / var_9_0)
 	local var_9_3 = Network.type_info("flexmatch_ticket").max_size

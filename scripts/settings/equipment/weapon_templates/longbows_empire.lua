@@ -227,25 +227,24 @@ local var_0_3 = {
 		action_two = {
 			default = {
 				cooldown = 0.2,
-				anim_time_scale = 2.2,
+				default_zoom = "zoom_in_trueflight",
 				kind = "aim",
 				weapon_action_hand = "left",
 				aim_sound_event = "player_combat_weapon_bow_tighten_grip_loop",
 				aim_zoom_delay = 0.22,
 				spread_template_override = "empire_longbow",
 				aim_sound_delay = 0.1,
-				anim_end_event = "draw_cancel",
 				aim_at_gaze_setting = "tobii_aim_at_gaze_longbow_empire",
-				aim_assist_ramp_multiplier = 0.6,
+				anim_end_event = "draw_cancel",
 				wield_blend_event = "equip_end",
 				minimum_hold_time = 0.2,
-				aim_assist_max_ramp_multiplier = 0.8,
-				heavy_aim_flow_delay = 0.9,
+				anim_time_scale = 2.2,
+				aim_assist_ramp_multiplier = 0.6,
 				ammo_usage = 1,
 				unaim_sound_event = "stop_player_combat_weapon_bow_tighten_grip_loop",
 				aim_assist_ramp_decay_delay = 0.2,
 				charge_time = 0.5,
-				heavy_aim_flow_event = "lua_heavy_zoom",
+				aim_assist_max_ramp_multiplier = 0.8,
 				hold_input = "action_two_hold",
 				anim_event = "draw_bow",
 				allow_hold_toggle = true,
@@ -289,6 +288,10 @@ local var_0_3 = {
 						action = "weapon_reload",
 						input = "weapon_reload"
 					}
+				},
+				buffed_zoom_thresholds = {
+					"zoom_in_trueflight",
+					"zoom_in"
 				},
 				zoom_condition_function = function()
 					return true

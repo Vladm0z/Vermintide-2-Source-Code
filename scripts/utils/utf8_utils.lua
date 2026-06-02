@@ -52,3 +52,25 @@ function UTF8Utils.sub_string(arg_2_0, arg_2_1, arg_2_2)
 		return ""
 	end
 end
+
+function UTF8Utils.clamp_byte_length(arg_3_0, arg_3_1)
+	if arg_3_1 >= #arg_3_0 then
+		return arg_3_0
+	end
+
+	arg_3_1 = arg_3_1 + 1
+
+	local var_3_0 = 1
+
+	while var_3_0 <= arg_3_1 do
+		local var_3_1, var_3_2 = Utf8.location(arg_3_0, var_3_0)
+
+		if arg_3_1 < var_3_2 then
+			break
+		end
+
+		var_3_0 = var_3_2
+	end
+
+	return string.sub(arg_3_0, 1, var_3_0 - 1)
+end

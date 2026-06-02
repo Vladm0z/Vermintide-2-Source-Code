@@ -14,9 +14,10 @@ local var_0_7 = var_0_0.hero_icon_widget
 local var_0_8 = var_0_0.generic_input_actions
 local var_0_9 = var_0_0.animation_definitions
 local var_0_10 = var_0_0.scenegraph_definition
-local var_0_11 = false
-local var_0_12 = 240
-local var_0_13 = "CharacterSelectionStateCharacter"
+local var_0_11 = var_0_0.NUM_PERKS
+local var_0_12 = false
+local var_0_13 = 240
+local var_0_14 = "CharacterSelectionStateCharacter"
 
 CharacterSelectionStateCharacter = class(CharacterSelectionStateCharacter)
 CharacterSelectionStateCharacter.NAME = "CharacterSelectionStateCharacter"
@@ -125,10 +126,10 @@ function CharacterSelectionStateCharacter._setup_video_player(arg_3_0, arg_3_1, 
 	local var_3_1 = true
 	local var_3_2, var_3_3 = arg_3_0.parent:get_background_world()
 
-	UIRenderer.create_video_player(var_3_0, var_0_13, var_3_2, arg_3_2, var_3_1)
+	UIRenderer.create_video_player(var_3_0, var_0_14, var_3_2, arg_3_2, var_3_1)
 
 	local var_3_4 = "info_window_video"
-	local var_3_5 = UIWidgets.create_video(var_3_4, arg_3_1, var_0_13)
+	local var_3_5 = UIWidgets.create_video(var_3_4, arg_3_1, var_0_14)
 
 	arg_3_0._video_widget = UIWidget.init(var_3_5)
 	arg_3_0._video_created = true
@@ -144,10 +145,10 @@ function CharacterSelectionStateCharacter._destroy_video_player(arg_4_0)
 		arg_4_0._video_widget = nil
 	end
 
-	if var_4_0 and var_4_0.video_players[var_0_13] then
+	if var_4_0 and var_4_0.video_players[var_0_14] then
 		local var_4_2, var_4_3 = arg_4_0.parent:get_background_world()
 
-		UIRenderer.destroy_video_player(var_4_0, var_0_13, var_4_2)
+		UIRenderer.destroy_video_player(var_4_0, var_0_14, var_4_2)
 	end
 
 	arg_4_0._video_created = nil
@@ -1005,8 +1006,8 @@ function CharacterSelectionStateCharacter._update_transition_timer(arg_26_0, arg
 end
 
 function CharacterSelectionStateCharacter.update(arg_27_0, arg_27_1, arg_27_2)
-	if var_0_11 then
-		var_0_11 = false
+	if var_0_12 then
+		var_0_12 = false
 
 		arg_27_0:create_ui_elements()
 	end
@@ -1308,7 +1309,7 @@ function CharacterSelectionStateCharacter._populate_career_info(arg_37_0, arg_37
 	local var_37_14 = 0
 	local var_37_15 = 0
 
-	for iter_37_0 = 1, 3 do
+	for iter_37_0 = 1, var_0_11 do
 		local var_37_16 = var_37_2["career_perk_" .. iter_37_0]
 		local var_37_17 = var_37_16.content
 		local var_37_18 = var_37_16.style
@@ -1339,7 +1340,7 @@ function CharacterSelectionStateCharacter._populate_career_info(arg_37_0, arg_37
 		var_37_17.visible = var_37_20 ~= nil
 	end
 
-	local var_37_28 = math.max(var_37_14 - var_0_12, 0)
+	local var_37_28 = math.max(var_37_14 - var_0_13, 0)
 
 	arg_37_0:_setup_additional_career_info(var_37_5, var_37_28)
 
