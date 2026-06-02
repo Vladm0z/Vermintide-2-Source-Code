@@ -158,6 +158,8 @@ function StateLoadingRestartNetwork._init_network(arg_3_0)
 		end
 	end
 
+	dofile("scripts/network_lookup/network_constants")
+
 	if script_data.done_initial_join then
 		var_3_1 = nil
 		var_3_2 = nil
