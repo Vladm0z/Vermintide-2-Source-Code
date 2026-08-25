@@ -462,7 +462,7 @@ function PlayFabMirrorBase.dlc_ownership_request_cb(arg_22_0, arg_22_1)
 
 	arg_22_0._owner_dlcs_cb_data = table.shallow_copy(var_22_0)
 
-	if script_data["eac-untrusted"] then
+	if GameSettingsDevelopment.read_only_backend then
 		arg_22_0:_handle_owned_dlcs_data()
 		arg_22_0:_request_best_power_levels()
 	else
@@ -1851,7 +1851,7 @@ function PlayFabMirrorBase._commit_status(arg_85_0)
 	if var_85_1.status == "commit_error" then
 		return "commit_error"
 	elseif var_85_1.num_updates == var_85_1.updates_to_make and not var_85_1.wait_for_stats and not var_85_1.wait_for_weave_user_data and not var_85_1.wait_for_keep_decorations and not var_85_1.wait_for_user_data and not var_85_1.wait_for_read_only_data and not var_85_1.wait_for_win_tracks_data and not var_85_1.wait_for_gotwf_data and not var_85_1.wait_for_weapon_pose_skin_data then
-		if IS_CONSOLE and not Managers.account:offline_mode() then
+		if not Managers.account:offline_mode() and IS_CONSOLE then
 			PlayfabBackendSaveDataUtils.store_online_data(arg_85_0)
 		end
 
@@ -2767,7 +2767,7 @@ function PlayFabMirrorBase._commit_internal(arg_165_0, arg_165_1, arg_165_2)
 
 	local var_165_3, var_165_4 = var_165_2:get_stat_save_request()
 
-	if var_165_3 and not script_data["eac-untrusted"] then
+	if var_165_3 and not GameSettingsDevelopment.read_only_backend then
 		local var_165_5 = callback(arg_165_0, "save_statistics_cb", var_165_0, var_165_4)
 		local var_165_6 = arg_165_0._request_queue:enqueue(var_165_3, var_165_5, true)
 
@@ -2780,7 +2780,7 @@ function PlayFabMirrorBase._commit_internal(arg_165_0, arg_165_1, arg_165_2)
 		var_165_1.request_queue_ids[#var_165_1.request_queue_ids + 1] = var_165_6
 	end
 
-	if not script_data["eac-untrusted"] then
+	if not GameSettingsDevelopment.read_only_backend then
 		local var_165_7 = Managers.backend:get_interface("weaves"):get_dirty_user_data()
 
 		if var_165_7 then
@@ -2797,7 +2797,7 @@ function PlayFabMirrorBase._commit_internal(arg_165_0, arg_165_1, arg_165_2)
 		end
 	end
 
-	if not script_data["eac-untrusted"] then
+	if not GameSettingsDevelopment.read_only_backend then
 		local var_165_10 = Managers.backend:get_interface("items"):get_dirty_weapon_pose_data()
 
 		if not table.is_empty(var_165_10.equipped_weapon_pose_skin) then

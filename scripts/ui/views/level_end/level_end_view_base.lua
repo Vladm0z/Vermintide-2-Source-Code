@@ -56,11 +56,7 @@ function LevelEndViewBase.init(arg_1_0, arg_1_1)
 		arg_1_0._players_session_score = arg_1_0.context.players_session_score
 	end
 
-	local var_1_3 = script_data["eac-untrusted"]
-
-	arg_1_0._is_untrusted = var_1_3
-
-	if not var_1_3 then
+	if not GameSettingsDevelopment.read_only_backend then
 		arg_1_0.level_up_rewards = arg_1_0:_get_level_up_rewards()
 		arg_1_0.deed_rewards = arg_1_0:_get_deed_rewards()
 		arg_1_0.deus_rewards = arg_1_0:_get_deus_rewards()
@@ -73,15 +69,15 @@ function LevelEndViewBase.init(arg_1_0, arg_1_1)
 	arg_1_0._reward_presentation_queue = {}
 	arg_1_0.reward_popup = RewardPopupUI:new(arg_1_1)
 
-	local var_1_4 = arg_1_0:setup_pages(var_1_0, var_1_1)
-	local var_1_5 = {}
+	local var_1_3 = arg_1_0:setup_pages(var_1_0, var_1_1)
+	local var_1_4 = {}
 
-	for iter_1_0, iter_1_1 in pairs(var_1_4) do
-		var_1_5[iter_1_1] = iter_1_0
+	for iter_1_0, iter_1_1 in pairs(var_1_3) do
+		var_1_4[iter_1_1] = iter_1_0
 	end
 
-	arg_1_0._index_by_state_name = var_1_4
-	arg_1_0._state_name_by_index = var_1_5
+	arg_1_0._index_by_state_name = var_1_3
+	arg_1_0._state_name_by_index = var_1_4
 	arg_1_0._state_machine_params = {
 		parent = arg_1_0,
 		context = arg_1_1,
@@ -230,7 +226,7 @@ function LevelEndViewBase.on_enter(arg_12_0)
 end
 
 function LevelEndViewBase.on_exit(arg_13_0)
-	if not arg_13_0._is_untrusted then
+	if not GameSettingsDevelopment.read_only_backend then
 		local var_13_0 = Managers.state.difficulty:get_difficulty()
 		local var_13_1 = LootChestData.chests_by_category[var_13_0].package_name
 

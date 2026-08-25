@@ -241,7 +241,7 @@ function var_0_0.update_function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, ar
 
 	local var_6_8 = var_6_2 and var_6_0.player_name or ""
 
-	if UTF8Utils.string_length(var_6_8) > 18 then
+	if Utf8.length(var_6_8) > 18 then
 		var_6_8 = string.sub(var_6_8, 1, 18) .. "..."
 	end
 

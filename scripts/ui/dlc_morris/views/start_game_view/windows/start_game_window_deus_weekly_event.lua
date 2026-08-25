@@ -35,8 +35,8 @@ function StartGameWindowDeusWeeklyEvent.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._current_difficulty = arg_1_0._parent:get_difficulty_option(true) or Managers.state.difficulty:get_difficulty()
 
 	arg_1_0:_update_difficulty_option(arg_1_0._current_difficulty)
-	arg_1_0:_fetch_event_data()
 
+	arg_1_0._refresh_requested = true
 	arg_1_0._is_focused = false
 	arg_1_0._play_button_pressed = false
 	arg_1_0._show_additional_settings = false
@@ -49,7 +49,7 @@ end
 
 local var_0_8 = {}
 
-function StartGameWindowDeusWeeklyEvent._fetch_event_data(arg_2_0)
+function StartGameWindowDeusWeeklyEvent._refresh_event_data(arg_2_0)
 	local var_2_0 = Managers.backend:get_interface("live_events")
 	local var_2_1, var_2_2 = var_2_0:get_weekly_chaos_wastes_game_mode_data()
 	local var_2_3 = var_2_0:get_weekly_chaos_wastes_rewards_data() or var_0_8
@@ -360,6 +360,12 @@ function StartGameWindowDeusWeeklyEvent.set_focus(arg_11_0, arg_11_1)
 end
 
 function StartGameWindowDeusWeeklyEvent.update(arg_12_0, arg_12_1, arg_12_2)
+	if arg_12_0._refresh_requested then
+		arg_12_0:_refresh_event_data()
+
+		arg_12_0._refresh_requested = false
+	end
+
 	arg_12_0:_update_can_play()
 	arg_12_0:_update_animations(arg_12_1)
 	arg_12_0:_update_time_left()
@@ -670,26 +676,27 @@ function StartGameWindowDeusWeeklyEvent._update_animations(arg_25_0, arg_25_1)
 	end
 end
 
-function StartGameWindowDeusWeeklyEvent._refresh_data(arg_26_0)
-	if arg_26_0._num_requests > 0 then
+function StartGameWindowDeusWeeklyEvent._fetch_event_data(arg_26_0)
+	if arg_26_0._fetch_in_progress then
 		return
 	end
 
+	arg_26_0._fetch_in_progress = true
+
 	local var_26_0 = Managers.backend:get_interface("live_events")
-	local var_26_1 = callback(arg_26_0, "_refresh_data_cb")
+	local var_26_1 = 2
 
-	var_26_0:request_live_events(var_26_1)
-	var_26_0:request_weekly_event_rewards(var_26_1)
+	local function var_26_2()
+		var_26_1 = var_26_1 - 1
 
-	arg_26_0._num_requests = 2
-end
-
-function StartGameWindowDeusWeeklyEvent._refresh_data_cb(arg_27_0, arg_27_1)
-	arg_27_0._num_requests = arg_27_0._num_requests - 1
-
-	if arg_27_0._num_requests <= 0 then
-		arg_27_0:_fetch_event_data()
+		if var_26_1 == 0 then
+			arg_26_0._refresh_requested = true
+			arg_26_0._fetch_in_progress = false
+		end
 	end
+
+	var_26_0:request_live_events(var_26_2)
+	var_26_0:request_weekly_event_rewards(var_26_2)
 end
 
 function StartGameWindowDeusWeeklyEvent._update_time_left(arg_28_0)
@@ -710,7 +717,7 @@ function StartGameWindowDeusWeeklyEvent._update_time_left(arg_28_0)
 		if var_28_1 < 0 then
 			var_28_1 = 0
 
-			arg_28_0:_refresh_data()
+			arg_28_0:_fetch_event_data()
 		end
 
 		var_28_2.text = string.format(var_28_7, var_28_1)

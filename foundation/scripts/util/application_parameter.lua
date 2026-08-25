@@ -143,7 +143,9 @@ function Development.init_application_parameters(arg_1_0, arg_1_1)
 		end
 	end
 
-	script_data["eac-untrusted"] = var_1_0["eac-untrusted"] ~= nil or var_1_0.eac_untrusted ~= nil
+	local var_1_22 = var_1_0["eac-untrusted"] ~= nil or var_1_0.eac_untrusted ~= nil
+
+	rawset(_G, "MODDED_REALM", var_1_22)
 
 	if DEDICATED_SERVER or BUILD ~= "release" then
 		if var_1_0["use-clean-settings"] then
@@ -155,9 +157,9 @@ function Development.init_application_parameters(arg_1_0, arg_1_1)
 
 		for iter_1_0, iter_1_1 in pairs(var_1_0) do
 			if type(iter_1_0) == "string" then
-				local var_1_22 = string.gsub(iter_1_0, "-", "_")
+				local var_1_23 = string.gsub(iter_1_0, "-", "_")
 
-				script_data[var_1_22] = iter_1_1
+				script_data[var_1_23] = iter_1_1
 			else
 				script_data[iter_1_0] = iter_1_1
 			end
@@ -170,20 +172,20 @@ function Development.init_application_parameters(arg_1_0, arg_1_1)
 
 		for iter_1_2, iter_1_3 in pairs(var_1_0) do
 			if type(iter_1_3) == "table" then
-				local var_1_23 = string.format("%%-%ds = {", var_1_15)
-				local var_1_24 = string.format(var_1_23, iter_1_2)
+				local var_1_24 = string.format("%%-%ds = {", var_1_15)
+				local var_1_25 = string.format(var_1_24, iter_1_2)
 
 				for iter_1_4 = 1, #iter_1_3 do
-					var_1_24 = var_1_24 .. " " .. tostring(iter_1_3[iter_1_4])
+					var_1_25 = var_1_25 .. " " .. tostring(iter_1_3[iter_1_4])
 				end
 
-				local var_1_25 = var_1_24 .. " }"
+				local var_1_26 = var_1_25 .. " }"
 
-				print(var_1_25)
+				print(var_1_26)
 			else
-				local var_1_26 = string.format("%%-%ds = %%s", var_1_15)
+				local var_1_27 = string.format("%%-%ds = %%s", var_1_15)
 
-				var_1_1(var_1_26, iter_1_2, tostring(iter_1_3))
+				var_1_1(var_1_27, iter_1_2, tostring(iter_1_3))
 			end
 		end
 

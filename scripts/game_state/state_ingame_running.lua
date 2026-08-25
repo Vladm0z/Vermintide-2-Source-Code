@@ -50,7 +50,6 @@ function StateInGameRunning.on_enter(arg_1_0, arg_1_1)
 	arg_1_0.is_in_tutorial = arg_1_1.is_in_tutorial
 	arg_1_0.network_event_delegate = arg_1_1.network_event_delegate
 	arg_1_0.end_conditions_met = false
-	arg_1_0._booted_eac_untrusted = script_data["eac-untrusted"]
 
 	if arg_1_0.is_in_tutorial then
 		var_1_1:create_input_service("Tutorial", "TutorialPlayerControllerKeymaps", "TutorialPlayerControllerFilters")
@@ -305,7 +304,7 @@ function StateInGameRunning._setup_end_of_level_UI(arg_3_0)
 
 		var_3_7.rewards = var_3_10
 
-		if not arg_3_0._booted_eac_untrusted then
+		if not GameSettingsDevelopment.read_only_backend then
 			local var_3_11, var_3_12, var_3_13 = arg_3_0.rewards:get_level_start()
 			local var_3_14, var_3_15 = arg_3_0.rewards:get_versus_level_start()
 
@@ -677,24 +676,23 @@ function StateInGameRunning.gm_event_end_conditions_met(arg_9_0, arg_9_1, arg_9_
 	end
 
 	local var_9_27, var_9_28, var_9_29 = Managers.state.game_mode:get_end_screen_config(var_9_6, var_9_7, var_9_1, arg_9_1)
-	local var_9_30 = arg_9_0._booted_eac_untrusted
-	local var_9_31 = var_9_4 == "weave"
+	local var_9_30 = var_9_4 == "weave"
+	local var_9_31
 	local var_9_32
 	local var_9_33
 	local var_9_34
-	local var_9_35
 
-	if var_9_31 then
-		var_9_32, var_9_33, var_9_34 = arg_9_0:_get_weave_scores()
+	if var_9_30 then
+		var_9_31, var_9_32, var_9_33 = arg_9_0:_get_weave_scores()
 
-		local var_9_36 = Managers.weave:current_bar_score()
+		local var_9_35 = Managers.weave:current_bar_score()
 
 		Managers.weave:store_saved_game_mode_data()
 	end
 
-	local function var_9_37(arg_10_0)
-		if var_9_31 and not var_9_30 and var_9_6 and var_9_15 and var_9_0 and not arg_9_0.is_quickplay then
-			arg_9_0:_submit_weave_scores(var_9_32, var_9_33, var_9_34)
+	local function var_9_36(arg_10_0)
+		if var_9_30 and not GameSettingsDevelopment.read_only_backend and var_9_6 and var_9_15 and var_9_0 and not arg_9_0.is_quickplay then
+			arg_9_0:_submit_weave_scores(var_9_31, var_9_32, var_9_33)
 		end
 
 		if arg_10_0 == "commit_error" then
@@ -712,7 +710,7 @@ function StateInGameRunning.gm_event_end_conditions_met(arg_9_0, arg_9_1, arg_9_
 		end
 
 		if GameModeSettings[var_9_4].end_mission_rewards then
-			if not var_9_30 and (var_9_7 or var_9_15) then
+			if not is_booted_unstrusted and (var_9_7 or var_9_15) then
 				arg_9_0:_award_end_of_level_rewards(var_9_10, var_9_9, var_9_6, var_9_2, var_9_3)
 			end
 
@@ -720,12 +718,12 @@ function StateInGameRunning.gm_event_end_conditions_met(arg_9_0, arg_9_1, arg_9_
 			var_9_8:activate_end_screen_ui(var_9_27, var_9_28, var_9_29)
 		end
 
-		if (var_9_6 and var_9_15 or var_9_7) and var_9_31 then
+		if (var_9_6 and var_9_15 or var_9_7) and var_9_30 then
 			Managers.weave:clear_weave_name()
 		end
 	end
 
-	Managers.backend:commit(true, var_9_37)
+	Managers.backend:commit(true, var_9_36)
 
 	arg_9_0.game_lost = var_9_7
 	arg_9_0.game_won = var_9_6
@@ -846,7 +844,7 @@ function StateInGameRunning.update(arg_16_0, arg_16_1, arg_16_2)
 
 	if var_16_0 then
 		local var_16_1 = not var_16_0.survey_active and not arg_16_0.has_setup_end_of_level and var_16_0:end_screen_active() and var_16_0:end_screen_fade_in_complete()
-		local var_16_2 = arg_16_0._booted_eac_untrusted or arg_16_0.rewards:rewards_generated() and not arg_16_0.rewards:consuming_deed() and arg_16_0.chests_package_name and Managers.package:has_loaded(arg_16_0.chests_package_name, "global")
+		local var_16_2 = GameSettingsDevelopment.read_only_backend or arg_16_0.rewards:rewards_generated() and not arg_16_0.rewards:consuming_deed() and arg_16_0.chests_package_name and Managers.package:has_loaded(arg_16_0.chests_package_name, "global")
 		local var_16_3 = Managers.mechanism:current_mechanism_name()
 
 		if var_16_3 == "versus" then

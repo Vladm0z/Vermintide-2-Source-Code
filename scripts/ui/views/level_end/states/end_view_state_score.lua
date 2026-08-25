@@ -556,7 +556,7 @@ function EndViewStateScore._setup_score_panel(arg_31_0, arg_31_1, arg_31_2)
 				local var_31_11 = "_" .. var_31_2
 				local var_31_12 = "score_text" .. var_31_11
 
-				var_31_9["row_bg" .. var_31_11][var_31_12] = UTF8Utils.string_length(iter_31_3) > var_0_7 and UIRenderer.crop_text_width(arg_31_0.ui_renderer, iter_31_3, var_0_2[1] - 40, var_31_10[var_31_12]) or iter_31_3
+				var_31_9["row_bg" .. var_31_11][var_31_12] = Utf8.length(iter_31_3) > var_0_7 and UIRenderer.crop_text_width(arg_31_0.ui_renderer, iter_31_3, var_0_2[1] - 40, var_31_10[var_31_12]) or iter_31_3
 			end
 
 			var_31_2 = var_31_2 + 1

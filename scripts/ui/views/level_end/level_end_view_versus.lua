@@ -18,7 +18,7 @@ local var_0_6 = {
 LevelEndViewVersus = class(LevelEndViewVersus, LevelEndViewBase)
 
 function LevelEndViewVersus._setup_pages_victory(arg_1_0, arg_1_1)
-	if not arg_1_0._is_untrusted then
+	if not GameSettingsDevelopment.read_only_backend then
 		return {
 			EndViewStateScoreVS = 2,
 			EndViewStateParadingVS = 1
@@ -32,7 +32,7 @@ function LevelEndViewVersus._setup_pages_victory(arg_1_0, arg_1_1)
 end
 
 function LevelEndViewVersus._setup_pages_defeat(arg_2_0, arg_2_1)
-	if not arg_2_0._is_untrusted then
+	if not GameSettingsDevelopment.read_only_backend then
 		return {
 			EndViewStateScoreVS = 2,
 			EndViewStateParadingVS = 1
@@ -699,7 +699,7 @@ end
 function LevelEndViewVersus.setup_pages(arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0
 
-	if arg_29_0._is_untrusted then
+	if GameSettingsDevelopment.read_only_backend then
 		var_29_0 = arg_29_0:_setup_pages_untrusted()
 	elseif arg_29_1 then
 		var_29_0 = arg_29_0:_setup_pages_victory(arg_29_2)

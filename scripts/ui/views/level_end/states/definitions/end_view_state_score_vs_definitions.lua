@@ -7,7 +7,7 @@ local var_0_1 = {
 		name = "end_view_state_score_vs_tab_report",
 		display_name = "end_view_state_score_vs_tab_report_display_name",
 		condition_func = function()
-			return not script_data["eac-untrusted"]
+			return not GameSettingsDevelopment.read_only_backend
 		end
 	},
 	{

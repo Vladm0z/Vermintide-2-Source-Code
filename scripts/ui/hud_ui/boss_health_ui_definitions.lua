@@ -106,7 +106,7 @@ local function var_0_6(arg_1_0)
 			texture_id = "marked_portrait_frame",
 			retained_mode = var_0_0,
 			content_check_function = function(arg_2_0)
-				return arg_2_0.attributes[1]
+				return arg_2_0.attributes[1] or arg_2_0.has_custom_attribute
 			end
 		},
 		{

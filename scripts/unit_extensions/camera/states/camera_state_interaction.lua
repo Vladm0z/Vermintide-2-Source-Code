@@ -13,7 +13,7 @@ function CameraStateInteraction.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg
 	if var_2_1:has_world("level_world") then
 		local var_2_2
 		local var_2_3 = var_2_1:world("level_world")
-		local var_2_4 = Managers.mechanism:game_mechanism():get_hub_level_key()
+		local var_2_4 = Managers.level_transition_handler:get_current_level_key()
 		local var_2_5 = LevelSettings[var_2_4].level_name
 		local var_2_6 = ScriptWorld.level(var_2_3, var_2_5)
 

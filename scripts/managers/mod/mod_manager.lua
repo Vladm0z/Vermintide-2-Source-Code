@@ -19,25 +19,23 @@ function ModManager.init(arg_1_0, arg_1_1)
 	arg_1_0._ui_time = 0
 	arg_1_0._network_callbacks = {}
 
-	local var_1_0 = script_data["eac-untrusted"]
-
-	Crashify.print_property("realm", var_1_0 and "modded" or "official")
+	Crashify.print_property("realm", MODDED_REALM and "modded" or "official")
 
 	if rawget(_G, "Presence") then
-		Presence.set_presence("status", var_1_0 and "Modded Realm" or "Official Realm")
+		Presence.set_presence("status", MODDED_REALM and "Modded Realm" or "Official Realm")
 	end
 
 	arg_1_0._mod_shim = ModShim:new()
 
-	local var_1_1 = arg_1_0:_has_enabled_mods()
-	local var_1_2 = Application.bundled()
+	local var_1_0 = arg_1_0:_has_enabled_mods()
+	local var_1_1 = Application.bundled()
 
-	printf("[ModManager] Mods enabled: %s // Bundled: %s", var_1_1, var_1_2)
+	printf("[ModManager] Mods enabled: %s // Bundled: %s", var_1_0, var_1_1)
 
-	if var_1_1 and var_1_2 then
+	if var_1_0 and var_1_1 then
 		print("[ModManager] Fetching mod metadata ...")
 
-		if var_1_0 then
+		if MODDED_REALM then
 			arg_1_0._mod_metadata = {}
 			arg_1_0._state = "fetching_metadata"
 		else
@@ -272,7 +270,7 @@ function ModManager._start_scan(arg_14_0)
 
 	arg_14_0._state = "scanning"
 
-	Mod.start_scan(not script_data["eac-untrusted"])
+	Mod.start_scan(not MODDED_REALM)
 end
 
 function ModManager._build_mod_table(arg_15_0, arg_15_1)

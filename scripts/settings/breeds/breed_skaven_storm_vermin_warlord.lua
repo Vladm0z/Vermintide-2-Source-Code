@@ -167,7 +167,7 @@ local var_0_3 = {
 
 		local var_1_0 = Managers.time:time("game")
 
-		if var_1_0 < arg_1_4.intro_timer then
+		if var_1_0 < (arg_1_4.intro_timer or 0) then
 			arg_1_0 = var_0_0.none
 
 			return arg_1_0, arg_1_1, arg_1_2

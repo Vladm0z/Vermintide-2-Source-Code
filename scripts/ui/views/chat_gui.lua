@@ -740,7 +740,7 @@ function ChatGui._update_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 
 				arg_28_0.ui_scenegraph.chat_input_text.size[1] = var_0_0.CHAT_INPUT_TEXT_WIDTH - var_28_39
 				arg_28_0.chat_input_widget.style.text.offset[1] = arg_28_0.chat_input_widget.style.channel_text.offset[1] + var_28_39
-				arg_28_0.chat_input_widget.content.caret_index = UTF8Utils.string_length(arg_28_0.chat_message) + 1
+				arg_28_0.chat_input_widget.content.caret_index = Utf8.length(arg_28_0.chat_message) + 1
 				arg_28_0.chat_index = arg_28_0.chat_input_widget.content.caret_index
 
 				local var_28_43, var_28_44 = Managers.chat:current_view_and_color()
@@ -801,7 +801,7 @@ function ChatGui._update_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				if var_28_57 ~= arg_28_0.chat_index then
 					if var_28_57 == 1 then
 						arg_28_0.chat_input_widget.content.text_index = var_28_57
-					elseif var_28_57 > UTF8Utils.string_length(var_28_56) then
+					elseif var_28_57 > Utf8.length(var_28_56) then
 						arg_28_0.chat_input_widget.content.jump_to_end = true
 					end
 				end
@@ -916,7 +916,7 @@ function ChatGui._update_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 
 				arg_28_0.ui_scenegraph.chat_input_text.size[1] = var_0_0.CHAT_INPUT_TEXT_WIDTH - var_28_83
 				arg_28_0.chat_input_widget.style.text.offset[1] = arg_28_0.chat_input_widget.style.channel_text.offset[1] + var_28_83
-				arg_28_0.chat_input_widget.content.caret_index = UTF8Utils.string_length(arg_28_0.chat_message) + 1
+				arg_28_0.chat_input_widget.content.caret_index = Utf8.length(arg_28_0.chat_message) + 1
 				arg_28_0.chat_index = arg_28_0.chat_input_widget.content.caret_index
 
 				local var_28_87, var_28_88 = Managers.chat:current_view_and_color()

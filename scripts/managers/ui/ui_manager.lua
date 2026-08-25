@@ -228,3 +228,40 @@ end
 function UIManager.ingame_ui(arg_24_0)
 	return arg_24_0._ingame_ui
 end
+
+function UIManager._fetch_disabled_ui_layouts(arg_25_0)
+	local var_25_0 = arg_25_0._disabled_ui_layouts
+
+	if not var_25_0 then
+		local var_25_1 = Managers.backend
+
+		fassert(var_25_1:get_backend_mirror(), "Backend not created yet")
+
+		local var_25_2 = var_25_1:get_title_settings()
+
+		var_25_0 = var_25_2 and var_25_2.disabled_ui_layouts or {}
+		arg_25_0._disabled_ui_layouts = var_25_0
+	end
+
+	return var_25_0
+end
+
+local function var_0_0(arg_26_0)
+	return arg_26_0 == "hide"
+end
+
+local function var_0_1(arg_27_0)
+	return arg_27_0 == "disable" or arg_27_0 == true or var_0_0(arg_27_0)
+end
+
+function UIManager.is_ui_layout_disabled(arg_28_0, arg_28_1)
+	local var_28_0 = arg_28_0:_fetch_disabled_ui_layouts()[arg_28_1]
+
+	return var_0_1(var_28_0)
+end
+
+function UIManager.is_ui_layout_hidden(arg_29_0, arg_29_1)
+	local var_29_0 = arg_29_0:_fetch_disabled_ui_layouts()[arg_29_1]
+
+	return var_0_0(var_29_0)
+end

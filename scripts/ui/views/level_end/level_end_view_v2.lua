@@ -117,7 +117,7 @@ end
 function LevelEndView.setup_pages(arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0
 
-	if arg_3_0._is_untrusted then
+	if GameSettingsDevelopment.read_only_backend then
 		var_3_0 = arg_3_0:_setup_pages_untrusted()
 	elseif arg_3_1 then
 		var_3_0 = arg_3_0:_setup_pages_victory(arg_3_2)

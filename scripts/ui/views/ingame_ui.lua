@@ -357,8 +357,8 @@ function IngameUI._handle_versus_matchmaking(arg_14_0)
 	return false
 end
 
-function IngameUI.not_in_modded(arg_15_0)
-	return not script_data["eac-untrusted"]
+function IngameUI.can_open_loot(arg_15_0)
+	return not GameSettingsDevelopment.read_only_backend
 end
 
 local var_0_5 = {
@@ -764,10 +764,6 @@ end
 
 function IngameUI._render_debug_ui(arg_28_0, arg_28_1, arg_28_2)
 	if not script_data.disable_debug_draw then
-		local var_28_0 = script_data.disable_colorize_unlocalized_strings
-
-		script_data.disable_colorize_unlocalized_strings = true
-
 		if arg_28_0.menu_active and GameSettingsDevelopment.show_version_info and not script_data.hide_version_info then
 			arg_28_0:_render_version_info()
 		end
@@ -775,8 +771,6 @@ function IngameUI._render_debug_ui(arg_28_0, arg_28_1, arg_28_2)
 		if GameSettingsDevelopment.show_fps and not script_data.hide_fps then
 			arg_28_0:_render_fps(arg_28_1)
 		end
-
-		script_data.disable_colorize_unlocalized_strings = var_28_0
 	end
 end
 

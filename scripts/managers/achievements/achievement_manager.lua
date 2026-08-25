@@ -119,7 +119,7 @@ function AchievementManager.init(arg_1_0, arg_1_1, arg_1_2)
 end
 
 function AchievementManager.trigger_event(arg_2_0, arg_2_1, ...)
-	if DEDICATED_SERVER or var_0_2["eac-untrusted"] then
+	if GameSettingsDevelopment.read_only_backend then
 		return
 	end
 
@@ -284,7 +284,7 @@ function AchievementManager.num_achievement_categories(arg_11_0)
 end
 
 function AchievementManager.update(arg_12_0, arg_12_1, arg_12_2)
-	if not arg_12_0._enabled or not arg_12_0:_check_version_number() or not arg_12_0:_check_initialized_achievements() or not arg_12_0:_verify_platform_achievements() or var_0_2["eac-untrusted"] then
+	if not arg_12_0._enabled or not arg_12_0:_check_version_number() or not arg_12_0:_check_initialized_achievements() or not arg_12_0:_verify_platform_achievements() or GameSettingsDevelopment.read_only_backend then
 		return
 	end
 

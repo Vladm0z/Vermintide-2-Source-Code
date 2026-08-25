@@ -214,7 +214,7 @@ function EquipmentUI._set_slot_input(arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = var_0_7[arg_8_2]
 	local var_8_1, var_8_2, var_8_3 = arg_8_0:_get_input_texture_data(var_8_0)
 
-	if not var_8_2 or not UTF8Utils.string_length(var_8_2) then
+	if not var_8_2 or not Utf8.length(var_8_2) then
 		local var_8_4 = 0
 	end
 

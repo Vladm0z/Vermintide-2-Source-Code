@@ -1018,8 +1018,8 @@ UITooltipPasses = {
 							var_19_26 = var_0_5
 						else
 							local var_19_27, var_19_28 = UIUtils.get_property_description(iter_19_0, iter_19_1)
-							local var_19_29 = var_19_28 and UTF8Utils.string_length(var_19_28) or 0
-							local var_19_30 = var_19_26 and UTF8Utils.string_length(var_19_26) or 0
+							local var_19_29 = var_19_28 and Utf8.length(var_19_28) or 0
+							local var_19_30 = var_19_26 and Utf8.length(var_19_26) or 0
 
 							var_19_26 = var_19_27 .. var_19_28
 
@@ -6063,8 +6063,8 @@ UITooltipPasses = {
 				local var_83_31 = iter_83_1.text .. " "
 				local var_83_32 = tostring(var_83_30)
 				local var_83_33 = var_83_31 .. var_83_32
-				local var_83_34 = UTF8Utils.string_length(var_83_32) or 0
-				local var_83_35 = UTF8Utils.string_length(var_83_31) or 0
+				local var_83_34 = Utf8.length(var_83_32) or 0
+				local var_83_35 = Utf8.length(var_83_31) or 0
 				local var_83_36 = var_83_9.entry_text
 				local var_83_37 = var_83_36.color_override_table
 

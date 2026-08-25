@@ -282,33 +282,27 @@ function ProximitySystem.unfreeze(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-local function var_0_12(arg_11_0)
-	local var_11_0 = Unit.world_pose(arg_11_0, 0)
+local function var_0_12(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = Unit.world_position(arg_11_1, Unit.node(arg_11_1, "camera_attach"))
+	local var_11_1, var_11_2 = Unit.box(arg_11_2)
+	local var_11_3 = Matrix4x4.translation(var_11_1)
+	local var_11_4 = Vector3.normalize(var_11_3 - var_11_0)
+	local var_11_5 = Vector3.length(var_11_3 - var_11_0)
+	local var_11_6 = PhysicsWorld.immediate_raycast(arg_11_0, var_11_0, var_11_4, var_11_5, "all", "types", "both", "collision_filter", "filter_lookat_object_ray")
 
-	return (Matrix4x4.forward(var_11_0))
-end
+	if var_11_6 then
+		for iter_11_0, iter_11_1 in ipairs(var_11_6) do
+			local var_11_7 = Actor.unit(iter_11_1[var_0_10])
 
-local function var_0_13(arg_12_0, arg_12_1, arg_12_2)
-	local var_12_0 = Unit.world_position(arg_12_1, Unit.node(arg_12_1, "camera_attach"))
-	local var_12_1, var_12_2 = Unit.box(arg_12_2)
-	local var_12_3 = Matrix4x4.translation(var_12_1)
-	local var_12_4 = Vector3.normalize(var_12_3 - var_12_0)
-	local var_12_5 = Vector3.length(var_12_3 - var_12_0)
-	local var_12_6 = PhysicsWorld.immediate_raycast(arg_12_0, var_12_0, var_12_4, var_12_5, "all", "types", "both", "collision_filter", "filter_lookat_object_ray")
-
-	if var_12_6 then
-		for iter_12_0, iter_12_1 in ipairs(var_12_6) do
-			local var_12_7 = Actor.unit(iter_12_1[var_0_10])
-
-			if var_12_7 ~= arg_12_1 then
-				if var_12_7 == arg_12_2 then
+			if var_11_7 ~= arg_11_1 then
+				if var_11_7 == arg_11_2 then
 					if script_data.debug_has_been_seen then
-						QuickDrawerStay:line(var_12_0, iter_12_1[var_0_7], Color(0, 255, 0))
-						QuickDrawerStay:line(iter_12_1[var_0_7], var_12_0 + var_12_4 * var_12_5, Color(255, 0, 0))
+						QuickDrawerStay:line(var_11_0, iter_11_1[var_0_7], Color(0, 255, 0))
+						QuickDrawerStay:line(iter_11_1[var_0_7], var_11_0 + var_11_4 * var_11_5, Color(255, 0, 0))
 					end
 
 					return true
-				elseif not Unit.get_data(var_12_7, "breed") then
+				elseif not Unit.get_data(var_11_7, "breed") then
 					return false
 				end
 			end
@@ -316,32 +310,28 @@ local function var_0_13(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
+local function var_0_13(arg_12_0, arg_12_1)
+	local var_12_0 = arg_12_1:game()
+
+	if var_12_0 then
+		local var_12_1 = arg_12_1:unit_game_object_id(arg_12_0)
+
+		return (GameSession.game_object_field(var_12_0, var_12_1, "aim_direction"))
+	else
+		local var_12_2 = Unit.world_rotation(arg_12_0, 0)
+
+		return (Quaternion.forward(var_12_2))
+	end
+end
+
 local var_0_14 = {}
 
 function ProximitySystem.update(arg_13_0, arg_13_1, arg_13_2)
-	local var_13_0 = arg_13_0.player_unit_extensions_map
-	local var_13_1 = arg_13_0.unit_forwards
-	local var_13_2 = var_0_12
-	local var_13_3 = Managers.state.network
-	local var_13_4 = var_13_3:game()
-
-	if var_13_4 and not LEVEL_EDITOR_TEST then
-		for iter_13_0, iter_13_1 in pairs(var_13_0) do
-			local var_13_5 = var_13_3:unit_game_object_id(iter_13_0)
-
-			var_13_1[iter_13_0] = GameSession.game_object_field(var_13_4, var_13_5, "aim_direction")
-		end
-	else
-		for iter_13_2, iter_13_3 in pairs(var_13_0) do
-			var_13_1[iter_13_2] = var_13_2(iter_13_2, 0)
-		end
-	end
-
 	if script_data.debug_has_been_seen then
-		for iter_13_4, iter_13_5 in pairs(arg_13_0.unit_extension_data) do
-			local var_13_6 = iter_13_5.has_been_seen and Color(0, 255, 0) or Color(255, 0, 0)
+		for iter_13_0, iter_13_1 in pairs(arg_13_0.unit_extension_data) do
+			local var_13_0 = iter_13_1.has_been_seen and Color(0, 255, 0) or Color(255, 0, 0)
 
-			QuickDrawer:sphere(Unit.local_position(iter_13_4, 0) + Vector3.up(), 2, var_13_6)
+			QuickDrawer:sphere(Unit.local_position(iter_13_0, 0) + Vector3.up(), 2, var_13_0)
 		end
 	end
 end
@@ -401,10 +391,10 @@ function ProximitySystem.physics_async_update(arg_15_0, arg_15_1, arg_15_2)
 	end
 
 	local var_15_11 = arg_15_0.enemy_check_raycasts
-	local var_15_12 = arg_15_0.unit_forwards
-	local var_15_13 = arg_15_0.raycast_read_index
-	local var_15_14 = arg_15_0.raycast_write_index
-	local var_15_15 = arg_15_0.raycast_max_index
+	local var_15_12 = arg_15_0.raycast_read_index
+	local var_15_13 = arg_15_0.raycast_write_index
+	local var_15_14 = arg_15_0.raycast_max_index
+	local var_15_15 = Managers.state.network
 
 	for iter_15_6, iter_15_7 in pairs(var_15_6) do
 		repeat
@@ -473,58 +463,54 @@ function ProximitySystem.physics_async_update(arg_15_0, arg_15_1, arg_15_2)
 			local var_15_33
 
 			if var_15_30 > var_0_2 then
-				local var_15_34 = var_15_12[iter_15_6]
+				local var_15_34 = var_0_13(iter_15_6, var_15_15)
+				local var_15_35 = Vector3.flat(var_15_16)
 
-				if var_15_34 then
-					local var_15_35 = Vector3.flat(var_15_16)
-					local var_15_36 = var_15_34.z
+				var_15_34.z = 0
 
-					var_15_34.z = 0
+				local var_15_36 = var_0_4
+				local var_15_37 = Broadphase.query(var_15_9, var_15_16, var_15_36, var_15_0)
 
-					local var_15_37 = var_0_4
-					local var_15_38 = Broadphase.query(var_15_9, var_15_16, var_15_37, var_15_0)
+				for iter_15_12 = 1, var_15_37 do
+					local var_15_38 = var_15_0[iter_15_12]
 
-					for iter_15_12 = 1, var_15_38 do
-						local var_15_39 = var_15_0[iter_15_12]
+					var_15_0[iter_15_12] = nil
 
-						var_15_0[iter_15_12] = nil
+					local var_15_39 = HEALTH_ALIVE[var_15_38]
 
-						local var_15_40 = HEALTH_ALIVE[var_15_39]
+					if var_15_38 ~= iter_15_6 and var_15_39 and var_15_17[var_15_38] and arg_15_0:_valid_dialogue_unit(var_15_38, nil) then
+						local var_15_40 = var_15_3(var_15_38, 0)
+						local var_15_41 = Vector3.flat(var_15_40)
+						local var_15_42 = var_15_41 - var_15_35
+						local var_15_43 = Vector3.normalize(var_15_42)
 
-						if var_15_39 ~= iter_15_6 and var_15_40 and var_15_17[var_15_39] and arg_15_0:_valid_dialogue_unit(var_15_39, nil) then
-							local var_15_41 = var_15_3(var_15_39, 0)
-							local var_15_42 = Vector3.flat(var_15_41)
-							local var_15_43 = var_15_42 - var_15_35
-							local var_15_44 = Vector3.normalize(var_15_43)
+						if var_15_31 > var_0_3 and Vector3.distance_squared(var_15_40, var_15_16) < var_0_6 then
+							local var_15_44 = ScriptUnit.extension_input(iter_15_6, "dialogue_system")
+							local var_15_45 = FrameTable.alloc_table()
+							local var_15_46 = Unit.get_data(var_15_38, "breed")
 
-							if var_15_31 > var_0_3 and Vector3.distance_squared(var_15_41, var_15_16) < var_0_6 then
-								local var_15_45 = ScriptUnit.extension_input(iter_15_6, "dialogue_system")
-								local var_15_46 = FrameTable.alloc_table()
-								local var_15_47 = Unit.get_data(var_15_39, "breed")
+							if var_15_46 then
+								var_15_45.enemy_tag = var_15_46.name
 
-								if var_15_47 then
-									var_15_46.enemy_tag = var_15_47.name
+								assert(var_15_45.enemy_tag)
 
-									assert(var_15_46.enemy_tag)
+								var_15_45.enemy_unit = var_15_38
+								var_15_45.distance = Vector3.distance(var_15_41, var_15_35)
 
-									var_15_46.enemy_unit = var_15_39
-									var_15_46.distance = Vector3.distance(var_15_42, var_15_35)
+								var_15_44:trigger_dialogue_event("heard_enemy", var_15_45)
 
-									var_15_45:trigger_dialogue_event("heard_enemy", var_15_46)
-
-									var_15_33 = true
-								end
+								var_15_33 = true
 							end
+						end
 
-							if Vector3.dot(var_15_44, var_15_34) > 0.7 then
-								var_15_32 = true
-								var_15_11[var_15_14] = iter_15_6
-								var_15_11[var_15_14 + 1] = var_15_39
-								var_15_14 = (var_15_14 + 1) % var_15_15 + 1
+						if Vector3.dot(var_15_43, var_15_34) > 0.7 then
+							var_15_32 = true
+							var_15_11[var_15_13] = iter_15_6
+							var_15_11[var_15_13 + 1] = var_15_38
+							var_15_13 = (var_15_13 + 1) % var_15_14 + 1
 
-								if var_15_13 == var_15_14 then
-									var_15_13 = (var_15_13 + 1) % var_15_15 + 1
-								end
+							if var_15_12 == var_15_13 then
+								var_15_12 = (var_15_12 + 1) % var_15_14 + 1
 							end
 						end
 					end
@@ -539,11 +525,10 @@ function ProximitySystem.physics_async_update(arg_15_0, arg_15_1, arg_15_2)
 				var_15_31 = 0
 			end
 
-			arg_15_0.raycast_read_index = var_15_13
-			arg_15_0.raycast_write_index = var_15_14
+			arg_15_0.raycast_read_index = var_15_12
+			arg_15_0.raycast_write_index = var_15_13
 			iter_15_7.hear_timer = var_15_31
 			iter_15_7.raycast_timer = var_15_30
-			var_15_12[iter_15_6] = nil
 		until true
 	end
 
@@ -812,36 +797,35 @@ end
 
 function ProximitySystem.post_update(arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0.enemy_check_raycasts
-	local var_25_1 = arg_25_0.unit_forwards
-	local var_25_2 = arg_25_0.physics_world
-	local var_25_3 = Managers.state.entity:system("darkness_system")
-	local var_25_4 = arg_25_0.raycast_read_index
+	local var_25_1 = arg_25_0.physics_world
+	local var_25_2 = Managers.state.entity:system("darkness_system")
+	local var_25_3 = arg_25_0.raycast_read_index
 
-	if var_25_4 ~= arg_25_0.raycast_write_index then
-		arg_25_0.raycast_read_index = (var_25_4 + 1) % arg_25_0.raycast_max_index + 1
+	if var_25_3 ~= arg_25_0.raycast_write_index then
+		arg_25_0.raycast_read_index = (var_25_3 + 1) % arg_25_0.raycast_max_index + 1
 
-		local var_25_5 = var_25_0[var_25_4]
-		local var_25_6 = var_25_0[var_25_4 + 1]
+		local var_25_4 = var_25_0[var_25_3]
+		local var_25_5 = var_25_0[var_25_3 + 1]
 
-		if var_0_17(var_25_5) and var_0_17(var_25_6) then
-			local var_25_7 = Unit.world_position(var_25_6, 0)
+		if var_0_17(var_25_4) and var_0_17(var_25_5) then
+			local var_25_6 = Unit.world_position(var_25_5, 0)
 
-			if not var_25_3:is_in_darkness(var_25_7) and var_0_13(var_25_2, var_25_5, var_25_6) then
-				local var_25_8 = Vector3.flat(var_25_7)
-				local var_25_9 = Unit.local_position(var_25_5, 0)
-				local var_25_10 = Vector3.flat(var_25_9)
-				local var_25_11 = ScriptUnit.extension_input(var_25_5, "dialogue_system")
-				local var_25_12 = FrameTable.alloc_table()
+			if not var_25_2:is_in_darkness(var_25_6) and var_0_12(var_25_1, var_25_4, var_25_5) then
+				local var_25_7 = Vector3.flat(var_25_6)
+				local var_25_8 = Unit.local_position(var_25_4, 0)
+				local var_25_9 = Vector3.flat(var_25_8)
+				local var_25_10 = ScriptUnit.extension_input(var_25_4, "dialogue_system")
+				local var_25_11 = FrameTable.alloc_table()
 
-				var_25_12.enemy_tag = Unit.get_data(var_25_6, "breed").name
+				var_25_11.enemy_tag = Unit.get_data(var_25_5, "breed").name
 
-				assert(var_25_12.enemy_tag)
+				assert(var_25_11.enemy_tag)
 
-				var_25_12.enemy_unit = var_25_6
-				var_25_12.distance = Vector3.distance(var_25_8, var_25_10)
-				ScriptUnit.extension(var_25_6, "proximity_system").has_been_seen = true
+				var_25_11.enemy_unit = var_25_5
+				var_25_11.distance = Vector3.distance(var_25_7, var_25_9)
+				ScriptUnit.extension(var_25_5, "proximity_system").has_been_seen = true
 
-				var_25_11:trigger_dialogue_event("seen_enemy", var_25_12)
+				var_25_10:trigger_dialogue_event("seen_enemy", var_25_11)
 			end
 		end
 	end

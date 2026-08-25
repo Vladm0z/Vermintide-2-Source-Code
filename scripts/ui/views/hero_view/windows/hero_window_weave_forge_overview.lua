@@ -954,7 +954,7 @@ function HeroWindowWeaveForgeOverview._set_essence_upgrade_cost(arg_31_0, arg_31
 
 	local var_31_13 = var_31_6 + (var_31_1.size[1] / 2 - var_31_5 / 2)
 
-	var_31_1.button_hotspot.disable_button = script_data["eac-untrusted"] or not arg_31_1 or not arg_31_2
+	var_31_1.button_hotspot.disable_button = GameSettingsDevelopment.read_only_backend or not arg_31_1 or not arg_31_2
 	var_31_1.title_text = var_31_4
 	var_31_2.title_text.size[1] = var_31_5
 	var_31_2.title_text_shadow.size[1] = var_31_5

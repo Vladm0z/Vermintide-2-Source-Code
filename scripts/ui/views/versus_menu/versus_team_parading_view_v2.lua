@@ -658,7 +658,7 @@ end
 function VersusTeamParadingViewV2._set_player_name(arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_1:name()
 
-	if UTF8Utils.string_length(var_36_0) > 18 then
+	if Utf8.length(var_36_0) > 18 then
 		var_36_0 = string.sub(var_36_0, 1, 18) .. "..."
 	end
 

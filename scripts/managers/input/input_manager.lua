@@ -729,15 +729,17 @@ function InputManager.update_devices(arg_28_0, arg_28_1, arg_28_2)
 		local var_28_11 = iter_28_1.axis
 
 		for iter_28_7 = 0, iter_28_1.num_axes - 1 do
-			var_28_11[iter_28_7] = iter_28_0.axis(iter_28_7)
+			local var_28_12 = iter_28_0.axis(iter_28_7)
 
-			local var_28_12 = iter_28_0.axis_name(iter_28_7)
+			var_28_11[iter_28_7] = var_28_12
+
+			local var_28_13 = iter_28_0.axis_name(iter_28_7)
 
 			if IS_PS4 or var_28_4 then
-				if var_0_4[var_28_12] and Vector3.length(var_28_11[iter_28_7]) ~= 0 then
+				if var_0_4[var_28_13] and Vector3.length(var_28_12) ~= 0 then
 					var_28_10 = true
 				end
-			elseif iter_28_0.axis_name(iter_28_7) ~= "cursor" and Vector3.length(var_28_11[iter_28_7]) ~= 0 then
+			elseif var_28_13 ~= "cursor" and Vector3.length(var_28_12) ~= 0 then
 				var_28_10 = true
 			end
 		end
@@ -761,11 +763,11 @@ function InputManager.update_devices(arg_28_0, arg_28_1, arg_28_2)
 				var_0_0 = iter_28_0
 				var_0_1 = InputAux.input_device_type_lookup[iter_28_0]
 
-				local var_28_13 = var_0_0.type()
-				local var_28_14 = iter_28_0._name
-				local var_28_15 = var_28_14 == "Keyboard" or var_28_14 == "Mouse"
+				local var_28_14 = var_0_0.type()
+				local var_28_15 = iter_28_0._name
+				local var_28_16 = var_28_15 == "Keyboard" or var_28_15 == "Mouse"
 
-				ShowCursorStack.render_cursor(var_28_15)
+				ShowCursorStack.render_cursor(var_28_16)
 			end
 		end
 

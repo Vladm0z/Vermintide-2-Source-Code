@@ -227,7 +227,7 @@ function StoreWindowItemDetails._setup_career_icons(arg_12_0, arg_12_1)
 end
 
 function StoreWindowItemDetails._set_item_icon(arg_13_0, arg_13_1)
-	arg_13_0._widgets_by_name.item_icon.content.texture_id = arg_13_1
+	arg_13_0._widgets_by_name.item_icon.content.texture_id = arg_13_1 or "icons_placeholder"
 end
 
 function StoreWindowItemDetails._set_title_text_color(arg_14_0, arg_14_1)

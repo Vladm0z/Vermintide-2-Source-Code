@@ -78,12 +78,12 @@ function AccountManager.update_presence(arg_11_0)
 	local var_11_5 = Managers.mechanism:current_mechanism_name()
 
 	if var_11_0 then
-		Presence.set_presence("steam_display", to_boolean(script_data["eac-untrusted"]) and "#presence_modded_hub" or "#presence_official_hub")
+		Presence.set_presence("steam_display", to_boolean(MODDED_REALM) and "#presence_modded_hub" or "#presence_official_hub")
 		Presence.set_presence("steam_player_group_size", PresenceHelper.lobby_num_players())
 		Presence.set_presence("hub_string", PresenceHelper.get_hub_presence())
 		Presence.set_presence("level", PresenceHelper.lobby_level())
 	elseif var_11_5 ~= "versus" then
-		Presence.set_presence("steam_display", to_boolean(script_data["eac-untrusted"]) and "#presence_modded" or "#presence_official")
+		Presence.set_presence("steam_display", MODDED_REALM and "#presence_modded" or "#presence_official")
 		Presence.set_presence("steam_player_group", var_11_3:id())
 		Presence.set_presence("steam_player_group_size", PresenceHelper.lobby_num_players())
 		Presence.set_presence("gamemode", PresenceHelper.lobby_gamemode(var_11_4))

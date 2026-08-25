@@ -354,7 +354,7 @@ local function var_0_36(arg_10_0, arg_10_1, arg_10_2)
 end
 
 local function var_0_37(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = UTF8Utils.string_length(arg_11_0)
+	local var_11_0 = Utf8.length(arg_11_0)
 
 	if arg_11_2 < var_11_0 then
 		return arg_11_0, var_11_0

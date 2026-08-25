@@ -3,6 +3,7 @@
 require("foundation/scripts/util/table")
 require("scripts/settings/attachment_node_linking")
 require("scripts/settings/ai_inventory_templates")
+require("scripts/settings/equipment/weapon_material_settings_templates")
 
 local var_0_0 = Unit.alive
 
@@ -943,6 +944,7 @@ function flow_callback_remove_player_items(arg_42_0)
 
 		local var_42_3 = flow_callback_remove_player_items(arg_42_0)
 
+		World.unlink_unit(var_42_1, var_42_2[iter_42_0])
 		World.destroy_unit(var_42_1, var_42_2[iter_42_0])
 	end
 

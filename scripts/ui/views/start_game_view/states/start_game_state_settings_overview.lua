@@ -356,6 +356,11 @@ end
 
 function StartGameStateSettingsOverview.can_add_layout(arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1.can_add_function
+	local var_17_1 = arg_17_1.name
+
+	if Managers.ui:is_ui_layout_hidden(var_17_1) then
+		return false
+	end
 
 	return var_17_0 and var_17_0(arg_17_0)
 end
@@ -661,15 +666,9 @@ function StartGameStateSettingsOverview.get_layout_setting(arg_45_0, arg_45_1)
 end
 
 function StartGameStateSettingsOverview.get_layout_setting_by_name(arg_46_0, arg_46_1)
-	local var_46_0 = arg_46_0._window_layouts
+	local var_46_0, var_46_1 = table.find_by_key(arg_46_0._window_layouts, "name", arg_46_1)
 
-	for iter_46_0 = 1, #var_46_0 do
-		local var_46_1 = var_46_0[iter_46_0]
-
-		if arg_46_1 == var_46_1.name then
-			return var_46_1
-		end
-	end
+	return var_46_1
 end
 
 function StartGameStateSettingsOverview._get_first_game_mode_option_layout(arg_47_0)
@@ -677,9 +676,10 @@ function StartGameStateSettingsOverview._get_first_game_mode_option_layout(arg_4
 
 	for iter_47_0 = 1, #var_47_0 do
 		local var_47_1 = var_47_0[iter_47_0]
+		local var_47_2 = var_47_1.name
 
-		if arg_47_0:can_add_layout(var_47_1) then
-			return var_47_1.name, var_47_1
+		if arg_47_0:can_add_layout(var_47_1) and not Managers.ui:is_ui_layout_disabled(var_47_2) then
+			return var_47_2, var_47_1
 		end
 	end
 end

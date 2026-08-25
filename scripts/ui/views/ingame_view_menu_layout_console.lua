@@ -1101,14 +1101,14 @@ local var_0_11 = {
 		can_add_function = var_0_6
 	},
 	{
-		display_name = "achievements",
+		display_name = "achv_menu_achievements_category_title",
 		requires_player_unit = true,
 		fade = true,
 		transition_state = "achievements",
 		transition = "hero_view"
 	},
 	{
-		display_name = "start_menu_view",
+		display_name = "main_menu",
 		requires_player_unit = true,
 		fade = false,
 		transition = "start_menu_view",
@@ -1123,7 +1123,7 @@ local var_0_11 = {
 	{
 		fade = true,
 		transition = "console_friends_menu",
-		display_name = "console_friends_menu_button_name",
+		display_name = "map_friend_button_tooltip",
 		disable_for_mechanism = var_0_8
 	},
 	{

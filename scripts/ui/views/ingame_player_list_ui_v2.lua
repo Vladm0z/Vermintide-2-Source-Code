@@ -775,7 +775,7 @@ function IngamePlayerListUI._update_widgets(arg_23_0)
 
 		local var_23_14 = var_23_4.player_name
 
-		var_23_4.player_name = UTF8Utils.string_length(var_23_14) > var_0_3 and UIRenderer.crop_text_width(arg_23_0._ui_top_renderer, var_23_14, 370, var_23_12.style.name) or var_23_14
+		var_23_4.player_name = Utf8.length(var_23_14) > var_0_3 and UIRenderer.crop_text_width(arg_23_0._ui_top_renderer, var_23_14, 370, var_23_12.style.name) or var_23_14
 		var_23_4.widget = var_23_12
 	end
 end

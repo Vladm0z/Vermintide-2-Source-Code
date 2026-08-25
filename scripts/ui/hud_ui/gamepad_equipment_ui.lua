@@ -214,7 +214,7 @@ end
 function GamePadEquipmentUI._set_switch_input(arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0, var_7_1, var_7_2 = arg_7_0:_get_input_texture_data(arg_7_2)
 
-	if not var_7_1 or not UTF8Utils.string_length(var_7_1) then
+	if not var_7_1 or not Utf8.length(var_7_1) then
 		local var_7_3 = 0
 	end
 
@@ -247,7 +247,7 @@ end
 function GamePadEquipmentUI._set_slot_input(arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0, var_8_1, var_8_2 = arg_8_0:_get_input_texture_data(arg_8_2)
 
-	if not var_8_1 or not UTF8Utils.string_length(var_8_1) then
+	if not var_8_1 or not Utf8.length(var_8_1) then
 		local var_8_3 = 0
 	end
 

@@ -113,7 +113,7 @@ SubtitleTimedGui = class(SubtitleTimedGui)
 local function var_0_3(arg_1_0)
 	local var_1_0 = Managers.localizer:language_id() == "zh"
 	local var_1_1 = {}
-	local var_1_2 = UTF8Utils.string_length(arg_1_0)
+	local var_1_2 = Utf8.length(arg_1_0)
 	local var_1_3 = 1
 	local var_1_4
 	local var_1_5 = 50
@@ -128,23 +128,31 @@ local function var_0_3(arg_1_0)
 
 			if var_1_5 < iter_1_0 - var_1_3 and iter_1_0 < var_1_2 then
 				if var_1_4 then
-					var_1_1[#var_1_1 + 1] = UTF8Utils.sub_string(arg_1_0, var_1_3, var_1_4)
+					local var_1_7 = UTF8Utils.sub_string(arg_1_0, var_1_3, var_1_4)
+
+					var_1_1[#var_1_1 + 1] = var_1_7
 					var_1_3 = var_1_4 + 1
 					iter_1_0 = var_1_4
 					var_1_4 = nil
 				else
-					var_1_1[#var_1_1 + 1] = UTF8Utils.sub_string(arg_1_0, var_1_3, iter_1_0)
+					local var_1_8 = UTF8Utils.sub_string(arg_1_0, var_1_3, iter_1_0)
+
+					var_1_1[#var_1_1 + 1] = var_1_8
 					var_1_3 = iter_1_0 + 1
 				end
 			end
 		elseif var_1_6 == " " and var_1_5 < iter_1_0 - var_1_3 then
-			var_1_1[#var_1_1 + 1] = UTF8Utils.sub_string(arg_1_0, var_1_3, iter_1_0)
+			local var_1_9 = UTF8Utils.sub_string(arg_1_0, var_1_3, iter_1_0)
+
+			var_1_1[#var_1_1 + 1] = var_1_9
 			var_1_3 = iter_1_0 + 1
 		end
 	end
 
 	if var_1_3 < var_1_2 then
-		var_1_1[#var_1_1 + 1] = UTF8Utils.sub_string(arg_1_0, var_1_3, var_1_2)
+		local var_1_10 = UTF8Utils.sub_string(arg_1_0, var_1_3, var_1_2)
+
+		var_1_1[#var_1_1 + 1] = var_1_10
 	end
 
 	return var_1_1

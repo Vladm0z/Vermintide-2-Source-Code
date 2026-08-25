@@ -800,7 +800,7 @@ local var_0_3 = {
 			disable_for_mechanism = var_0_0
 		},
 		hotkey_loot = {
-			can_interact_func = "not_in_modded",
+			can_interact_func = "can_open_loot",
 			in_transition = "hero_view_force",
 			error_message = "matchmaking_ready_interaction_message_loot",
 			view = "hero_view",

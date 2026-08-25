@@ -1448,7 +1448,7 @@ function var_0_9.scaled_cursor_position_by_scenegraph(arg_40_0, arg_40_1, arg_40
 end
 
 function var_0_9.crop_text(arg_41_0, arg_41_1)
-	if arg_41_1 < UTF8Utils.string_length(arg_41_0) then
+	if arg_41_1 < Utf8.length(arg_41_0) then
 		return UTF8Utils.sub_string(arg_41_0, 1, arg_41_1) .. "..."
 	end
 
@@ -1465,7 +1465,7 @@ function var_0_9.crop_text_width(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	if arg_42_2 < var_42_2 then
 		repeat
 			local var_42_4 = 1 - (1 - (arg_42_2 - var_42_3) / var_42_2) * 0.5
-			local var_42_5 = UTF8Utils.string_length(arg_42_1)
+			local var_42_5 = Utf8.length(arg_42_1)
 			local var_42_6 = math.floor(var_42_5 * var_42_4)
 
 			arg_42_1 = UTF8Utils.sub_string(arg_42_1, 1, var_42_6)
@@ -1477,7 +1477,7 @@ function var_0_9.crop_text_width(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 			var_42_2 = math.floor(var_0_9.text_size(arg_42_0, arg_42_1, var_42_0[1], var_42_1))
 		until var_42_2 <= arg_42_2
 
-		local var_42_7 = UTF8Utils.string_length(arg_42_1)
+		local var_42_7 = Utf8.length(arg_42_1)
 
 		arg_42_1 = UTF8Utils.sub_string(arg_42_1, 1, var_42_7) .. "..."
 	end

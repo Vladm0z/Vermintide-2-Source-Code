@@ -1653,8 +1653,8 @@ function HeroWindowWeaveForgeWeapons._create_property_option_entry(arg_55_0, arg
 	local var_55_4 = UIWidget.init(var_55_3)
 	local var_55_5 = var_55_4.style
 	local var_55_6 = var_55_5.text.color_override_table
-	local var_55_7 = UTF8Utils.string_length(arg_55_2) or 0
-	local var_55_8 = UTF8Utils.string_length(arg_55_3)
+	local var_55_7 = Utf8.length(arg_55_2) or 0
+	local var_55_8 = Utf8.length(arg_55_3)
 	local var_55_9 = var_55_5.text
 
 	if var_55_9 then

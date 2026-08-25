@@ -71,6 +71,11 @@ ModShim.patches = {
 		func = function(arg_6_0, arg_6_1, arg_6_2)
 			return UIUtils.is_button_hover_enter(arg_6_1, arg_6_2)
 		end
+	},
+	{
+		name = "UTF8Utils.string_length",
+		mods = {},
+		func = Utf8.length
 	}
 }
 ModShim.error_handling = {
@@ -298,7 +303,7 @@ local function var_0_1(arg_18_0)
 end
 
 function ModShim.init(arg_19_0)
-	arg_19_0._enable_wedges = not script_data["eac-untrusted"]
+	arg_19_0._enable_wedges = not MODDED_REALM
 
 	if arg_19_0._enable_wedges then
 		arg_19_0._wedged_mod_by_id = {}

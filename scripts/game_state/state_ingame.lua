@@ -548,7 +548,7 @@ function StateIngame.on_enter(arg_1_0)
 	local var_1_54 = Managers.venture.quickplay:is_quick_game()
 	local var_1_55 = "official"
 
-	if HAS_STEAM and script_data["eac-untrusted"] then
+	if MODDED_REALM then
 		var_1_55 = "modded"
 	end
 

@@ -634,7 +634,7 @@ function HeroViewStateAchievements._create_entries(arg_19_0, arg_19_1, arg_19_2,
 		if var_19_7 ~= nil and not SearchUtils.simple_search(var_19_7, var_19_12.name) and not SearchUtils.simple_search(var_19_7, var_19_12.desc) then
 			-- block empty
 		else
-			local var_19_13 = (var_19_12.completed or script_data.set_all_challenges_claimable) and not script_data["eac-untrusted"]
+			local var_19_13 = (var_19_12.completed or script_data.set_all_challenges_claimable) and not GameSettingsDevelopment.read_only_backend
 
 			if var_19_6.completed ~= nil and var_19_6.completed == not var_19_13 then
 				-- block empty
@@ -2890,7 +2890,7 @@ function HeroViewStateAchievements._handle_claim_all_challenges(arg_95_0)
 		var_95_11 = arg_95_0:_has_any_unclaimed_completed_challenge_in_category(var_95_8)
 	end
 
-	if (arg_95_0._claimable_challenge_widgets and #arg_95_0._claimable_challenge_widgets > 0 and true or false) and (var_95_11 or arg_95_0._has_claimable_filtered_challenges) and not script_data["eac-untrusted"] and not arg_95_0:_is_polling() then
+	if (arg_95_0._claimable_challenge_widgets and #arg_95_0._claimable_challenge_widgets > 0 and true or false) and (var_95_11 or arg_95_0._has_claimable_filtered_challenges) and not GameSettingsDevelopment.read_only_backend and not arg_95_0:_is_polling() then
 		var_95_6.content.visible = true
 	else
 		var_95_6.content.visible = false

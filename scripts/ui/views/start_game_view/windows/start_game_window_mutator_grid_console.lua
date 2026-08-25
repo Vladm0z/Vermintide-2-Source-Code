@@ -152,7 +152,7 @@ function StartGameWindowMutatorGridConsole.create_ui_elements(arg_4_0, arg_4_1, 
 	arg_4_0._overlay_widgets, arg_4_0._overlay_widgets_by_name = UIUtils.create_widgets(var_0_4)
 	arg_4_0._delete_deeds_buttons_widgets, arg_4_0._delete_deeds_buttons_widgets_by_name = UIUtils.create_widgets(var_0_5)
 
-	if script_data["eac-untrusted"] then
+	if not GameSettingsDevelopment.read_only_backend then
 		local var_4_0 = arg_4_0._delete_deeds_buttons_widgets_by_name
 
 		var_4_0.button_delete.content.button_hotspot.disable_button = true

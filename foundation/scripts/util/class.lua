@@ -2,7 +2,7 @@
 
 local var_0_0 = {
 	__index = function()
-		error("This object has been destroyed")
+		error("This object has been destroyed", 2)
 	end
 }
 local var_0_1 = {

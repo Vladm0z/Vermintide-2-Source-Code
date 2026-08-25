@@ -110,6 +110,7 @@ function ImguiBuffsDebug.draw(arg_7_0, arg_7_1)
 	arg_7_0:_display_perks(var_7_4)
 	arg_7_0:_display_stat_buffs(var_7_2)
 	arg_7_0:_display_event_buffs(var_7_3)
+	arg_7_0:_display_movement_settings(arg_7_0._current_unit)
 	Imgui.end_window()
 
 	return var_7_0
@@ -421,93 +422,121 @@ function ImguiBuffsDebug._display_event_buffs(arg_13_0, arg_13_1)
 	end
 end
 
-function ImguiBuffsDebug._refresh_unit_list(arg_14_0)
-	arg_14_0._unit_names = {}
-	arg_14_0._units = {}
+function ImguiBuffsDebug._display_movement_settings(arg_14_0, arg_14_1)
+	if not Unit.alive(arg_14_1) then
+		return
+	end
 
-	local var_14_0
+	local var_14_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_14_1)
 
-	table.insert(arg_14_0._unit_names, "none")
-	table.insert(arg_14_0._units, false)
+	if not var_14_0 then
+		return
+	end
 
-	local var_14_1 = Managers.player
+	if Imgui.tree_node("Movement Settings") then
+		Imgui.text(string.format("%-36s", "Move speed"))
+		Imgui.text(string.format("    %-36s%.1f", "forwards", var_14_0.move_speed))
+		Imgui.text(string.format("    %-36s%.1f", "backwards", var_14_0.backward_move_scale * var_14_0.move_speed))
+		Imgui.text(string.format("    %-36s%.1f", "walk", var_14_0.walk_move_speed))
+		Imgui.text(string.format("    %-36s%.1f", "crouch", var_14_0.crouch_move_speed))
+		Imgui.text(string.format("    %-36s%.1f", "pounce", var_14_0.pounce_speed))
+		Imgui.text(string.format("%-36s", "Dodge"))
+		Imgui.text(string.format("    %-36s%.1f m", "distance", var_14_0.dodging.distance))
+		Imgui.text(string.format("    %-36sx%.1f", "distance modifier", var_14_0.dodging.distance_modifier))
+		Imgui.text(string.format("    %-36s%.1f s", "cooldown", var_14_0.dodging.dodge_cd))
+		Imgui.text(string.format("    %-36sx%.1f", "speed modifier", var_14_0.dodging.speed_modifier))
+		Imgui.dummy(10, 10)
+		Imgui.tree_pop()
+	end
+end
 
-	if var_14_1 then
-		local var_14_2 = var_14_1:human_and_bot_players()
+function ImguiBuffsDebug._refresh_unit_list(arg_15_0)
+	arg_15_0._unit_names = {}
+	arg_15_0._units = {}
 
-		for iter_14_0, iter_14_1 in pairs(var_14_2) do
-			if iter_14_1 then
-				local var_14_3 = iter_14_1:profile_display_name()
+	local var_15_0
 
-				table.insert(arg_14_0._unit_names, var_14_3)
-				table.insert(arg_14_0._units, iter_14_1.player_unit)
+	table.insert(arg_15_0._unit_names, "none")
+	table.insert(arg_15_0._units, false)
 
-				if iter_14_1.local_player then
-					var_14_0 = #arg_14_0._unit_names
+	local var_15_1 = Managers.player
+
+	if var_15_1 then
+		local var_15_2 = var_15_1:human_and_bot_players()
+
+		for iter_15_0, iter_15_1 in pairs(var_15_2) do
+			if iter_15_1 then
+				local var_15_3 = iter_15_1:profile_display_name()
+
+				table.insert(arg_15_0._unit_names, var_15_3)
+				table.insert(arg_15_0._units, iter_15_1.player_unit)
+
+				if iter_15_1.local_player then
+					var_15_0 = #arg_15_0._unit_names
 				end
 			end
 		end
 	end
 
 	if ALIVE[script_data.debug_unit] then
-		local var_14_4 = script_data.debug_unit
+		local var_15_4 = script_data.debug_unit
 
-		table.insert(arg_14_0._unit_names, "Selected AI: " .. Unit.debug_name(var_14_4))
-		table.insert(arg_14_0._units, var_14_4)
+		table.insert(arg_15_0._unit_names, "Selected AI: " .. Unit.debug_name(var_15_4))
+		table.insert(arg_15_0._units, var_15_4)
 
-		if arg_14_0._fallback_to_ai then
-			arg_14_0._selected_unit_idx = #arg_14_0._units
+		if arg_15_0._fallback_to_ai then
+			arg_15_0._selected_unit_idx = #arg_15_0._units
 		end
 	end
 
-	if not arg_14_0._units[arg_14_0._selected_unit_idx] then
-		arg_14_0._selected_unit_idx = var_14_0 or 1
+	if not arg_15_0._units[arg_15_0._selected_unit_idx] then
+		arg_15_0._selected_unit_idx = var_15_0 or 1
 	end
 
-	arg_14_0._current_unit = arg_14_0._units[arg_14_0._selected_unit_idx]
-	arg_14_0._selected_unit = arg_14_0._current_unit
-	arg_14_0._selected_debug_unit = script_data.debug_unit
-	arg_14_0._debug_unit_alive = ALIVE[arg_14_0._selected_debug_unit]
+	arg_15_0._current_unit = arg_15_0._units[arg_15_0._selected_unit_idx]
+	arg_15_0._selected_unit = arg_15_0._current_unit
+	arg_15_0._selected_debug_unit = script_data.debug_unit
+	arg_15_0._debug_unit_alive = ALIVE[arg_15_0._selected_debug_unit]
 
-	arg_14_0:_initialize_unit(arg_14_0._current_unit)
+	arg_15_0:_initialize_unit(arg_15_0._current_unit)
 end
 
-function ImguiBuffsDebug._initialize_unit(arg_15_0, arg_15_1)
-	arg_15_0._current_unit = arg_15_1
+function ImguiBuffsDebug._initialize_unit(arg_16_0, arg_16_1)
+	arg_16_0._current_unit = arg_16_1
 
-	if arg_15_1 and Unit.alive(arg_15_1) then
-		arg_15_0._buff_extension = ScriptUnit.extension(arg_15_1, "buff_system")
-	end
-end
-
-function ImguiBuffsDebug._add_buff(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
-	if arg_16_0._buff_extension and arg_16_2 then
-		arg_16_0._buff_extension:add_buff(arg_16_2, arg_16_3)
+	if arg_16_1 and Unit.alive(arg_16_1) then
+		arg_16_0._buff_extension = ScriptUnit.extension(arg_16_1, "buff_system")
 	end
 end
 
-function ImguiBuffsDebug._add_buff_with_buff_system(arg_17_0, arg_17_1)
-	if arg_17_0._current_unit then
-		local var_17_0 = Managers.state.entity:system("buff_system")
-
-		if var_17_0 then
-			var_17_0:add_buff(arg_17_0._current_unit, arg_17_1, arg_17_0._current_unit)
-		end
+function ImguiBuffsDebug._add_buff(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	if arg_17_0._buff_extension and arg_17_2 then
+		arg_17_0._buff_extension:add_buff(arg_17_2, arg_17_3)
 	end
 end
 
-function ImguiBuffsDebug._add_buff_with_buff_synced(arg_18_0, arg_18_1, arg_18_2)
+function ImguiBuffsDebug._add_buff_with_buff_system(arg_18_0, arg_18_1)
 	if arg_18_0._current_unit then
 		local var_18_0 = Managers.state.entity:system("buff_system")
 
 		if var_18_0 then
-			var_18_0:add_buff_synced(arg_18_0._current_unit, arg_18_1, arg_18_2, nil, arg_18_0._target_peer_id)
+			var_18_0:add_buff(arg_18_0._current_unit, arg_18_1, arg_18_0._current_unit)
 		end
 	end
 end
 
-function ImguiBuffsDebug._remove_buff(arg_19_0, arg_19_1, arg_19_2)
-	if arg_19_0._buff_extension and arg_19_2 then
-		arg_19_0._buff_extension:remove_buff(arg_19_2)
+function ImguiBuffsDebug._add_buff_with_buff_synced(arg_19_0, arg_19_1, arg_19_2)
+	if arg_19_0._current_unit then
+		local var_19_0 = Managers.state.entity:system("buff_system")
+
+		if var_19_0 then
+			var_19_0:add_buff_synced(arg_19_0._current_unit, arg_19_1, arg_19_2, nil, arg_19_0._target_peer_id)
+		end
+	end
+end
+
+function ImguiBuffsDebug._remove_buff(arg_20_0, arg_20_1, arg_20_2)
+	if arg_20_0._buff_extension and arg_20_2 then
+		arg_20_0._buff_extension:remove_buff(arg_20_2)
 	end
 end

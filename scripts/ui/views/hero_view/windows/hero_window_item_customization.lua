@@ -1783,7 +1783,7 @@ function HeroWindowItemCustomization._state_setup_property_reroll(arg_51_0)
 end
 
 function HeroWindowItemCustomization._enable_craft_button(arg_52_0, arg_52_1, arg_52_2)
-	if script_data["eac-untrusted"] then
+	if GameSettingsDevelopment.read_only_backend then
 		arg_52_1 = false
 	end
 
@@ -1825,7 +1825,7 @@ function HeroWindowItemCustomization._update_state_craft_button(arg_53_0, arg_53
 
 	local var_53_7 = var_53_3.craft_button
 
-	var_53_7.content.button_hotspot.disable_button = arg_53_4 or not var_53_0 or script_data["eac-untrusted"]
+	var_53_7.content.button_hotspot.disable_button = arg_53_4 or not var_53_0 or GameSettingsDevelopment.read_only_backend
 	var_53_7.content.title_text = arg_53_2
 	arg_53_0._has_all_crafting_requirements = var_53_0
 
@@ -1951,8 +1951,8 @@ function HeroWindowItemCustomization._create_property_option_entry(arg_57_0, arg
 	local var_57_3 = UIWidget.init(var_57_2)
 	local var_57_4 = var_57_3.style.text
 	local var_57_5 = var_57_4.color_override_table
-	local var_57_6 = arg_57_2 and UTF8Utils.string_length(arg_57_2) or 0
-	local var_57_7 = UTF8Utils.string_length(arg_57_1) or 0
+	local var_57_6 = arg_57_2 and Utf8.length(arg_57_2) or 0
+	local var_57_7 = Utf8.length(arg_57_1) or 0
 
 	var_57_5.start_index = var_57_7 + 1
 	var_57_5.end_index = var_57_7 + var_57_6

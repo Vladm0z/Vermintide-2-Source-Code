@@ -541,6 +541,8 @@ function Boot._setup_statemachine(arg_19_0, arg_19_1, arg_19_2)
 end
 
 function Boot.on_close(arg_20_0)
+	print("[Boot] on_close")
+
 	if arg_20_0._machine and arg_20_0._machine.on_close then
 		return arg_20_0._machine:on_close()
 	end
@@ -903,6 +905,8 @@ function Boot.game_update(arg_40_0, arg_40_1)
 end
 
 function Boot.shutdown(arg_42_0, arg_42_1)
+	print("[Boot] shutdown")
+
 	if arg_42_0._machine then
 		arg_42_0._machine:destroy(true)
 	end

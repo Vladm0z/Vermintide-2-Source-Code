@@ -405,7 +405,7 @@ function VoiceChatUI._update_widgets(arg_9_0)
 		end
 
 		local var_9_10 = arg_9_0.name_widgets[var_9_1]
-		local var_9_11 = UTF8Utils.string_length(var_9_8) > var_0_2 and UIRenderer.crop_text_width(arg_9_0.ui_top_renderer, var_9_8, 250, var_9_10.style.text) or var_9_8
+		local var_9_11 = Utf8.length(var_9_8) > var_0_2 and UIRenderer.crop_text_width(arg_9_0.ui_top_renderer, var_9_8, 250, var_9_10.style.text) or var_9_8
 		local var_9_12 = var_9_10.content
 		local var_9_13 = var_9_10.element
 

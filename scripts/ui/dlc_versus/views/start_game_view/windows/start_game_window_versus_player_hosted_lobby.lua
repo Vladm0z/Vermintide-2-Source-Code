@@ -899,7 +899,7 @@ function StartGameWindowVersusPlayerHostedLobby._update_server_name(arg_27_0)
 			arg_27_0._parent.parent:set_input_blocked(false)
 		end
 	elseif UIUtils.is_button_pressed(var_27_0) then
-		var_27_1.caret_index = 1 + UTF8Utils.string_length(var_27_1.text)
+		var_27_1.caret_index = 1 + Utf8.length(var_27_1.text)
 		var_27_1.active = true
 
 		arg_27_0._parent.parent:set_input_blocked(true)

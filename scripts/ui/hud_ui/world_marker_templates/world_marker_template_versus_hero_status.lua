@@ -366,7 +366,7 @@ function var_0_1.update_function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, ar
 	local var_5_26 = Managers.player:owner(var_5_0)
 	local var_5_27 = var_5_26 and var_5_26:name() or ""
 
-	if UTF8Utils.string_length(var_5_27) > 18 then
+	if Utf8.length(var_5_27) > 18 then
 		var_5_27 = string.sub(var_5_27, 1, 18) .. "..."
 	end
 

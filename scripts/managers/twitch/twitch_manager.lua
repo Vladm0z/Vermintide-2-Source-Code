@@ -155,7 +155,7 @@ function TwitchManager.cb_on_user_info_received(arg_8_0, arg_8_1, arg_8_2, arg_8
 	arg_8_0:_show_result_info(arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 
 	if arg_8_1 then
-		local var_8_0 = cjson.decode(arg_8_4)
+		local var_8_0 = arg_8_4 and cjson.decode(arg_8_4)
 
 		if var_8_0 then
 			if var_8_0.status == 401 and arg_8_0._num_retries < var_0_2 then

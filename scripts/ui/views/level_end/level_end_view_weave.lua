@@ -40,7 +40,7 @@ end
 function LevelEndViewWeave.setup_pages(arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0
 
-	if arg_4_0._is_untrusted then
+	if GameSettingsDevelopment.read_only_backend then
 		var_4_0 = arg_4_0:_setup_pages_untrusted()
 	elseif arg_4_1 then
 		var_4_0 = arg_4_0:_setup_pages_victory(arg_4_2)

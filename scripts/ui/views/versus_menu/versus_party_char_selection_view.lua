@@ -1136,7 +1136,7 @@ end
 function VersusPartyCharSelectionView._set_player_name(arg_43_0, arg_43_1)
 	local var_43_0 = arg_43_1:name()
 
-	if UTF8Utils.string_length(var_43_0) > 18 then
+	if Utf8.length(var_43_0) > 18 then
 		var_43_0 = string.sub(var_43_0, 1, 18) .. "..."
 	end
 

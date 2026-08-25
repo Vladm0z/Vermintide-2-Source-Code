@@ -136,7 +136,7 @@ function HeroWindowPanelConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
 
 	assert(var_3_4[3].content.text_field == "hero_window_crafting")
 
-	var_3_4[3].content.button_hotspot.disable_button = script_data["eac-untrusted"]
+	var_3_4[3].content.button_hotspot.disable_button = GameSettingsDevelopment.read_only_backend
 
 	for iter_3_4 = 1, #var_3_4 do
 		var_3_4[iter_3_4].content.button_hotspot.disable_button = not arg_3_0.parent:can_add(var_0_7[iter_3_4])

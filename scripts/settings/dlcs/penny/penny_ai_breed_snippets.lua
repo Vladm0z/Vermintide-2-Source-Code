@@ -73,13 +73,14 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn(arg_2_0, ar
 	local var_2_3 = {}
 	local var_2_4 = {}
 	local var_2_5 = World.get_data(arg_2_1.world, "physics_world")
-	local var_2_6 = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_center[1]
+	local var_2_6 = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_center
+	local var_2_7 = var_2_6 and var_2_6[1] or arg_2_0
 
 	arg_2_1.no_kill_achievement = true
-	arg_2_1.ring_center_position = Vector3Box(Unit.local_position(var_2_6, 0))
+	arg_2_1.ring_center_position = Vector3Box(Unit.local_position(var_2_7, 0))
 	arg_2_1.spell_count = 0
 
-	local var_2_7 = {
+	local var_2_8 = {
 		name = "plague_wave",
 		plague_wave_timer = var_2_0 + 10,
 		physics_world = var_2_5,
@@ -88,11 +89,11 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn(arg_2_0, ar
 		search_func = BTChaosExaltedSorcererSkulkAction.update_plague_wave
 	}
 
-	arg_2_1.plague_wave_data = var_2_7
-	var_2_3[#var_2_3 + 1] = var_2_7
-	var_2_4.plague_wave = var_2_7
+	arg_2_1.plague_wave_data = var_2_8
+	var_2_3[#var_2_3 + 1] = var_2_8
+	var_2_4.plague_wave = var_2_8
 
-	local var_2_8 = {
+	local var_2_9 = {
 		range = 40,
 		magic_missile = true,
 		magic_missile_speed = 20,
@@ -105,11 +106,11 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn(arg_2_0, ar
 		target_direction = Vector3Box()
 	}
 
-	arg_2_1.magic_missile_data = var_2_8
-	var_2_3[#var_2_3 + 1] = var_2_8
-	var_2_4.magic_missile = var_2_8
+	arg_2_1.magic_missile_data = var_2_9
+	var_2_3[#var_2_3 + 1] = var_2_9
+	var_2_4.magic_missile = var_2_9
 
-	local var_2_9 = {
+	local var_2_10 = {
 		range = 40,
 		magic_missile = true,
 		magic_missile_speed = 15,
@@ -123,11 +124,11 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn(arg_2_0, ar
 		target_direction = Vector3Box()
 	}
 
-	arg_2_1.sorcerer_strike_missile_data = var_2_9
-	var_2_3[#var_2_3 + 1] = var_2_9
-	var_2_4.sorcerer_strike_missile = var_2_9
+	arg_2_1.sorcerer_strike_missile_data = var_2_10
+	var_2_3[#var_2_3 + 1] = var_2_10
+	var_2_4.sorcerer_strike_missile = var_2_10
 
-	local var_2_10 = {
+	local var_2_11 = {
 		range = 40,
 		name = "magic_missile_ground",
 		magic_missile = true,
@@ -141,11 +142,11 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn(arg_2_0, ar
 		target_direction = Vector3Box()
 	}
 
-	arg_2_1.magic_missile_ground_data = var_2_10
-	var_2_3[#var_2_3 + 1] = var_2_10
-	var_2_4.magic_missile_ground = var_2_10
+	arg_2_1.magic_missile_ground_data = var_2_11
+	var_2_3[#var_2_3 + 1] = var_2_11
+	var_2_4.magic_missile_ground = var_2_11
 
-	local var_2_11 = {
+	local var_2_12 = {
 		name = "missile_barrage",
 		magic_missile = true,
 		magic_missile_speed = 20,
@@ -155,11 +156,11 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn(arg_2_0, ar
 		target_direction = Vector3Box()
 	}
 
-	arg_2_1.missile_barrage_data = var_2_11
-	var_2_3[#var_2_3 + 1] = var_2_11
-	var_2_4.missile_barrage = var_2_11
+	arg_2_1.missile_barrage_data = var_2_12
+	var_2_3[#var_2_3 + 1] = var_2_12
+	var_2_4.missile_barrage = var_2_12
 
-	local var_2_12 = {
+	local var_2_13 = {
 		range = 40,
 		name = "seeking_bomb_missile",
 		magic_missile = true,
@@ -178,44 +179,44 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn(arg_2_0, ar
 		}
 	}
 
-	arg_2_1.seeking_bomb_missile_data = var_2_12
-	var_2_3[#var_2_3 + 1] = var_2_12
-	var_2_4.seeking_bomb_missile = var_2_12
+	arg_2_1.seeking_bomb_missile_data = var_2_13
+	var_2_3[#var_2_3 + 1] = var_2_13
+	var_2_4.seeking_bomb_missile = var_2_13
 
-	local var_2_13 = {
+	local var_2_14 = {
 		name = "dummy",
 		search_func = BTChaosExaltedSorcererSkulkAction.update_dummy
 	}
 
-	arg_2_1.dummy_data = var_2_13
-	var_2_3[#var_2_3 + 1] = var_2_13
-	var_2_4.dummy = var_2_13
+	arg_2_1.dummy_data = var_2_14
+	var_2_3[#var_2_3 + 1] = var_2_14
+	var_2_4.dummy = var_2_14
 
-	local var_2_14 = Managers.state.entity:system("spawner_system")._id_lookup
-	local var_2_15 = Managers.state.conflict.level_analysis
-	local var_2_16 = var_2_15.generic_ai_node_units.sorcerer_boss_drachenfels_center
-	local var_2_17 = var_2_15.generic_ai_node_units.sorcerer_boss_drachenfels_wall
+	local var_2_15 = Managers.state.entity:system("spawner_system")._id_lookup
+	local var_2_16 = Managers.state.conflict.level_analysis
+	local var_2_17 = var_2_16.generic_ai_node_units.sorcerer_boss_drachenfels_center
+	local var_2_18 = var_2_16.generic_ai_node_units.sorcerer_boss_drachenfels_wall
 
-	if var_2_16 and var_2_17 and var_2_14.sorcerer_boss_drachenfels and var_2_14.sorcerer_boss_drachenfels_minion then
-		local var_2_18 = var_2_16[1]
+	if var_2_17 and var_2_18 and var_2_15.sorcerer_boss_drachenfels and var_2_15.sorcerer_boss_drachenfels_minion then
+		local var_2_19 = var_2_17[1]
 
-		arg_2_1.in_boss_arena = Vector3.distance(POSITION_LOOKUP[arg_2_0], Unit.local_position(var_2_18, 0)) < 20
+		arg_2_1.in_boss_arena = Vector3.distance(POSITION_LOOKUP[arg_2_0], Unit.local_position(var_2_19, 0)) < 20
 	else
 		arg_2_1.in_boss_arena = false
 	end
 
 	if arg_2_1.in_boss_arena then
 		arg_2_1.spawners = {
-			sorcerer_boss_center = var_2_16
+			sorcerer_boss_center = var_2_17
 		}
 		arg_2_1.mode = "setup"
 		arg_2_1.intro_timer = var_2_0 + 12.3
 
-		local var_2_19 = var_2_16[1]
-		local var_2_20 = Unit.local_position(var_2_19, 0) + Vector3(0, 0, 0.75)
-		local var_2_21 = Unit.local_rotation(var_2_19, 0)
+		local var_2_20 = var_2_17[1]
+		local var_2_21 = Unit.local_position(var_2_20, 0) + Vector3(0, 0, 0.75)
+		local var_2_22 = Unit.local_rotation(var_2_20, 0)
 
-		arg_2_1.arena_pose_boxed = Matrix4x4Box(Matrix4x4.from_quaternion_position(var_2_21, var_2_20))
+		arg_2_1.arena_pose_boxed = Matrix4x4Box(Matrix4x4.from_quaternion_position(var_2_22, var_2_21))
 		arg_2_1.arena_half_extents = Vector3Box(12, 12, 1)
 
 		function arg_2_1.valid_teleport_pos_func(arg_3_0, arg_3_1)
@@ -234,20 +235,20 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn(arg_2_0, ar
 		print("Sorcerer boss not in arena")
 	end
 
-	local var_2_22 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
+	local var_2_23 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
 
-	for iter_2_0, iter_2_1 in pairs(var_2_22) do
+	for iter_2_0, iter_2_1 in pairs(var_2_23) do
 		ScriptUnit.extension(iter_2_1, "health_system").is_invincible = true
 	end
 
 	arg_2_1.spells = var_2_3
 	arg_2_1.spells_lookup = var_2_4
 
-	local var_2_23 = arg_2_1.breed
-	local var_2_24 = Managers.state.entity:system("audio_system")
+	local var_2_24 = arg_2_1.breed
+	local var_2_25 = Managers.state.entity:system("audio_system")
 
-	if var_2_23.teleport_sound_event then
-		var_2_24:play_audio_unit_event(var_2_23.teleport_sound_event, arg_2_0)
+	if var_2_24.teleport_sound_event then
+		var_2_25:play_audio_unit_event(var_2_24.teleport_sound_event, arg_2_0)
 	end
 
 	Managers.state.conflict:add_unit_to_bosses(arg_2_0)

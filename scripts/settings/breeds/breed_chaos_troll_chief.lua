@@ -69,63 +69,64 @@ local var_0_5 = {
 	use_aggro = true,
 	minion_detection_radius = 10,
 	boss_staggers = true,
-	poison_resistance = 100,
+	lord_damage_reduction = true,
 	panic_close_detection_radius_sq = 9,
 	height = 3,
+	poison_resistance = 100,
 	boss = true,
 	hit_mass_count = 50,
 	patrol_active_perception = "perception_rat_ogre",
 	animation_movement_template = "chaos_troll",
 	race = "chaos",
-	stagger_threshold_medium = 1,
 	ai_strength = 10,
 	death_reaction = "ai_default",
 	armor_category = 3,
+	stagger_threshold_medium = 1,
 	stagger_threshold_heavy = 1,
 	stagger_threshold_explosion = 1,
 	regen_pulse_interval = 2,
 	target_selection_angry = "pick_chaos_troll_target_with_weights",
-	exchange_order = 1,
 	use_big_boy_turning = true,
 	use_navigation_path_splines = true,
-	downed_pulse_interval = 1,
+	exchange_order = 1,
 	distance_sq_can_detect_target = 2025,
-	is_bot_aid_threat = true,
+	downed_pulse_interval = 1,
 	perception_continuous = "perception_continuous_chaos_troll",
 	behavior = "troll_chief",
+	bot_opportunity_target_melee_range_while_ranged = 5,
 	bots_should_flank = true,
-	bot_hitbox_radius_approximation = 1,
 	boost_curve_multiplier_override = 1.8,
 	downed_pulse_intensity = 0.2,
+	bot_hitbox_radius_approximation = 1,
 	far_vomit = "troll_chief_vomit",
 	has_inventory = true,
-	combat_music_state = "troll",
 	run_speed = 5.25,
 	awards_positive_reinforcement_message = true,
+	trigger_dialogue_on_target_switch = true,
 	headshot_coop_stamina_fatigue_type = "headshot_special",
 	threat_value = 32,
-	trigger_dialogue_on_target_switch = true,
-	show_health_bar = true,
+	combat_music_state = "troll",
 	aim_template = "chaos_warrior",
 	near_vomit = "troll_chief_vomit_near",
 	passive_in_patrol_start_anim = "move_fwd",
 	reach_distance = 4.2,
 	navigation_spline_distance_to_borders = 1,
 	stagger_threshold_light = 1,
+	show_health_bar = true,
 	reflect_regen_reduction_in_hp_bar = true,
-	no_stagger_duration = false,
+	keep_weapon_on_death = false,
 	hit_reaction = "ai_default",
-	bone_lod_level = 0,
 	passive_in_patrol = true,
 	patrol_passive_target_selection = "patrol_passive_target_selection",
-	smart_object_template = "chaos_troll",
-	keep_weapon_on_death = false,
+	bone_lod_level = 0,
+	is_bot_aid_threat = true,
 	hit_effect_template = "HitEffectsChaosTroll",
-	bot_opportunity_target_melee_range_while_ranged = 5,
 	unit_template = "ai_unit_chaos_troll",
 	catch_up_speed = 10,
+	smart_object_template = "chaos_troll",
 	has_running_attack = true,
 	dialogue_target_switch_event = "enemy_target_changed",
+	no_stagger_duration = false,
 	perception = "perception_rat_ogre",
 	player_locomotion_constrain_radius = 1.5,
 	husk_hit_reaction_cooldown = 1,
@@ -133,7 +134,6 @@ local var_0_5 = {
 	distance_sq_idle_auto_detect_target = 49,
 	far_off_despawn_immunity = true,
 	patrol_passive_perception = "perception_rat_ogre",
-	boss_damage_reduction = true,
 	base_unit = "units/beings/enemies/chaos_troll_chief/chr_chaos_troll_chief",
 	aoe_height = 2.4,
 	displace_players_data = var_0_2,
@@ -203,7 +203,7 @@ local var_0_5 = {
 			StatusEffectNames.burning_warpfire
 		})
 	},
-	custom_health_bar_name = function(arg_1_0, arg_1_1)
+	boss_health_ui_boss_phase_func = function(arg_1_0)
 		local var_1_0 = ScriptUnit.has_extension(arg_1_0, "health_system")
 
 		if not var_1_0 then
@@ -212,35 +212,30 @@ local var_0_5 = {
 
 		local var_1_1 = ScriptUnit.extension(arg_1_0, "buff_system")
 		local var_1_2 = Managers.time:time("game")
+		local var_1_3 = var_1_1:get_buff_type("troll_chief_downed_regen")
 
-		if var_1_0.state == "down" then
-			local var_1_3 = var_1_1:get_buff_type("troll_chief_downed_regen")
+		if var_1_3 and var_1_0.state == "down" then
+			local var_1_4 = var_1_2 - var_1_3.start_time
+			local var_1_5 = AiUtils.downed_duration(BreedActions.chaos_troll_chief.downed) - var_1_4
 
-			if var_1_3 then
-				local var_1_4 = var_1_2 - var_1_3.start_time
-				local var_1_5 = AiUtils.downed_duration(BreedActions.chaos_troll_chief.downed) - var_1_4
-				local var_1_6 = Localize("chaos_troll_chief_regenerating")
-
-				if var_1_5 > 0 then
-					return string.format("%s: %d", var_1_6, var_1_5)
-				end
+			if var_1_5 > 0 then
+				return "chaos_troll_chief_regenerating", var_1_5
 			end
 		end
 
-		local var_1_7 = var_1_1:get_buff_type("troll_chief_on_downed_wounded")
+		local var_1_6 = var_1_1:get_buff_type("troll_chief_on_downed_wounded")
 
-		if var_1_7 then
-			local var_1_8 = var_1_2 - var_1_7.start_time
-			local var_1_9 = var_1_7.duration - var_1_8
-			local var_1_10 = Localize("chaos_troll_chief_raging")
+		if var_1_6 then
+			local var_1_7 = var_1_2 - var_1_6.start_time
+			local var_1_8 = var_1_6.duration - var_1_7
 
-			if var_1_9 > 0 then
-				return string.format("%s: %d", var_1_10, var_1_9)
+			if var_1_8 > 0 then
+				return "chaos_troll_chief_raging", var_1_8
 			end
 		end
 
 		if var_1_1:num_buff_stacks("sorcerer_tether_buff_invulnerability") > 0 then
-			return string.format("%s (%s)", Localize(arg_1_1), Localize("chaos_troll_chief_protected"))
+			return "chaos_troll_chief_protected", nil
 		end
 	end,
 	debug_color = {
@@ -1163,6 +1158,7 @@ local var_0_7 = {
 			120,
 			120,
 			90,
+			75,
 			75,
 			75,
 			75,

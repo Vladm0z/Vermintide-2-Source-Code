@@ -15,7 +15,7 @@ local function var_0_3()
 		return false, "unsupported platform: " .. tostring(PLATFORM)
 	end
 
-	if script_data["eac-untrusted"] then
+	if MODDED_REALM then
 		return false, "in modded realm"
 	end
 

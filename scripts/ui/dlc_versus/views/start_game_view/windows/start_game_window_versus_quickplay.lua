@@ -214,7 +214,7 @@ function StartGameWindowVersusQuickplay._play_sound(arg_11_0, arg_11_1)
 end
 
 function StartGameWindowVersusQuickplay._can_play(arg_12_0)
-	if script_data["eac-untrusted"] then
+	if MODDED_REALM then
 		return false, "versus_disabled_in_modded_realm_disclaimer"
 	end
 

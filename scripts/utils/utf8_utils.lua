@@ -2,75 +2,63 @@
 
 UTF8Utils = UTF8Utils or {}
 
-function UTF8Utils.string_length(arg_1_0)
+local var_0_0 = Utf8.location
+
+function Utf8.length(arg_1_0)
 	local var_1_0 = #arg_1_0
 	local var_1_1 = 1
-	local var_1_2 = 0
-	local var_1_3
 
-	while var_1_1 <= var_1_0 do
-		local var_1_4
+	for iter_1_0 = 1, var_1_0 do
+		local var_1_2, var_1_3 = Utf8.location(arg_1_0, var_1_1)
 
-		var_1_4, var_1_1 = Utf8.location(arg_1_0, var_1_1)
-		var_1_2 = var_1_2 + 1
+		if var_1_0 < var_1_3 then
+			return iter_1_0
+		end
+
+		var_1_1 = var_1_3
 	end
 
-	return var_1_2
+	return 0
 end
 
 function UTF8Utils.sub_string(arg_2_0, arg_2_1, arg_2_2)
-	if arg_2_2 <= 0 or arg_2_0 == "" then
-		return ""
+	if #arg_2_0 == 0 then
+		return arg_2_0
 	end
 
-	local var_2_0 = 1
-	local var_2_1 = #arg_2_0
-	local var_2_2 = -1
-	local var_2_3 = -1
-	local var_2_4 = 1
+	local var_2_0 = UTF8Utils.count_bytes(arg_2_0, arg_2_1 - 1, 1) + 1
+	local var_2_1 = UTF8Utils.count_bytes(arg_2_0, arg_2_2 - arg_2_1 + 1, var_2_0)
 
-	while var_2_0 <= var_2_1 do
-		local var_2_5, var_2_6 = Utf8.location(arg_2_0, var_2_0)
-
-		if var_2_4 == arg_2_1 then
-			var_2_2 = var_2_5
-		end
-
-		if var_2_4 == arg_2_2 then
-			var_2_3 = var_2_6 - 1
-
-			break
-		end
-
-		var_2_4 = var_2_4 + 1
-		var_2_0 = var_2_6
-	end
-
-	if var_2_2 then
-		return string.sub(arg_2_0, var_2_2, var_2_3)
-	else
-		return ""
-	end
+	return string.sub(arg_2_0, var_2_0, var_2_1)
 end
 
-function UTF8Utils.clamp_byte_length(arg_3_0, arg_3_1)
-	if arg_3_1 >= #arg_3_0 then
-		return arg_3_0
-	end
+function UTF8Utils.count_bytes(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = #arg_3_0
+	local var_3_1
 
-	arg_3_1 = arg_3_1 + 1
+	for iter_3_0 = 1, arg_3_1 do
+		local var_3_2
 
-	local var_3_0 = 1
+		var_3_2, arg_3_2 = var_0_0(arg_3_0, arg_3_2)
 
-	while var_3_0 <= arg_3_1 do
-		local var_3_1, var_3_2 = Utf8.location(arg_3_0, var_3_0)
-
-		if arg_3_1 < var_3_2 then
+		if var_3_0 < arg_3_2 then
 			break
 		end
-
-		var_3_0 = var_3_2
 	end
 
-	return string.sub(arg_3_0, 1, var_3_0 - 1)
+	return arg_3_2 - 1
+end
+
+function UTF8Utils.clamp_byte_length(arg_4_0, arg_4_1)
+	if arg_4_1 <= 0 then
+		return ""
+	end
+
+	if arg_4_1 >= #arg_4_0 then
+		return arg_4_0
+	end
+
+	local var_4_0 = var_0_0(arg_4_0, arg_4_1 + 1)
+
+	return string.sub(arg_4_0, 1, var_4_0 - 1)
 end

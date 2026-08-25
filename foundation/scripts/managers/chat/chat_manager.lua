@@ -793,7 +793,7 @@ function ChatManager._profanity_check(arg_54_0, arg_54_1)
 
 		while var_54_0 do
 			local var_54_2 = ""
-			local var_54_3 = UTF8Utils.string_length(iter_54_1)
+			local var_54_3 = Utf8.length(iter_54_1)
 
 			for iter_54_2 = 1, var_54_3 do
 				var_54_2 = var_54_2 .. "*"

@@ -1126,7 +1126,7 @@ function StoreItemPurchasePopup._create_ui_elements(arg_33_0, arg_33_1)
 	arg_33_0._static_widgets = var_33_2
 	arg_33_0._widgets_by_name = var_33_0
 	arg_33_0._widgets_by_state = var_33_1
-	var_33_0.purchase_button.content.button_hotspot.disable_button = script_data["eac-untrusted"]
+	var_33_0.purchase_button.content.button_hotspot.disable_button = GameSettingsDevelopment.read_only_backend
 
 	UIRenderer.clear_scenegraph_queue(arg_33_0._purchase_ui_renderer)
 

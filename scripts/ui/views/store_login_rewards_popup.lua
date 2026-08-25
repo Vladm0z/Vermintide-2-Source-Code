@@ -52,7 +52,7 @@ function StoreLoginRewardsPopup._create_ui_elements(arg_3_0)
 
 	arg_3_0._menu_input_description:set_input_description(nil)
 
-	arg_3_0._widgets_by_name.claim_button.content.button_hotspot.disable_button = script_data["eac-untrusted"]
+	arg_3_0._widgets_by_name.claim_button.content.button_hotspot.disable_button = GameSettingsDevelopment.read_only_backend
 	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_0.animation_definitions)
 	arg_3_0._animations = {}
 end

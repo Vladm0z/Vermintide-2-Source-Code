@@ -2057,7 +2057,7 @@ function InteractionDefinitions.forge_access.client.stop(arg_114_0, arg_114_1, a
 end
 
 function InteractionDefinitions.forge_access.client.can_interact(arg_115_0, arg_115_1, arg_115_2, arg_115_3)
-	return not script_data["eac-untrusted"]
+	return not GameSettingsDevelopment.read_only_backend
 end
 
 function InteractionDefinitions.forge_access.client.hud_description(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4)
@@ -2147,7 +2147,7 @@ function InteractionDefinitions.loot_access.client.stop(arg_126_0, arg_126_1, ar
 end
 
 function InteractionDefinitions.loot_access.client.can_interact(arg_127_0, arg_127_1, arg_127_2, arg_127_3)
-	return not script_data["eac-untrusted"]
+	return not GameSettingsDevelopment.read_only_backend
 end
 
 function InteractionDefinitions.loot_access.client.hud_description(arg_128_0, arg_128_1, arg_128_2, arg_128_3, arg_128_4)

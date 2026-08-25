@@ -679,6 +679,20 @@ local var_0_0 = {
 			50
 		}
 	},
+	menu_option_7 = {
+		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
+		position = {
+			0,
+			-210,
+			10
+		},
+		size = {
+			300,
+			50
+		}
+	},
 	ai_benchmark = {
 		vertical_alignment = "center",
 		parent = "menu_anchor_point",

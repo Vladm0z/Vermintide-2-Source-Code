@@ -595,7 +595,7 @@ function UnitFrameUI.set_player_name(arg_34_0, arg_34_1)
 			var_34_0.style.player_name.font_size = var_34_6
 			var_34_5.font_size = UIRenderer.scaled_font_size_by_width(arg_34_0.ui_renderer, var_34_2, var_34_3, var_34_5)
 		else
-			var_34_2 = var_34_0.style.player_name and UTF8Utils.string_length(arg_34_1) > var_0_0 and UIRenderer.crop_text_width(arg_34_0.ui_renderer, arg_34_1, var_34_3, var_34_0.style.player_name) or arg_34_1
+			var_34_2 = var_34_0.style.player_name and Utf8.length(arg_34_1) > var_0_0 and UIRenderer.crop_text_width(arg_34_0.ui_renderer, arg_34_1, var_34_3, var_34_0.style.player_name) or arg_34_1
 		end
 
 		var_34_1.player_name = var_34_2

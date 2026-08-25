@@ -7274,7 +7274,7 @@ function UIWidgets.create_screen_ceremony_award(arg_152_0, arg_152_1, arg_152_2,
 		}
 	}
 
-	local var_152_21 = UTF8Utils.string_length(var_152_11) > 10 and 15 or 0
+	local var_152_21 = Utf8.length(var_152_11) > 10 and 15 or 0
 
 	var_152_4.header = {
 		upper_case = true,

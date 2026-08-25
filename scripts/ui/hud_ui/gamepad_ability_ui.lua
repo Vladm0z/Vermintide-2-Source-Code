@@ -314,7 +314,7 @@ end
 function GamePadAbilityUI._set_input(arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0, var_20_1, var_20_2 = arg_20_0:_get_input_texture_data(arg_20_2)
 
-	if not var_20_1 or not UTF8Utils.string_length(var_20_1) then
+	if not var_20_1 or not Utf8.length(var_20_1) then
 		local var_20_3 = 0
 	end
 

@@ -849,7 +849,7 @@ function ChatView._update_create_channel_input(arg_31_0, arg_31_1, arg_31_2)
 
 			var_31_6.chat_text_id = string.format(var_31_6.chat_text_id, "%w")
 			var_31_6.chat_text_id = string.gsub(var_31_6.chat_text_id, "%s", "")
-			var_31_6.caret_index = UTF8Utils.string_length(var_31_6.chat_text_id) + 1
+			var_31_6.caret_index = Utf8.length(var_31_6.chat_text_id) + 1
 		elseif var_31_2:get("chat_backspace_pressed") then
 			local var_31_13 = {
 				Keyboard.BACKSPACE
@@ -1121,7 +1121,7 @@ function ChatView._update_channels_list_input(arg_36_0, arg_36_1, arg_36_2)
 
 				var_36_5.chat_text_id = string.format(var_36_5.chat_text_id, "%w")
 				var_36_5.chat_text_id = string.gsub(var_36_5.chat_text_id, "%s", "")
-				var_36_5.caret_index = UTF8Utils.string_length(var_36_5.chat_text_id) + 1
+				var_36_5.caret_index = Utf8.length(var_36_5.chat_text_id) + 1
 			end
 		elseif var_36_0:get("chat_backspace_pressed") then
 			local var_36_22 = {

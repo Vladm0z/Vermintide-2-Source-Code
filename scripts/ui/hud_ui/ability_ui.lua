@@ -262,7 +262,7 @@ function AbilityUI.event_input_changed(arg_14_0)
 	local var_14_3 = arg_14_0._widgets_by_name.ability
 	local var_14_4, var_14_5 = arg_14_0:_get_input_texture_data(var_14_2)
 
-	if not var_14_5 or not UTF8Utils.string_length(var_14_5) then
+	if not var_14_5 or not Utf8.length(var_14_5) then
 		local var_14_6 = 0
 	end
 

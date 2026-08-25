@@ -18174,7 +18174,7 @@ function UIWidgets.create_item_option_overview(arg_338_0, arg_338_1)
 	}
 	local var_338_17 = {
 		title_background = "headline_bg_40",
-		title_text = "overview",
+		title_text = "achv_menu_summary_category_title",
 		input_text = "Title Text",
 		icon_texture = "icons_placeholder",
 		locked = false,
@@ -18331,7 +18331,7 @@ function UIWidgets.create_item_option_overview(arg_338_0, arg_338_1)
 		title_text = {
 			font_size = 34,
 			upper_case = true,
-			word_wrap = true,
+			localize = true,
 			horizontal_alignment = "left",
 			vertical_alignment = "top",
 			dynamic_font_size = true,
@@ -18352,7 +18352,7 @@ function UIWidgets.create_item_option_overview(arg_338_0, arg_338_1)
 		title_text_shadow = {
 			font_size = 34,
 			upper_case = true,
-			word_wrap = true,
+			localize = true,
 			horizontal_alignment = "left",
 			vertical_alignment = "top",
 			dynamic_font_size = true,
@@ -18956,11 +18956,12 @@ function UIWidgets.create_item_option_properties(arg_340_0, arg_340_1)
 				return arg_345_0[var_340_23].disable_button
 			end
 		}
-		var_340_13[var_340_28] = "Locked"
+		var_340_13[var_340_28] = "search_filter_locked"
 		var_340_14[var_340_28] = {
-			word_wrap = true,
-			horizontal_alignment = "left",
 			font_size = 20,
+			upper_case = true,
+			localize = true,
+			horizontal_alignment = "left",
 			vertical_alignment = "center",
 			dynamic_font_size = true,
 			font_type = "hell_shark",
@@ -18989,9 +18990,10 @@ function UIWidgets.create_item_option_properties(arg_340_0, arg_340_1)
 			end
 		}
 		var_340_14[var_340_29] = {
-			word_wrap = true,
-			horizontal_alignment = "left",
 			font_size = 20,
+			upper_case = true,
+			localize = true,
+			horizontal_alignment = "left",
 			vertical_alignment = "center",
 			dynamic_font_size = true,
 			font_type = "hell_shark",
@@ -19154,10 +19156,10 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 	}
 	local var_347_15 = {
 		locked = true,
-		title_text = "trait",
+		title_text = "search_filter_trait",
 		input_text = "n/a",
 		title_background = "headline_bg_40",
-		input_text_locked = "Locked",
+		input_text_locked = "search_filter_locked",
 		sub_title = "n/a",
 		background = "gradient_straight",
 		button_hotspot = {},
@@ -19291,7 +19293,7 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 		title_text = {
 			font_size = 34,
 			upper_case = true,
-			word_wrap = true,
+			localize = true,
 			horizontal_alignment = "left",
 			vertical_alignment = "top",
 			dynamic_font_size = true,
@@ -19312,7 +19314,7 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 		title_text_shadow = {
 			font_size = 34,
 			upper_case = true,
-			word_wrap = true,
+			localize = true,
 			horizontal_alignment = "left",
 			vertical_alignment = "top",
 			dynamic_font_size = true,
@@ -19388,8 +19390,9 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 			}
 		},
 		input_text_locked = {
-			word_wrap = true,
 			font_size = 36,
+			upper_case = true,
+			localize = true,
 			horizontal_alignment = "left",
 			vertical_alignment = "top",
 			dynamic_font_size = true,
@@ -19423,9 +19426,10 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 			}
 		},
 		input_text_locked_shadow = {
-			word_wrap = true,
-			horizontal_alignment = "left",
 			font_size = 36,
+			upper_case = true,
+			localize = true,
+			horizontal_alignment = "left",
 			vertical_alignment = "top",
 			dynamic_font_size = true,
 			font_type = "hell_shark_header",

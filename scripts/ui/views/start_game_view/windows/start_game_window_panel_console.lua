@@ -57,6 +57,7 @@ function StartGameWindowPanelConsole._create_ui_elements(arg_2_0, arg_2_1, arg_2
 
 			var_2_12.content.layout_name = var_2_13
 			var_2_12.disable_function_name = var_2_5.disable_function_name
+			var_2_12.is_layout_disabled = Managers.ui:is_ui_layout_disabled(var_2_13)
 			var_2_2[#var_2_2 + 1] = var_2_12
 		end
 	end
@@ -144,15 +145,19 @@ function StartGameWindowPanelConsole._update_title_buttons_disable_status(arg_8_
 
 	for iter_8_0 = 1, #var_8_0 do
 		local var_8_1 = var_8_0[iter_8_0]
-		local var_8_2 = var_8_1.disable_function_name
+		local var_8_2 = false
 
-		if var_8_2 then
-			local var_8_3 = arg_8_0[var_8_2](arg_8_0)
-
-			var_8_1.content.button_hotspot.disable_button = var_8_3
+		if var_8_1.is_layout_disabled then
+			var_8_2 = true
 		else
-			var_8_1.content.button_hotspot.disable_button = false
+			local var_8_3 = var_8_1.disable_function_name
+
+			if var_8_3 then
+				var_8_2 = arg_8_0[var_8_3](arg_8_0)
+			end
 		end
+
+		var_8_1.content.button_hotspot.disable_button = var_8_2
 	end
 end
 

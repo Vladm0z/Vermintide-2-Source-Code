@@ -125,8 +125,19 @@ local var_0_10 = {
 	8,
 	1
 }
+local var_0_11 = {
+	1,
+	1,
+	1.5,
+	2,
+	3.4,
+	5.6,
+	7.3,
+	9,
+	1
+}
 
-local function var_0_11(arg_1_0)
+local function var_0_12(arg_1_0)
 	arg_1_0 = math.clamp(arg_1_0, 0, 8191.5)
 
 	local var_1_0 = arg_1_0 % 1
@@ -135,19 +146,19 @@ local function var_0_11(arg_1_0)
 	return math.floor(arg_1_0) + var_1_1
 end
 
-local function var_0_12(arg_2_0, arg_2_1)
+local function var_0_13(arg_2_0, arg_2_1)
 	local var_2_0 = {}
 
 	for iter_2_0 = 1, 9 do
 		local var_2_1 = arg_2_0 * arg_2_1[iter_2_0]
 
-		var_2_0[iter_2_0] = var_0_11(var_2_1)
+		var_2_0[iter_2_0] = var_0_12(var_2_1)
 	end
 
 	return var_2_0
 end
 
-local function var_0_13(arg_3_0, arg_3_1)
+local function var_0_14(arg_3_0, arg_3_1)
 	local var_3_0 = {}
 
 	for iter_3_0 = 1, 9 do
@@ -162,71 +173,71 @@ local function var_0_13(arg_3_0, arg_3_1)
 end
 
 BreedTweaks.max_health = {
-	slave_rat = var_0_12(4, var_0_7),
-	fanatic = var_0_12(8, var_0_7),
-	ungor = var_0_12(6, var_0_7),
-	clan_rat = var_0_12(8, var_0_0),
-	clan_rat_with_shield = var_0_12(8, var_0_0),
-	marauder = var_0_12(16, var_0_0),
-	gor = var_0_12(12, var_0_0),
-	berzerker = var_0_12(18, var_0_4),
-	plague_monk = var_0_12(18, var_0_4),
-	stormvermin = var_0_12(16, var_0_4),
-	stormvermin_with_shield = var_0_12(16, var_0_4),
-	raider = var_0_12(30, var_0_4),
-	bestigor = var_0_12(20, var_0_4),
-	chaos_warrior = var_0_12(46, var_0_4),
-	chaos_bulwark = var_0_12(56, var_0_4),
-	chaos_spawn = var_0_12(800, var_0_10),
-	chaos_troll = var_0_12(600, var_0_10),
-	chaos_troll_chief = var_0_12(1200, var_0_10),
-	rat_ogre = var_0_12(800, var_0_10),
-	stormfiend = var_0_12(600, var_0_10),
-	corruptor_sorcerer = var_0_12(20, var_0_0),
-	vortex_sorcerer = var_0_12(20, var_0_0),
-	warpfire_thrower = var_0_12(12, var_0_0),
-	globadier = var_0_12(20, var_0_0),
-	gutter_runner = var_0_12(12, var_0_0),
-	pack_master = var_0_12(25, var_0_0),
-	ratling_gunner = var_0_12(12, var_0_0),
-	standard_bearer = var_0_12(20, var_0_0),
-	stormvermin_warlord = var_0_12(500, var_0_10),
-	exalted_champion = var_0_12(700, var_0_10),
-	exalted_sorcerer = var_0_12(1000, var_0_10),
-	norsca_champion = var_0_12(600, var_0_10),
-	grey_seer = var_0_12(500, var_0_10),
-	stormfiend_boss = var_0_12(600, var_0_10)
+	slave_rat = var_0_13(4, var_0_7),
+	fanatic = var_0_13(8, var_0_7),
+	ungor = var_0_13(6, var_0_7),
+	clan_rat = var_0_13(8, var_0_0),
+	clan_rat_with_shield = var_0_13(8, var_0_0),
+	marauder = var_0_13(16, var_0_0),
+	gor = var_0_13(12, var_0_0),
+	berzerker = var_0_13(18, var_0_4),
+	plague_monk = var_0_13(18, var_0_4),
+	stormvermin = var_0_13(16, var_0_4),
+	stormvermin_with_shield = var_0_13(16, var_0_4),
+	raider = var_0_13(30, var_0_4),
+	bestigor = var_0_13(20, var_0_4),
+	chaos_warrior = var_0_13(46, var_0_4),
+	chaos_bulwark = var_0_13(56, var_0_4),
+	chaos_spawn = var_0_13(800, var_0_10),
+	chaos_troll = var_0_13(600, var_0_10),
+	chaos_troll_chief = var_0_13(600, var_0_11),
+	rat_ogre = var_0_13(800, var_0_10),
+	stormfiend = var_0_13(600, var_0_10),
+	corruptor_sorcerer = var_0_13(20, var_0_0),
+	vortex_sorcerer = var_0_13(20, var_0_0),
+	warpfire_thrower = var_0_13(12, var_0_0),
+	globadier = var_0_13(20, var_0_0),
+	gutter_runner = var_0_13(12, var_0_0),
+	pack_master = var_0_13(25, var_0_0),
+	ratling_gunner = var_0_13(12, var_0_0),
+	standard_bearer = var_0_13(20, var_0_0),
+	stormvermin_warlord = var_0_13(500, var_0_10),
+	exalted_champion = var_0_13(700, var_0_10),
+	exalted_sorcerer = var_0_13(1000, var_0_10),
+	norsca_champion = var_0_13(600, var_0_10),
+	grey_seer = var_0_13(500, var_0_10),
+	stormfiend_boss = var_0_13(600, var_0_10)
 }
 BreedTweaks.diff_stagger_resist = {
-	slave_rat = var_0_13(1, var_0_1),
-	fanatic = var_0_13(1.4, var_0_1),
-	ungor = var_0_13(1.3, var_0_1),
-	clan_rat = var_0_13(2.1, var_0_1),
-	gor = var_0_13(2.4, var_0_1),
-	marauder = var_0_13(2.65, var_0_1),
-	stormvermin = var_0_13(2.25, var_0_5),
-	bestigor = var_0_13(3.25, var_0_5),
-	raider = var_0_13(3, var_0_5),
-	warrior = var_0_13(4.8, var_0_5),
-	berzerker = var_0_13(2.7, var_0_5),
-	plague_monk = var_0_13(3, var_0_5),
-	packmaster = var_0_13(4, var_0_5),
-	ratling_gunner = var_0_13(2.5, var_0_5),
-	sorcerer = var_0_13(2.7, var_0_5)
+	slave_rat = var_0_14(1, var_0_1),
+	fanatic = var_0_14(1.4, var_0_1),
+	ungor = var_0_14(1.3, var_0_1),
+	clan_rat = var_0_14(2.1, var_0_1),
+	gor = var_0_14(2.4, var_0_1),
+	marauder = var_0_14(2.65, var_0_1),
+	stormvermin = var_0_14(2.25, var_0_5),
+	bestigor = var_0_14(3.25, var_0_5),
+	raider = var_0_14(3, var_0_5),
+	warrior = var_0_14(4.8, var_0_5),
+	berzerker = var_0_14(2.7, var_0_5),
+	plague_monk = var_0_14(3, var_0_5),
+	packmaster = var_0_14(4, var_0_5),
+	ratling_gunner = var_0_14(2.5, var_0_5),
+	sorcerer = var_0_14(2.7, var_0_5)
 }
 BreedTweaks.stagger_reduction = {
-	marauder = var_0_13(0.2, var_0_1),
-	gor = var_0_13(0.1, var_0_1),
-	stormvermin = var_0_13(1, var_0_5),
-	raider = var_0_13(0.9, var_0_5),
-	warrior = var_0_13(1.8, var_0_5),
-	bestigor = var_0_13(1, var_0_5),
-	berzerker = var_0_13(0.75, var_0_5),
-	plague_monk = var_0_13(1.35, var_0_5),
-	sorcerer = var_0_13(2, var_0_5),
-	packmaster = var_0_13(2, var_0_5),
-	ratling_gunner = var_0_13(1, var_0_5),
-	stormvermin_warlord = var_0_13(1.35, var_0_5)
+	marauder = var_0_14(0.2, var_0_1),
+	gor = var_0_14(0.1, var_0_1),
+	stormvermin = var_0_14(1, var_0_5),
+	raider = var_0_14(0.9, var_0_5),
+	warrior = var_0_14(1.8, var_0_5),
+	bestigor = var_0_14(1, var_0_5),
+	berzerker = var_0_14(0.75, var_0_5),
+	plague_monk = var_0_14(1.35, var_0_5),
+	sorcerer = var_0_14(2, var_0_5),
+	packmaster = var_0_14(2, var_0_5),
+	ratling_gunner = var_0_14(1, var_0_5),
+	stormvermin_warlord = var_0_14(1.35, var_0_5)
 }
 BreedTweaks.stagger_duration = {
 	slave_rat = {
@@ -385,21 +396,21 @@ BreedTweaks.stagger_duration_difficulty_mod = {
 	}
 }
 BreedTweaks.hit_mass_counts = {
-	slave_rat = var_0_13(0.8, var_0_3),
-	fanatic = var_0_13(1.25, var_0_3),
-	ungor = var_0_13(1, var_0_3),
-	clan_rat = var_0_13(1.5, var_0_3),
-	clan_rat_shield_block = var_0_13(1.5, var_0_3),
-	marauder = var_0_13(3, var_0_3),
-	gor = var_0_13(2.75, var_0_3),
-	stormvermin = var_0_13(5, var_0_3),
-	stormvermin_shield_block = var_0_13(8, var_0_3),
-	bestigor = var_0_13(8, var_0_3),
-	raider = var_0_13(5, var_0_3),
-	berzerker = var_0_13(3, var_0_3),
-	marauder_shield_block = var_0_13(5, var_0_3),
-	plague_monk = var_0_13(2.5, var_0_3),
-	sorcerer = var_0_13(8, var_0_3)
+	slave_rat = var_0_14(0.8, var_0_3),
+	fanatic = var_0_14(1.25, var_0_3),
+	ungor = var_0_14(1, var_0_3),
+	clan_rat = var_0_14(1.5, var_0_3),
+	clan_rat_shield_block = var_0_14(1.5, var_0_3),
+	marauder = var_0_14(3, var_0_3),
+	gor = var_0_14(2.75, var_0_3),
+	stormvermin = var_0_14(5, var_0_3),
+	stormvermin_shield_block = var_0_14(8, var_0_3),
+	bestigor = var_0_14(8, var_0_3),
+	raider = var_0_14(5, var_0_3),
+	berzerker = var_0_14(3, var_0_3),
+	marauder_shield_block = var_0_14(5, var_0_3),
+	plague_monk = var_0_14(2.5, var_0_3),
+	sorcerer = var_0_14(8, var_0_3)
 }
 BreedTweaks.difficulty_damage = {
 	beastmen_roamer_attack = {

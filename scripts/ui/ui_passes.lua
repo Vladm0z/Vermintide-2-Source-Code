@@ -1664,7 +1664,7 @@ local function var_0_27(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 
 					var_0_24[iter_55_0] = var_0_7.rep("½", var_55_23)
 				else
-					local var_55_24 = Utf8.upper(var_55_20 and Localize(var_55_19[2]) or Keyboard.button_name(var_55_19[2]) or Localize(UNASSIGNED_KEY))
+					local var_55_24 = Utf8.upper(var_55_20 and Localize(var_55_19[2]) or Keyboard.button_locale_name(var_55_19[2]) or Localize(UNASSIGNED_KEY))
 					local var_55_25 = var_0_0.text_size(arg_55_0, var_55_24, var_55_10, var_55_11) + var_55_11 * var_55_5
 					local var_55_26 = var_0_8.ceil(var_55_25 / var_55_13)
 
@@ -1778,7 +1778,7 @@ local function var_0_29(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56
 						var_0_0.draw_text(arg_56_0, "[?]", arg_56_2, arg_56_3, arg_56_4, var_56_20, Colors.get_color_table_with_alpha("font_title", 255))
 					end
 				else
-					local var_56_21 = Utf8.upper(var_56_13 and Localize(var_56_12[2]) or Keyboard.button_name(var_56_12[2]) or Localize(UNASSIGNED_KEY))
+					local var_56_21 = Utf8.upper(var_56_13 and Localize(var_56_12[2]) or Keyboard.button_locale_name(var_56_12[2]) or Localize(UNASSIGNED_KEY))
 					local var_56_22, var_56_23 = var_0_0.text_size(arg_56_0, var_56_21, arg_56_2, arg_56_3)
 					local var_56_24 = var_56_10[1]
 					local var_56_25 = var_56_10[2]
@@ -2007,7 +2007,7 @@ UIPasses.text = {
 		end
 
 		if arg_60_4.word_wrap then
-			local var_60_13 = UTF8Utils.string_length(var_60_4)
+			local var_60_13 = Utf8.length(var_60_4)
 			local var_60_14, var_60_15, var_60_16 = var_0_4(arg_60_0.gui, var_60_10, var_60_9)
 			local var_60_17 = var_0_0.word_wrap(arg_60_0, var_60_4, var_60_8, var_60_9, arg_60_4.area_size and arg_60_4.area_size[1] or arg_60_7[1])
 			local var_60_18 = arg_60_5.text_start_index or 1
@@ -2046,7 +2046,7 @@ UIPasses.text = {
 			for iter_60_0 = 1, var_60_20 do
 				var_60_4 = var_60_17[iter_60_0 - 1 + var_60_18]
 
-				local var_60_29 = var_60_4 and UTF8Utils.string_length(var_60_4) or 0
+				local var_60_29 = var_60_4 and Utf8.length(var_60_4) or 0
 				local var_60_30
 
 				if var_60_24 ~= "left" then
@@ -2107,7 +2107,7 @@ UIPasses.text = {
 			end
 		elseif arg_60_4.horizontal_scroll then
 			local var_60_40 = arg_60_5.text_index
-			local var_60_41 = UTF8Utils.string_length(var_60_4)
+			local var_60_41 = Utf8.length(var_60_4)
 			local var_60_42 = arg_60_5.end_index or var_60_41
 			local var_60_43 = arg_60_4.replacing_character
 
@@ -2119,7 +2119,7 @@ UIPasses.text = {
 			local var_60_45
 
 			if arg_60_5.jump_to_end or var_60_41 < arg_60_5.caret_index then
-				var_60_42 = UTF8Utils.string_length(var_60_4)
+				var_60_42 = Utf8.length(var_60_4)
 				var_60_40 = var_60_42
 				arg_60_5.jump_to_end = nil
 
@@ -4095,7 +4095,7 @@ UIPasses.rect_text = {
 		local var_106_14 = var_0_8.min(#var_106_11 - (var_106_12 - 1), var_106_13)
 		local var_106_15 = (var_106_10 + var_0_8.abs(var_106_9)) * RESOLUTION_LOOKUP.inv_scale
 		local var_106_16 = Vector3(0, arg_106_4.grow_downward and var_106_15 or -var_106_15, 0)
-		local var_106_17 = UTF8Utils.string_length(var_106_6)
+		local var_106_17 = Utf8.length(var_106_6)
 
 		var_0_38[2] = var_106_15 * var_106_14
 		var_0_38[1] = 0
@@ -4118,7 +4118,7 @@ UIPasses.rect_text = {
 
 			for iter_106_1 = 1, var_106_14 do
 				local var_106_21 = var_106_11[iter_106_1 - 1 + var_106_12]
-				local var_106_22 = var_106_21 and UTF8Utils.string_length(var_106_21) or 0
+				local var_106_22 = var_106_21 and Utf8.length(var_106_21) or 0
 				local var_106_23 = var_0_0.text_size(arg_106_0, var_106_21, var_106_0, var_106_1, arg_106_7[2])
 				local var_106_24 = Vector3(arg_106_7[1] / 2 - var_106_23 / 2, 0, 0)
 				local var_106_25

@@ -47,9 +47,7 @@ function ActionCareerBWNecromancerCommandVent.client_owner_start_action(arg_2_0,
 		Managers.state.entity:system("buff_system"):add_buff_synced(var_2_4, "sienna_necromancer_4_3_withering_touch", BuffSyncType.LocalAndServer)
 	end
 
-	if HEALTH_ALIVE[var_2_0] then
-		arg_2_0._command_ability:command_sacrifice(var_2_0)
-	end
+	arg_2_0._command_ability:command_sacrifice(var_2_0)
 end
 
 function ActionCareerBWNecromancerCommandVent.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
