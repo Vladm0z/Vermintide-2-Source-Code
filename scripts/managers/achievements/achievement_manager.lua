@@ -78,6 +78,10 @@ function AchievementManager.init(arg_1_0, arg_1_1, arg_1_2)
 		arg_1_0.platform = "debug"
 	end
 
+	if GameSettingsDevelopment.achievements_disabled then
+		arg_1_0.platform = "debug"
+	end
+
 	local var_1_0 = arg_1_0._event_mappings
 	local var_1_1 = 0
 

@@ -250,14 +250,16 @@ function MenuInformationSlateUI._parse_information_data(arg_12_0, arg_12_1)
 	local var_12_4 = arg_12_1.body
 	local var_12_5 = 0
 
-	for iter_12_0, iter_12_1 in ipairs(var_12_4) do
-		local var_12_6 = iter_12_1.type
-		local var_12_7 = arg_12_0["_parse_" .. var_12_6 .. "_data"]
+	if var_12_4 then
+		for iter_12_0, iter_12_1 in ipairs(var_12_4) do
+			local var_12_6 = iter_12_1.type
+			local var_12_7 = arg_12_0["_parse_" .. var_12_6 .. "_data"]
 
-		if var_12_7 then
-			var_12_5 = var_12_7(arg_12_0, iter_12_1, iter_12_0, var_12_5)
-		else
-			fassert(false, "[MenuInformationSlateUi] There is no parse function for type %q", var_12_6)
+			if var_12_7 then
+				var_12_5 = var_12_7(arg_12_0, iter_12_1, iter_12_0, var_12_5)
+			else
+				fassert(false, "[MenuInformationSlateUi] There is no parse function for type %q", var_12_6)
+			end
 		end
 	end
 

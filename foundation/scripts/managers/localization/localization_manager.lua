@@ -172,22 +172,28 @@ local var_0_2 = {}
 function LocalizationManager.get_input_action(arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0:_base_lookup(arg_19_1) or var_0_0(arg_19_1)
 	local var_19_1 = string.match(var_19_0, "%b$;[%a%d_]*:")
-	local var_19_2
 
 	table.clear(var_0_1)
 	table.clear(var_0_2)
 
 	while var_19_1 do
-		local var_19_3, var_19_4 = string.find(var_19_0, var_19_1)
+		local var_19_2, var_19_3 = string.find(var_19_0, var_19_1)
 
-		var_19_0 = string.sub(var_19_0, var_19_4 + 2)
+		if not var_19_3 then
+			break
+		end
 
-		local var_19_5 = string.find(var_19_1, ";")
-		local var_19_6 = string.sub(var_19_1, var_19_5 + 1, -2)
-		local var_19_7, var_19_8 = string.find(var_19_6, "__")
+		var_19_0 = string.sub(var_19_0, var_19_3 + 2)
 
-		var_0_2[#var_0_2 + 1] = string.sub(var_19_6, 1, var_19_7 - 1)
-		var_0_1[#var_0_1 + 1] = string.sub(var_19_6, var_19_8 + 1)
+		local var_19_4 = string.find(var_19_1, ";")
+		local var_19_5 = string.sub(var_19_1, var_19_4 + 1, -2)
+		local var_19_6, var_19_7 = string.find(var_19_5, "__")
+
+		if var_19_6 then
+			var_0_2[#var_0_2 + 1] = string.sub(var_19_5, 1, var_19_6 - 1)
+			var_0_1[#var_0_1 + 1] = string.sub(var_19_5, var_19_7 + 1)
+		end
+
 		var_19_1 = string.match(var_19_0, "%b$;[%a%d_]*:")
 	end
 

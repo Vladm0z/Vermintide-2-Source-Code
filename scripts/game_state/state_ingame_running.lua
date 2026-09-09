@@ -710,7 +710,7 @@ function StateInGameRunning.gm_event_end_conditions_met(arg_9_0, arg_9_1, arg_9_
 		end
 
 		if GameModeSettings[var_9_4].end_mission_rewards then
-			if not is_booted_unstrusted and (var_9_7 or var_9_15) then
+			if not GameSettingsDevelopment.read_only_backend and (var_9_7 or var_9_15) then
 				arg_9_0:_award_end_of_level_rewards(var_9_10, var_9_9, var_9_6, var_9_2, var_9_3)
 			end
 
