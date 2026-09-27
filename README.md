@@ -1,7 +1,33 @@
 # Vermintide 2 Source Code
+This repository contains reconstructed Lua source code for Warhammer: Vermintide 2, derived from the game's compiled LuaJIT bytecode bundles.
+
+## Pipeline
+
+### Extraction
+Game archives are unpacked using the [VT2 Bundle Unpacker](https://gitlab.com/lschwiderski/vt2_bundle_unpacker) to isolate `.lua` and `.luac` files. This process requires the game's specific string dictionary and Zstandard compression dictionary to properly decompress and resolve internal references.
+
+### Header Stripping
+The game's LuaJIT bytecode files are prepended with a custom 12-byte Fatshark header. Standard decompilation tools cannot parse this format. The pipeline scans the binary data for the standard LuaJIT signature (`1B 4C 4A`) and truncates the file to remove the proprietary header, exposing the raw LuaJIT bytecode.
+
+### Decompilation
+The raw bytecode is processed using the [LuaJIT Decompiler v2](https://github.com/Vladm0z/luajit-decompiler-v2). The decompiler is configured with the following flags to handle the specific constraints of the game's compiled scripts:
+- `-f` (Force overwrite): Replaces existing files without prompting.
+- `-s` (Silent assertions): Bypasses interactive error prompts and automatically skips files that trigger internal decompiler assertions.
+- `-i` (Ignore debug info): Forces the decompiler to reconstruct control flow, boolean logic, and variable scopes algorithmically, as the game's bytecode is largely stripped of debug symbols.
+- `-u` (Unrestricted ASCII): Disables strict UTF-8 validation and string restrictions for constant outputs.
+
+### Directory Reconstruction
+LuaJIT files and the resulting decompiled text files contain a `chunkname` property, which maps to the original file path. A sorting script is required to read the `chunkname` from either the raw bytecode header (if present) or the `-- chunkname:` comment injected by the decompiler.
+
+## Limitations and Artifacts
+- Files compiled with the LuaJIT strip flag (`BC_F_STRIP`) lack chunkname and debug information. These files cannot be automatically sorted into the directory structure and are bypassed by the reconstruction script.
+- The output is a structural approximation of the original source code. Local variable names, exact syntactic constructs, and formatting are inferred from bytecode and will not match the original developer source.
+
+## Versions
+
+This repository tracks the decompiled source code across different game updates. Below is a history of the game versions.
 
 -------------------------------------------------------------
-
 Date      |  Patch  | Notes
 --------: | :-----: | :--------------
 09-01-26   |  6.12.1 | 
